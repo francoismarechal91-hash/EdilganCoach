@@ -1,6 +1,6 @@
 /* Mon Coach : réseau d'abord (toujours la dernière version), cache en secours hors connexion */
 const C='mon-coach-v1';
-const SHELL=['./','index.html','manifest.json','icon.png','icon-192.png','icon-512.png'];
+const SHELL=['./','index.html','manifest.json','icon.png','icon-192.png','icon-512.png','world.json'];
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll(SHELL)).catch(()=>{}))});
 self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim())});
 self.addEventListener('fetch',e=>{
