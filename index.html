@@ -2050,7 +2050,7 @@ function renderCountry(){const el=$('wCountry');if(!WSEL){el.innerHTML='';return
 let PHC=store.get('phc',{});
 async function wikiPhoto(q){if(PHC[q]!==undefined)return PHC[q];
   try{const r=await fetch('https://fr.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&generator=search&gsrnamespace=0&gsrlimit=3&prop=pageimages&piprop=thumbnail&pithumbsize=640&gsrsearch='+encodeURIComponent(q));const d=await r.json();
-    const pg=arr(d.query&&d.query.pages).sort((a,b)=>a.index-b.index).find(p=>p.thumbnail&&p.thumbnail.source&&!/\.svg/i.test(p.thumbnail.source));
+    const qw=normT(q).filter(w=>w.length>3),pg=arr(d.query&&d.query.pages).sort((a,b)=>a.index-b.index).find(p=>p.thumbnail&&p.thumbnail.source&&!/\.svg/i.test(p.thumbnail.source)&&(!qw.length||normT(p.title).some(t=>qw.some(w=>t.startsWith(w.slice(0,5))||w.startsWith(t.slice(0,5))))));
     const v=pg?{src:pg.thumbnail.source,t:pg.title}:null;PHC[q]=v;const ks=Object.keys(PHC);if(ks.length>300)delete PHC[ks[0]];store.set('phc',PHC);return v}catch(e){return undefined}}
 const aiPic=(q,pays)=>'https://image.pollinations.ai/prompt/'+encodeURIComponent(`photo culinaire réaliste du plat ${q}${pays?' ('+pays+')':''}, servi dans une assiette, vue de trois quarts, lumière naturelle, appétissant`)+'?width=640&height=440&nologo=true&seed='+(q.length*7919%9973);
 async function fillPhoto(box){if(box.dataset.done)return;box.dataset.done=1;const q=box.dataset.q,pays=box.dataset.pays||'';
@@ -2411,7 +2411,7 @@ async function loadCook(){
 function renderK(){
   const d=K.d,et=d.etapes||[],head=`<div class="ovh"><span class="mute" style="flex:1">${esc(d.nom||K.o.nom)}</span><b class="ktm" style="color:var(--red);white-space:nowrap"></b><button class="ghost sm" data-act="kClose">Fermer</button></div>`;
   if(K.i<0){
-    ov.innerHTML=head+`<h1 style="font-size:clamp(28px,7vw,38px)">${esc(d.nom||K.o.nom)}</h1>
+    ov.innerHTML=head+`<div class="dph wide" data-q="${esc(K.o.wiki||K.o.nom_local||d.nom||K.o.nom)}" data-pays="${esc(K.o.pays||'')}" style="margin:6px 0 10px"><span class="mute">Photo…</span></div><h1 style="font-size:clamp(28px,7vw,38px)">${esc(d.nom||K.o.nom)}</h1>
     <div class="macro" style="margin:8px 0"><span><b>${esc(d.temps_total_min)}</b> min</span><span>${esc(d.difficulte||'')}</span>${d.kcal_portion?`<span><b>${esc(d.kcal_portion)}</b> kcal / portion</span>`:''}</div>
     <label for="kN">Nombre de portions</label><div class="row"><select id="kN" style="width:auto">${[1,2,3,4,5,6,8].map(n=>`<option ${n===K.n?'selected':''}>${n}</option>`).join('')}</select><span class="mute">les quantités sont recalculées</span></div>
     <h3 style="margin-top:18px">Ingrédients <span class="mute">(coche quand c'est sorti)</span></h3>
@@ -2419,7 +2419,7 @@ function renderK(){
     ${d.materiel&&d.materiel.length?`<h3 style="margin-top:18px">Matériel</h3>${list(d.materiel)}`:''}
     ${d.mise_en_place&&d.mise_en_place.length?`<h3 style="margin-top:18px">Avant de commencer</h3>${list(d.mise_en_place,'ol')}`:''}
     <div class="row" style="margin:18px 0">${yt('recette '+(d.nom||K.o.nom),'Voir une vidéo')}</div>
-    <button data-act="kGo" data-v="0" style="width:100%;min-height:60px;font-size:20px">Commencer · ${et.length} étapes</button>`;
+    <button data-act="kGo" data-v="0" style="width:100%;min-height:60px;font-size:20px">Commencer · ${et.length} étapes</button>`;try{loadPhotos(ov)}catch(e){}
     return;
   }
   if(K.i>=et.length){
@@ -3383,7 +3383,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-47';
+const APP_VERSION='2026.11.26-48';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
