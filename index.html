@@ -423,6 +423,46 @@ html[data-skin=foretnuit] .qual button.on{color:#0c1a24}
 .tipwarn{border-left:5px solid var(--yel)}
 .tipl{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line)}.tipl:first-child{border-top:0}
 .tipl em{font-style:normal;width:30px;height:30px;border-radius:50%;background:var(--tint);color:var(--tintink);display:grid;place-items:center;font-weight:800;flex:none}
+
+/* ===== Ambiances animées par thème (calque fixe derrière le contenu) ===== */
+#amb{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+#amb i{position:absolute;display:block}
+html[data-fx=off] #amb{display:none}
+/* Synthwave : étoiles filantes + horizon néon + reflets sur les boutons */
+html[data-skin=synth] #amb .hz{left:-10%;right:-10%;bottom:-40px;height:38vh;background:repeating-linear-gradient(90deg,rgba(34,228,255,.18) 0 1px,transparent 1px 60px),repeating-linear-gradient(0deg,rgba(255,42,157,.2) 0 1px,transparent 1px 34px);transform:perspective(300px) rotateX(62deg);transform-origin:bottom;-webkit-mask:linear-gradient(0deg,#000,transparent);mask:linear-gradient(0deg,#000,transparent);animation:hzmove 4s linear infinite}
+@keyframes hzmove{to{background-position:0 34px,0 34px}}
+html[data-skin=synth] #amb .sh{width:120px;height:2px;background:linear-gradient(90deg,transparent,#fff,#ff7cc6);border-radius:2px;top:10%;left:110%;transform:rotate(-20deg);animation:shoot 9s linear infinite;opacity:0}
+@keyframes shoot{0%{left:110%;top:6%;opacity:0}2%{opacity:1}9%{left:-30%;top:34%;opacity:0}100%{left:-30%;opacity:0}}
+html[data-skin=synth] button:not(.ghost):not(.alt):not(.chip):not(.ib):not(.tile):not(.skin):not(.tint):not(.x):not(.seg *):not(.glass *):not(.qual *):not(.wobj *){background-size:200% 100%;background-image:linear-gradient(110deg,#ff2a9d 0%,#c03bff 45%,#ff2a9d 90%);animation:sheen 6s ease-in-out infinite}
+@keyframes sheen{50%{background-position:100% 0}}
+html[data-skin=synth] .lt h1{animation:neon 5s ease-in-out infinite}
+@keyframes neon{0%,100%{filter:drop-shadow(0 0 10px rgba(255,42,157,.45))}50%{filter:drop-shadow(0 0 18px rgba(255,42,157,.8))}}
+/* Forêt jour : feuilles qui traversent l'écran + taches de soleil */
+html[data-skin=foret] #amb .lf{top:-30px;width:14px;height:14px;border-radius:0 100% 0 100%;background:#7ccf5c;opacity:.55;animation:lfall linear infinite}
+html[data-skin=foret] #amb .lf:nth-child(2n){background:#e0b13c}
+@keyframes lfall{0%{transform:translate(0,0) rotate(0)}25%{transform:translate(30px,25vh) rotate(90deg)}50%{transform:translate(-20px,50vh) rotate(200deg)}100%{transform:translate(40px,110vh) rotate(380deg)}}
+html[data-skin=foret] #amb .sun{width:46vw;height:46vw;border-radius:50%;background:radial-gradient(circle,rgba(255,244,190,.5),transparent 70%);animation:dapple 8s ease-in-out infinite alternate}
+@keyframes dapple{to{transform:translate(20px,14px) scale(1.12);opacity:.6}}
+/* Forêt nuit : lucioles sur tout l'écran */
+html[data-skin=foretnuit] #amb .ff{width:7px;height:7px;border-radius:50%;background:#fff6b8;box-shadow:0 0 12px 4px rgba(255,236,140,.75);animation:ffly ease-in-out infinite alternate}
+@keyframes ffly{0%{transform:translate(0,0);opacity:.15}40%{opacity:1}100%{transform:translate(var(--dx),var(--dy));opacity:.25}}
+/* Chats & chiens : pattes qui apparaissent quand on touche l'écran + petits cœurs */
+.pawtap{position:fixed;width:30px;height:30px;margin:-15px 0 0 -15px;pointer-events:none;z-index:80;color:var(--red);animation:pawt .9s ease-out forwards}
+@keyframes pawt{0%{transform:scale(.3) rotate(-20deg);opacity:0}25%{transform:scale(1.1) rotate(0);opacity:.9}100%{transform:scale(1) translateY(-14px);opacity:0}}
+html[data-skin=pets] #amb .ht{bottom:-30px;font-size:0;width:16px;height:16px;background:var(--red);opacity:.22;transform:rotate(45deg);animation:hrise linear infinite}
+html[data-skin=pets] #amb .ht::before,html[data-skin=pets] #amb .ht::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:inherit}
+html[data-skin=pets] #amb .ht::before{left:-8px}html[data-skin=pets] #amb .ht::after{top:-8px}
+@keyframes hrise{to{transform:translateY(-115vh) rotate(45deg)}}
+/* Clair : halos colorés qui respirent */
+html[data-skin=clair] #amb .bl{width:60vw;height:60vw;border-radius:50%;filter:blur(40px);opacity:.25;animation:blob 14s ease-in-out infinite alternate}
+@keyframes blob{to{transform:translate(12vw,8vh) scale(1.2)}}
+/* Nuit : ciel étoilé discret */
+html[data-skin=nuit] #amb .st{width:2px;height:2px;border-radius:50%;background:#fff;animation:tw 3s ease-in-out infinite alternate}
+/* Onde de toucher colorée selon le thème */
+button,.tile{position:relative;overflow:hidden}
+.rip{position:absolute;border-radius:50%;pointer-events:none;background:currentColor;opacity:.28;transform:scale(0);animation:rip .55s ease-out forwards}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+html[data-fx=off] *,html[data-fx=off] *::before,html[data-fx=off] *::after{animation-duration:0s!important;animation-iteration-count:1!important;transition-duration:0s!important}
 /* tuiles : toujours le texte du thème */
 .tile{color:var(--ink)!important}.tile small{color:var(--mute)!important}
 /* ===== Petites animations ===== */
@@ -468,6 +508,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
 </svg>
 
+<div id="amb" aria-hidden="true"></div>
 <header class="appbar" id="appbar">
   <a class="logo" href="#accueil"><span><svg class="i"><use href="#i-dumb"/></svg></span><span class="lname">Edilgan<b>Super</b>Coach</span></a>
   <button class="ib" data-act="shareApp" aria-label="Partager l'app"><svg class="i"><use href="#i-share"/></svg></button>
@@ -578,6 +619,8 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
     <div class="eqh" style="margin-top:16px">Mon image d'accueil</div>
     <p class="mute" style="margin:2px 0 8px">Une photo de ton téléphone en fond de l'accueil.</p>
     <div class="row"><label class="vid" style="cursor:pointer;margin:0;color:var(--ink);font-size:14px"><input type="file" accept="image/*" id="heroIn" style="display:none">Choisir une image</label><button class="ghost sm" data-act="heroDel" id="heroDel" hidden>Retirer</button></div>
+    <div class="eqh" style="margin-top:16px">Animations et effets</div>
+    <div class="seg" id="fxSeg" style="margin:8px 0 0"><button data-fx="on">Activés</button><button data-fx="off">Désactivés</button></div>
     <div class="eqh" style="margin-top:16px">Taille du texte</div>
     <div class="seg" id="sizeSeg" style="margin:8px 0 0"><button data-size="m">Normal</button><button data-size="l">Grand</button><button data-size="xl">Très grand</button></div>
   </div>
@@ -2040,7 +2083,7 @@ function heroDeco(k){
 }
 function applySkin(k,save){
   const sk=SKINS.find(x=>x.k===k)||SKINS[0];document.documentElement.dataset.skin=sk.k;if(save)store.set('skin',sk.k);
-  const d=$('heroDeco');if(d)d.innerHTML=heroDeco(sk.k);
+  const d=$('heroDeco');if(d)d.innerHTML=heroDeco(sk.k);if(typeof ambiance==='function')ambiance(sk.k);
   document.querySelector('meta[name=theme-color]').setAttribute('content',sk.tc);
   document.querySelector('link[rel=apple-touch-icon]').setAttribute('href',{synth:'icon.png',foret:'icon-foret.png',foretnuit:'icon-foretnuit.png',pets:'icon-pets.png',clair:'icon-clair.png',nuit:'icon-clair.png'}[sk.k]);
   if($('skins'))$('skins').innerHTML=SKINS.map(x=>`<button class="skin${x.k===sk.k?' on':''}" data-act="skin" data-k="${x.k}" aria-pressed="${x.k===sk.k}"><span class="pv" style="background:${x.pv}">${x.d.map((c,i)=>`<i style="left:${10+i*24}px;background:${c};box-shadow:0 0 0 2px rgba(255,255,255,.6)"></i>`).join('')}</span><b>${esc(x.n)}</b></button>`).join('');
@@ -2085,8 +2128,29 @@ function renderSleep(){
 const SLTIPS=[["Des horaires réguliers","Couche-toi et lève-toi à peu près à la même heure, même le week-end. C'est le réglage n°1 de ton horloge interne."],["La lumière du matin","Sors ou ouvre grand les volets dans l'heure qui suit le réveil : ça cale ton sommeil du soir."],["Café avant 14 h","La caféine reste plusieurs heures dans le corps. Après le déjeuner, passe au déca ou à la tisane."],["Pas d'écran au lit","La lumière et les notifications réveillent le cerveau. Laisse le téléphone hors de portée."],["Une chambre fraîche et noire","Autour de 18-19 °C, sombre et calme. Un masque ou des bouchons d'oreilles peuvent aider."],["Dîner léger, 2 à 3 h avant","Un repas lourd ou très gras gêne l'endormissement. Après une sleeve, garde des petites portions."],["L'alcool trompe","Il aide à s'endormir mais casse la qualité du sommeil en deuxième partie de nuit."],["Le sport, oui, mais pas trop tard","Bouger améliore le sommeil. Évite seulement les séances très intenses juste avant de dormir."],["Sieste courte","20 minutes maximum, et avant 15 h, sinon elle empiète sur la nuit."],["Le lit, c'est pour dormir","Si tu ne dors pas au bout de 20 minutes, lève-toi, fais quelque chose de calme, puis reviens."]];
 let bT=null;
 function stopBreath(){clearInterval(bT);bT=null;$('breath').classList.remove('in');$('bTxt').textContent='Prêt ?';$('bBtn').textContent='Commencer';$('bTime').textContent='5:00'}
+
+/* ---------- Ambiances par thème ---------- */
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function ambiance(k){
+  const a=$('amb');if(!a)return;let h='';const r=(i,m)=>((i*9301+49297)%233280)/233280*m;
+  if(k==='synth')h='<i class="hz"></i><i class="sh"></i><i class="sh" style="animation-delay:-4.5s;top:20%"></i>';
+  if(k==='foret'){h='<i class="sun" style="left:-10vw;top:-6vw"></i>';for(let i=0;i<7;i++)h+=`<i class="lf" style="left:${r(i+1,100)}%;animation-duration:${14+r(i+3,10)}s;animation-delay:-${r(i+7,20)}s"></i>`}
+  if(k==='foretnuit')for(let i=0;i<16;i++)h+=`<i class="ff" style="left:${r(i+2,100)}%;top:${r(i+5,100)}%;--dx:${(r(i+9,80)-40).toFixed(0)}px;--dy:${(r(i+4,80)-40).toFixed(0)}px;animation-duration:${4+r(i+1,5)}s;animation-delay:-${r(i+6,6)}s"></i>`;
+  if(k==='pets')for(let i=0;i<6;i++)h+=`<i class="ht" style="left:${r(i+3,100)}%;animation-duration:${16+r(i+2,12)}s;animation-delay:-${r(i+8,24)}s"></i>`;
+  if(k==='clair')h='<i class="bl" style="left:-20vw;top:-10vh;background:#ff6a3d"></i><i class="bl" style="right:-25vw;top:40vh;background:#ffc23d;animation-delay:-7s"></i>';
+  if(k==='nuit')for(let i=0;i<40;i++)h+=`<i class="st" style="left:${r(i+1,100)}%;top:${r(i+11,100)}%;animation-delay:-${r(i+3,3)}s;opacity:${.2+r(i+5,.6)}"></i>`;
+  a.innerHTML=h;
+}
+function applyFx(v,save){document.documentElement.dataset.fx=v;if(save)store.set('fx',v);document.querySelectorAll('#fxSeg button').forEach(b=>b.classList.toggle('on',b.dataset.fx===v))}
+$('fxSeg').addEventListener('click',e=>{const b=e.target.closest('[data-fx]');if(b)applyFx(b.dataset.fx,true)});
+document.addEventListener('pointerdown',e=>{
+  if(document.documentElement.dataset.fx==='off')return;
+  const b=e.target.closest('button,.tile');
+  if(b&&!b.disabled){const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height)*2.2,s=document.createElement('span');s.className='rip';s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;b.appendChild(s);setTimeout(()=>s.remove(),600)}
+  if(document.documentElement.dataset.skin==='pets'){const p=document.createElement('span');p.className='pawtap';p.innerHTML=PAW;p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';p.style.transform=`rotate(${Math.round(Math.random()*40-20)}deg)`;document.body.appendChild(p);setTimeout(()=>p.remove(),950)}
+},{passive:true});
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-18';
+const APP_VERSION='2026.11.26-20';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
@@ -2104,6 +2168,7 @@ $('slQ').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(!b
 $('slWake').value=store.get('reveil','07:00');$('slWake').addEventListener('input',()=>{store.set('reveil',$('slWake').value);renderSleep()});
 $('slTips').innerHTML=SLTIPS.map(([t,d],i)=>`<div class="tipl"><em>${i+1}</em><div><b>${esc(t)}</b><div class="mute" style="font-size:15px">${esc(d)}</div></div></div>`).join('');
 renderDaily();renderSleep();
+applyFx(store.get('fx',RM?'off':'on'));ambiance(document.documentElement.dataset.skin);
 calc();renderEq();renderSante();renderProg();renderAH();renderProdHist();renderMenu();renderWeek();renderFav();renderChat();route();
 }
 </script>
