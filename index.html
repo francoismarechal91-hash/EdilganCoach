@@ -897,6 +897,132 @@ html:not(#_) section[data-v=accueil]>.tiles>.tile:active{transform:scale(.98)}
 .dsk em,.dsk b{background:linear-gradient(90deg,color-mix(in srgb,var(--ink) 7%,transparent) 0%,color-mix(in srgb,var(--ink) 14%,transparent) 50%,color-mix(in srgb,var(--ink) 7%,transparent) 100%);background-size:200% 100%;animation:dskl 1.3s linear infinite}
 @keyframes dskl{to{background-position:-200% 0}}@media (prefers-reduced-motion:reduce){.dsk em,.dsk b{animation:none}}
 .wclass{margin-top:16px}.wclass summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center}
+/* === ag_home === Accueil, Cuisine, Scanner, Profil/Réglages, Coach, premier lancement, recette + mode cuisine.
+   Hiérarchie claire, une action principale par écran, verdict produit lisible en 1 seconde. CSS scopé à ces écrans. */
+:root{--agh-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' fill='none' stroke='%23fff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");--agh-clock:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='13' r='8' fill='none' stroke='%23000' stroke-width='2.2'/%3E%3Cpath d='M12 9v4l2.5 2M9.5 2.5h5' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+
+/* ---------- Accueil ---------- */
+/* « Que veux-tu faire ? » : icône en haut, titre sur toute la largeur (lisible d'un coup d'œil, même en 320 px) */
+html #homeNow .tiles{gap:10px}
+html #homeNow .tiles>.tile{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:10px;min-height:112px;padding:14px 14px 13px;text-align:left;line-height:1.2}
+html #homeNow .tiles>.tile>span:last-child{display:block;max-width:100%;font-size:17px;font-weight:750;letter-spacing:-.005em;text-wrap:balance}
+html #homeNow .tiles>.tile small{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin:4px 0 0;font-size:14px;font-weight:500;line-height:1.3;color:var(--mute)}
+html #homeNow .tiles>.tile:last-child{flex-direction:row;align-items:center;min-height:64px;gap:12px}
+html #homeNow .tiles>.tile:last-child>span:last-child{display:flex;align-items:baseline;flex-wrap:wrap;gap:2px 8px}
+html #homeNow .tiles>.tile:last-child small{margin:0}
+/* « Plus d'idées » : la flèche était collée à gauche (left:0 hérité) → à droite, comme une liste iOS */
+html section[data-v=accueil]>.tiles>.tile::after{left:auto;right:16px}
+/* Bien démarrer : actions secondaires discrètes */
+html #homeStart .start>[data-act=stAll],html #homeStart .start>[data-act=startHide]{background:transparent;box-shadow:none;border:0;color:var(--mute);font-weight:700;text-decoration:underline;text-underline-offset:3px;padding:0 10px;margin-top:6px!important;min-height:44px}
+html #homeStart .start>[data-act=stAll]{padding-left:2px}
+/* Mot du jour : une citation, puis deux lignes calmes (plus de boîtes empilées) */
+html section[data-v=accueil] #dailyCard .fact{background:transparent;box-shadow:none;border-radius:0;padding:14px 0 0;margin-top:12px;border-top:1px solid var(--line);text-align:left;width:100%}
+html section[data-v=accueil] #dailyCard .dq{margin-bottom:4px}
+html section[data-v=accueil] #dailyCard button.fact{color:var(--ink);min-height:0;font:inherit}
+/* Ton suivi : récupération et poids côte à côte sur téléphone (l'accueil raccourcit d'un écran) */
+@media (max-width:719px){
+ html section[data-v=accueil] .grid:has(>#homeRecov){grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+ html section[data-v=accueil] #homeRecov svg{max-height:190px}
+ html section[data-v=accueil] #homeRecov,html section[data-v=accueil] #homeWeight{grid-column:auto;padding:14px}
+ html section[data-v=accueil] #homeWeight .kv b{font-size:34px}
+}
+
+/* ---------- Cuisine ---------- */
+/* Mes repas : « Noter un repas » en premier, puis la liste du jour */
+section[data-v=cuisine] .jadd>h2{margin:0 0 12px}
+section[data-v=cuisine] .jadd>.tiles{margin:0 0 14px;gap:10px}
+section[data-v=cuisine] .jadd>.tiles>.tile{min-height:60px;background:var(--fill);box-shadow:none;flex-direction:row;align-items:center;gap:10px;padding:10px 12px;font-size:16px;line-height:1.2}
+section[data-v=cuisine] .jadd>.tiles>.tile .ic{width:36px;height:36px;flex:none}
+section[data-v=cuisine] .jadd>.tiles>[data-p=assiette]{order:-1}
+section[data-v=cuisine] .jadd>#favs{margin:0 0 4px}
+section[data-v=cuisine] .jadd>#favs>.mute{font-size:14px;font-weight:700}
+section[data-v=cuisine] #jListCard>h2{margin:0 0 6px}
+section[data-v=cuisine] .pane[data-pane=journal]>.card:first-child{padding-top:16px;padding-bottom:16px}
+section[data-v=cuisine] .pane[data-pane=journal]>.card:first-child .row.sb{margin-top:2px}
+section[data-v=cuisine] .pane[data-pane=journal]>.card:first-child .bar{margin:6px 0 10px}
+section[data-v=cuisine] #favTabs:empty{display:none}
+/* Idées repas : une carte = une action principale (la recette), le reste en petit dessous */
+section[data-v=cuisine] .meal>.row:last-child{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:8px}
+section[data-v=cuisine] .meal>.row:last-child>button{width:100%;margin:0;padding-inline:6px;white-space:normal;line-height:1.15}
+section[data-v=cuisine] .meal>.row:last-child>button:first-child{grid-column:1/-1;min-height:50px;font-size:17px}
+section[data-v=cuisine] .meal>.row:last-child>button:not(:first-child){min-height:44px;font-size:14.5px}
+section[data-v=cuisine] #genMenu.ghost{min-height:48px}
+
+/* ---------- Recette (fiche) et mode cuisine : grand, calme, bouton toujours au même endroit ---------- */
+html #ov.on:has(.shop [data-kck])>h1{font-size:clamp(28px,8vw,36px)!important;line-height:1.1;margin:4px 0 6px!important;text-wrap:balance}
+html #ov.on:has(.shop [data-kck])>.macro span{background:var(--fill);border-radius:99px;padding:5px 12px}
+html #ov .shop label{min-height:48px}
+html #ov .shop label>span{transition:opacity .2s}
+html #ov .shop label:has(input:checked)>span{text-decoration:line-through;text-decoration-thickness:1.5px;opacity:.55}
+html #ov .shop input[type=checkbox]{width:26px;height:26px;flex:none}
+html #ov.on>button[data-act=kGo]:last-child{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));z-index:4;margin-top:auto;box-shadow:0 0 0 12px var(--bg),0 36px 0 12px var(--bg),0 -14px 26px 6px var(--bg)}
+html #ov.on>.kbar{margin-top:auto;box-shadow:0 36px 0 8px var(--bg),0 -14px 18px -6px var(--bg)}
+/* « C'est prêt ! » : une coche, le titre, et « Bon appétit ! » en bas de l'écran */
+html #ov.on:has(>button[data-act=kClose]:last-child)>div[style*=center]>h1{font-size:clamp(30px,9vw,40px)!important}
+html #ov.on:has(>button[data-act=kClose]:last-child)>div[style*=center]>h1::before{content:"";display:block;width:68px;height:68px;margin:0 auto 14px;border-radius:50%;background:var(--green,#1e9e4a) var(--agh-tick) center/58% no-repeat;box-shadow:0 10px 26px -10px var(--green,#1e9e4a)}
+html #ov.on>button[data-act=kClose]:last-child{margin-top:auto!important;position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));min-height:56px;font-size:18px;box-shadow:0 0 0 12px var(--bg),0 36px 0 12px var(--bg)}
+html #ov.on:has(>.kbar)>.mute:first-of-type{font-size:15px;letter-spacing:.01em}
+html #ov.on:has(>.kbar)>h1{font-size:clamp(28px,8.2vw,38px)!important;line-height:1.12;margin:4px 0 12px!important;letter-spacing:-.012em;text-wrap:balance}
+html #ov.on:has(>.kbar)>p{font-size:21px!important;line-height:1.55!important;margin:6px 0 14px}
+html #ov.on:has(>.kbar)>.tip{font-size:16.5px}
+html #ov.on [data-act=kTimer]{display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:0 20px;border-radius:99px;font-size:18px;font-weight:800}
+html #ov.on [data-act=kTimer]::before{content:"";width:22px;height:22px;flex:none;background:currentColor;-webkit-mask:var(--agh-clock) center/contain no-repeat;mask:var(--agh-clock) center/contain no-repeat}
+html #ov .ktm:not(:empty){padding:6px 12px;border-radius:99px;background:color-mix(in srgb,var(--red) 14%,transparent);font-variant-numeric:tabular-nums;font-size:16px}
+
+/* ---------- Scanner ---------- */
+section[data-v=scan] #prodRes,section[data-v=scan] #plateRes,section[data-v=scan] #synthRes,section[data-v=scan] #ana,section[data-v=scan] #corpsRes,section[data-v=scan] #fridgeRes{scroll-margin-top:calc(84px + env(safe-area-inset-top))}
+section[data-v=scan] .scanmain{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58px;font-size:18px;margin:2px 0 0}
+section[data-v=scan] .scanmain svg{width:24px;height:24px}
+section[data-v=scan] .scanor{margin:14px 0 8px;font-size:15px;font-weight:700}
+/* verdict en 1 seconde : note + couleur + mot + 1 phrase */
+section[data-v=scan] #prodRes .verdict{gap:16px}
+section[data-v=scan] #prodRes .vscore{width:96px;height:96px;font-size:38px}
+section[data-v=scan] #prodRes .vscore small{font-size:12px}
+section[data-v=scan] #prodRes .vlab{font-size:30px;line-height:1.05;letter-spacing:-.01em}
+section[data-v=scan] #prodRes .verdict .mute{font-size:15px;margin-top:2px}
+section[data-v=scan] #prodRes .forme{font-size:16px;padding:7px 12px}
+section[data-v=scan] #pAvis .tip>b:first-child{display:block;font-size:17px;line-height:1.4}
+section[data-v=scan] #pAvis details.pavd>summary{cursor:pointer;font-weight:700;padding:10px 0 2px;min-height:44px;display:flex;align-items:center;color:var(--ink)}
+section[data-v=scan] [data-act=synth]{width:100%;min-height:52px}
+section[data-v=scan] #plateRes .plt .plgw{display:flex;align-items:center;gap:6px;margin-top:6px;width:fit-content}
+section[data-v=scan] #plateRes .plt td:first-child{font-weight:600}
+
+/* ---------- Profil / Réglages (façon iOS : groupes, libellés courts) ---------- */
+section[data-v=moi] #foldApp>.eqh:first-of-type{margin-top:4px!important}
+section[data-v=moi] #foldApp>.eqh{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin:20px 0 8px!important}
+section[data-v=moi] #foldApp>#sizeSeg,section[data-v=moi] #foldApp>#fxSeg{margin-top:0!important}
+section[data-v=moi] #iaCard>summary b{display:block;font-family:var(--ff-d,inherit);font-size:21px!important;font-weight:700;letter-spacing:-.012em;line-height:1.25}
+section[data-v=moi] #iaCard>summary .mute{font-size:15px;margin-top:2px}
+html body section[data-v=moi] .iosl>h2{margin-bottom:6px}
+html body section[data-v=moi] .iosl>.row{display:flex;flex-direction:column;align-items:stretch;gap:0;margin:0!important}
+html body section[data-v=moi] .iosl>.row>button{position:relative;display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:54px;margin:0;padding:0 34px 0 2px;border:0;border-radius:0;background:transparent;background-image:none;box-shadow:none;color:var(--ink);font-size:17px;font-weight:600;text-align:left;text-transform:none;letter-spacing:0;border-top:1px solid var(--line)}
+html body section[data-v=moi] .iosl>.row:first-of-type>button:first-child{border-top:0}
+html body section[data-v=moi] .iosl>.row>button::after{content:"";position:absolute;right:6px;top:50%;width:16px;height:16px;margin-top:-8px;background:var(--mute);opacity:.7;-webkit-mask:var(--agv-chev) center/contain no-repeat;mask:var(--agv-chev) center/contain no-repeat}
+html body section[data-v=moi] .iosl>.row>button .i{display:none}
+section[data-v=moi] #foldApp>.seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;border-radius:16px;background:var(--fill);-webkit-mask:none;mask:none;overflow:visible}
+section[data-v=moi] #foldApp>.seg>button:not(.on){background:transparent;box-shadow:none}
+section[data-v=moi] #foldApp>.seg>button{width:100%;margin:0;min-height:44px;padding-inline:4px;white-space:nowrap}
+html body section[data-v=moi] .iosl>p.mute{margin:10px 0 0}
+
+/* ---------- Coach ---------- */
+section[data-v=coach] .pane[data-pane=chat]>.card{display:flex;flex-direction:column}
+section[data-v=coach] .pane[data-pane=chat]>.card>*{order:5}
+section[data-v=coach] .pane[data-pane=chat]>.card>#msgs{order:1}
+section[data-v=coach] .card:has(#msgs>.bub:only-child) #msgs{min-height:0;margin-bottom:12px}
+section[data-v=coach] .card:has(#msgs>.bub:only-child) #quickQ{order:2;margin-bottom:14px}
+section[data-v=coach] .pane[data-pane=chat]>.card>#quickQ{order:0}
+section[data-v=coach] .card:has(#msgs>.bub:only-child) #quickQ::before{content:"Des idées de questions :";flex:1 1 100%;font-size:14px;font-weight:700;color:var(--mute);margin-bottom:2px}
+section[data-v=coach] .card:has(#msgs>.bub:only-child) #quickQ{flex-wrap:wrap;overflow:visible;-webkit-mask:none;mask:none;padding-right:0;gap:8px}
+section[data-v=coach] .card:has(#msgs>.bub:only-child) #quickQ .chip{flex:1 1 100%;white-space:normal;text-align:left;justify-content:flex-start;min-height:48px;line-height:1.3;padding:10px 14px}
+section[data-v=coach] #quickQ{-webkit-mask:linear-gradient(90deg,#000 85%,transparent);mask:linear-gradient(90deg,#000 85%,transparent);padding-right:24px}
+
+/* ---------- Premier lancement ---------- */
+#welcome .obind{position:relative;padding-top:16px;font-size:14px}
+#welcome .obind::before{content:"";position:absolute;left:0;top:0;width:100%;height:6px;border-radius:6px;background:linear-gradient(90deg,var(--red) var(--agh-ob,33.4%),var(--fill2,var(--fill)) 0);-webkit-mask:linear-gradient(90deg,#000 32.4%,transparent 0 34.4%,#000 0 65.6%,transparent 0 67.6%,#000 0);mask:linear-gradient(90deg,#000 32.4%,transparent 0 34.4%,#000 0 65.6%,transparent 0 67.6%,#000 0)}
+#welcome .wbox:has(.obstep[data-st="2"]:not([hidden])) .obind{--agh-ob:66.7%}
+#welcome .wbox:has(.obstep[data-st="3"]:not([hidden])) .obind{--agh-ob:100%}
+html #welcome button[data-act=obBack],html #welcome button[data-act=wLater]{background:transparent;background-image:none;box-shadow:none;border:0;color:var(--mute);min-height:48px;font-weight:700;font-size:16px;text-decoration:underline;text-underline-offset:3px}
+/* === /ag_home === */
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -1890,7 +2016,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
     <div id="bilan"></div>
   </div>
 
-  <details class="card" id="iaCard"><summary style="cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center"><span><b style="font-size:17px">Réglages avancés</b><div class="mute" style="font-weight:400">Facultatif — l'IA marche déjà sans rien faire</div></span><svg class="i" style="color:var(--mute)"><use href="#i-chev"/></svg></summary>
+  <details class="card" id="iaCard"><summary style="cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center"><span><b style="font-size:17px">Réglages avancés</b><div class="mute" style="font-weight:400">Clés IA personnelles · facultatif</div></span><svg class="i" style="color:var(--mute)"><use href="#i-chev"/></svg></summary>
     <h2 style="margin-top:16px">Clés IA personnelles</h2>
     <p class="sub">Colle une ou plusieurs clés gratuites. Le coach utilise la première ; si elle est saturée, il passe tout seul à la suivante. Gemini en premier : c'est lui qui lit le mieux les photos. Les clés restent sur ce téléphone. Les offres gratuites peuvent utiliser tes échanges pour entraîner leurs modèles.</p>
     <div id="provs"></div>
@@ -1976,12 +2102,14 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
     <div class="card">
       <h2>Est-ce un bon produit ?</h2>
       <p class="sub">Prends en photo le paquet (le devant suffit, je le retrouve), le code-barres, le tableau ou les ingrédients : je te dis s'il est bon, à quoi il sert et s'il te convient.</p>
+      <button class="wide scanmain" data-act="liveScan"><svg class="i" aria-hidden="true"><use href="#i-bar"/></svg><span>Scanner le <span style="white-space:nowrap">code-barres</span></span></button>
+      <p class="mute scanor">Ou prends-le en photo :</p>
       <div class="drop3">
         <label class="drop mini" data-drop="produit"><input type="file" accept="image/*" data-in="produit" aria-label="Photo du code-barres ou du devant"><svg class="i"><use href="#i-bar"/></svg><b>Produit</b><span class="mute">devant ou code-barres</span></label>
         <label class="drop mini" data-drop="ptab"><input type="file" accept="image/*" data-in="ptab" aria-label="Photo du tableau nutritionnel"><svg class="i"><use href="#i-chart"/></svg><b>Tableau</b><span class="mute">gras, sucre…</span></label>
         <label class="drop mini" data-drop="ping"><input type="file" accept="image/*" data-in="ping" aria-label="Photo de la liste des ingrédients"><svg class="i"><use href="#i-list"/></svg><b>Ingrédients</b><span class="mute">la liste</span></label>
       </div>
-      <div class="row" style="margin-top:12px"><button data-act="anaProd" style="flex:1">Analyser le produit</button><button class="alt" data-act="liveScan" style="flex:1"><svg class="i" style="width:20px;height:20px;vertical-align:-4px;margin-right:4px"><use href="#i-bar"/></svg>Scanner le code-barres</button></div>
+      <div class="row" style="margin-top:12px"><button class="alt" data-act="anaProd" style="flex:1">Analyser le produit</button></div>
       <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:700;padding:8px 0">Sans photo : taper le code-barres ou le nom</summary>
       <div class="row" style="margin-top:4px"><input id="ean" inputmode="numeric" aria-label="Code-barres" placeholder="Code-barres (chiffres)" style="flex:1;min-width:150px;margin:0"><button class="alt" data-act="anaProd">Chercher</button></div>
       <div class="row" style="margin-top:10px"><input id="pq" aria-label="Nom du produit" placeholder="Nom du produit (ex. skyr nature Siggi's)" style="flex:1;min-width:150px;margin:0" data-enter="prodSearch"><button class="alt" data-act="prodSearch">Chercher</button></div>
@@ -2064,8 +2192,8 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
       <input id="cqQ" type="search" autocomplete="off" placeholder="ex. banane, riz cuit, poulet rôti, fromage blanc…" aria-describedby="cqHelp" style="margin:0">
       <p class="mute" id="cqHelp" style="font-size:13px;margin:4px 0 0">Valeurs officielles de l'ANSES (3 484 aliments), même sans internet.</p>
       <div id="cqRes"></div>
-      <label for="qa" style="margin-top:14px">Ou écris tout ton repas en toutes lettres</label>
-      <textarea id="qa" class="grow" rows="2" data-enter="quickAdd" placeholder="ex. 2 œufs brouillés, une tartine de pain complet beurrée et un café au lait"></textarea><button class="alt wide" data-act="quickAdd" style="margin-top:8px">Ajouter à mon journal</button>
+      <label for="qa" style="margin-top:14px">Ou décris tout ton repas</label>
+      <textarea id="qa" class="grow" rows="2" data-enter="quickAdd" placeholder="ex. 2 œufs brouillés et une tartine beurrée"></textarea><button class="alt wide" data-act="quickAdd" style="margin-top:8px">Ajouter à mon journal</button>
       <div id="qaRes"></div>
       <div class="chips" id="favs"></div>
     </div>
@@ -2148,7 +2276,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
 
 <!-- ================= COACH ================= -->
 <section data-v="coach">
-  <div class="lt"><a href="#accueil" class="mute" style="text-decoration:none;font-weight:700">‹ Accueil</a><h1 style="margin-top:6px">Coach</h1><p>Pose-lui toutes tes questions : il connaît ton profil, ta journée et tes séances.</p></div>
+  <div class="lt"><a href="#accueil" class="mute" style="text-decoration:none;font-weight:700">‹ Accueil</a><h1 style="margin-top:6px">Coach</h1><p>Demande-lui tout : il connaît ton profil et ta journée.</p></div>
   <div class="seg"><button data-pane="chat" class="on">Discuter</button><button data-pane="fiches">Conseils pratiques</button></div>
   <div class="pane" data-pane="fiches">
     <div class="card"><h2>Conseils pratiques</h2><p class="sub">Des fiches courtes et concrètes, vérifiées auprès des sources officielles. Elles marchent sans internet.</p>
@@ -3909,6 +4037,23 @@ const PUSH_ACTS={
   pushLink(b){const u=b.dataset.u||((store.get('pushReg',null)||{}).url);if(!u)return;const w=window.open(u,'_blank','noopener');if(!w)location.href=u},
   async pushShareLink(){const R=store.get('pushReg',null);if(!R||!R.url)return;try{if(navigator.share){await navigator.share({title:'Enregistrer mes rappels',text:'Ouvre ce lien sur un téléphone connecté au GitHub de l\'app, puis touche « Submit new issue ».',url:R.url});return}}catch(e){if(e&&e.name==='AbortError')return}if(await copy(R.url,document.createElement('button')))toast('Lien copié')}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pushSync()});setTimeout(pushSync,3000);
+/* === ag_home === rangements doux : « Noter un repas » en premier dans Mes repas, Apparence dans l'ordre utile
+   (taille du texte d'abord), « L'app » en liste façon iOS. Ne fait que déplacer des éléments existants (mêmes id, mêmes data-act). */
+function aghJournal(){const pn=document.querySelector('section[data-v=cuisine] .pane[data-pane=journal]'),jr=$('journal');if(!pn||!jr||$('jListCard'))return;
+  const add=jr.closest('.card');if(!add||!pn.contains(add))return;add.classList.add('jadd');
+  const h=add.querySelector(':scope>h2');if(h)h.textContent='Noter un repas';
+  const lc=document.createElement('div');lc.className='card';lc.id='jListCard';lc.innerHTML='<h2>Ce que j\'ai mangé aujourd\'hui</h2>';lc.appendChild(jr);add.after(lc);
+  const tl=pn.querySelector(':scope>.tiles');if(tl){if(h)h.after(tl);else add.prepend(tl)}
+  const fv=$('favs'),cl=add.querySelector('label[for=cqQ]');if(fv&&cl)cl.before(fv)}
+function aghMoi(){const f=$('foldApp');if(f&&!f.dataset.agh){f.dataset.agh='1';const sk=$('skins'),sz=$('sizeSeg'),fx=$('fxSeg');
+    if(sk&&sz&&fx){const hOf=el=>{const p=el.previousElementSibling;return p&&p.classList.contains('eqh')?p:null};
+      const imH=[...f.querySelectorAll(':scope>.eqh')].find(e=>/image/i.test(e.textContent)),im=[];if(imH){let e=imH;for(let k=0;k<3&&e;k++){im.push(e);e=e.nextElementSibling}}
+      const th=document.createElement('div');th.className='eqh';th.textContent='Thème';
+      [hOf(sz),sz,th,sk,hOf(fx),fx,$('fxNote'),f.querySelector(':scope>.fxrow'),...im].filter(Boolean).forEach(e=>f.appendChild(e))}}
+  const ac=[...document.querySelectorAll('section[data-v=moi]>.card')].find(c=>c.querySelector('[data-act=installHelp]'));
+  if(ac&&!ac.classList.contains('iosl')){ac.classList.add('iosl');if(!ac.id)ac.id='appCard';const h=ac.querySelector(':scope>h2');if(h)h.textContent='L\'app et mes données'}}
+Promise.resolve().then(()=>{[aghJournal,aghMoi].forEach(f=>{try{f()}catch(e){}})});
+/* === /ag_home === */
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -4065,7 +4210,7 @@ function renderDay(){
   if(dayJ().length&&h>=14&&tp-t.p>25){tip.style.display='block';tip.textContent=`Il te manque ${Math.round(tp-t.p)} g de protéines aujourd'hui : pense à un skyr, du poulet, des œufs ou du thon.`}
   else if(m.kcal&&t.k>tk*1.1){tip.style.display='block';tip.textContent='Tu as dépassé ton objectif du jour. Pas de panique : c\'est la moyenne de la semaine qui compte.'}else tip.style.display='none';
   $('journal').innerHTML=dayJ().map((e,i)=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${Math.round(num(e.p))}&nbsp;g prot · ${Math.round(num(e.g))}&nbsp;g gluc · ${Math.round(num(e.l))}&nbsp;g lip</div></span><span class="v">${Math.round(num(e.kcal)).toLocaleString('fr-FR')} kcal${e.plate?`<button class="restb" data-act="leftJ" data-i="${i}">${(e.part??1)<1?'Mangé à '+Math.round((e.part??1)*100)+' %':'Tout fini ?'}</button>`:''}</span><button class="x" data-act="fav" data-i="${i}" aria-label="${FAV.some(f=>f.nom===e.nom)?'Retirer '+esc(e.nom)+' des favoris':'Mettre '+esc(e.nom)+' en favori'}">${FAV.some(f=>f.nom===e.nom)?'★':'☆'}</button><button class="x" data-act="delJ" data-i="${i}" aria-label="Supprimer ${esc(e.nom)}">×</button></div>`).join('')||finEmpty('repas','Rien de noté aujourd\'hui.','Cherche un aliment ou décris ton repas juste en dessous. Ou prends ton assiette en photo.',{t:'Photographier mon assiette',act:'goPane',v:'scan',p:'assiette'});
-  $('favs').innerHTML=FAV.length?'<span class="mute" style="width:100%">Favoris, un toucher pour ajouter :</span>'+FAV.map((f,i)=>`<button class="chip" data-act="addFav" data-i="${i}">${esc(f.nom)} · ${esc(f.kcal)} kcal</button>`).join(''):'';
+  $('favs').innerHTML=FAV.length?'<span class="mute" style="width:100%">Tes favoris, un toucher pour les ajouter :</span>'+FAV.map((f,i)=>`<button class="chip" data-act="addFav" data-i="${i}">${esc(f.nom)} · ${esc(f.kcal)} kcal</button>`).join(''):'';
 }
 const MEALF=`{"moment":"","nom":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"temps_min":15,"cout":"€","ingredients":["quantité + ingrédient"],"preparation":["étape"]}`;
 const REG=[];const reg=o=>{let i=REG.indexOf(o);if(i<0){REG.push(o);i=REG.length-1}return i};
@@ -4198,7 +4343,7 @@ document.addEventListener('change',e=>{if(!K)return;if(e.target.id==='kN'){K.n=+
 let FT='tout';
 function renderFav(){
   const T={tout:'Tout',recette:'Recettes',menu:'Menus',sauce:'Sauces'};
-  $('favTabs').innerHTML=!FAVR.length?'':Object.entries(T).map(([k,v])=>`<button class="chip${FT===k?' p':''}" data-act="favTab" data-v="${k}">${v} (${k==='tout'?FAVR.length:FAVR.filter(f=>f.type===k).length})</button>`).join('');
+  const TT=Object.entries(T).filter(([k])=>k==='tout'||FAVR.some(f=>f.type===k));if(!TT.some(([k])=>k===FT))FT='tout';$('favTabs').innerHTML=!FAVR.length||TT.length<3?'':TT.map(([k,v])=>`<button class="chip${FT===k?' p':''}" data-act="favTab" data-v="${k}">${v} (${k==='tout'?FAVR.length:FAVR.filter(f=>f.type===k).length})</button>`).join('');
   const l=FAVR.map((f,i)=>[f,i]).filter(([f])=>FT==='tout'||f.type===FT).reverse();
   $('favList').innerHTML=l.length?l.map(([f,i])=>f.type==='menu'?`<details class="ex"><summary><span class="exn">Menu · ${esc(f.nom)}</span><span class="mute">${esc(f.data.calories_total||'')} kcal</span></summary><div class="in">${(f.data.repas||[]).map(m=>mealHTML(m)).join('')}<div class="row"><button class="sm" data-act="useMenu" data-i="${i}">En faire mon menu du jour</button><button class="ghost sm" data-act="unfav" data-i="${i}">Retirer</button></div></div></details>`
     :`<details class="ex"><summary><span class="exn">${f.type==='sauce'?'Sauce · ':''}${esc(f.nom)}</span><span class="mute">${esc(f.data.kcal??'')}${f.data.kcal!=null?' kcal':''}</span></summary><div class="in">${mealHTML(f.data,`<button class="ghost sm" data-act="unfav" data-i="${i}">Retirer</button>`,f.type)}</div></details>`).join('')
@@ -4206,8 +4351,8 @@ function renderFav(){
 }
 function refreshFood(){renderMenu();renderFav();document.querySelectorAll('[data-act=favR]').forEach(b=>{const o=REG[+b.dataset.r];if(o)b.textContent=isFav(o)?'En favori ★':'Favori ☆'})}
 function renderMenu(){
-  const d=MENUS[today()];if(!d){$('menu').innerHTML='';$('genMenu').textContent='Créer mon menu du jour';return}
-  $('genMenu').textContent='Un tout autre menu';
+  const d=MENUS[today()];if(!d){$('menu').innerHTML='';$('genMenu').textContent='Créer mon menu du jour';$('genMenu').className='wide';return}
+  $('genMenu').textContent='Un tout autre menu';$('genMenu').className='ghost wide';
   $('menu').innerHTML=`<p style="margin:14px 0 0"><b>${num(d.calories_total)?Math.round(num(d.calories_total)).toLocaleString('fr-FR'):esc(d.calories_total)} kcal</b> · ${esc(d.proteines_total_g)} g de protéines</p>`+arr(d.repas).map((m,i)=>mealHTML(m,`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button><button class="ghost sm" data-act="swapMeal" data-i="${i}">Remplacer</button>`)).join('')+(d.astuce?`<p class="mute">${esc(d.astuce)}</p>`:'')+
   `<div class="row"><button class="alt sm" data-act="favMenu">${FAVR.some(f=>f.type==='menu'&&sameMenu(f.data,d))?'Menu en favori ★':'Ajouter ce menu aux favoris'}</button><button class="ghost sm" data-act="copyMenu">Copier la liste des ingrédients</button></div>`+moreBar('genMenu','menu');
 }
@@ -4599,7 +4744,7 @@ function prodAnalyse(p){
   const ens=[...new Set((il.match(/\be\d{3}[a-d]?\b/g)||[]))];
   const risky=ens.filter(e=>ADD[e]).map(e=>e.toUpperCase()+' '+ADD[e]),sw=[...ens.filter(e=>SWEET[e]).map(e=>SWEET[e]),...(['aspartame','sucralose','acésulfame','stévia','saccharine'].filter(w=>il.includes(w)))],pol=[...ens.filter(e=>POLY[e]).map(e=>POLY[e]),...(['maltitol','sorbitol','xylitol','érythritol','erythritol','isomalt'].filter(w=>il.includes(w)))];
   const sugars=[...new Set((ing.match(SUGW)||[]).map(x=>x.toLowerCase()))],first=(il.split(/[,(]/)[0]||'').trim(),sugFirst=/sucre|sirop|glucose|dextrose|fructose/.test(first);
-  const palm=/palm/.test(il),hydro=/hydrog[ée]n/.test(il),gaz=/gaz carbonique|anhydride carbonique|gazéifi|dioxyde de carbone/.test(il)||/gazeu|soda|cola|pétillant/i.test(p.nom||''),alcool=/alcool|vin |bière|rhum|liqueur/.test(il+' '+String(p.nom||'').toLowerCase()),compl=/complet|intégral|integral|son de|flocons d'avoine/.test(il);
+  const palm=/palm/.test(il),hydro=/hydrog[ée]n/.test(il),gaz=/gaz carbonique|anhydride carbonique|gazéifi|dioxyde de carbone/.test(il)||/gazeu|soda|\bcola\b|pétillant/i.test(p.nom||''),alcool=/alcool|vin |bière|rhum|liqueur/.test(il+' '+String(p.nom||'').toLowerCase()),compl=/complet|intégral|integral|son de|flocons d'avoine/.test(il);
   const lim=drink?{su:[2.5,11.25],l:[1.5,8.75],sa:[.75,2.5],se:[.3,.75]}:{su:[5,22.5],l:[3,17.5],sa:[1.5,5],se:[.3,1.5]};
   const lv=(v,t)=>v==null||v===''?'':num(v)<=t[0]?'lo':num(v)>t[1]?'hi':'md';
   const L={su:lv(c.sucres,lim.su),l:lv(c.l,lim.l),sa:lv(c.ags,lim.sa),se:lv(c.sel,lim.se)};
@@ -4632,7 +4777,7 @@ function prodAnalyse(p){
   if(S.includes('gluten')&&/blé|gluten|orge|seigle|épeautre|gluten|wheat/.test(al)&&!/sans gluten/.test(al))me.push(['ko','Contient du gluten']);
   (String(P.regime||'').toLowerCase().match(/(?:pas de|sans|allergi\w* (?:au|à la|aux)|intol\w* (?:au|à la|aux))\s+([a-zéèêàç]{4,})/g)||[]).forEach(m=>{const w=m.split(/\s+/).pop().replace(/s$/,'');if(w.length>3&&al.includes(w))me.push(['ko','Contient « '+w+' » : tu as indiqué l\'éviter'])});
   const ko=me.filter(x=>x[0]==='ko').length,okn=me.filter(x=>x[0]==='ok').length;
-  const forMe=!known?'':ko>=2||(ko&&sc<35)?['non','Pas idéal pour toi']:ko||sc<35?['mod','Avec modération']:okn||sc>=55?['oui','Adapté à ton objectif']:['mod','Ça passe, sans plus'];
+  const forMe=!known?'':ko>=2||(ko&&sc<35)?['non','pas idéal']:ko||sc<35?['mod','avec modération']:okn||sc>=55?['oui','adapté à ton objectif']:['mod','ça passe, sans plus'];
   /* le produit */
   const pt=[];
   if(L.su==='hi')pt.push(['ko','Très sucré ('+fr(num(c.sucres))+' g pour 100 '+(drink?'ml':'g')+')']);else if(L.su==='lo')pt.push(['ok','Peu sucré']);
@@ -4668,7 +4813,7 @@ Analyse de l'app : note ${a.sc}/100 (${a.lab}) ; ${a.pt.map(x=>x[1]).join(' ; ')
 Dis-lui simplement si c'est un bon produit, à quoi il sert, et s'il lui convient selon SON objectif et SA santé. Reste cohérent avec l'analyse de l'app. Pas de chiffres de calories (déjà affichés). Phrases courtes, tutoiement.
 Format JSON : {"reponse":"1 phrase directe : c'est bon ou pas, et pourquoi","utilite":"à quoi sert ce produit (ex. source de protéines, énergie rapide, plaisir, fibres, calcium…)","pour_toi":"1 à 2 phrases selon son objectif et sa santé","quand":"le meilleur moment ou la meilleure façon de le consommer","portion":"portion raisonnable pour lui, en grammes et en mesure concrète","alternative":"une alternative plus saine du même rayon (vide si le produit est déjà très bon)"}`,{modelTier:'quick'});
     if(!$('pAvis')||PROD!==p)return;
-    el.innerHTML=`<div class="tip" style="margin:0"><b>${esc(r.reponse||'')}</b>${r.utilite?`<div style="margin-top:6px"><b>À quoi ça sert :</b> ${esc(r.utilite)}</div>`:''}${r.pour_toi?`<div style="margin-top:6px"><b>Pour toi :</b> ${esc(r.pour_toi)}</div>`:''}${r.quand?`<div style="margin-top:6px"><b>Quand :</b> ${esc(r.quand)}</div>`:''}${r.portion?`<div style="margin-top:6px"><b>Portion conseillée :</b> ${esc(r.portion)}</div>`:''}${r.alternative?`<div style="margin-top:6px"><b>Mieux :</b> ${esc(r.alternative)}</div>`:''}</div>`;
+    const _m=[r.utilite,r.pour_toi,r.quand,r.portion,r.alternative].some(Boolean);el.innerHTML=`<div class="tip" style="margin:0"><b>${esc(r.reponse||'')}</b>${_m?'<details class="pavd"><summary>L\'avis complet du coach</summary>':''}${r.utilite?`<div style="margin-top:6px"><b>À quoi ça sert :</b> ${esc(r.utilite)}</div>`:''}${r.pour_toi?`<div style="margin-top:6px"><b>Pour toi :</b> ${esc(r.pour_toi)}</div>`:''}${r.quand?`<div style="margin-top:6px"><b>Quand :</b> ${esc(r.quand)}</div>`:''}${r.portion?`<div style="margin-top:6px"><b>Portion conseillée :</b> ${esc(r.portion)}</div>`:''}${r.alternative?`<div style="margin-top:6px"><b>Mieux :</b> ${esc(r.alternative)}</div>`:''}${_m?'</details>':''}</div>`;
   }catch(e){if($('pAvis'))el.innerHTML=`<p class="mute">L'avis du coach n'a pas pu se charger (${esc(errMsg(e))}). La note ci-dessous reste valable.</p><button class="ghost sm" data-act="prodAvisRetry">Réessayer</button>`}}
 async function offSearch1(q){const r=await fetch('https://search.openfoodfacts.org/search?q='+encodeURIComponent(q)+'&langs=fr&page_size=10&fields=code,product_name,product_name_fr,brands,quantity,nutriscore_grade,countries_tags');if(!r.ok)throw{code:'busy'};const d=await r.json();return arr(d.hits).filter(h=>h&&h.code)}
 async function offSearch2(q){const r=await fetch('https://fr.openfoodfacts.org/cgi/search.pl?search_simple=1&action=process&json=1&page_size=10&lc=fr&fields=code,product_name,product_name_fr,brands,quantity,nutriscore_grade&search_terms='+encodeURIComponent(q));if(!r.ok)throw{code:'busy'};const d=await r.json();return arr(d.products).filter(h=>h&&h.code)}
@@ -4698,7 +4843,7 @@ function renderProd(p){
   <div class="chips">${[p.portion?'1 portion':'', '100 g','la moitié du paquet','tout le paquet','2 unités'].filter(Boolean).map(q=>`<button class="chip" data-act="qtyPick" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div>
   <textarea id="qty" class="grow" rows="1" data-enter="synth" placeholder="ex. 3 biscuits, un bol, 150 g, tartiné sur 2 cracottes…"></textarea>
   <label class="drop mini qph" data-drop="pqty"><input type="file" accept="image/*" data-in="pqty" aria-label="Photo de ce que tu as mangé"><svg class="i"><use href="#i-cam"/></svg><b>Montrer en photo</b><span>ta tartine, ton bol, ton assiette… je regarde la quantité</span></label>
-  <div class="row" style="margin-top:12px"><button data-act="synth">Faire la synthèse</button></div><div id="synthRes"></div></div>`;
+  <div class="row" style="margin-top:12px"><button data-act="synth">Calculer ma portion</button></div><div id="synthRes"></div></div>`;
   delete PH.pqty;bindDrops($('prodRes'));prodAvis(p);
 }
 function renderProdHist(){$('prodHistC').style.display='block';$('prodHist').innerHTML=(PRODS.length?'':finEmpty('scans','Aucun produit scanné pour l\'instant.','Tes produits et leur note s\'afficheront ici.',{t:'Scanner un produit',act:'finPick',q:'[data-in=produit]'},1))+PRODS.map((p,i)=>{let a=null;try{a=prodAnalyse(p)}catch(e){}return `<button class="chip" data-act="showProd" data-i="${i}">${a&&a.known?`<i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${a.col};margin-right:6px"></i>`:''}${esc(p.nom)}</button>`}).join('')}
@@ -4738,7 +4883,7 @@ function renderHome(){try{renderNow()}catch(e){}
     [Object.values(J).some(a=>Array.isArray(a)&&a.length),'Noter un repas','photo, aliment ou en toutes lettres','goPane','cuisine','journal'],
     [STANDALONE(),'Installer l\'app','sur l\'écran d\'accueil','installHelp','',''],
     [!!store.get('lastbk',''),'Faire une sauvegarde','pour ne rien perdre','goPane','suivi','donnees']],done=steps.filter(x=>x[0]).length;
-  $('homeStart').innerHTML=store.get('startHide',0)||done===steps.length?'':`<div class="card start"><div class="row sb"><b>Bien démarrer</b><span class="mute">${done}/${steps.length}</span></div><div class="rbar" style="height:8px;margin:8px 0 6px"><i style="width:${Math.round(done/steps.length*100)}%"></i></div>${steps.map(([ok,t,sub,act,v,pn],i)=>!stShow(steps,i)?'':`<button class="stp${ok?' ok':''}" data-act="${act}" data-v="${v}" data-p="${pn}" ${ok?'disabled':''}><i>${ok?'✓':i+1}</i><span><b>${t}</b><small>${ok?'Fait':sub}</small></span>${ok?'':'<svg class="i stpgo" aria-hidden="true"><use href="#i-chev"/></svg>'}</button>`).join('')}${stMore(steps)}<button class="ghost sm" data-act="startHide" style="margin-top:8px">Masquer</button></div>`}
+  $('homeStart').innerHTML=store.get('startHide',0)||done===steps.length?'':`<div class="card start"><div class="row sb"><b>Bien démarrer</b><span class="mute">${done}/${steps.length}</span></div><div class="rbar" style="height:8px;margin:8px 0 6px"><i style="width:${Math.round(done/steps.length*100)}%"></i></div>${steps.map(([ok,t,sub,act,v,pn],i)=>!stShow(steps,i)?'':`<button class="stp${ok?' ok':''}" data-act="${act}" data-v="${v}" data-p="${pn}" ${ok?'disabled':''}><i>${ok?'✓':steps.slice(0,i+1).filter(x=>!x[0]).length}</i><span><b>${t}</b><small>${ok?'Fait':sub}</small></span>${ok?'':'<svg class="i stpgo" aria-hidden="true"><use href="#i-chev"/></svg>'}</button>`).join('')}${stMore(steps)}<button class="ghost sm" data-act="startHide" style="margin-top:8px">Masquer</button></div>`}
   if(!$('homeStart').innerHTML){const lb=store.get('lastbk',''),sn=store.get('bkSnooze',''),nd=Object.keys(J).length+LOG.length;
     if(nd>=6&&(!lb||(Date.now()-new Date(lb+'T12:00'))/864e5>30)&&(!sn||sn<=today()))$('homeStart').innerHTML=`<div class="card bkrem"><div class="row" style="gap:12px;flex-wrap:nowrap;align-items:flex-start"><span class="bkico" aria-hidden="true">🛡️</span><div><b>Tes données sont bien gardées</b><p class="mute" style="margin:4px 0 0">Elles restent sur ce téléphone et passent toutes les mises à jour. Pour être tranquille même si tu changes de téléphone, range une copie dans Fichiers (10 secondes).</p></div></div><div class="row" style="margin-top:10px"><button class="sm" data-act="bkSave" style="flex:1">Ranger une copie</button><button class="ghost sm" data-act="bkLater">Plus tard</button></div></div>`}
   /* séance du jour */
@@ -5197,10 +5342,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-82';
+const APP_VERSION='2026.11.26-83';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.26-83','Accueil, cuisine et scanner plus clairs','Noter un repas en 2 gestes, verdict produit lisible d\'un coup d\'œil (note, couleur, un mot), recette et mode cuisine plus grands avec « C\'est fait » toujours au même endroit, réglages rangés comme sur iPhone.','accueil',''],
  ['2026.11.26-82','Animations d\'exercices réparées','Les mollets, la corde à sauter, le jumping jack… bougent de nouveau. Les démonstrations restent animées même si ton iPhone demande moins d\'animations. En séance, la charge, les répétitions et « Série faite » restent toujours visibles ensemble.','sport','exos'],
  ['2026.11.26-81','Le menu de chaque pays','Pour chaque pays : 3 entrées, 3 plats et 3 desserts. Un plat ne te plaît pas ? « ↻ D\'autres » change juste cette partie, « Tout changer » refait tout le menu, sans jamais remontrer les mêmes.','cuisine','monde'],
  ['2026.11.26-80','Rappels même téléphone en veille','Les rappels (boire, médicaments, repas…) peuvent maintenant arriver en vraie notification, écran verrouillé ou dans une autre appli. Touche la cloche › « Activer les notifications ».','accueil',''],
