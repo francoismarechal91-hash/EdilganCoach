@@ -892,6 +892,9 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
       <div id="recov"></div>
       <div id="vol"></div>
     </div>
+    <div class="card" id="dlCard" style="display:none"></div>
+    <div class="card"><h2>Mes tests de forme</h2><p class="sub">Trois tests simples à la maison, comparés aux normes de ton âge.</p><div id="testsBox"></div></div>
+    <div class="card"><h2>Mes pas</h2><p class="sub">Regarde le nombre dans l'app Santé de ton iPhone et note-le ici. L'objectif monte doucement.</p><div id="pasBox"></div></div>
     <div class="card" id="prC" style="display:none"><h2>Mes records</h2><table class="tbl" id="prs"></table></div>
     <div class="card" id="histC" style="display:none"><h2>Historique</h2><div id="hist"></div></div>
   </div>
@@ -1298,7 +1301,7 @@ function calc(){
   $('sub').textContent=m.kcal?`${m.kcal.toLocaleString('fr-FR')} kcal et ${m.prot} g de protéines par jour pour ton objectif.`:'Ajoute ton âge pour calculer tes calories.';
   renderDay();
 }
-const SANTE={sleeve:'Sleeve (gastrectomie)',bypass:'Bypass gastrique',anneau:'Anneau gastrique',diab1:'Diabète type 1',diab2:'Diabète type 2',hta:'Hypertension',chol:'Cholestérol',coeur:'Problème cardiaque',rein:'Problème rénal',thyro:'Hypothyroïdie',sopk:'SOPK',rgo:'Reflux (RGO)',lactose:'Intolérance au lactose',gluten:'Sans gluten (cœliaque)',enceinte:'Grossesse',allait:'Allaitement',asthme:'Asthme',dos:'Mal de dos',articul:'Arthrose / articulations'};
+const SANTE={postpartum:'Post-partum',sleeve:'Sleeve (gastrectomie)',bypass:'Bypass gastrique',anneau:'Anneau gastrique',diab1:'Diabète type 1',diab2:'Diabète type 2',hta:'Hypertension',chol:'Cholestérol',coeur:'Problème cardiaque',rein:'Problème rénal',thyro:'Hypothyroïdie',sopk:'SOPK',rgo:'Reflux (RGO)',lactose:'Intolérance au lactose',gluten:'Sans gluten (cœliaque)',enceinte:'Grossesse',allait:'Allaitement',asthme:'Asthme',dos:'Mal de dos',articul:'Arthrose / articulations'};
 const BARIA=()=>(P.santeL||[]).some(k=>['sleeve','bypass','anneau'].includes(k));
 const RULES={
  baria:"Chirurgie bariatrique : adapter STRICTEMENT à la phase post-opératoire selon le temps écoulé depuis l'opération (liquide, puis mixé, puis mou, puis texture normale ; en cas de doute, demander à l'équipe médicale) ; toutes petites portions (une petite assiette à dessert, quantités en grammes réduites) ; protéines en priorité et en premier à chaque repas ; manger lentement, petites bouchées bien mâchées ; ne pas boire pendant le repas ni 30 minutes avant et après ; aucune boisson gazeuse, sucrée ni alcool ; éviter les sucres rapides (risque de dumping) et, en début de parcours, les aliments durs, filandreux ou secs (viande sèche, pain de mie frais, riz collant, peaux, fibres dures) ; 5 à 6 petites prises par jour ; rappeler les compléments prescrits. Sport : progressif ; pas d'abdominaux ni de charges lourdes tant que l'équipe médicale ne l'a pas autorisé ; hydratation par petites gorgées entre les repas.",
@@ -1398,12 +1401,6 @@ const wro=new ResizeObserver(drawW);wro.observe($('spark'));
 /* ---------- Sport : journal, récup, zones ---------- */
 let PR=store.get('programme',null),LOG=store.get('seances',[]);
 function lastSets(name){for(let i=LOG.length-1;i>=0;i--){const e=LOG[i].ex.find(x=>x.nom===name);if(e&&e.sets.length)return e.sets}return null}
-function suggest(x){
-  const ls=lastSets(x.nom);if(!ls)return{kg:'',reps:String(x.reps).match(/\d+/g)?.pop()||'',note:'Première fois : prends une charge où les 2 dernières reps sont dures mais propres.'};
-  const top=+(String(x.reps).match(/\d+/g)||[]).pop()||0,kg=Math.max(...ls.map(s=>num(s.kg)));
-  const all=top&&ls.every(s=>num(s.reps)>=top);
-  return all&&kg?{kg:kg+2.5,reps:String(x.reps).match(/\d+/)?.[0]||'',note:`Tu as fait le haut de la fourchette la dernière fois : on monte à ${fr(kg+2.5)} kg.`}:{kg:kg||'',reps:ls[0].reps,note:kg?`La dernière fois : ${ls.map(s=>s.reps+'×'+fr(s.kg)).join(', ')} kg. Essaie d'ajouter une rep.`:''};
-}
 function recovery(){
   const last={};LOG.forEach(l=>l.ex.forEach(e=>{if(e.sets.length)clean(e.muscles).forEach(k=>{last[k]=Math.max(last[k]||0,l.t)})}));
   const h=k=>last[k]?(Date.now()-last[k])/36e5:999;
@@ -1617,11 +1614,17 @@ function renderProg(){
    ${(j.exercices||[]).map((x,xi)=>exHTML(x,ji+'-'+xi)).join('')}
    <div class="row" style="margin-top:10px"><button data-act="start" data-j="${ji}">Démarrer la séance</button></div></div>`).join('');
 }
+function renderPas(){const g=stepGoal(),t=PAS[today()]||0,days=[...Array(7)].map((_,i)=>dkey(Date.now()-(6-i)*864e5));
+  $('pasBox').innerHTML=`<div class="row sb"><b>Objectif du jour : ${g.toLocaleString('fr-FR')} pas</b><span class="mute">${t?t.toLocaleString('fr-FR')+' faits':''}</span></div><div class="bar"><i style="width:${Math.min(100,t/g*100)}%"></i></div>
+  <div class="slbars" style="height:90px">${days.map(d=>{const v=PAS[d]||0;return `<div><i class="${v>=g?'':v?'lo':'no'}" style="height:${v?Math.max(6,Math.min(1,v/12000)*70):5}px"></i><span>${new Date(d).toLocaleDateString('fr-FR',{weekday:'short'}).slice(0,3)}</span></div>`}).join('')}</div>
+  <div class="row"><input type="number" inputmode="numeric" id="pasIn" placeholder="Pas d'aujourd'hui" style="flex:1;margin:0;min-width:140px"><button class="alt" data-act="pasSave">Noter</button></div><p class="mute" style="margin-bottom:0">Repère santé : 7 000 pas par jour et plus, idéalement 8 000 à 10 000.</p>`}
 function renderHist(){
+  renderTests();renderPas();const dc=$('dlCard');if(deloadNeeded()&&LOG.length>=6){dc.style.display='block';dc.innerHTML='<h2>Semaine allégée conseillée</h2><p>Tes performances baissent ou ton énergie est basse depuis quelques jours. Cette semaine : moitié moins de séries, 4 répétitions en réserve. Tu repartiras plus fort.</p><button class="alt sm" data-act="deloadDone">J\'ai fait ma semaine allégée</button>'}else dc.style.display='none';
   const best={};LOG.forEach(l=>l.ex.forEach(e=>e.sets.forEach(s=>{const kg=num(s.kg),r=num(s.reps);if(!kg)return;const e1=kg*(1+r/30);if(!best[e.nom]||e1>best[e.nom].e1)best[e.nom]={kg,r,e1,d:l.d}})));
   const b=Object.entries(best).sort((a,c)=>c[1].e1-a[1].e1);
   $('prC').style.display=b.length?'block':'none';
-  $('prs').innerHTML=b.slice(0,15).map(([n,v])=>`<tr><td>${esc(n)}<div class="mute">${v.r} reps · ${frd(v.d)} · max estimé ${Math.round(v.e1)} kg</div></td><td>${fr(v.kg)} kg</td></tr>`).join('');
+  const bw=num(P.poids)||0,F=P.sexe==='F',lev=(n,e)=>{if(!bw)return'';const r=e/bw,N=/squat|presse/i.test(n)?(F?[.75,1.25]:[1,1.5]):/couch|bench/i.test(n)?(F?[.5,.75]:[.75,1.25]):/soulev|deadlift/i.test(n)?(F?[1,1.5]:[1.25,2]):null;return N?` · niveau ${r>=N[1]?'intermédiaire+':r>=N[0]?'intermédiaire':'débutant'} (${fr(r.toFixed(2))}× ton poids)`:''};
+  $('prs').innerHTML=b.slice(0,15).map(([n,v])=>`<tr><td>${esc(n)}<div class="mute">${v.r} reps · ${frd(v.d)} · max estimé ${Math.round(v.e1)} kg${lev(n,v.e1)}</div></td><td>${fr(v.kg)} kg</td></tr>`).join('');
   $('histC').style.display=LOG.length?'block':'none';
   $('hist').innerHTML=LOG.slice(-10).reverse().map(l=>{const vol=l.ex.reduce((s,e)=>s+e.sets.reduce((a,x)=>a+num(x.kg)*num(x.reps),0),0);return `<div class="jl"><span class="n"><b>${esc(l.nom)}</b><div class="mute">${frd(l.d)} · ${l.min} min · ${l.ex.filter(e=>e.sets.length).length} exercices</div></span><span class="v">${vol?Math.round(vol).toLocaleString('fr-FR')+' kg':''}</span></div>`}).join('');
 }
@@ -1644,20 +1647,23 @@ function renderS(){
     <div class="row" style="justify-content:center"><button class="ghost" data-act="rest" data-v="-15">−15 s</button><button class="ghost" data-act="rest" data-v="15">+15 s</button><button data-act="skipRest">Passer</button></div>`;
     const t=()=>{const r=Math.max(0,Math.ceil((S.rest-Date.now())/1000));const el=$('tm');if(el)el.textContent=Math.floor(r/60)+':'+String(r%60).padStart(2,'0');if(r===10&&!S.said){S.said=1;say('Encore dix secondes')}if(r<=0){beep(3);S.rest=0;S.said=0;renderS();say('C\'est reparti : '+S.ex[S.i].nom+', série '+(S.ex[S.i].sets.length+1))}};t();tick=setInterval(t,250);return;
   }
+  const lastN=SL[today()],sleepLow=lastN&&dur(lastN.c,lastN.l)<360,cc=CHK[today()],sore=cc&&cc.c>=4,dl=deloadNeeded();
   const g=suggest(x),n=+x.series||3,p=clean(x.muscles),s=clean(x.muscles_secondaires);
   ov.innerHTML=head+`<h1 style="font-size:clamp(28px,7vw,38px)">${esc(x.nom)}</h1>
   ${ANIM.html(ANIM.pick(x.nom,x.machine,x.anim),'anim ovanim')}
   <div class="row sb" style="margin-top:6px"><span class="dose" style="font-size:20px;white-space:normal;flex:1">${esc(x.series)} × ${esc(x.reps)}</span><span class="mute">repos ${esc(x.repos_s)} s</span></div>
   ${machBox(x)}
   <div class="dots">${Array.from({length:n},(_,i)=>`<i class="${i<x.sets.length?'f':''}"></i>`).join('')}</div>
-  ${g.note?`<div class="tip">${esc(g.note)}</div>`:''}
+  ${g.note?`<div class="tip">${esc(g.note)}</div>`:''}${(sleepLow||sore||dl)&&S.i===0&&!x.sets.length?`<div class="tip" style="border-left-color:var(--yel)">${sleepLow?'Nuit courte : fais une série de moins par exercice aujourd\'hui. ':''}${sore?'Grosses courbatures : allège de 25 %. ':''}${dl&&!sleepLow&&!sore?'Ton corps a besoin d\'une semaine plus légère : moitié moins de séries, 4 répétitions en réserve.':''}</div>`:''}${/course|marche|v[ée]lo|rameur|elliptique|tapis|cardio/i.test(x.nom+' '+(x.machine||''))?`<div class="tip">Zone 2 : ${hrZones().z2.join('–')} pulsations/min, tu peux parler en phrases. Fractionné : ${hrZones().hiit.join('–')}.</div>`:''}
   <div class="setin"><div><label for="sKg">Charge (kg)</label><input id="sKg" type="number" inputmode="decimal" step="0.5" value="${esc(x.sets.length?x.sets[x.sets.length-1].kg:g.kg)}" placeholder="0"></div>
   <div><label for="sR">Répétitions</label><input id="sR" type="number" inputmode="numeric" value="${esc(x.sets.length?x.sets[x.sets.length-1].reps:g.reps)}"></div></div>
+  <label style="margin-top:4px">Combien de répétitions tu aurais encore pu faire ?</label>
+  <div class="qual" id="rirRow" style="margin-bottom:12px">${['0','1','2','3','4+'].map((v,i)=>`<button data-act="rir" data-v="${i}" class="${(S.rir??2)===i?'on':''}">${v}</button>`).join('')}</div>
   <button data-act="doneSet" style="width:100%;min-height:60px;font-size:20px">Série ${x.sets.length+1} faite</button>
   <div class="row" style="margin:12px 0"><button class="ghost sm" data-act="prevEx" ${S.i?'':'disabled'}>Exercice précédent</button><button class="ghost sm" data-act="nextEx">Exercice suivant</button>${x.machine?'':yt(x.nom+' exécution technique','Vidéo')}</div>
   <details><summary style="cursor:pointer;font-weight:700;padding:8px 0">Muscles et technique</summary>${bodyMap(p,s)}<p>${esc(x.execution||'')}</p><p class="mute">${esc(x.conseil||'')}</p></details>
   <details id="wu"><summary style="cursor:pointer;font-weight:700;padding:8px 0">Échauffement et disques</summary><div id="wuIn"></div></details>`;
-  const wu=()=>{const kg=num($('sKg')?.value);$('wuIn').innerHTML=kg>=10?`<table class="tbl">${[[.4,10],[.6,6],[.8,3]].map(([f,r])=>`<tr><td>Échauffement ${Math.round(f*100)} %</td><td>${fr(Math.round(kg*f/2.5)*2.5)} kg × ${r}</td></tr>`).join('')}</table><p class="mute">Disques par côté (barre de 20 kg) : ${esc(plates(kg))}</p>`:'<p class="mute">Indique une charge pour calculer l\'échauffement.</p>'};
+  const wu=()=>{const kg=num($('sKg')?.value);$('wuIn').innerHTML=kg>=5?`<p class="mute" style="margin-top:0">5 min de cardio léger avant, puis :</p><table class="tbl">${warmup(kg).map(([f,r])=>`<tr><td>${f?'Échauffement '+Math.round(f*100)+' %':'Barre à vide'}</td><td>${f?fr(Math.max(0,Math.round(kg*f/2.5)*2.5))+' kg':'20 kg'} × ${r}</td></tr>`).join('')}</table><p class="mute">60 s de repos entre ces séries, puis 2 min avant ta première vraie série.</p><p class="mute">Disques par côté (barre de 20 kg) : ${esc(plates(kg))}</p>`:'<p class="mute">Indique une charge pour calculer l\'échauffement.</p>'};
   wu();$('sKg').addEventListener('input',wu);
 }
 function plates(kg){let r=(kg-20)/2;if(r<=0)return'barre seule';const out=[];for(const p of[25,20,15,10,5,2.5,1.25])while(r>=p-1e-9){out.push(p);r-=p}return out.map(fr).join(' + ')+' kg'+(r>0.01?' (≈)':'')}
@@ -1868,7 +1874,8 @@ const A={
   zclear(){P.zones=[];saveP();renderZones()},
   genProg(b){const env=(b&&b.dataset.envie)?$('envie').value.trim():'';run(b,$('prog'),'Préparation de ta semaine',async()=>{
     PR=await askJSON(`Tu es un coach sportif diplômé. ${profil()}${env?'\nCE QU\'IL DEMANDE POUR CETTE SEMAINE (prioritaire) : « '+env+' ».':''}
-Crée un programme d'entraînement hebdomadaire adapté, réaliste et sûr, avec exactement ${P.jours||3} séances. Équilibre les groupes musculaires pour laisser 48 h de récupération, insiste sur les zones prioritaires sans négliger le reste, et respecte les blessures.
+Crée un programme d'entraînement hebdomadaire adapté, réaliste et sûr, avec exactement ${P.jours||3} séances. Insiste sur les zones prioritaires sans négliger le reste, et respecte les blessures.
+${SPORT_RULES()}
 Format JSON : {"titre":"","resume":"2 phrases","echauffement":"","progression":"comment progresser semaine après semaine","jours":[{"nom":"Jour 1 – …","focus":"","duree_min":60,"exercices":[${EXF}]}]}
 5 à 7 exercices par séance. Noms d'exercices usuels en français. Pour muscles et muscles_secondaires, utilise seulement ces clés : ${KEYS}.`,{modelTier:'default'});
     store.set('programme',PR);renderProg()})},
@@ -1895,9 +1902,13 @@ Propose UN exercice de remplacement pour « ${x.nom} » qui travaille les mêmes
   importData(){openPane('suivi','donnees');setTimeout(()=>$('impT').focus(),120)},
   async pasteImp(){try{const t=await navigator.clipboard.readText();if(t){$('impT').value=t;toast('Collé')}}catch(e){toast('Appuie longuement dans la case puis « Coller »')}},
   doImport(){restoreFrom($('impT').value)},
+  testSave(b){const k=b.dataset.k,v=num($('tst-'+k).value);if(!v){$('tst-'+k).focus();return}TESTS.push({k,v,d:today()});store.set('tests',TESTS);renderTests();toast('Test noté')},
+  pasSave(){const v=Math.round(num($('pasIn').value));if(!v){$('pasIn').focus();return}PAS[today()]=v;const k=Object.keys(PAS).sort().slice(-60);PAS=Object.fromEntries(k.map(x=>[x,PAS[x]]));store.set('pas',PAS);renderPas();if(v>=stepGoal()){toast('Objectif de pas atteint !');confetti()}},
+  deloadDone(){store.set('deloadAt',today());renderHist()},
+  rir(b){S.rir=+b.dataset.v;document.querySelectorAll('#rirRow button').forEach(x=>x.classList.toggle('on',x===b))},
   doneSet(){const x=S.ex[S.i],kg=num($('sKg').value),rp=num($('sR').value),prev=bestE1(x.nom),cur=Math.max(0,...x.sets.map(s=>num(s.kg)*(1+num(s.reps)/30)));
     if(kg&&prev&&kg*(1+rp/30)>Math.max(prev,cur)+0.01){toast('Nouveau record sur '+x.nom+' !');confetti();store.set('nbrec',store.get('nbrec',0)+1);say('Nouveau record !')}
-    x.sets.push({kg:$('sKg').value,reps:$('sR').value});
+    x.sets.push({kg:$('sKg').value,reps:$('sR').value,rir:S.rir??2});
     if(x.sets.length>=(+x.series||3)){if(S.i<S.ex.length-1){S.i++;S.rest=Date.now()+(+x.repos_s||90)*1000}else return endS()}else S.rest=Date.now()+(+x.repos_s||90)*1000;renderS()},
   rest(b){S.rest+=(+b.dataset.v)*1000;if(S.rest<Date.now())S.rest=Date.now()+1000},
   skipRest(){S.rest=0;renderS()},
@@ -2323,6 +2334,55 @@ document.addEventListener('pointerdown',e=>{
   if(document.documentElement.dataset.skin==='pets'){const p=document.createElement('span');p.className='pawtap';p.innerHTML=PAW;p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';p.style.transform=`rotate(${Math.round(Math.random()*40-20)}deg)`;document.body.appendChild(p);setTimeout(()=>p.remove(),950)}
 },{passive:true});
 
+
+/* ===================== MOTEUR D'ENTRAÎNEMENT (règles ACSM / méta-analyses) ===================== */
+function SPORT_RULES(){const lvl=P.niv||'débutant',deb=/débutant/i.test(lvl),j=num(P.jours)||3,imc=(metrics()||{}).imc||0;
+  const split=j<=2?'full body A/B':j===3?'full body A/B/A':j===4?'haut du corps / bas du corps, 2 fois chacun':deb?'full body ou haut/bas':'push/pull/jambes possible';
+  let r=`RÈGLES DE PROGRAMMATION (obligatoires) :
+- Structure conseillée : ${split}. Chaque grand groupe musculaire au moins 2 fois par semaine, poly-articulaires en premier (squat ou presse, charnière de hanche, poussée horizontale et verticale, tirage horizontal et vertical), puis 1 à 2 exercices d'isolation ou de gainage.
+- Volume par muscle et par semaine : ${deb?'6 à 10':'10 à 20'} séries (maximum 10 par muscle et par séance), 2 à 3 séries par exercice, 4 à 8 exercices, séance de ${P.duree||60} minutes maximum.
+- Répétitions : poly-articulaires ${deb?'8-12':'6-12'}, isolation et machines 10-15, poids du corps ou élastique 12-25. Arrête chaque série en gardant 2 à 3 répétitions en réserve (jamais jusqu'à l'échec en poly-articulaire libre).
+- Repos : 2 à 3 min sur les poly-articulaires, 60 à 90 s en isolation.
+- Ne fixe jamais les charges en kg et ne génère pas d'échauffement détaillé : l'app s'en charge. Écris les répétitions en format court.
+- Cardio : exprimé en minutes, avec l'intensité (zone 2 = « tu peux parler en phrases », effort 3-4 sur 10) ; fractionné 2 fois par semaine maximum.`;
+  if(imc>=30)r+='\n- IMC ≥ 30 : ni sauts ni course, cardio sur vélo, elliptique, rameur ou marche inclinée ; limiter les passages au sol ; préférer pompes inclinées, squat sur box, presse, tractions assistées.';
+  if(BARIA()&&P.opdate){const wk=Math.floor((Date.now()-new Date(P.opdate))/6048e5);r+=`\n- Opération il y a ${wk} semaines : `+(wk<3?'marche douce uniquement, accord du chirurgien requis.':wk<4?'cardio léger 3×30 min, musculation très légère 2×/semaine, aucun effort à glotte fermée ni charge abdominale lourde.':wk<9?'cardio modéré 3-4×40 min, musculation modérée 3×/semaine, pas de charge abdominale lourde avant 6 semaines.':wk<26?'programme normal progressif, fractionné seulement après 3 à 6 mois.':'programme normal.')+' Hydratation par petites gorgées ; arrêter en cas de malaise ou de sueurs.'}
+  if((P.santeL||[]).includes('enceinte'))r+='\n- Grossesse : effort 5-6/10, pas de blocage respiratoire, pas d\'exercice allongé sur le dos s\'il gêne, pas de sport de contact ni de risque de chute ; exercices du périnée.';
+  if((P.santeL||[]).includes('postpartum'))r+='\n- Post-partum : reprise progressive (marche et périnée, puis faible impact, puis renforcement léger) ; pas de course avant 12 semaines.';
+  const c=CHK[today()];if(c&&(c.c>=4||c.e<=2))r+='\n- Aujourd\'hui : '+(c.c>=4?'fortes courbatures':'peu d\'énergie')+', réduis le volume de 25 %.';
+  if(deloadNeeded())r+='\n- SEMAINE ALLÉGÉE recommandée : réduis le nombre de séries de 40 à 50 % et garde 4 répétitions en réserve.';
+  return r}
+const LOWER=/squat|presse|fente|soulev|deadlift|hip ?thrust|pont|leg ?press|bulgare|romanian|roumain/i,ISO=/curl|triceps|extension|élévation|elevation|latéral|lateral|butterfly|pec ?deck|écarté|ecarte|leg ?curl|leg ?ext|mollet|shrug|abduct|adduct|oiseau|kickback|face pull/i;
+function incr(x,kg){const t=(x.nom||'')+' '+(x.machine||'');if(/halt[èe]re|dumbbell/i.test(t))return kg<12?1:2;if(ISO.test(t))return kg<20?1:2.5;if(LOWER.test(t))return kg<60?5:2.5;return 2.5}
+function lastSessions(name,n){const out=[];for(let i=LOG.length-1;i>=0&&out.length<n;i--){const e=LOG[i].ex.find(x=>x.nom===name);if(e&&e.sets.length)out.push(e.sets)}return out}
+function suggest(x){
+  const rr=(String(x.reps).match(/\d+/g)||[]).map(Number),lo=rr[0]||0,hi=rr[1]||rr[0]||0,ss=lastSessions(x.nom,2),ls=ss[0];
+  if(!ls)return{kg:'',reps:String(hi||''),note:'Première fois : prends une charge avec laquelle il te reste 2 à 3 répétitions en réserve à la fin de la série.'};
+  const kg=Math.max(...ls.map(s=>num(s.kg))),minR=Math.min(...ls.map(s=>num(s.reps))),rir=ls.map(s=>s.rir).filter(v=>v!=null);
+  if(!kg)return{kg:'',reps:String(Math.max(...ls.map(s=>num(s.reps)))+1),note:`La dernière fois : ${ls.map(s=>s.reps).join(', ')} répétitions. Essaie d'en faire une de plus.`};
+  const inc=incr(x,kg),allTop=hi&&ls.every(s=>num(s.reps)>=hi)&&(!rir.length||Math.min(...rir)>=1);
+  if(allTop){if(inc/kg>.1&&ls.every(s=>num(s.reps)<hi+3))return{kg,reps:String(hi+1),note:`Bravo ! Le prochain cran serait trop gros : vise ${hi+1} à ${hi+3} répétitions avant de monter.`};
+    return{kg:kg+inc,reps:String(lo||hi),note:`Objectif atteint la dernière fois : on monte à ${fr(kg+inc)} kg (+${fr(inc)}).`}}
+  if(lo&&ss.length===2&&ss.every(st=>num(st[0].reps)<lo)){const nk=Math.round(kg*.925/inc)*inc||kg;return{kg:nk,reps:String(lo),note:`Deux séances sous ${lo} répétitions : on redescend à ${fr(nk)} kg pour repartir proprement.`}}
+  return{kg,reps:String(Math.min(hi||99,minR+1)),note:`La dernière fois : ${ls.map(s=>s.reps+'×'+fr(s.kg)).join(', ')} kg. Garde la charge et vise une répétition de plus.`}}
+function warmup(kg){if(kg<=0)return[];if(kg<=20)return[[.5,10]];if(kg<=60)return[[.5,8],[.75,4]];return[[0,10],[.5,6],[.7,4],[.85,2]]}
+function deloadNeeded(){const last=LOG[LOG.length-1];if(!last)return false;
+  const since=store.get('deloadAt','');const wks=(Date.now()-new Date(since||LOG[0].d))/6048e5;
+  const reg=last.ex.filter(e=>{const s2=lastSessions(e.nom,3);if(s2.length<3)return false;const v=st=>Math.max(...st.map(x=>num(x.kg)*(1+num(x.reps)/30)));return v(s2[0])<v(s2[1])&&v(s2[1])<v(s2[2])}).length;
+  const low=[0,1,2].every(i=>{const c=CHK[dkey(Date.now()-i*864e5)];return c&&c.e&&c.e<=2});
+  return reg>=2||low||wks>=(/débutant/i.test(P.niv||'débutant')?9:6)}
+function hrZones(){const a=num(P.age)||35,mx=Math.round(208-.7*a);return{mx,z2:[Math.round(mx*.6),Math.round(mx*.7)],hiit:[Math.round(mx*.8),Math.round(mx*.9)]}}
+/* tests de forme */
+let TESTS=store.get('tests',[]);
+function pushNorm(n){const a=num(P.age)||35,F=P.sexe==='F',T=F?[[29,30,15],[39,27,13],[49,24,11],[59,21,7],[99,17,5]]:[[29,36,22],[39,30,17],[49,25,13],[59,21,10],[99,18,8]],r=T.find(t=>a<=t[0]);return n>=r[1]?'excellent':n>=r[2]?'bon':'à améliorer'}
+function chairNorm(n){const a=Math.min(79,Math.max(22,num(P.age)||35)),F=P.sexe==='F',med=(F?47:50)-(a-22)/(77-22)*((F?47:50)-(F?27:30));return{med:Math.round(med),txt:n>=med*1.1?'au-dessus de la moyenne':n>=med*.85?'dans la moyenne':'en dessous de la moyenne'}}
+function walkNorm(m){const a=num(P.age)||45,h=num(P.taille)||170,w=num(P.poids)||75,F=P.sexe==='F',pred=F?2.11*h-2.29*w-5.78*a+667:7.57*h-5.02*a-1.76*w-309,lowl=pred-(F?139:153);return{pred:Math.round(pred),txt:m>=pred?'au niveau attendu ou mieux':m>=lowl?'un peu en dessous de l\'attendu':'en dessous de la limite basse, parles-en à ton médecin si tu es essoufflé'}}
+function renderTests(){const el=$('testsBox');if(!el)return;const last=k=>[...TESTS].reverse().find(t=>t.k===k),first=k=>TESTS.find(t=>t.k===k);
+  const row=(k,n,unit,norm,ph)=>{const l=last(k),f=first(k);return `<div class="meal"><div class="row sb"><b>${n}</b>${l?`<span class="chip p">${l.v} ${unit}</span>`:''}</div>${l?`<div class="mute">${esc(norm(l.v))}${f&&f!==l?` · ${l.v-f.v>=0?'+':''}${l.v-f.v} depuis le ${frd(f.d)}`:''}</div>`:''}<div class="row" style="margin-top:8px"><input type="number" inputmode="numeric" id="tst-${k}" placeholder="${ph}" style="flex:1;margin:0;min-width:120px"><button class="sm" data-act="testSave" data-k="${k}">Noter</button></div></div>`};
+  el.innerHTML=row('pompes','Pompes d\'affilée'+(P.sexe==='F'?' (sur les genoux)':''),'pompes',v=>'Niveau : '+pushNorm(v),'nombre')+row('chaise','Assis-debout d\'une chaise en 1 minute','fois',v=>{const c=chairNorm(v);return `Moyenne pour ton âge : ${c.med}. Tu es ${c.txt}.`},'nombre')+row('marche','Marche de 6 minutes','m',v=>{const w=walkNorm(v);return `Attendu pour toi : ~${w.pred} m. Tu es ${w.txt}.`},'mètres')+`<p class="mute">À refaire toutes les 6 à 8 semaines, à la même heure.</p>`}
+/* pas */
+let PAS=store.get('pas',{});
+function stepGoal(){const v=Object.entries(PAS).sort().slice(-7).map(([,x])=>x);if(!v.length)return 6000;const avg=v.reduce((a,b)=>a+b,0)/v.length;return Math.min(10000,Math.max(5000,Math.round((avg+1000)/500)*500))}
 /* ===================== SUIVI ===================== */
 let CHK=store.get('checkin',{}),MES=store.get('mesures',[]),WINS=store.get('victoires',[]),PLOG=store.get('prises',{});
 let PILLS=store.get('pilulier',null);
@@ -2507,7 +2567,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-25';
+const APP_VERSION='2026.11.26-26';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
