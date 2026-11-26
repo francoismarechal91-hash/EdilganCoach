@@ -572,6 +572,16 @@ html.idle .cauw .cau,.hero.off .cauw .cau{animation-play-state:paused}
 .skin .pv i{z-index:1}
 /* === /ag_theme === */
 .qph{margin-top:10px;min-height:64px!important;flex-direction:row!important;gap:12px;justify-content:flex-start!important;text-align:left;padding:10px 14px!important}.qph b{display:block}.qph span{display:block;font-size:13px;opacity:.75}.qph img{max-height:120px;border-radius:12px}
+.rapb{position:relative}.rapb.lit::after{content:"";position:absolute;top:9px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--green,#22a06b);box-shadow:0 0 0 2px var(--bg)}
+.rapcta{display:inline-flex!important;align-items:center;gap:8px;margin-top:12px}.rapcta svg.i{width:18px;height:18px}
+.rapr{border-radius:16px;background:var(--fill);margin-top:8px;padding:4px 12px 4px;transition:background .2s}.rapr.on{background:color-mix(in srgb,var(--green,#22a06b) 10%,var(--fill))}
+.rapt{display:flex!important;align-items:center;gap:12px;min-height:56px;margin:0!important;cursor:pointer;color:var(--ink)!important;font-weight:400}.rapt b{display:block;font-size:16px}.rapt small{display:block;color:var(--mute);font-size:13.5px;line-height:1.35}
+.rapi{font-size:24px;line-height:1;flex:none;width:32px;text-align:center}
+.rapf{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:2px 0 12px 44px}.rapf label{display:flex;align-items:center;gap:6px;margin:0;font-size:14.5px;color:var(--ink)}.rapf input[type=time],.rapf select{width:auto;min-height:40px;margin:0;padding:4px 8px}.rapf .chips{width:100%}
+.rapban{position:fixed;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));top:calc(10px + env(safe-area-inset-top));z-index:60;background:var(--card);color:var(--ink);border-radius:20px;padding:14px;box-shadow:0 18px 50px rgba(0,0,0,.35),0 0 0 1px var(--line);animation:rapin .45s cubic-bezier(.2,1.3,.4,1);max-width:560px;margin:0 auto}
+.rapban.out{opacity:0;transform:translateY(-20px);transition:.25s}
+@keyframes rapin{from{opacity:0;transform:translateY(-30px) scale(.96)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.rapban{animation:none}}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -1261,6 +1271,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
  <symbol id="i-add" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></symbol>
  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 4 5.6 4 9s-1.4 6.4-4 9c-2.6-2.6-4-5.6-4-9s1.4-6.4 4-9z"/></symbol>
+ <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0"/></symbol>
  <symbol id="i-tick" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-7 1 2 2 3 3 3 0-3-1-5 0-7z"/></symbol>
  <symbol id="i-scale" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="4"/><path d="M9 9a3 3 0 0 1 6 0M12 9l1.5-1.5"/></symbol>
@@ -1276,6 +1287,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
 <div id="amb" aria-hidden="true"></div><div id="sweep" aria-hidden="true"></div>
 <header class="appbar" id="appbar">
   <a class="logo" href="#accueil"><span><svg class="i"><use href="#i-dumb"/></svg></span><span class="lname">Edilgan<b>Super</b>Coach</span></a>
+  <button class="ib rapb" data-act="rapOpen" aria-label="Mes rappels" id="rapBtn"><svg class="i"><use href="#i-bell"/></svg></button>
   <a class="ib" href="#coach" aria-label="Parler au coach" id="coachBtn" data-act="goPane" data-v="coach" data-p="chat"><svg class="i"><use href="#i-chat"/></svg></a>
   <button class="ib" data-act="shareApp" aria-label="Partager l'app"><svg class="i"><use href="#i-share"/></svg></button>
   <a class="ib av" href="#moi" id="avatar" aria-label="Mon profil">M</a>
@@ -1354,7 +1366,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
     <div class="card" id="phaseCard" style="display:none"></div>
     <div class="card" id="drinkCard"></div>
     <div class="card tipwarn" id="alertCard" style="display:none"></div>
-    <div class="card"><h2>Mon pilulier</h2><p class="sub">Coche chaque prise. Les noms et horaires se règlent selon ta prescription.</p><div id="pills"></div>
+    <div class="card"><h2>Mon pilulier</h2><p class="sub">Coche chaque prise. Les noms et horaires se règlent selon ta prescription.</p><div id="pills"></div><button class="ghost sm rapcta" data-act="rapOpen" data-k="pills"><svg class="i"><use href="#i-bell"/></svg>Me rappeler mes prises</button>
       <details style="margin-top:10px"><summary class="mute" style="cursor:pointer;padding:8px 0">Modifier mon pilulier</summary><div id="pillEdit"></div>
       <div class="row" style="margin-top:8px"><input id="pillN" placeholder="Nom (ex. Vitamine D)" style="flex:1;margin:0;min-width:140px"><input id="pillH" type="time" value="09:00" style="width:auto;margin:0"><button class="sm" data-act="pillAdd">Ajouter</button></div></details>
       <div class="tip" id="pillTip" style="display:none"></div></div>
@@ -3293,6 +3305,78 @@ const FXE=(()=>{
  return {nav,deco,amb:k=>amb[k]?amb[k]():'',rich};
 })();
 /* === /ag_theme === */
+/* ===================== RAPPELS (dans l'app + calendrier du téléphone) ===================== */
+const RAPD={eau:{on:0,de:'08:00',a:'21:00',pas:90},pills:{on:0},repas:{on:0,h:['08:00','10:30','12:30','16:00','19:30']},pesee:{on:0,j:1,h:'07:30'},seance:{on:0,j:[1,3,5],h:'18:30'},coucher:{on:0,h:'22:30'}};
+const rapClone=o=>JSON.parse(JSON.stringify(o));
+let RAP=store.get('rappels',{});if(!RAP||typeof RAP!=='object'||Array.isArray(RAP))RAP={};for(const k in RAPD)if(!RAP[k]||typeof RAP[k]!=='object'||Array.isArray(RAP[k]))RAP[k]=rapClone(RAPD[k]);else RAP[k]={...rapClone(RAPD[k]),...RAP[k]};
+let RAPSH=store.get('rapShown',{});if(!RAPSH||typeof RAPSH!=='object'||Array.isArray(RAPSH))RAPSH={};let RAPSNZ=null;
+const rapHM=m=>String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const JRS=['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'],JRL=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const RAPN={eau:['Boire','💧'],pills:['Mes médicaments et compléments','💊'],repas:['Mes repas','🍽️'],pesee:['Ma pesée','⚖️'],seance:['Ma séance','🏋️'],coucher:['Aller me coucher','🌙']};
+function rapTimes(k,all){const r=RAP[k];if(!r||(!r.on&&!all))return[];
+  if(k==='eau'){const out=[],a=tmin(r.a),st=Math.max(30,+r.pas||90);for(let m=tmin(r.de);m<=a;m+=st)out.push({h:rapHM(m),t:'💧 Un verre d\'eau',d:BARIA()?'Par petites gorgées, et pas dans les 30 minutes autour d\'un repas.':'Un grand verre d\'eau, maintenant.'});return out}
+  if(k==='pills')return arr(PILLS).filter(p=>p&&p.h).map(p=>({h:p.h,t:'💊 '+p.n,d:'Ta prise de '+p.h+' (pilulier EdilganSuperCoach).',pid:p.id}));
+  if(k==='repas')return arr(r.h).filter(Boolean).map(h=>({h,t:'🍽️ C\'est l\'heure de manger',d:BARIA()?'Petite portion, protéines d\'abord, 20 minutes, petites bouchées.':'Un repas équilibré. Pense à le noter dans l\'app.'}));
+  if(k==='pesee')return[{h:r.h,t:'⚖️ Pesée de la semaine',d:'À jeun, après être passé aux toilettes, toujours sur la même balance. Note-la dans l\'app.',days:[+r.j]}];
+  if(k==='seance')return arr(r.j).length?[{h:r.h,t:'🏋️ C\'est l\'heure de ta séance',d:'Ta séance du jour t\'attend dans l\'app.',days:arr(r.j).map(Number)}]:[];
+  if(k==='coucher')return[{h:r.h,t:'🌙 Prépare-toi à dormir',d:'Écrans éteints, lumière douce : ta nuit commence maintenant.'}];return[]}
+function rapSum(k){const r=RAP[k];if(k==='eau')return`de ${r.de} à ${r.a}, toutes les ${+r.pas>=60?(Math.floor(r.pas/60)+' h'+(r.pas%60?' '+(r.pas%60):'')):r.pas+' min'} (${rapTimes(k,1).length} rappels)`;
+  if(k==='pills')return PILLS&&PILLS.length?arr(PILLS).map(p=>p.h).sort().join(', '):'ajoute tes prises dans le pilulier (Suivi › Santé)';
+  if(k==='repas')return arr(r.h).join(', ');if(k==='pesee')return`le ${JRL[+r.j]} à ${r.h}`;if(k==='seance')return arr(r.j).length?`${arr(r.j).map(d=>JRS[d]).join(' ')} à ${r.h}`:'choisis tes jours';return'à '+r.h}
+function rapFields(k){const r=RAP[k],t=(f,v)=>`<input type="time" data-rf="${k}.${f}" value="${esc(v)}" aria-label="Heure">`;
+  if(k==='eau')return`<div class="rapf"><label>De ${t('de',r.de)}</label><label>à ${t('a',r.a)}</label><label>toutes les <select data-rf="eau.pas">${[60,90,120,180].map(v=>`<option value="${v}" ${+r.pas===v?'selected':''}>${v===60?'1 h':v===90?'1 h 30':v/60+' h'}</option>`).join('')}</select></label></div>`;
+  if(k==='repas')return`<div class="rapf">${arr(r.h).map((h,i)=>`<label>${i+1}. <input type="time" data-rf="repas.h.${i}" value="${esc(h)}"></label>`).join('')}</div>`;
+  if(k==='pesee')return`<div class="rapf"><label>Le <select data-rf="pesee.j">${[1,2,3,4,5,6,0].map(d=>`<option value="${d}" ${+r.j===d?'selected':''}>${JRL[d]}</option>`).join('')}</select></label><label>à ${t('h',r.h)}</label></div>`;
+  if(k==='seance')return`<div class="rapf"><div class="chips">${[1,2,3,4,5,6,0].map(d=>`<button class="chip${arr(r.j).includes(d)?' p':''}" data-act="rapDay" data-d="${d}">${JRS[d]}</button>`).join('')}</div><label>à ${t('h',r.h)}</label></div>`;
+  if(k==='coucher')return`<div class="rapf"><label>à ${t('h',r.h)}</label></div>`;return''}
+function rapHTML(){const n=Object.keys(RAPD).reduce((a,k)=>a+rapTimes(k).length,0),cd=store.get('rapCalD','');
+  return`<div class="row sb"><h2 style="margin:0">Mes rappels</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div>
+  <p class="sub" style="margin-top:6px">Choisis ce que le coach doit te rappeler.</p>
+  <div id="rapBox">${Object.keys(RAPD).map(k=>`<div class="rapr${RAP[k].on?' on':''}"><label class="rapt"><input type="checkbox" data-rk="${k}" ${RAP[k].on?'checked':''}><span class="rapi" aria-hidden="true">${RAPN[k][1]}</span><span><b>${RAPN[k][0]}</b><small>${esc(rapSum(k))}</small></span></label>${RAP[k].on?rapFields(k):''}</div>`).join('')}</div>
+  <div class="tip" style="margin-top:14px"><b>App ouverte :</b> le coach te fait signe à l'heure prévue (avec un petit son). <b>App fermée :</b> ajoute tes rappels au calendrier de ton téléphone, il te préviendra tout seul.</div>
+  <button data-act="rapCal" style="width:100%;margin-top:10px" ${n?'':'disabled'}><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg> Ajouter ${n?n+' rappel'+(n>1?'s':''):'mes rappels'} à mon calendrier</button>
+  <button class="ghost sm" data-act="rapCalShare" style="width:100%;margin-top:8px" ${n?'':'disabled'}>Ça ne s'ouvre pas ? Enregistrer le fichier</button>
+  <p class="mute" style="font-size:13.5px;margin-top:10px">Ton téléphone te propose « Ajouter tout » : touche-le.${cd?` Déjà ajouté le ${frd(cd)} : si tu changes tes rappels, supprime d'abord les anciens dans le Calendrier (touche un rappel › Supprimer › « Tous les événements futurs »).`:''}</p>`}
+function rapRefresh(){const b=$('rapBtn');if(b)b.classList.toggle('lit',Object.keys(RAPD).some(k=>RAP[k].on));if($('sheet').classList.contains('on')&&$('rapBox')){const y=$('sheetIn').scrollTop;$('sheetIn').innerHTML='<div class="grab"></div>'+rapHTML();$('sheetIn').scrollTop=y}}
+function rapSave(){store.set('rappels',RAP);rapRefresh();try{renderDrink()}catch(e){}}
+document.addEventListener('change',e=>{const t=e.target;if(!t.closest||!t.closest('#rapBox'))return;
+  if(t.dataset.rk){const k=t.dataset.rk;RAP[k].on=t.checked?1:0;if(k==='pills'&&t.checked&&!(PILLS&&PILLS.length))toast('Ajoute d\'abord tes prises dans le pilulier (Suivi › Santé).');rapSave();return}
+  if(t.dataset.rf){const[k,f,i]=t.dataset.rf.split('.');let v=t.value;if(!v)return;if(f==='pas'||f==='j')v=+v;if(i!=null){RAP[k][f][+i]=v;RAP[k][f].sort()}else RAP[k][f]=v;rapSave()}});
+function icsEsc(t){return String(t).replace(/\\/g,'\\\\').replace(/;/g,'\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n')}
+function icsFold(l){const c=[...l];if(c.length<=60)return l;const o=[];for(let i=0;i<c.length;i+=60)o.push((i?' ':'')+c.slice(i,i+60).join(''));return o.join('\r\n')}
+function buildICS(){const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,''),L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//EdilganSuperCoach//Rappels//FR','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:EdilganSuperCoach'];let n=0;
+  for(const k of Object.keys(RAPD))for(const x of rapTimes(k)){n++;let d0=new Date(Date.now()+864e5);if(x.days)for(let i=0;i<7&&!x.days.includes(d0.getDay());i++)d0=new Date(d0.getTime()+864e5);
+    const ds=dkey(d0).replace(/-/g,'')+'T'+x.h.replace(':','')+'00',rr=x.days?'FREQ=WEEKLY;BYDAY='+x.days.map(d=>['SU','MO','TU','WE','TH','FR','SA'][d]).join(','):'FREQ=DAILY';
+    L.push('BEGIN:VEVENT','UID:edg-'+k+'-'+x.h.replace(':','')+'-'+n+'-'+stamp+'@edilgan.app','DTSTAMP:'+stamp,'DTSTART:'+ds,'DURATION:PT5M','RRULE:'+rr,'SUMMARY:'+icsEsc(x.t),'DESCRIPTION:'+icsEsc(x.d),'TRANSP:TRANSPARENT','BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(x.t),'TRIGGER:PT0M','END:VALARM','END:VEVENT')}
+  L.push('END:VCALENDAR');return{n,txt:L.map(icsFold).join('\r\n')+'\r\n'}}
+/* rappels dans l'app, quand elle est ouverte */
+function rapDue(){const now=new Date(),d=today(),cur=now.getHours()*60+now.getMinutes(),dow=now.getDay(),sh=RAPSH[d]||{};let due=null;
+  if(RAPSNZ&&RAPSNZ.until<=Date.now()){const z=RAPSNZ;RAPSNZ=null;return z.due}
+  for(const k of Object.keys(RAPD))for(const x of rapTimes(k)){if(x.days&&!x.days.includes(dow))continue;const m=tmin(x.h),id=k+x.h;if(cur>=m&&cur-m<=45&&!sh[id])due={k,x,id}}return due}
+function rapMark(id){const d=today();const sh=RAPSH[d]||{};sh[id]=1;RAPSH={[d]:sh};store.set('rapShown',RAPSH)}
+function rapTick(){if(document.visibilityState!=='visible'||$('welcome').classList.contains('on')||document.querySelector('.rapban'))return;const due=rapDue();if(!due)return;rapMark(due.id);const d=today();
+  if(due.k==='eau'){const m=metrics()||{},b=store.get('boire',null);if((EAU[d]||0)>=(m.eau||8)||(b&&b.until>Date.now()))return}
+  if(due.k==='pills'&&due.x.pid&&(PLOG[d]||{})[due.x.pid])return;
+  if(due.k==='seance'&&LOG.some(l=>l.d===d))return;
+  const act={eau:['rapEau','+1 verre bu'],pills:['rapPill','C\'est pris'],repas:['rapGo','Noter mon repas'],pesee:['rapGo','Me peser'],seance:['rapGo','Voir ma séance'],coucher:['rapGo','Mode nuit']}[due.k];
+  const go={repas:'cuisine|journal',pesee:'suivi|progres2',seance:'sport|programme',coucher:'sommeil|nuit'}[due.k]||'';
+  const el=document.createElement('div');el.className='rapban';el.setAttribute('role','alert');RAPCUR=due;
+  el.innerHTML=`<div class="row" style="gap:12px;flex-wrap:nowrap;align-items:flex-start"><span class="rapi" aria-hidden="true">${RAPN[due.k][1]}</span><div style="flex:1;min-width:0"><b>${esc(due.x.t.replace(/^\S+\s/,''))}</b><div class="mute" style="font-size:14px">${esc(due.x.d)}</div></div></div><div class="row" style="margin-top:10px;gap:8px;flex-wrap:nowrap"><button class="sm" data-act="${act[0]}" data-go="${go}" style="flex:1">${act[1]}</button><button class="ghost sm" data-act="rapLater">Dans 20 min</button><button class="ghost sm" data-act="rapX" aria-label="Fermer">OK</button></div>`;
+  document.body.appendChild(el);try{beep(2)}catch(e){}try{navigator.vibrate&&navigator.vibrate([60,60,60])}catch(e){}}
+let RAPCUR=null;const rapClose=()=>document.querySelectorAll('.rapban').forEach(x=>{x.classList.add('out');setTimeout(()=>x.remove(),250)});
+setInterval(rapTick,30000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(rapTick,1200)});setTimeout(rapTick,6000);setTimeout(rapRefresh,0);
+const RAP_ACTS={
+  rapOpen(b){openSheet(rapHTML());const k=b&&b.dataset&&b.dataset.k;if(k)setTimeout(()=>{const c=document.querySelector(`[data-rk="${k}"]`);if(c){c.closest('.rapr').scrollIntoView({block:'center'});if(!c.checked){c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))}}},60)},
+  rapDay(b){const d=+b.dataset.d,j=arr(RAP.seance.j).map(Number);RAP.seance.j=j.includes(d)?j.filter(x=>x!==d):[...j,d];rapSave()},
+  rapCal(){const{n,txt}=buildICS();if(!n){toast('Active au moins un rappel.');return}const u=URL.createObjectURL(new Blob([txt],{type:'text/calendar;charset=utf-8'})),a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(u)},60000);store.set('rapCalD',today());setTimeout(rapRefresh,400)},
+  async rapCalShare(){const{n,txt}=buildICS();if(!n)return;const f=new File([txt],'rappels-edilgan.ics',{type:'text/calendar'});
+    try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Mes rappels EdilganSuperCoach'});store.set('rapCalD',today());rapRefresh();return}}catch(e){if(e&&e.name==='AbortError')return}
+    const u=URL.createObjectURL(f),a=document.createElement('a');a.href=u;a.download='rappels-edilgan.ics';document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(u)},4000);store.set('rapCalD',today());toast('Fichier enregistré : ouvre-le pour ajouter tes rappels au calendrier.');rapRefresh()},
+  rapEau(){const d=today();EAU[d]=(EAU[d]||0)+1;store.set('eau',EAU);try{renderDay()}catch(e){}rapClose();const m=metrics()||{};toast(EAU[d]>=(m.eau||8)?'Objectif d\'eau atteint, bravo !':`Noté : ${EAU[d]} verre${EAU[d]>1?'s':''} sur ${m.eau||8}`)},
+  rapPill(){const x=RAPCUR&&RAPCUR.x;if(x&&x.pid){const d=today();PLOG[d]=PLOG[d]||{};PLOG[d][x.pid]=Date.now();store.set('prises',PLOG);try{renderPills()}catch(e){}}rapClose();toast('Noté, bravo !')},
+  rapGo(b){rapClose();const[v,p]=String(b.dataset.go||'').split('|');if(v)openPane(v,p)},
+  rapLater(){if(RAPCUR)RAPSNZ={until:Date.now()+20*6e4,due:RAPCUR};rapClose();toast('Je te le rappelle dans 20 minutes')},
+  rapX(){rapClose()}};
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -4481,7 +4565,7 @@ function renderDrink(){
   const d=store.get('boire',null),now=Date.now(),act=d&&d.until>now,mm=act?Math.ceil((d.until-now)/6e4):0,hh=act?new Date(d.until).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'';
   const body=BARIA()?`<h2>Boire et manger séparément</h2><p class="sub">Après une sleeve : pas de boisson 30 minutes avant et après le repas.</p>${act?`<div class="drink"><div class="big" style="color:var(--blue)">${mm} min</div><p>Tu pourras boire à <b>${hh}</b>.</p></div>`:`<p style="font-weight:700;color:var(--green)">Tu peux boire maintenant, par petites gorgées.</p>`}<div class="row"><button class="sm" data-act="mealGo">Démarrer un repas en douceur</button><button class="ghost sm" data-act="drinkAfter">J'ai fini de manger</button><button class="ghost sm" data-act="drinkStop">Annuler</button></div>`
     :`<h2>Hydratation</h2><p class="sub">Bois régulièrement dans la journée, un verre à chaque repas et un autour de la séance.</p>`;
-  $('drinkCard').innerHTML=body;
+  $('drinkCard').innerHTML=body+`<button class="ghost sm rapcta" data-act="rapOpen" data-k="eau"><svg class="i"><use href="#i-bell"/></svg>${RAP.eau.on?'Rappels pour boire : activés':'Me rappeler de boire'}</button>`;
   const mc=$('mealCard');if(mc){if(BARIA()){mc.style.display='block';mc.innerHTML=`<div class="row sb" style="flex-wrap:nowrap;gap:10px"><span><b>À table ?</b><div class="mute">${act?'Pas de boisson avant '+hh+'.':'Un repas guidé de 20 à 30 min, en petites bouchées.'}</div></span><button class="sm" data-act="mealGo">Repas en douceur</button></div>`}else mc.style.display='none'}
   const hd=$('homeDrink');if(BARIA()&&act){hd.style.display='block';hd.innerHTML=`<div class="row sb"><span><b>Pas de boisson pour l'instant</b><div class="mute">Tu pourras boire à ${hh} (dans ${mm} min)</div></span><button class="ghost sm" data-act="drinkStop">OK</button></div>`}else hd.style.display='none';
 }
@@ -4579,10 +4663,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-76';
+const APP_VERSION='2026.11.26-77';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.26-77','Des rappels','Touche la cloche en haut : boire, médicaments, repas, pesée, séance, coucher. Le coach te fait signe quand l\'app est ouverte, et tu peux ajouter tes rappels au calendrier de ton téléphone pour être prévenu même app fermée.','accueil',''],
  ['2026.11.26-76','Montre combien tu en as mangé','Après un produit scanné, tu peux montrer en photo ce que tu as mangé (ta tartine, ton bol…) : le coach estime la quantité. Et il ne compte plus 125 g de rillettes pour une cracotte !','scan','produit'],
  ['2026.11.26-75','Des thèmes vivants','Chaque thème a maintenant sa matière et sa lumière : néon en Synthwave, papier et taches de soleil en Forêt, lucioles la nuit, peluche cousue pour Chats & chiens. Les reflets suivent ton doigt. Nouveau thème Océan ! Réglage « Animations : riches, sobres ou aucune ».','moi',''],
  ['2026.11.26-74','Plus simple à prendre en main','L\'accueil te propose 5 grosses actions : noter un repas, scanner un produit, faire ta séance, quoi cuisiner, te peser. Les rubriques ont des noms plus clairs et les longues explications se cachent derrière un « ? ».','accueil',''],
@@ -4627,7 +4712,7 @@ $('bkIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;c
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 setTimeout(()=>{try{if(lsSize()>2e6)lsCompact()}catch(e){}},4000);
 renderChk();renderDrink();
-Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS,BK_ACTS,CAL_ACTS);try{localStorage.removeItem('coach_phc')}catch(e){}netBanner();$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
+Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS,BK_ACTS,CAL_ACTS,RAP_ACTS);try{localStorage.removeItem('coach_phc')}catch(e){}netBanner();$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
 [calc,renderEq,renderSante,renderAH,renderProdHist,renderMenu,renderWeek,renderChat].forEach(f=>{try{f()}catch(e){console.error(f.name,e)}});route();
 }
 /* ==== Audit iPhone : clavier virtuel, typographie française, stockage ==== */
