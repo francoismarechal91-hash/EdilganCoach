@@ -1023,6 +1023,273 @@ section[data-v=coach] #quickQ{-webkit-mask:linear-gradient(90deg,#000 85%,transp
 #welcome .wbox:has(.obstep[data-st="3"]:not([hidden])) .obind{--agh-ob:100%}
 html #welcome button[data-act=obBack],html #welcome button[data-act=wLater]{background:transparent;background-image:none;box-shadow:none;border:0;color:var(--mute);min-height:48px;font-weight:700;font-size:16px;text-decoration:underline;text-underline-offset:3px}
 /* === /ag_home === */
+/* === ag_sport === Sport, séance guidée (#ov), Suivi, Sommeil : hiérarchie claire, 1 action principale par écran,
+   saisie de série rapide, minuteur en anneau, récap gratifiant. Styles limités à #ov (.sxw), section[data-v=sport|suivi|sommeil]. */
+/* --- séance guidée : cadre --- */
+#ov.on:has(>.sxw){display:flex;flex-direction:column;padding-bottom:0}
+#ov>.sxw{flex:1 0 auto;display:flex;flex-direction:column;width:100%;max-width:560px;margin:0 auto;min-height:100%}
+#ov .sxh{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;margin:0 0 10px}
+#ov .sxh>button{min-height:44px;padding:0 12px;font-size:15px;border-radius:999px}
+#ov .sxht{min-width:0;text-align:center;line-height:1.25}
+#ov .sxht b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ov .sxht span{display:block;font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ov .sxv{display:inline-flex;align-items:center;gap:6px}
+#ov .sxv .sxspk{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#ov .sxv[aria-pressed=true] .off,#ov .sxv[aria-pressed=false] .on{display:none}
+#ov .sxv[aria-pressed=true]{background:color-mix(in srgb,var(--red) 14%,var(--fill));color:var(--ink)}
+#ov .sxpb{display:flex;gap:4px;margin:0 0 16px}
+#ov .sxpb i{flex:1;height:6px;border-radius:3px;background:var(--fill2);overflow:hidden}
+#ov .sxpb i.cur{background:color-mix(in srgb,var(--red) 22%,var(--fill2))}
+#ov .sxpb b{display:block;height:100%;background:var(--red);border-radius:3px;transform-origin:0 50%;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
+#ov .sxw h1{font-size:clamp(26px,7.4vw,34px)!important;line-height:1.08;letter-spacing:-.02em;margin:0;text-wrap:balance}
+#ov .sxmeta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:8px 0 0;color:var(--mute);font-size:15px}
+#ov .sxmeta .dose{font-size:17px;font-weight:800;color:var(--red)}
+#ov .sxmach{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;background:var(--fill);color:var(--ink);font-weight:600;font-size:14px}
+#ov .sxanim{display:flex;justify-content:center;margin:14px 0 2px}
+#ov .sxanim .anim{width:min(54vw,230px,25vh);max-width:none;margin:0}
+/* tableau des séries (comme un carnet) */
+#ov .sxsets{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:6px}
+#ov .sxsets li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:12px;min-height:48px;padding:7px 12px 7px 9px;border-radius:14px;background:var(--fill)}
+#ov .sxsets .sn{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;background:var(--card);color:var(--mute);font-variant-numeric:tabular-nums}
+#ov .sxsets .sn svg{width:16px;height:16px;stroke:#fff;stroke-width:3}
+#ov .sxsets .sv{font-weight:700;font-size:16px;font-variant-numeric:tabular-nums}
+#ov .sxsets .sp{font-size:13px;line-height:1.3;color:var(--mute);text-align:right;font-variant-numeric:tabular-nums}
+#ov .sxsets .sp b{color:var(--ink);font-weight:700}
+#ov .sxsets li.ok .sn{background:var(--green)}
+#ov .sxsets li.ok .sv{color:var(--ink)}
+#ov .sxsets li.cur{background:var(--card);box-shadow:inset 0 0 0 2px var(--red),var(--sh)}
+#ov .sxsets li.cur .sn{background:var(--red);color:#fff}
+#ov .sxsets li.todo .sv{color:var(--mute);font-weight:600}
+#ov .sxtip{margin:10px 0 0;font-size:15px}
+#ov .sxtip.warn{border-left-color:var(--red)}
+#ov .sxrir{margin:16px 0 0}
+#ov .sxrir>span{display:block;font-size:14px;font-weight:700;color:var(--mute);margin:0 0 6px}
+#ov .sxrir .qual{margin:0}
+#ov .sxrir .qual button{min-height:44px;font-size:16px;font-weight:700}
+/* exercice suivant */
+#ov .sxup{display:flex;align-items:center;gap:10px;margin:16px 0 0;padding:10px 10px 10px 14px;border-radius:16px;background:var(--fill)}
+#ov .sxup>div:first-child{flex:1;min-width:0}
+#ov .sxup small,#ov .sxnext small{display:block;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+#ov .sxup b{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ov .sxup em{font-style:normal;font-size:14px;color:var(--mute)}
+#ov .sxupb{display:flex;gap:6px;flex:none}
+#ov .sxupb button{min-height:44px;min-width:44px;padding:0 14px;background:var(--card)}
+#ov .sxupb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+#ov .sxdet{margin:10px 0 0;border-radius:16px;background:var(--fill);padding:0 14px}
+#ov .sxdet>summary{min-height:50px;font-weight:700}
+#ov .sxdet[open]{padding-bottom:12px}
+#ov .sxdet .mach{background:var(--card)}
+/* barre de saisie (toujours visible en bas) */
+#ov .logbar.sxbar{margin:auto -6px 0;padding:12px 6px calc(14px + env(safe-area-inset-bottom));position:sticky;bottom:0;z-index:3;background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);box-shadow:0 -1px 0 var(--line)}
+#ov .sxex>.sxdet:last-of-type{margin-bottom:16px}
+#ov .sxin{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:0 0 10px;align-items:end}
+#ov .sxbar.bw .sxin{grid-template-columns:minmax(0,1fr) auto}
+#ov .sxbar.bw .sxkg,#ov .sxbar:not(.bw) .sxaddkg{display:none}
+#ov .sxst label{display:block;margin:0 0 5px 6px;font-size:13px;font-weight:700;color:var(--mute)}
+#ov .sxsr{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:2px;background:var(--card);border-radius:16px;padding:4px;box-shadow:inset 0 0 0 1px var(--line),var(--sh)}
+#ov .sxsr input{min-width:0;width:100%;margin:0;padding:0;min-height:50px;border:0;border-radius:10px;background:transparent;box-shadow:none;text-align:center;font-family:var(--ff-n);font-size:clamp(21px,6.8vw,30px);font-weight:760;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--ink);-moz-appearance:textfield}
+#ov .sxsr input::-webkit-inner-spin-button,#ov .sxsr input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+#ov .sxsr input:focus-visible{outline:2px solid var(--red);outline-offset:-2px}
+#ov button.sxpm{min-height:50px;width:44px;min-width:44px;padding:0;border-radius:12px;font-size:26px;font-weight:500;line-height:1;background:var(--fill);color:var(--ink);box-shadow:none}
+#ov button.sxpm.bump{animation:sxBump .18s ease-out}
+#ov button.sxaddkg{width:auto;padding:0 14px;font-size:16px;font-weight:700;min-height:58px;border-radius:16px}
+@keyframes sxBump{50%{transform:scale(.9)}}
+#ov .sxbar .kdone{width:100%;min-height:58px;font-size:19px}
+/* repos : anneau */
+#ov .sxk{margin:4px 0 0;text-align:center;font-size:14px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+#ov .sxring,section[data-v=sommeil] .sxring{position:relative;width:min(68vw,280px,36vh);aspect-ratio:1;margin:10px auto 0}
+#ov .sxring>svg,section[data-v=sommeil] .sxring>svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+#ov .sxring circle,section[data-v=sommeil] .sxring circle{fill:none;stroke-width:6.5}
+#ov .sxring .trk,section[data-v=sommeil] .sxring .trk{stroke:var(--fill2)}
+#ov .sxring .prg,section[data-v=sommeil] .sxring .prg{stroke:var(--red);stroke-linecap:round;transition:stroke-dashoffset .3s linear}
+#ov .sxrin,section[data-v=sommeil] .sxrin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#ov .sxt{font-family:var(--ff-n);font-size:clamp(52px,16vw,74px);font-weight:760;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
+#ov .sxrin span{font-size:14px;color:var(--mute);margin-top:6px}
+#ov .sxring.zero .sxt{color:var(--red)}
+#ov .sxadj{display:flex;justify-content:center;gap:12px;margin:16px 0 0}
+#ov .sxadj button{min-width:100px;min-height:48px;border-radius:999px;font-variant-numeric:tabular-nums}
+#ov .sxlast{display:flex;align-items:center;gap:10px;margin:18px 0 0;padding:6px 6px 6px 12px;border-radius:14px;background:color-mix(in srgb,var(--green) 13%,var(--card))}
+#ov .sxlast>svg{flex:none;width:20px;height:20px;stroke:var(--green);stroke-width:3}
+#ov .sxlast span{flex:1;min-width:0;font-size:15px}
+#ov .sxlast button{min-height:44px;background:var(--card);color:var(--ink)}
+#ov .sxnext{display:flex;align-items:center;gap:12px;margin:10px 0 0;padding:10px 14px 10px 10px;border-radius:16px;background:var(--card);box-shadow:var(--sh)}
+#ov .sxnext>span{min-width:0;flex:1}
+#ov .sxnext b{display:block;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ov .sxnext em{font-style:normal;color:var(--mute);font-size:14px;font-variant-numeric:tabular-nums}
+#ov .sxnext .animMini{width:56px;height:53px}
+#ov :is(.sxrest,.sxrun)>.sxk,#ov .sxrun>h1{margin-top:auto}
+#ov :is(.sxrest,.sxrun)>.sxnext{margin-bottom:auto}
+#ov .sxfoot{margin:auto -6px 0;padding:14px 6px calc(14px + env(safe-area-inset-bottom));position:sticky;bottom:0;z-index:3;background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#ov .sxgo{width:100%;min-height:58px;font-size:18px}
+/* séances prêtes */
+#ov .sxrun h1{text-align:center;margin-top:6px}
+#ov .sxstage{display:flex;flex-direction:column;align-items:center}
+#ov .sxrun .sxring:not(.still){width:min(66vw,270px,34vh)}
+#ov .sxring.still{width:min(62vw,250px,31vh)}
+#ov .sxring .sxrin>.anim{width:80%;max-width:none;margin:0;border-radius:50%;background:var(--fill);overflow:hidden;aspect-ratio:1}
+#ov .sxbig{text-align:center;margin:8px 0 0}
+#ov .sxbig b{display:block;font-family:var(--ff-n);font-size:clamp(44px,13vw,64px);font-weight:760;letter-spacing:-.03em;line-height:1.05;color:var(--red);font-variant-numeric:tabular-nums}
+#ov .sxbig span{color:var(--mute);font-size:15px}
+#ov .sxbig .sxt{color:var(--ink)}
+#ov .sxrun .sxnext{margin-top:18px}
+#ov .sxcount{text-align:center;margin:12px 0 0}
+#ov .sxcount button{min-height:60px;min-width:200px;font-size:20px}
+#ov .sxctl{display:grid;gap:10px;margin:auto -6px 0;padding:14px 6px calc(14px + env(safe-area-inset-bottom));position:sticky;bottom:0;z-index:3;background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#ov .sxctl.t2{grid-template-columns:1fr 1.7fr}
+#ov .sxctl.t3{grid-template-columns:1fr 1fr 1fr}
+#ov .sxctl button{width:100%;min-height:60px;font-size:18px;padding:0 8px}
+#ov .sxpb.one{margin-bottom:12px}
+/* récap de fin */
+#ov .sxend{align-items:center;text-align:center;padding-top:10px}
+#ov .sxmed{width:92px;height:92px;flex:none;border-radius:50%;display:grid;place-items:center;margin:16px auto 16px;color:#fff;background:radial-gradient(circle at 32% 26%,color-mix(in srgb,var(--red) 55%,#fff),var(--red) 70%);box-shadow:0 16px 34px -14px var(--red),inset 0 0 0 6px rgba(255,255,255,.18)}
+#ov .sxmed svg{width:44px;height:44px;stroke:#fff;stroke-width:2.4}
+html:not([data-fx=off]) #ov .sxmed{animation:sxPop .7s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes sxPop{from{transform:scale(.3);opacity:0}to{transform:none;opacity:1}}
+#ov .sxsub{color:var(--mute);margin:8px 0 0;font-size:16px;text-wrap:balance}
+#ov .sxkpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:100%;margin:20px 0 0}
+#ov .sxkpi.k3{grid-template-columns:repeat(3,minmax(0,1fr))}
+#ov .sxkpi>div{background:var(--card);border-radius:16px;padding:14px 4px 12px;box-shadow:var(--sh)}
+#ov .sxkpi b{display:block;font-family:var(--ff-n);font-size:clamp(20px,6vw,26px);font-weight:760;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+#ov .sxkpi span{display:block;font-size:13px;color:var(--mute);margin-top:2px}
+#ov .sxkpi .pr{box-shadow:inset 0 0 0 2px var(--red),var(--sh)}
+#ov .sxkpi .pr b{color:var(--red)}
+#ov .sxcmp{margin:14px 0 0;color:var(--green);font-size:15px;text-wrap:balance}
+#ov .sxcmp svg{width:18px;height:18px;stroke:currentColor;vertical-align:-3px;margin-right:6px}
+#ov .sxrecap{list-style:none;padding:0;margin:16px 0 0;width:100%;text-align:left;background:var(--card);border-radius:18px;box-shadow:var(--sh)}
+#ov .sxrecap li{display:flex;align-items:center;gap:10px;padding:12px 16px;border-top:1px solid var(--line)}
+#ov .sxrecap li:first-child{border-top:0}
+#ov .sxrecap li>span{flex:1;min-width:0}
+#ov .sxrecap b{display:block;font-size:16px}
+#ov .sxrecap em{font-style:normal;color:var(--mute);font-size:14px;font-variant-numeric:tabular-nums}
+#ov .sxpr{flex:none;font-style:normal;font-size:13px;font-weight:800;color:var(--red);background:color-mix(in srgb,var(--red) 13%,transparent);border-radius:999px;padding:5px 10px}
+#ov .sxfeel{width:100%;margin:22px 0 0}
+#ov .sxfeel h3{margin:0 0 10px}
+#ov .sxfeel .row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#ov .sxfeel button{min-height:50px;padding:0 6px;font-size:15px}
+#ov .sxtipend{margin:16px 0 0;font-size:15px}
+#ov .sxend .sxfoot{width:100%}
+@media (max-width:370px){#ov .sxkpi{grid-template-columns:repeat(2,minmax(0,1fr))}#ov .sxkpi.k3{grid-template-columns:repeat(3,minmax(0,1fr))}#ov .sxsets .sp{font-size:12px}#ov .sxh>button{padding:0 10px}#ov .sxv span{display:none}}
+@media (max-height:700px){#ov .sxanim .anim{width:min(46vw,170px,22vh)}#ov .sxring{width:min(58vw,220px,34vh)}#ov .sxmed{width:72px;height:72px;margin:6px auto 10px}#ov .sxmed svg{width:34px;height:34px}}
+@media (prefers-reduced-motion:reduce){#ov .sxmed,#ov button.sxpm.bump{animation:none!important}#ov .sxring .prg,#ov .sxpb b{transition:none}}
+/* thèmes : l'anneau et les chiffres prennent la lumière du thème */
+html[data-skin=synth] #ov .sxt{font-family:Orbitron,var(--ff-n);color:#ff2a9d;text-shadow:0 0 22px rgba(255,42,157,.7)}
+html[data-skin=synth] #ov .sxring .prg{stroke:#ff2a9d}
+html[data-skin=aurore] #ov .sxt{color:#a6fbd6;text-shadow:0 0 22px rgba(90,240,180,.5)}
+html[data-skin=aurore] #ov .sxring .prg{stroke:#5af0b4}
+html[data-skin=synth] #ov .sxsets li.cur,html[data-skin=synth] #ov .sxkpi .pr{box-shadow:inset 0 0 0 2px #ff2a9d,0 0 18px -6px rgba(255,42,157,.8)}
+
+/* --- Sport › Programme --- */
+section[data-v=sport] #progToday.sxtoday{padding:20px 18px 18px}
+section[data-v=sport] .sxtk{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px;font-weight:700;color:var(--mute)}
+section[data-v=sport] .sxwk{display:inline-flex;align-items:center;gap:5px}
+section[data-v=sport] .sxwk i{width:10px;height:10px;border-radius:50%;background:var(--fill2)}
+section[data-v=sport] .sxwk i.f{background:var(--red)}
+section[data-v=sport] .sxwk em{font-style:normal;margin-left:4px;font-variant-numeric:tabular-nums}
+section[data-v=sport] #progToday h2{font-size:clamp(24px,6.6vw,28px);line-height:1.12;margin:10px 0 4px;letter-spacing:-.015em}
+section[data-v=sport] .sxpre{list-style:none;margin:14px 0 0;padding:0}
+section[data-v=sport] .sxpre li{display:flex;align-items:center;gap:12px;min-height:44px;border-top:1px solid var(--line);font-size:16px}
+section[data-v=sport] .sxpre li i{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--fill);font-style:normal;font-size:13px;font-weight:800;color:var(--mute)}
+section[data-v=sport] .sxpre li span{flex:1;min-width:0;font-weight:600}
+section[data-v=sport] .sxpre li em{flex:none;font-style:normal;color:var(--mute);font-size:15px;font-variant-numeric:tabular-nums}
+section[data-v=sport] .sxpre li.more span{color:var(--mute);font-weight:500}
+section[data-v=sport] .sxstart{min-height:58px;font-size:18px;margin-top:14px}
+section[data-v=sport] #prog .sxprsum{background:transparent;box-shadow:none;padding:4px 4px 0}
+section[data-v=sport] #prog .sxprsum h3{font-size:19px}
+section[data-v=sport] #prog .sxnextday{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--red) 45%,transparent),var(--sh)}
+section[data-v=sport] .sxtag{display:inline-block;vertical-align:middle;font-size:12px;font-weight:800;letter-spacing:.02em;color:var(--red);background:color-mix(in srgb,var(--red) 12%,transparent);border-radius:999px;padding:3px 9px;margin-left:4px}
+section[data-v=sport] .sxenvie textarea{margin-top:4px}
+/* séances prêtes et bibliothèque */
+section[data-v=sport] #pretsBox .pret{align-items:center;min-height:76px}
+section[data-v=sport] #pretsBox .pret b{display:block;font-size:16.5px;line-height:1.2;text-wrap:balance}
+section[data-v=sport] #pretsBox .pret small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:14px;line-height:1.35;margin-top:2px}
+section[data-v=sport] #pretsBox .pret .chip{white-space:nowrap;font-variant-numeric:tabular-nums;font-size:14px;min-height:32px;padding:0 10px}
+section[data-v=sport] #pretsBox .pret{gap:10px;padding-inline:10px 12px}
+section[data-v=sport] #exoF{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-18px;padding:2px 18px 6px;scroll-padding-inline:18px}
+section[data-v=sport] #exoF::-webkit-scrollbar{display:none}
+section[data-v=sport] #exoF .chip{flex:none}
+/* historique */
+section[data-v=sport] .sxhs{margin:6px 0 0}
+section[data-v=sport] .sxeb{margin:16px 0 0;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+section[data-v=sport] #pasBox .slbars:not(:has(i:not(.no)))::after{content:"Tes pas s'afficheront ici dès ta première note"}
+section[data-v=sport] .sxwb{position:relative;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;align-items:end;height:132px;margin:26px 0 6px}
+section[data-v=sport] .sxwb>div:not(.sxwbg){display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%}
+section[data-v=sport] .sxwb em{font-style:normal;font-size:13px;font-weight:700;line-height:16px;min-height:16px;color:var(--mute);font-variant-numeric:tabular-nums}
+section[data-v=sport] .sxwb i{display:block;width:100%;max-width:26px;border-radius:7px 7px 4px 4px;background:color-mix(in srgb,var(--red) 38%,var(--fill2))}
+section[data-v=sport] .sxwb i.ok{background:var(--red)}
+section[data-v=sport] .sxwb span{font-size:11.5px;line-height:18px;height:18px;color:var(--mute);white-space:nowrap;font-variant-numeric:tabular-nums}
+section[data-v=sport] .sxwb .now span{color:var(--ink);font-weight:700}
+section[data-v=sport] .sxwbg{position:absolute;left:0;right:0;height:0;border-top:1.5px dashed color-mix(in srgb,var(--ink) 28%,transparent);pointer-events:none}
+section[data-v=sport] .sxwbg span{position:absolute;right:0;top:-17px;line-height:14px;font-size:11.5px;color:var(--mute);background:var(--card);padding:0 4px}
+section[data-v=sport] .sxhls{margin-top:8px}
+section[data-v=sport] .sxhl{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+section[data-v=sport] .sxd{flex:none;width:46px;height:50px;border-radius:12px;background:var(--fill);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+section[data-v=sport] .sxd b{font-family:var(--ff-n);font-size:19px;font-weight:760;font-variant-numeric:tabular-nums}
+section[data-v=sport] .sxd small{font-size:12px;color:var(--mute);margin-top:3px}
+section[data-v=sport] .sxhl .n{flex:1;min-width:0}
+section[data-v=sport] .sxhl .n b{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+section[data-v=sport] .sxhl .n em{font-style:normal;font-size:14px;color:var(--mute)}
+section[data-v=sport] .sxhl .v{flex:none;font-weight:700;font-variant-numeric:tabular-nums}
+section[data-v=sport] .sxmore>summary{min-height:48px;font-weight:700;color:var(--ink)}
+section[data-v=sport] #prC:not(.all) #prs tr:nth-child(n+6){display:none}
+section[data-v=sport] #sxPrAll{margin-top:10px;min-height:44px}
+/* --- Suivi --- */
+section[data-v=suivi] .sxwp{margin:2px 0 6px;flex-wrap:nowrap}
+section[data-v=suivi] .sxwp .chip{min-height:44px}
+section[data-v=suivi] .sxwp .chip.on{background:var(--ink);color:var(--card)}
+section[data-v=suivi] #trendSvg{overflow:visible}
+section[data-v=suivi] #trendSvg .sxgl{stroke:var(--line);stroke-width:1}
+section[data-v=suivi] #trendSvg .sxax{font-size:11.5px;fill:var(--mute);font-variant-numeric:tabular-nums}
+section[data-v=suivi] #trendSvg .sxpt{fill:var(--mute);opacity:.38}
+section[data-v=suivi] #trendSvg .sxln{fill:none;stroke:var(--red);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+section[data-v=suivi] #trendSvg .sxhalo{fill:var(--red);opacity:.18}
+section[data-v=suivi] #trendSvg .sxlast{fill:var(--red);stroke:var(--card);stroke-width:2.5}
+section[data-v=suivi] #trendSvg .sxmm{font-size:11.5px;font-weight:700;fill:var(--ink);opacity:.75;font-variant-numeric:tabular-nums}
+section[data-v=suivi] #trendSvg .sxcap{stroke:var(--green);stroke-width:1.5;stroke-dasharray:5 5}
+section[data-v=suivi] #trendSvg .sxcapt{font-size:12px;font-weight:700;fill:var(--green)}
+section[data-v=suivi] .sxwk3 .good b{color:var(--green)}
+section[data-v=suivi] .sxproj{margin:12px 0 0;font-size:15px;color:var(--mute)}
+section[data-v=suivi] .sxproj b{color:var(--ink)}
+section[data-v=suivi] .card:has(>#trendTxt)>.row{gap:8px}
+section[data-v=suivi] .card:has(>#trendTxt)>.row>input{flex:1 1 100%!important;font-size:18px}
+section[data-v=suivi] .card:has(>#trendTxt) [data-act=logW2]{flex:1 1 100%;min-height:52px}
+section[data-v=suivi] .sxcnt{font-size:14px;font-weight:700;color:var(--mute);margin-left:6px;font-variant-numeric:tabular-nums}
+section[data-v=suivi] #badges:not(.all) .sxhid{display:none}
+section[data-v=suivi] #sxBdgT{margin-top:12px;min-height:44px}
+section[data-v=suivi] .sxpsum{display:flex;align-items:center;gap:14px;padding:12px 14px;margin:2px 0 8px;border-radius:14px;background:var(--fill)}
+section[data-v=suivi] .sxpsum>div:first-child{flex:none;display:flex;flex-direction:column;line-height:1.25}
+section[data-v=suivi] .sxpsum b{font-family:var(--ff-n);font-size:20px;font-variant-numeric:tabular-nums}
+section[data-v=suivi] .sxpsum span{font-size:13px;color:var(--mute)}
+section[data-v=suivi] .sxpbar{flex:1;height:8px;border-radius:4px;background:var(--fill2);overflow:hidden}
+section[data-v=suivi] .sxpbar i{display:block;height:100%;background:var(--green);border-radius:4px;transform-origin:0 50%;transition:transform .4s}
+section[data-v=suivi] .sxph{font-size:12.5px;font-weight:800;letter-spacing:.07em;color:var(--mute);margin:12px 0 2px;font-variant-numeric:tabular-nums}
+section[data-v=suivi] .pill.sxdue{border-radius:14px;background:color-mix(in srgb,var(--yel) 16%,transparent);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--yel) 70%,transparent);padding-inline:8px}
+section[data-v=suivi] .sxnow{color:var(--ink)}
+section[data-v=suivi] .sxcalst{margin:0 0 14px!important}
+/* --- Sommeil --- */
+section[data-v=sommeil] .sxslh{padding-top:20px}
+section[data-v=sommeil] .sxslr{display:flex;align-items:center;gap:18px}
+section[data-v=sommeil] .sxring.sm{width:124px;margin:0;flex:none}
+section[data-v=sommeil] .sxring .prg{stroke:var(--blue);transition:none}
+section[data-v=sommeil] .sxring circle{stroke-width:10}
+section[data-v=sommeil] .sxrin b{font-family:var(--ff-n);font-size:26px;font-weight:760;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+section[data-v=sommeil] .sxrin span{font-size:12px;color:var(--mute);margin-top:4px}
+section[data-v=sommeil] .sxslx{display:flex;flex-direction:column;gap:3px;min-width:0;font-size:15px}
+section[data-v=sommeil] .sxslx small{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+section[data-v=sommeil] .sxslx>b{font-size:22px;line-height:1.15}
+section[data-v=sommeil] .sxslx>b.q4,section[data-v=sommeil] .sxslx>b.q5{color:var(--green)}
+section[data-v=sommeil] .sxslx>b.q1,section[data-v=sommeil] .sxslx>b.q2{color:var(--red)}
+section[data-v=sommeil] .sxslx span{color:var(--mute)}
+section[data-v=sommeil] .sxslx span.ok{color:var(--green);font-weight:700}
+section[data-v=sommeil] .sxslx span.lo{color:var(--ink);font-weight:700}
+section[data-v=sommeil] .sxslw{margin:20px 0 0;font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+section[data-v=sommeil] .slbars{height:140px}
+section[data-v=sommeil] .slbars i{background:color-mix(in srgb,var(--blue) 82%,var(--card))}
+section[data-v=sommeil] .slbars i.lo{background:var(--yel)}
+section[data-v=sommeil] .slbars i.no{background:var(--fill2)}
+section[data-v=sommeil] .slbars b{font-weight:700;color:var(--ink)}
+section[data-v=sommeil] #slAvg{margin-bottom:0}
+@media (max-width:360px){section[data-v=sommeil] .sxring.sm{width:104px}section[data-v=sommeil] .sxslr{gap:12px}}
+/* === /ag_sport === */
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -4054,6 +4321,252 @@ function aghMoi(){const f=$('foldApp');if(f&&!f.dataset.agh){f.dataset.agh='1';c
   if(ac&&!ac.classList.contains('iosl')){ac.classList.add('iosl');if(!ac.id)ac.id='appCard';const h=ac.querySelector(':scope>h2');if(h)h.textContent='L\'app et mes données'}}
 Promise.resolve().then(()=>{[aghJournal,aghMoi].forEach(f=>{try{f()}catch(e){}})});
 /* === /ag_home === */
+/* === ag_sport === Sport, séance guidée, minuteur, récap, historique, courbe de poids, pilulier, calendrier, sommeil.
+   Principe : on ENVELOPPE les fonctions d'affichage existantes (renderS, rStep, endS, rEnd, renderHist, renderTrend,
+   renderSleep, renderPills, renderSuivi, renderCal, renderProg, renderProgToday). Aucune clé de stockage, aucun format
+   de données, aucune logique de sauvegarde modifiés ; tous les data-act existants restent présents. */
+const SX={wp:-1};
+SX.ic=(id,c)=>`<svg class="i${c?' '+c:''}" aria-hidden="true"><use href="#${id}"/></svg>`;
+SX.chl='<svg class="i" aria-hidden="true" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
+SX.spk='<svg class="i sxspk" aria-hidden="true" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="off" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>';
+SX.C=2*Math.PI*54;
+SX.mmss=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+SX.dur=s=>{s=Math.round(+s||0);return s>=60?Math.floor(s/60)+' min'+(s%60?' '+String(s%60).padStart(2,'0'):''):s+' s'};
+SX.unit=x=>{const r=String(x&&x.reps||'');return /\bmin\b/i.test(r)?'min':/\d\s*(s|sec|secondes?)\b/i.test(r)?'s':'rep'};
+SX.repsTxt=x=>{const r=String(x.reps??'').trim();return /^\d+\s*(?:[-–à]\s*\d+)?$/.test(r)?r+' répétitions':r};
+SX.bw=x=>/poids du corps|aucun|tapis|chaise|sans mat/i.test(String(x.machine||''))||/^(pompe|gainage|crunch|jambes|climber|superman|burpee|jj|course|marche|etirement|chaise|pont|corde|velo)$/.test(String(x.anim||''));
+SX.setTxt=(z,x)=>{const kg=num(z.kg),u=SX.unit(x),r=z.reps!=null&&z.reps!==''?z.reps:(z.s?Math.round(num(z.s)):'');return (kg?fr(kg)+' kg × ':'')+r+(u==='s'?' s':u==='min'?' min':kg?'':' répétitions')};
+SX.ring=(id,inner)=>`<div class="sxring" id="${id}"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="54"/><circle class="prg" cx="60" cy="60" r="54" style="stroke-dasharray:${SX.C.toFixed(2)};stroke-dashoffset:0"/></svg><div class="sxrin">${inner}</div></div>`;
+SX.setRing=(id,left,tot)=>{const el=$(id);if(!el)return;const t=el.parentNode&&el.closest('.sxw')?el.closest('.sxw').querySelector('.sxt'):null;if(t){const v=SX.mmss(left);if(t.textContent!==v)t.textContent=v}
+  const p=el.querySelector('.prg');if(p)p.style.strokeDashoffset=(SX.C*(1-Math.max(0,Math.min(1,tot?left/tot:0)))).toFixed(2);el.classList.toggle('zero',left<=0)};
+SX.head=(name,sub,act)=>`<div class="ovh sxh"><button class="ghost sm sxv" data-act="voice" aria-pressed="${VOICE?'true':'false'}" aria-label="Voix du coach">${SX.spk}<span>Voix</span></button><div class="sxht"><b>${esc(name)}</b><span id="sxEl">${sub}</span></div><button class="ghost sm sxq" data-act="${act}">Terminer</button></div>`;
+SX.el=()=>S?Math.max(0,Math.floor((Date.now()-S.t)/6e4)):0;
+SX.sub=()=>`Exercice ${S.i+1} sur ${S.ex.length} · ${SX.el()} min`;
+SX.prog=()=>`<div class="sxpb" aria-hidden="true">${S.ex.map((e,i)=>{const n=Math.max(1,+e.series||3),f=Math.min(1,e.sets.length/n);return `<i class="${i===S.i?'cur':''}"><b style="transform:scaleX(${f.toFixed(3)})"></b></i>`}).join('')}</div>`;
+
+/* ---------- Séance guidée : écran exercice + repos ---------- */
+renderS=function(){
+  if(!S)return;const x=S.ex[S.i];clearInterval(tick);
+  const n=Math.max(1,+x.series||3),head=SX.head(S.nom,SX.sub(),'endS')+SX.prog();
+  if(S.rest){SX.rest(x,n,head);return}
+  const lastN=SL[today()],sleepLow=lastN&&dur(lastN.c,lastN.l)<360,cc=CHK[today()],sore=cc&&cc.c>=4,dl=deloadNeeded();
+  const g=suggest(x),p=clean(x.muscles),s=clean(x.muscles_secondaires),u=SX.unit(x),fx=S._fix;delete S._fix;if(fx&&fx.rir!=null)S.rir=+fx.rir;
+  const ls=x.sets[x.sets.length-1],kg0=fx?fx.kg:ls?ls.kg:g.kg,r0=fx?fx.reps:ls?ls.reps:g.reps,prev=lastSets(x.nom)||[],cur=x.sets.length,rows=Math.max(n,cur+1);
+  const bw=!num(kg0)&&SX.bw(x),cardio=/\b(course|marche|v[ée]lo|rameur|elliptique|tapis|cardio)\b/i.test(x.nom+' '+(x.machine||''));
+  const tips=[];if(!cur&&g.note)tips.push(['',g.note]);
+  if((sleepLow||sore||dl)&&S.i===0&&!cur)tips.push(['warn',(sleepLow?'Nuit courte : fais une série de moins par exercice aujourd\'hui. ':'')+(sore?'Grosses courbatures : allège de 25 %. ':'')+(dl&&!sleepLow&&!sore?'Ton corps a besoin d\'une semaine plus légère : moitié moins de séries, 4 répétitions en réserve.':'')]);
+  if(cardio&&!cur)tips.push(['',`Zone 2 : ${hrZones().z2.join('–')} pulsations/min, tu peux parler en phrases. Fractionné : ${hrZones().hiit.join('–')}.`]);
+  const row=i=>{const pv=prev[i]?SX.setTxt(prev[i],x):'';
+    if(i<cur)return `<li class="ok"><span class="sn">${SX.ic('i-tick')}</span><span class="sv">${esc(SX.setTxt(x.sets[i],x))}</span><span class="sp">${pv?'avant : '+esc(pv):''}</span></li>`;
+    if(i===cur)return `<li class="cur" aria-current="step"><span class="sn">${i+1}</span><span class="sv">Série ${i+1} : à toi !</span><span class="sp">${pv?'la dernière fois<br><b>'+esc(pv)+'</b>':'objectif<br><b>'+esc(SX.repsTxt(x))+'</b>'}</span></li>`;
+    return `<li class="todo"><span class="sn">${i+1}</span><span class="sv">${esc(SX.repsTxt(x))}</span><span class="sp">${pv?'avant : '+esc(pv):''}</span></li>`};
+  const nx=S.ex[S.i+1],last=S.i===S.ex.length-1&&cur>=n-1;
+  ov.innerHTML=`<div class="sxw sxex">${head}
+  <h1>${esc(x.nom)}</h1>
+  <div class="sxmeta"><span class="dose">${esc(x.series)} × ${esc(x.reps)}</span><span>repos ${esc(SX.dur(+x.repos_s||90))}</span>${x.machine?`<span class="sxmach">${esc(x.machine)}</span>`:''}</div>
+  <div class="sxanim">${ANIM.html(ANIM.pick(x.nom,x.machine,x.anim),'anim ovanim')}</div>
+  <ol class="sxsets">${Array.from({length:rows},(_,i)=>row(i)).join('')}</ol>
+  ${tips.map(([c,t])=>`<div class="tip sxtip${c?' '+c:''}">${esc(t)}</div>`).join('')}
+  <div class="sxrir"><span id="sxRirL">Tu aurais pu en faire combien de plus ?</span><div class="qual" id="rirRow" role="group" aria-labelledby="sxRirL">${['0','1','2','3','4+'].map((v,i)=>`<button data-act="rir" data-v="${i}" class="${(S.rir??2)===i?'on':''}">${v}</button>`).join('')}</div></div>
+  <div class="sxup"><div><small>${nx?'Exercice suivant':'Dernier exercice'}</small><b>${nx?esc(nx.nom):'Ensuite, c\'est fini !'}</b>${nx?`<em>${esc(nx.series)} × ${esc(nx.reps)}</em>`:''}</div><div class="sxupb">${S.i?`<button class="ghost sm" data-act="prevEx" aria-label="Exercice précédent">${SX.chl}</button>`:''}<button class="ghost sm" data-act="nextEx" aria-label="${nx?'Passer à l\'exercice suivant':'Finir la séance'}">${nx?'Passer':'Finir'}</button></div></div>
+  <details class="sxdet"><summary>Comment bien le faire</summary>${machBox(x)}${x.machine?'':`<div class="row" style="margin:8px 0">${yt(x.nom+' exécution technique','Vidéo de l\'exercice')}</div>`}${bodyMap(p,s,x.nom)}${x.execution?`<p>${esc(x.execution)}</p>`:''}${x.conseil?`<p class="mute">${esc(x.conseil)}</p>`:''}</details>
+  ${bw?'':'<details id="wu" class="sxdet"><summary>Échauffement et disques</summary><div id="wuIn"></div></details>'}
+  <div class="logbar sxbar${bw?' bw':''}"><div class="sxin">
+   <div class="sxst sxkg"><label for="sKg">Charge (kg)</label><div class="sxsr"><button type="button" class="ghost sxpm" data-sxs="sKg" data-v="-1" aria-label="Moins de charge">−</button><input id="sKg" type="number" inputmode="decimal" step="0.5" min="0" value="${esc(kg0)}" placeholder="0"><button type="button" class="ghost sxpm" data-sxs="sKg" data-v="1" aria-label="Plus de charge">+</button></div></div>
+   <div class="sxst"><label for="sR">${u==='s'?'Secondes':u==='min'?'Minutes':'Répétitions'}</label><div class="sxsr"><button type="button" class="ghost sxpm" data-sxs="sR" data-v="-1" aria-label="Une de moins">−</button><input id="sR" type="number" inputmode="numeric" min="0" value="${esc(r0)}" placeholder="0"><button type="button" class="ghost sxpm" data-sxs="sR" data-v="1" aria-label="Une de plus">+</button></div></div>
+   ${bw?'<button type="button" class="ghost sxpm sxaddkg" data-act="sxKg" aria-label="Ajouter une charge">+ kg</button>':''}</div>
+  <button class="kdone" data-act="doneSet"><span class="kck" aria-hidden="true">${SX.ic('i-tick')}</span><span>${last?'Dernière série faite':'Série '+(cur+1)+' faite'}</span></button></div></div>`;
+  ov.scrollTop=0;
+  const wu=()=>{const kg=num($('sKg')?.value),w=$('wuIn');if(!w)return;w.innerHTML=kg>=5?`<p class="mute" style="margin-top:0">5 min de cardio léger avant, puis :</p><table class="tbl">${warmup(kg).map(([f,r])=>`<tr><td>${f?'Échauffement '+Math.round(f*100)+' %':'Barre à vide'}</td><td>${f?fr(Math.max(0,Math.round(kg*f/2.5)*2.5))+' kg':'20 kg'} × ${r}</td></tr>`).join('')}</table><p class="mute">60 s de repos entre ces séries, puis 2 min avant ta première vraie série.</p><p class="mute">Disques par côté (barre de 20 kg) : ${esc(plates(kg))}</p>`:'<p class="mute">Indique une charge pour calculer l\'échauffement.</p>'};
+  wu();$('sKg').addEventListener('input',wu);
+  tick=setInterval(()=>{const e=$('sxEl');if(e&&S)e.textContent=SX.sub()},15000);
+};
+SX.rest=(x,n,head)=>{
+  let li=S.i;if(!S.ex[li].sets.length&&li>0)li--;const le=S.ex[li],ls=le&&le.sets[le.sets.length-1];
+  const nk=x.sets[x.sets.length-1],g=nk?null:suggest(x),nkg=nk?nk.kg:g.kg,nr=nk?nk.reps:g.reps;
+  if(S._rk!==S.rest){S._rk=S.rest;S._rt=Math.max(1,Math.round((S.rest-Date.now())/1000))}
+  ov.innerHTML=`<div class="sxw sxrest">${head}
+  <p class="sxk">Repos</p>
+  ${SX.ring('sxRing','<b class="sxt" role="timer">0:00</b><span>pour souffler</span>')}
+  <div class="sxadj"><button class="ghost" data-act="rest" data-v="-15" aria-label="Enlever 15 secondes">−15 s</button><button class="ghost" data-act="rest" data-v="15" aria-label="Ajouter 15 secondes">+15 s</button></div>
+  ${ls?`<div class="sxlast">${SX.ic('i-tick')}<span>Série ${le.sets.length} notée : <b>${esc(SX.setTxt(ls,le))}</b></span><button class="ghost sm" data-act="sxFix">Corriger</button></div>`:''}
+  <div class="sxnext">${ANIM.html(ANIM.pick(x.nom,x.machine,x.anim),'animMini')}<span><small>Ensuite</small><b>${esc(x.nom)}</b><em>Série ${x.sets.length+1} sur ${n}${nr!==''&&nr!=null||num(nkg)?' · '+esc(SX.setTxt({kg:nkg,reps:nr??''},x)):''}</em></span></div>
+  <div class="sxfoot"><button class="wide sxgo" data-act="skipRest">Passer le repos</button></div></div>`;
+  ov.scrollTop=0;
+  const t=()=>{if(!S)return;const r=Math.max(0,Math.ceil((S.rest-Date.now())/1000));if(r>S._rt)S._rt=r;SX.setRing('sxRing',r,S._rt);
+    if(r===10&&!S.said){S.said=1;say('Encore dix secondes')}if(r<=0){beep(3);S.rest=0;S.said=0;renderS();say('C\'est reparti : '+S.ex[S.i].nom+', série '+(S.ex[S.i].sets.length+1))}};t();tick=setInterval(t,250);
+};
+/* fin de séance : la sauvegarde reste celle d'origine (endS), on ne fait que redessiner l'écran de récap */
+SX._endS=endS;
+endS=function(){
+  if(!S)return SX._endS();
+  let snap=null;try{snap={nom:S.nom,t:S.t,ex:S.ex.map(e=>({nom:e.nom,reps:e.reps,anim:e.anim,machine:e.machine,sets:e.sets.slice()}))};snap.pb={};snap.ex.forEach(e=>snap.pb[e.nom]=bestE1(e.nom));snap.prev=[...LOG].reverse().find(l=>l.nom===snap.nom)||null}catch(e){snap=null}
+  SX._endS();
+  try{if(snap)SX.end(snap)}catch(e){console.error(e)}
+};
+SX.sum=e=>{const kg=Math.max(0,...e.sets.map(z=>num(z.kg))),u=SX.unit(e),r=e.sets.map(z=>z.reps||(z.s?Math.round(num(z.s)):'')).filter(v=>v!=='');
+  return `${e.sets.length} série${e.sets.length>1?'s':''}${r.length?' · '+r.join(', ')+(u==='s'?' s':u==='min'?' min':''):''}${kg?' · '+fr(kg)+' kg':''}`};
+SX.end=snap=>{
+  const done=snap.ex.filter(e=>e.sets.length);if(!done.length)return;
+  const min=Math.round((Date.now()-snap.t)/6e4),sets=done.reduce((a,e)=>a+e.sets.length,0),vol=done.reduce((a,e)=>a+e.sets.reduce((b,z)=>b+num(z.kg)*num(z.reps),0),0);
+  const recs=done.filter(e=>{const b=Math.max(0,...e.sets.map(z=>num(z.kg)*(1+num(z.reps)/30)));return num(snap.pb[e.nom])>0&&b>snap.pb[e.nom]+0.01});
+  const pv=snap.prev?arr(snap.prev.ex).reduce((a,e)=>a+arr(e.sets).reduce((b,z)=>b+num(z.kg)*num(z.reps),0),0):0,dv=pv&&vol?Math.round((vol-pv)/pv*100):0;
+  ov.innerHTML=`<div class="sxw sxend">
+  <div class="sxmed" aria-hidden="true">${SX.ic(recs.length?'i-trophy':'i-tick')}</div>
+  <h1>Séance terminée !</h1><p class="sxsub">${P.nom?'Bravo '+esc(P.nom)+' : ':'Bravo : '}« ${esc(snap.nom)} » est dans la boîte.</p>
+  <div class="sxkpi"><div><b>${min<1?'&lt;1':min}</b><span>minute${min>1?'s':''}</span></div><div><b>${sets}</b><span>série${sets>1?'s':''}</span></div><div><b>${vol?Math.round(vol).toLocaleString('fr-FR'):'–'}</b><span>kg soulevés</span></div>${recs.length?`<div class="pr"><b>${recs.length}</b><span>record${recs.length>1?'s':''}</span></div>`:`<div><b>${done.length}</b><span>exercice${done.length>1?'s':''}</span></div>`}</div>
+  ${dv>0?`<p class="sxcmp">${SX.ic('i-trend')}<b>+${dv} %</b> de poids soulevé par rapport à la dernière fois</p>`:''}${recs.length?`<p class="sxcmp">${SX.ic('i-star')}${recs.length>1?recs.length+' nouveaux records':'Nouveau record'} : ${recs.map(e=>esc(e.nom)).join(', ')}</p>`:''}
+  <ul class="sxrecap">${done.map(e=>`<li><span><b>${esc(e.nom)}</b><em>${esc(SX.sum(e))}</em></span>${recs.includes(e)?'<i class="sxpr">Record</i>':''}</li>`).join('')}</ul>
+  <div class="sxfeel"><h3>C'était comment ?</h3><div class="row">${['Trop facile','Parfait','Trop dur'].map(f=>`<button class="ghost" data-act="feel" data-v="${f}">${f}</button>`).join('')}</div></div>
+  <p class="mute sxtipend">Bois un grand verre d'eau et mange des protéines dans les 2 heures.</p>
+  <div class="sxfoot"><button class="wide sxgo" data-act="closeS">Fermer</button></div></div>`;ov.scrollTop=0};
+
+/* ---------- Séances prêtes : minuteur guidé ---------- */
+rStep=function(){clearInterval(rtick);if(!R)return;const s=R.seq[R.i];if(!s){rEnd(true);return}
+  const nx=R.seq.slice(R.i+1).find(z=>!z.repos);R.end=s.s?Date.now()+s.s*1000:0;R.pause=0;R.said=0;
+  const all=R.seq.filter(z=>!z.repos).length,k=R.seq.slice(0,R.i+1).filter(z=>!z.repos).length,
+    sub=`${R.x.tours>1?'Tour '+s.tour+' sur '+R.x.tours+' · ':''}${s.repos?'Pause':'Exercice '+k+' sur '+all}`;
+  const stage=s.repos?SX.ring('sxRing','<b class="sxt" role="timer">0:00</b><span>de repos</span>')
+    :s.s?SX.ring('sxRing',ANIM.html(s.k,'anim ovanim'))+`<div class="sxbig"><b class="sxt" role="timer">0:00</b></div>`
+    :`<div class="sxring still"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="54"/></svg><div class="sxrin">${ANIM.html(s.k,'anim ovanim')}</div></div><div class="sxbig"><b>${esc(s.r)}</b><span>répétitions, à ton rythme</span></div>`;
+  ov.innerHTML=`<div class="sxw sxrun${s.repos?' isrest':''}">${SX.head(R.x.t,sub,'rStop')}
+  <div class="sxpb one" aria-hidden="true"><i><b style="transform:scaleX(${(R.i/R.seq.length).toFixed(3)})"></b></i></div>
+  ${s.repos?'<p class="sxk">Repos</p>':`<h1>${esc(s.n)}</h1>`}
+  <div class="sxstage">${stage}</div>
+  ${s.count?`<div class="sxcount"><div class="big" id="rcnt">${R.cnt}</div><p class="mute">tours d'équipe</p><button data-act="rCount">+1 tour</button></div>`:''}
+  <div class="sxnext">${nx?ANIM.html(nx.k,'animMini'):''}<span><small>Ensuite</small><b>${nx?esc(nx.n):'Fin de la séance'}</b>${nx?(nx.r?`<em>${esc(nx.r)}${/^\d/.test(String(nx.r))&&!/[a-z]/i.test(String(nx.r))?' répétitions':''}</em>`:nx.s?`<em>${esc(SX.dur(nx.s))}</em>`:''):''}</span></div>
+  <div class="sxctl ${s.s?'t3':'t2'}"><button class="ghost" data-act="rPrev" ${R.i?'':'disabled'}>Précédent</button>${s.s?'<button class="ghost" data-act="rPause">Pause</button>':''}<button class="${s.s?'ghost':'sxgo'}" data-act="rNext">${s.s?'Passer':'C\'est fait'}</button></div></div>`;
+  ov.scrollTop=0;
+  say(s.repos?'Repos':s.n+(s.r?', '+s.r:''));
+  if(s.s){const f=()=>{if(!R)return;if(R.pause)return;const r=Math.max(0,Math.ceil((R.end-Date.now())/1000));SX.setRing('sxRing',r,s.s);if(r===3&&!R.said){R.said=1;beep(1)}if(r<=0){beep(s.repos?2:3);R.i++;rStep()}};f();rtick=setInterval(f,250)}};
+SX._rEnd=rEnd;
+rEnd=function(done){const snap=R?{x:R.x,t0:R.t0,cnt:R.cnt,i:R.i,seq:R.seq}:null;SX._rEnd(done);
+  try{const h=ov.querySelector('h1');if(snap&&h&&/Bravo/.test(h.textContent))SX.runEnd(snap)}catch(e){console.error(e)}};
+SX.runEnd=sn=>{const min=Math.max(1,Math.round((Date.now()-sn.t0)/6e4)),ex=new Set(sn.x.steps.map(z=>z.n)).size,rt=sn.x.g==='routine';
+  ov.innerHTML=`<div class="sxw sxend"><div class="sxmed" aria-hidden="true">${SX.ic('i-tick')}</div><h1>Bravo !</h1><p class="sxsub">« ${esc(sn.x.t)} » terminé${sn.cnt?' · '+sn.cnt+' tours d\'équipe':''}.</p>
+  <div class="sxkpi k3"><div><b>${min}</b><span>minutes</span></div><div><b>${ex}</b><span>exercice${ex>1?'s':''}</span></div><div><b>${sn.cnt||sn.x.tours||1}</b><span>${sn.cnt?'tours d\'équipe':'tour'+((sn.x.tours||1)>1?'s':'')}</span></div></div>
+  <p class="mute sxtipend">${rt?'Ton corps te dit merci.':'Pense à boire un grand verre d\'eau.'}${rt?'':' La séance est notée dans ton historique.'}</p>
+  <div class="sxfoot"><button class="wide sxgo" data-act="rClose">Fermer</button></div></div>`;ov.scrollTop=0};
+
+/* ---------- Sport › Programme : la séance du jour en vedette, le reste en second plan ---------- */
+renderProgToday=function(){const el=$('progToday');if(!el)return;let n=null;try{n=simpleNext()}catch(e){}if(!n){el.innerHTML='';el.hidden=true;return}el.hidden=false;el.classList.add('sxtoday');
+  const wk=LOG.filter(l=>l.d>=weekKey()).length,goal=Math.max(1,Math.min(7,num(P.jours)||3)),exs=arr(n.j.exercices);
+  el.innerHTML=`<div class="sxtk"><span>${n.done?'Séance faite aujourd\'hui, bravo':'Ta séance du jour'}</span><span class="sxwk" role="img" aria-label="${wk} séance${wk>1?'s':''} sur ${goal} cette semaine">${Array.from({length:goal},(_,i)=>`<i class="${i<wk?'f':''}"></i>`).join('')}<em>${wk}/${goal}</em></span></div>
+  <h2>${esc(n.j.nom)}</h2><div class="mute">${esc(n.j.focus||'')}${n.j.focus?' · ':''}${exs.length} exercice${exs.length>1?'s':''}${n.j.duree_min?' · '+esc(n.j.duree_min)+' min':''}</div>
+  <ol class="sxpre">${exs.slice(0,5).map((x,i)=>`<li><i>${i+1}</i><span>${esc(x.nom)}</span><em>${esc(x.series)} × ${esc(x.reps)}</em></li>`).join('')}${exs.length>5?`<li class="more"><i>+</i><span>${exs.length-5} autre${exs.length-5>1?'s':''}</span></li>`:''}</ol>
+  <button class="wide sxstart" data-act="start" data-j="${n.ji}">${n.done?'En refaire une':'Démarrer la séance'}</button>`};
+SX._renderProg=renderProg;
+renderProg=function(){SX._renderProg();try{SX.progPolish()}catch(e){console.error(e)}};
+SX.progPolish=()=>{const g=$('genProg');if(g)g.classList.toggle('ghost',!!PR);SX.envieFold();const pr=$('prog');if(!pr||!PR)return;let n=null;try{n=simpleNext()}catch(e){}
+  const cs=[...pr.querySelectorAll(':scope>.card')];if(cs[0])cs[0].classList.add('sxprsum');
+  pr.querySelectorAll('[data-act=start]').forEach(b=>{b.classList.add('ghost');const c=b.closest('.card');if(!c)return;const on=n&&+b.dataset.j===n.ji;c.classList.toggle('sxnextday',!!on);const h=c.querySelector('h3');if(h&&on&&!h.querySelector('.sxtag'))h.insertAdjacentHTML('beforeend',' <span class="sxtag">la prochaine</span>')})};
+SX.envieFold=()=>{const t=$('envie'),c=t&&t.closest('.card');if(!c||c.tagName==='DETAILS')return;const d=document.createElement('details');d.className='card fold sxenvie';d.id='sxEnvie';
+  d.innerHTML='<summary><span><h2>Envie d\'autre chose ?</h2><span class="mute fsum">Dis-le avec tes mots : le coach adapte ta séance ou ta semaine.</span></span></summary>';
+  [...c.childNodes].forEach(x=>{if(x.nodeType===1&&(x.tagName==='H2'||(x.tagName==='P'&&x.classList.contains('sub'))))return;d.appendChild(x)});c.replaceWith(d);if(!PR)d.open=true};
+
+/* ---------- Sport › Historique : les séances d'abord, avec une vue sur 8 semaines ---------- */
+SX._renderHist=renderHist;
+renderHist=function(){SX._renderHist();try{SX.hist()}catch(e){console.error(e)}};
+SX.vol=l=>arr(l.ex).reduce((s,e)=>s+arr(e.sets).reduce((a,x)=>a+num(x.kg)*num(x.reps),0),0);
+SX.hist=()=>{const pane=document.querySelector('section[data-v=sport] .pane[data-pane=progres]');if(!pane)return;
+  if(!pane.dataset.sx){pane.dataset.sx='1';const hc=$('histC'),pc=$('prC'),dc=$('dlCard');if(pc)pane.prepend(pc);if(hc)pane.prepend(hc);if(dc)pane.prepend(dc);
+    const tb=$('testsBox'),tc=tb&&tb.closest('.card');if(tc&&tc.tagName!=='DETAILS'){const d=document.createElement('details');d.className='card fold sxtests';d.innerHTML='<summary><span><h2>Mes tests de forme</h2><span class="mute fsum">5 tests simples, à refaire toutes les 6 à 8 semaines</span></span></summary>';[...tc.childNodes].forEach(x=>{if(x.nodeType===1&&x.tagName==='H2')return;d.appendChild(x)});tc.replaceWith(d);pane.appendChild(d)}}
+  const hc=$('histC'),h=$('hist');if(hc){const t=hc.querySelector('h2');if(t)t.textContent='Mes séances'}
+  if(!h||!LOG.length)return;
+  const mk=today().slice(0,7),mo=LOG.filter(l=>l.d.startsWith(mk)),mmin=mo.reduce((a,l)=>a+num(l.min),0),mvol=mo.reduce((a,l)=>a+SX.vol(l),0),goal=Math.max(1,num(P.jours)||3);
+  const W=[...Array(8)].map((_,i)=>{const a=weekKey(Date.now()-(7-i)*6048e5),b=i<7?weekKey(Date.now()-(6-i)*6048e5):'9999';return{a,n:LOG.filter(l=>l.d>=a&&l.d<b).length}}),mx=Math.max(goal,...W.map(w=>w.n));
+  const item=l=>{const v=SX.vol(l),dt=new Date(l.d+'T12:00'),nb=arr(l.ex).filter(e=>arr(e.sets).length).length;return `<div class="sxhl"><span class="sxd"><b>${dt.getDate()}</b><small>${dt.toLocaleDateString('fr-FR',{month:'short'})}</small></span><span class="n"><b>${esc(l.nom)}</b><em>${esc(l.min)} min · ${nb} exercice${nb>1?'s':''}${l.ressenti?' · '+esc(l.ressenti):''}</em></span><span class="v">${v?Math.round(v).toLocaleString('fr-FR')+' kg':''}</span></div>`};
+  const L=LOG.slice().reverse(),first=L.slice(0,8),more=L.slice(8,40);
+  h.innerHTML=`<div class="sxeb">En ${new Date().toLocaleDateString('fr-FR',{month:'long'})}</div><div class="stk sxhs"><div><b>${mo.length}</b><span>séance${mo.length>1?'s':''}</span></div><div><b>${mmin>=60?Math.floor(mmin/60)+' h '+String(mmin%60).padStart(2,'0'):mmin+' min'}</b><span>de sport</span></div><div><b>${mvol>=1000?fr(Math.round(mvol/100)/10)+' t':Math.round(mvol)+' kg'}</b><span>soulevés</span></div></div><div class="sxeb">Séances par semaine</div>
+  <div class="sxwb" role="img" aria-label="Séances par semaine sur les 8 dernières semaines : ${W.map(w=>w.n).join(', ')}. Objectif ${goal} par semaine.">
+   <div class="sxwbg" style="bottom:${(24+goal/mx*84).toFixed(1)}px"><span>objectif ${goal}</span></div>
+   ${W.map((w,i)=>`<div class="${i===7?'now':''}"><em>${w.n||''}</em><i class="${w.n>=goal?'ok':''}" style="height:${w.n?Math.max(6,w.n/mx*84).toFixed(1):3}px"></i><span>${new Date(w.a+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'numeric'})}</span></div>`).join('')}</div>
+  <div class="sxhls">${first.map(item).join('')}</div>${more.length?`<details class="sxmore"><summary>Voir ${more.length} séance${more.length>1?'s':''} plus ancienne${more.length>1?'s':''}</summary><div class="sxhls">${more.map(item).join('')}</div></details>`:''}`;
+  const prs=$('prs'),pc=$('prC');if(prs&&pc){const n=prs.querySelectorAll('tr').length;let b=$('sxPrAll');if(!b){pc.insertAdjacentHTML('beforeend','<button class="ghost sm" id="sxPrAll" data-act="sxPrAll"></button>');b=$('sxPrAll')}b.hidden=n<=5;b.textContent=pc.classList.contains('all')?'Voir moins':`Voir mes ${n} records`}};
+
+/* ---------- Suivi › Mon poids : courbe lissée, min / max, prochain cap ---------- */
+SX.path=pts=>{if(pts.length<2)return'';const n=pts.length,d=[],m=[];for(let i=0;i<n-1;i++)d.push((pts[i+1][1]-pts[i][1])/((pts[i+1][0]-pts[i][0])||1));
+  m.push(d[0]);for(let i=1;i<n-1;i++)m.push(d[i-1]*d[i]<=0?0:(d[i-1]+d[i])/2);m.push(d[n-2]);
+  let s=`M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;for(let i=0;i<n-1;i++){const[x0,y0]=pts[i],[x1,y1]=pts[i+1],h=(x1-x0)/3;s+=`C${(x0+h).toFixed(1)},${(y0+m[i]*h).toFixed(1)} ${(x1-h).toFixed(1)},${(y1-m[i+1]*h).toFixed(1)} ${x1.toFixed(1)},${y1.toFixed(1)}`}return s};
+SX.wpBar=(show,per)=>{const sv=$('trendSvg'),fig=sv&&sv.closest('.fig');if(!fig)return;let b=$('sxWp');if(!b){fig.insertAdjacentHTML('beforebegin','<div class="chips sxwp" id="sxWp" role="group" aria-label="Période affichée"></div>');b=$('sxWp')}
+  b.hidden=!show;b.innerHTML=[[30,'1 mois'],[90,'3 mois'],[0,'Tout']].map(([v,t])=>`<button class="chip${per===v?' on':''}" data-act="sxWP" data-v="${v}" aria-pressed="${per===v}">${t}</button>`).join('')};
+renderTrend=function(){
+  const sv=$('trendSvg'),E0=ema(),tt=$('trendTxt');if(!sv)return;
+  if(E0.length<2){sv.innerHTML='';SX.wpBar(false,0);tt.innerHTML='<p class="mute">Pèse-toi 2 à 3 fois par semaine, le matin à jeun : la tendance apparaîtra ici.</p>';return}
+  const t=d=>new Date(d+'T12:00').getTime(),span=(t(E0[E0.length-1].d)-t(E0[0].d))/864e5,per=SX.wp>=0?SX.wp:(span>120?90:0);
+  let E=per?E0.filter(p=>t(p.d)>=t(E0[E0.length-1].d)-per*864e5):E0;if(E.length<2)E=E0.slice(-2);SX.wpBar(span>35,per);
+  const last=E[E.length-1],o=String(P.obj||''),down=/perte|seche/.test(o),up=o==='muscle';
+  let cap=null;if(down){cap=Math.floor((last.e-.05)/5)*5}else if(up){cap=Math.ceil((last.e+.05)/5)*5}
+  const W2=sv.clientWidth||320,H=212,pl=6,pr=48,pt=16,pb=26,ws=E.flatMap(p=>[p.w,p.e]).concat(cap!=null?[cap]:[]);let lo=Math.min(...ws),hi=Math.max(...ws);const pad=Math.max(.4,(hi-lo)*.08);lo-=pad;hi+=pad;
+  const t0=t(E[0].d),sp=Math.max(1,t(last.d)-t0),X=d=>pl+(t(d)-t0)/sp*(W2-pl-pr),Y=v=>pt+(hi-v)/(hi-lo)*(H-pt-pb);
+  const stp=[.5,1,2,5,10,20].find(s=>(hi-lo)/s<=4)||20,ticks=[];for(let v=Math.ceil(lo/stp)*stp;v<=hi;v+=stp)ticks.push(v);
+  const pts=E.map(p=>[X(p.d),Y(p.e)]),line=SX.path(pts),area=line+`L${pts[pts.length-1][0].toFixed(1)},${H-pb}L${pts[0][0].toFixed(1)},${H-pb}Z`;
+  const mn=E.reduce((a,p)=>p.w<a.w?p:a,E[0]),mxp=E.reduce((a,p)=>p.w>a.w?p:a,E[0]),fd=d=>new Date(d+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+  const lab=(p,txt,below)=>{const x=Math.min(W2-pr-4,Math.max(pl+18,X(p.d))),y=Y(p.w)+(below?15:-8);return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" class="sxmm">${txt}</text>`};
+  sv.setAttribute('viewBox',`0 0 ${W2} ${H}`);sv.setAttribute('role','img');sv.setAttribute('aria-label',`Courbe de poids : tendance ${fr(last.e.toFixed(1))} kg, plus bas ${fr(mn.w)} kg, plus haut ${fr(mxp.w)} kg.`);
+  sv.innerHTML=`<defs><linearGradient id="sxwg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--red)" stop-opacity=".22"/><stop offset="1" stop-color="var(--red)" stop-opacity="0"/></linearGradient></defs>`+
+   ticks.map(v=>`<line x1="${pl}" x2="${W2-pr+6}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" class="sxgl"/><text x="${W2-2}" y="${(Y(v)+4).toFixed(1)}" text-anchor="end" class="sxax">${fr(v)}</text>`).join('')+
+   (cap!=null?`<line x1="${pl}" x2="${W2-pr+6}" y1="${Y(cap).toFixed(1)}" y2="${Y(cap).toFixed(1)}" class="sxcap"/><text x="${pl+2}" y="${(Y(cap)+(Y(cap)>H-pb-14?-6:14)).toFixed(1)}" class="sxcapt">Prochain cap : ${fr(cap)} kg</text>`:'')+
+   `<path d="${area}" fill="url(#sxwg)"/>`+E.map(p=>`<circle cx="${X(p.d).toFixed(1)}" cy="${Y(p.w).toFixed(1)}" r="2.4" class="sxpt"/>`).join('')+
+   `<path d="${line}" class="sxln drawline"/>`+(mxp!==last?lab(mxp,'max '+fr(mxp.w),false):'')+(mn!==last&&mn!==mxp?lab(mn,'min '+fr(mn.w),true):'')+
+   `<circle cx="${pts[pts.length-1][0].toFixed(1)}" cy="${pts[pts.length-1][1].toFixed(1)}" r="9" class="sxhalo"/><circle cx="${pts[pts.length-1][0].toFixed(1)}" cy="${pts[pts.length-1][1].toFixed(1)}" r="5" class="sxlast"/>`+
+   `<text x="${pl}" y="${H-6}" class="sxax">${fd(E[0].d)}</text><text x="${(W2-pr).toFixed(1)}" y="${H-6}" text-anchor="end" class="sxax">${fd(last.d)}</text>`;
+  const L0=E0[E0.length-1],ref=[...E0].reverse().find(p=>(t(L0.d)-t(p.d))>=6*864e5),wk=ref?(L0.e-ref.e)/((t(L0.d)-t(ref.d))/864e5)*7:0,tot=E0[0].e-L0.e,good=down?wk<0:up?wk>0:Math.abs(wk)<.25;
+  let proj='';if(cap!=null&&Math.abs(wk)>=.05&&(down?wk<0:wk>0)){const wks=Math.abs((L0.e-cap)/wk);if(wks<52)proj=`À ce rythme, tu ${down?'passes sous':'atteins'} <b>${fr(cap)} kg</b> vers le ${new Date(Date.now()+wks*6048e5).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}.`}
+  tt.innerHTML=`<div class="stk sxwk3"><div><b>${fr(L0.e.toFixed(1))}</b><span>kg, ta tendance</span></div><div class="${good?'good':''}"><b>${wk>0?'+':''}${fr(wk.toFixed(2))}</b><span>kg par semaine</span></div><div><b>${fr(Math.abs(tot).toFixed(1))}</b><span>kg ${tot>=0?'perdus':'pris'} en tout</span></div></div>${proj?`<p class="sxproj">${proj}</p>`:''}`};
+
+/* ---------- Suivi › badges : gagnés d'abord, le reste replié ---------- */
+SX._renderSuivi=renderSuivi;
+renderSuivi=function(){SX._renderSuivi();try{SX.badges();const w=document.querySelector('[data-act=logW2]');if(w)w.classList.remove('alt')}catch(e){console.error(e)}};
+SX.badges=()=>{const el=$('badges');if(!el)return;const all=[...el.children],on=all.filter(b=>b.classList.contains('on')),off=all.filter(b=>!b.classList.contains('on'));
+  on.concat(off).forEach(b=>el.appendChild(b));off.forEach((b,i)=>b.classList.toggle('sxhid',i>=3));
+  let t=$('sxBdgT');if(!t){el.insertAdjacentHTML('afterend','<button class="ghost sm" id="sxBdgT" data-act="sxBadges"></button>');t=$('sxBdgT')}
+  t.hidden=off.length<=3;t.textContent=el.classList.contains('all')?'Voir moins':`Voir les ${off.length} badges à gagner`;
+  const h=el.closest('.card')&&el.closest('.card').querySelector('h2');if(h)h.innerHTML=`Mes badges <span class="sxcnt">${on.length} sur ${all.length}</span>`};
+
+/* ---------- Suivi › Santé : pilulier en tête, prises du jour en un coup d'œil ---------- */
+SX._renderPills=renderPills;
+renderPills=function(){SX._renderPills();try{SX.pills()}catch(e){console.error(e)}};
+SX.pills=()=>{const box=$('pills');if(!box||!PILLS||!PILLS.length)return;const card=box.closest('.card'),pane=card&&card.closest('.pane');if(pane&&card&&!card.dataset.sx){card.dataset.sx='1';pane.prepend(card)}
+  const L=PLOG[today()]||{},n=PILLS.length,k=PILLS.filter(p=>L[p.id]).length,now=new Date(),nm=now.getHours()*60+now.getMinutes();
+  let due=false,lastH=null;box.querySelectorAll('.pill').forEach(r=>{const b=r.querySelector('[data-act=pillT]'),p=b&&PILLS.find(z=>z.id===b.dataset.id);if(!p)return;
+    if(p.h!==lastH){r.insertAdjacentHTML('beforebegin',`<div class="sxph">${esc(p.h)}</div>`);lastH=p.h}
+    if(!L[p.id]&&!due&&tmin(p.h)<=nm+30){due=true;r.classList.add('sxdue');const m=r.querySelector('.mute');if(m)m.insertAdjacentHTML('beforeend',' · <b class="sxnow">à prendre</b>')}});
+  box.insertAdjacentHTML('afterbegin',`<div class="sxpsum"><div><b>${k} sur ${n}</b><span>${k===n?'Tout est pris aujourd\'hui, bravo !':'prises faites aujourd\'hui'}</span></div><div class="sxpbar" aria-hidden="true"><i style="transform:scaleX(${(k/n).toFixed(3)})"></i></div></div>`)};
+
+/* ---------- Suivi › Calendrier : le bilan du mois en haut, le détail du jour juste sous la grille ---------- */
+SX._renderCal=renderCal;
+renderCal=async function(){await SX._renderCal();try{const box=$('calBox'),st=box&&box.querySelector(':scope>.stats'),h=box&&box.querySelector(':scope>.calh');if(st&&h){st.classList.add('sxcalst');h.before(st)}}catch(e){}};
+
+/* ---------- Sommeil : la nuit en un coup d'œil (anneau + semaine), puis la saisie ---------- */
+SX._renderSleep=renderSleep;
+renderSleep=function(){SX._renderSleep();try{SX.sleep()}catch(e){console.error(e)}};
+SX.sleep=()=>{const pane=document.querySelector('section[data-v=sommeil] .pane[data-pane=nuit]'),q=$('slQ'),form=q&&q.closest('.card'),bars=$('slBars'),wkc=bars&&bars.closest('.card');if(!pane||!form||!bars)return;
+  let hero=$('sxSlHero');if(!hero){hero=document.createElement('div');hero.className='card sxslh';hero.id='sxSlHero';hero.innerHTML='<div id="sxSlTop"></div><div class="sxslw">Ta semaine</div>';
+    form.after(hero);const avg=$('slAvg');hero.appendChild(bars);if(avg)hero.appendChild(avg);if(wkc&&wkc!==hero)wkc.style.display='none'}
+  const td=SL[today()],y=SL[dkey(Date.now()-864e5)],last=td||y,QW=['','Très mal','Mal','Moyen','Bien','Super'];
+  const d=last?dur(last.c,last.l):0,f=Math.min(1,d/480),ok=d>=420&&d<=600;
+  hero.querySelector('#sxSlTop').innerHTML=last?`<div class="sxslr"><div class="sxring sm" aria-hidden="true"><svg viewBox="0 0 120 120"><circle class="trk" cx="60" cy="60" r="54"/><circle class="prg" cx="60" cy="60" r="54" style="stroke-dasharray:${SX.C.toFixed(2)};stroke-dashoffset:${(SX.C*(1-f)).toFixed(2)}"/></svg><div class="sxrin"><b>${hm(d).replace(' h ','h')}</b><span>de sommeil</span></div></div>
+    <div class="sxslx"><small>${td?'Ta nuit dernière':'Ta dernière nuit notée'}</small><b class="q${last.q}">${QW[last.q]||'Nuit notée'}</b><span>Couché à ${esc(last.c)}, levé à ${esc(last.l)}</span><span class="${ok?'ok':'lo'}">${ok?'Dans la bonne zone (7 à 9 h)':d<420?'Un peu court : vise 7 h ce soir':'Longue nuit : ton corps récupère'}</span></div></div>`
+    :`<div class="sxslx"><small>Ta nuit</small><b>Pas encore notée</b><span>Note-la en 10 secondes, juste en dessous.</span></div>`;
+  const h2=form.querySelector('h2');if(h2)h2.textContent=td?'Corriger ma nuit':'Ma nuit dernière';
+  if(td){if(pane.firstElementChild!==hero)pane.prepend(hero)}else if(form.nextElementSibling!==hero)form.after(hero)};
+
+/* actions et saisie rapide */
+const SX_ACTS={
+  voice(b){VOICE=!VOICE;store.set('voix',VOICE);if(b&&b.classList&&b.classList.contains('sxv'))b.setAttribute('aria-pressed',String(VOICE));else if(b)b.textContent=VOICE?'Voix : oui':'Voix : non';if(VOICE)say('Voix activée');else stopVoice()},
+  sxFix(){if(!S)return;let i=S.i;if(!S.ex[i].sets.length&&i>0)i--;const e=S.ex[i];if(!e||!e.sets.length)return;S._fix=e.sets.pop();S.i=i;S.rest=0;S.said=0;renderS();toast('Corrige les chiffres, puis valide la série.')},
+  sxKg(){const b=ov.querySelector('.sxbar');if(b)b.classList.remove('bw');const i=$('sKg');if(i)try{i.focus()}catch(e){}},
+  sxWP(b){SX.wp=+b.dataset.v;renderTrend()},
+  sxBadges(){const el=$('badges');if(!el)return;el.classList.toggle('all');SX.badges()},
+  sxPrAll(b){const pc=$('prC');if(!pc)return;pc.classList.toggle('all');b.textContent=pc.classList.contains('all')?'Voir moins':`Voir mes ${$('prs').querySelectorAll('tr').length} records`}};
+Promise.resolve().then(()=>{try{Object.assign(A,SX_ACTS)}catch(e){}});
+/* boutons − / + : hors data-act pour pouvoir taper vite (le garde-fou « double appui » ne s'applique pas) */
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-sxs]');if(!b)return;const i=$(b.dataset.sxs);if(!i)return;
+  const isKg=b.dataset.sxs==='sKg',v=num(i.value),x=S&&S.ex[S.i];let st=1;if(isKg)st=x?Math.min(2.5,incr(x,v||10)):2.5;else if(x&&SX.unit(x)==='s')st=5;
+  const nv=Math.max(0,Math.round((v+(+b.dataset.v)*st)*100)/100);i.value=String(nv);i.dispatchEvent(new Event('input',{bubbles:true}));
+  try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}b.classList.remove('bump');void b.offsetWidth;b.classList.add('bump')});
+/* === /ag_sport === */
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -5342,10 +5855,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-83';
+const APP_VERSION='2026.11.26-84';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.26-84','Séance guidée refaite','Gros boutons − et + pour la charge et les répétitions, tes chiffres de la dernière fois, repos en anneau avec « Corriger », exercice suivant toujours visible, et un vrai récap de fin avec tes records. Courbe de poids lissée, pilulier et sommeil plus clairs.','sport','programme'],
  ['2026.11.26-83','Accueil, cuisine et scanner plus clairs','Noter un repas en 2 gestes, verdict produit lisible d\'un coup d\'œil (note, couleur, un mot), recette et mode cuisine plus grands avec « C\'est fait » toujours au même endroit, réglages rangés comme sur iPhone.','accueil',''],
  ['2026.11.26-82','Animations d\'exercices réparées','Les mollets, la corde à sauter, le jumping jack… bougent de nouveau. Les démonstrations restent animées même si ton iPhone demande moins d\'animations. En séance, la charge, les répétitions et « Série faite » restent toujours visibles ensemble.','sport','exos'],
  ['2026.11.26-81','Le menu de chaque pays','Pour chaque pays : 3 entrées, 3 plats et 3 desserts. Un plat ne te plaît pas ? « ↻ D\'autres » change juste cette partie, « Tout changer » refait tout le menu, sans jamais remontrer les mêmes.','cuisine','monde'],
