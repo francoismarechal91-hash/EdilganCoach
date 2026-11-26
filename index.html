@@ -463,7 +463,7 @@ html[data-skin=synth] #amb .hz{left:-10%;right:-10%;bottom:-40px;height:38vh;bac
 @keyframes hzmove{to{background-position:0 34px,0 34px}}
 html[data-skin=synth] #amb .sh{width:120px;height:2px;background:linear-gradient(90deg,transparent,#fff,#ff7cc6);border-radius:2px;top:10%;left:110%;transform:rotate(-20deg);animation:shoot 9s linear infinite;opacity:0}
 @keyframes shoot{0%{left:110%;top:6%;opacity:0}2%{opacity:1}9%{left:-30%;top:34%;opacity:0}100%{left:-30%;opacity:0}}
-html[data-skin=synth] button:not(.ghost):not(.alt):not(.chip):not(.ib):not(.tile):not(.skin):not(.tint):not(.x):not(.seg *):not(.glass *):not(.qual *):not(.wobj *){background-size:200% 100%;background-image:linear-gradient(110deg,#e0137f 0%,#a92ee0 45%,#e0137f 90%);animation:sheen 6s ease-in-out infinite}
+html[data-skin=synth] button:not(.ghost):not(.alt):not(.chip):not(.ib):not(.tile):not(.skin):not(.tint):not(.x):not(.seg *):not(.glass *):not(.qual *):not(.wobj *):not(.stp):not(.tipd):not(.cqi):not(.pret):not(.chkrow *):not(.pill *){background-size:200% 100%;background-image:linear-gradient(110deg,#e0137f 0%,#a92ee0 45%,#e0137f 90%);animation:sheen 6s ease-in-out infinite}
 @keyframes sheen{50%{background-position:100% 0}}
 html[data-skin=synth] .lt h1{animation:neon 5s ease-in-out infinite}
 @keyframes neon{0%,100%{filter:drop-shadow(0 0 10px rgba(255,42,157,.45))}50%{filter:drop-shadow(0 0 18px rgba(255,42,157,.8))}}
@@ -645,6 +645,125 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
 @media(orientation:landscape) and (max-height:500px){.tabs{bottom:4px}.hero{min-height:0!important}#ov .anim{max-width:150px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:380px){.stats b{font-size:18px}.tile{padding:14px}}
+/* ==== Audit design (testé) ==== */
+/* F1 synth : boutons 1-5 du check-in et pilulier qui paraissent tous cochés */
+html[data-skin=synth] :is(.chkrow,.pill) button:not(.on){background:var(--fill)!important;background-image:none!important;animation:none!important;color:var(--ink)!important;box-shadow:inset 0 0 0 1.5px rgba(155,92,255,.45)!important}
+html[data-skin=synth] .pill button.ck:not(.on){color:var(--mute)!important}
+html[data-skin=synth] .chkrow button.on{box-shadow:0 0 0 2px var(--ink),0 0 16px rgba(255,42,157,.8)!important}
+
+/* F2 pets : états actifs blanc sur rose clair (2,48:1) */
+html:is([data-skin=pets],[data-skin=foret]) :is(.seg button.on,.ib.av){background:var(--red)}
+html[data-skin=synth] :is(.seg button.on,.ib.av){background:linear-gradient(135deg,#c0106c,#7a3fd0)}
+
+/* F3 héros : contraste du sous-titre et des libellés d'anneaux */
+.hero p,.ring span{opacity:1}
+.ring span{font-size:13px;font-weight:600}
+html:is([data-skin=clair],[data-skin=nuit]) .hero{background:linear-gradient(150deg,#c93a22,#b0241a 55%,#8f1b33)}
+html:is([data-skin=clair],[data-skin=nuit],[data-skin=synth]) .hero :is(p,.ring span){text-shadow:0 1px 2px rgba(0,0,0,.3)}
+html[data-skin=foret] .ring b{text-shadow:0 0 4px #fffdf6,0 0 10px #fffdf6}
+
+/* F5 synth : soleil et grille sous les anneaux -> horizon dégagé */
+html[data-skin=synth] .hero{padding-bottom:84px}
+html[data-skin=synth] .hero .sun{bottom:0;width:168px;height:168px;transform:translate(-50%,46%)!important;opacity:.6}
+html[data-skin=synth] .hero .grid3d{height:88px}
+
+/* F6 placeholders coupés dans les zones de texte */
+textarea.grow:placeholder-shown:not(.send>textarea){min-height:calc(2.9em + 25px)}
+
+/* F7 barre du haut saturée (360 px, texte Grand/Très grand) */
+@media (max-width:380px){.appbar>[data-act=shareApp]{display:none}}
+html:is([data-size=l],[data-size=xl]) .appbar>[data-act=shareApp]{display:none}
+
+/* F8 « vous êtes ici » pour Coach et Profil */
+.appbar .ib.on{background:var(--tint);color:var(--tintink);box-shadow:inset 0 0 0 2px currentColor}
+.appbar .ib.av.on{box-shadow:0 0 0 3px var(--bg),0 0 0 5px var(--red)}
+
+/* F9 séance : contenu tassé en haut, bouton hors de portée du pouce */
+#ov.on{display:flex;flex-direction:column;min-height:100dvh}
+#ov.on>.ovanim{max-width:none;width:min(62vw,270px);flex:none}
+#ov.on>.rbar+h1{margin-top:auto!important}
+#ov.on>p.mute:last-child{order:8;margin-top:auto}
+#ov.on>.row:has(>[data-act=rNext]){order:9;display:grid;grid-template-columns:1fr 1.6fr;gap:10px;margin:8px 0 0}
+#ov.on>.row:has(>[data-act=rNext]) button{min-height:64px;font-size:19px;width:100%}
+#ov.on>.row:has(>[data-act=rPause]){grid-template-columns:1fr 1fr 1fr}
+
+/* F10 nuit : identité propre (fini le héros rouge vif la nuit) */
+html[data-skin=nuit] .hero{background:radial-gradient(90% 70% at 88% 0%,#3b2a4d 0%,transparent 70%),linear-gradient(170deg,#251b31 0%,#16111d 62%,#2b1519 100%);box-shadow:0 0 0 1px var(--line),0 18px 40px -20px #000}
+html[data-skin=nuit] .hero::after{right:16px;top:12px;width:32px;height:32px;background:none;box-shadow:inset -8px 5px 0 0 #f3e6c4;filter:drop-shadow(0 0 10px rgba(243,230,196,.45))}
+
+/* F11 état vide du graphe de sommeil */
+.slbars{position:relative}
+.slbars:not(:has(i:not(.no)))::after{content:"Tes nuits s'afficheront ici dès demain matin";position:absolute;inset:0 0 26px;display:grid;place-items:center;padding:0 24px;text-align:center;font-weight:700;color:var(--mute)}
+
+/* F12 coupures maladroites (« 0 », « 2 » orphelins) */
+#weekCount{display:block;width:fit-content;margin-top:10px;padding:5px 12px;border-radius:99px;background:var(--tint);color:var(--tintink);font-weight:800;font-size:14px}
+.lt p,.sub,.mute,.lvl div{text-wrap:pretty}
+
+/* F13 tuile « À fixer avec ton équipe » écrasée */
+.stats:has(b.sm){grid-template-columns:1fr 1fr;grid-auto-flow:dense}
+.stats div:has(>b.sm){grid-column:1/-1}
+
+/* F14 pets : gouttes d'eau illisibles (1,8:1) */
+.glass button:not(.f){color:color-mix(in srgb,var(--blue) 45%,var(--ink))}
+
+/* F15 sur-titres en capitales -> titres de rubrique éditoriaux */
+.sect{font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.01em;margin:26px 4px 12px;display:flex;align-items:center;gap:12px}
+.sect::after{content:"";flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--line),transparent)}
+.daily .lab{letter-spacing:0;font-size:14px}
+/* S1 texte en couleur d'accent -> --tintink */
+.daily .lab,.meal .k{color:var(--tintink)}
+html:not([data-skin=synth]) .tabs a.on{color:var(--tintink)}
+/* S2 gris secondaires trop pâles (pets, forêt jour) */
+html[data-skin=pets]{--mute:#7a5f59}
+html[data-skin=foret]{--mute:#5a6a4e}
+/* S3 plus de texte sous 13 px */
+.tile small,.stats span,.stk span,.slbars span,.ticks,.legend,.bdg{font-size:13.5px}
+.tabs a{font-size:12.5px}
+.mute,.sub{font-size:15px}
+/* S4 cibles de toucher >= 44 px */
+.chkrow button{min-height:48px}
+details>summary{padding-block:12px!important}
+.x{min-width:44px;min-height:44px}
+.vid{min-height:44px!important}
+.card>.lnk:first-child{min-height:44px}
+/* S5 tailles Grand / Très grand */
+html:is([data-size=l],[data-size=xl]) .chkrow{flex-wrap:wrap}
+html:is([data-size=l],[data-size=xl]) .chkrow>b{width:100%}
+html[data-size=xl] .tiles{grid-template-columns:1fr}
+html[data-size=xl] .tile{flex-direction:row;align-items:center;min-height:0}
+html[data-size=xl] .seg{flex-wrap:wrap;-webkit-mask:none;mask:none}
+
+/* ==== Signatures par thème ==== */
+/* G1 synth : anneau complété = tube néon qui s'allume */
+@keyframes flick{0%,18%,22%,60%,64%,100%{opacity:1}20%,62%{opacity:.2}}
+html[data-skin=synth] .ring.full circle+circle{animation:ringIn 1.1s cubic-bezier(.2,.8,.2,1) both,flick .9s 1.1s 2}
+/* G2 synth : laser sous l'onglet actif */
+html[data-skin=synth] .tabs::after{content:"";position:absolute;left:6px;bottom:2px;width:calc((100% - 12px)/5);height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,#22e4ff 30% 70%,transparent);box-shadow:0 0 10px #22e4ff;transform:translateX(calc(var(--ti,0)*100%));transition:transform .45s cubic-bezier(.3,1.4,.5,1),opacity .2s}
+html[data-skin=synth] .tabs.noti::after{opacity:0}
+/* G3 synth : médaille « insert coin » quand le niveau monte */
+.lvl .medal.up{animation:coin .9s cubic-bezier(.3,1.4,.5,1)}
+@keyframes coin{from{transform:perspective(300px) rotateY(0)}to{transform:perspective(300px) rotateY(360deg)}}
+/* G4 forêt jour : la régularité fait pousser des feuilles */
+html[data-skin=foret] .heat i{position:relative}
+html[data-skin=foret] .heat i:is(.l2,.l3)::after{content:"";position:absolute;left:38%;bottom:50%;width:55%;height:55%;background:#8fd36a;border-radius:0 100% 0 100%;transform-origin:0 100%;animation:sprout .6s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes sprout{from{transform:scale(0) rotate(-40deg)}}
+/* G5 tous thèmes : le dernier verre se remplit par le bas */
+.glass button svg{position:relative;z-index:1}
+@media (prefers-reduced-motion:no-preference){.glass button.f:not(:has(~.f))::after{content:"";position:absolute;inset:0;background:var(--fill);border-radius:inherit;animation:fillup .7s cubic-bezier(.2,.8,.2,1) forwards}}
+@keyframes fillup{to{transform:translateY(-101%)}}
+/* G6 forêt nuit : champignons-lanternes */
+.fx-shroom{animation:shroom 3.2s ease-in-out infinite alternate}
+@keyframes shroom{from{opacity:.35}to{opacity:1}}
+/* G7 pets : les yeux suivent le doigt */
+.hero svg.pets .blink{translate:var(--ex,0) var(--ey,0);transition:translate .25s ease-out}
+/* G9 clair : trait de feutre sous les rubriques */
+html[data-skin=clair] .sect::after{height:3px;background:linear-gradient(90deg,var(--red),var(--yel) 60%,transparent);transform-origin:left;animation:ink .8s .15s cubic-bezier(.2,.8,.2,1) both}
+@keyframes ink{from{transform:scaleX(0)}}
+/* G10 nuit : vraie phase de lune dans le héros (avec F10) */
+html[data-skin=nuit] .hero::after{box-shadow:inset var(--mx,-8px) 0 0 0 #f3e6c4}
+/* G11 nuit : veilleuse après 22 h */
+html[data-skin=nuit][data-late] #amb{opacity:.45}
+
 @media(max-width:350px){.logo .lname{font-size:12.5px!important}.logo{gap:6px;min-width:0}}
 </style>
 </head>
@@ -696,7 +815,7 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
   <div class="card daily" id="dailyCard"></div>
   <div class="card" id="homeChk"></div>
   <div class="card drinkb" id="homeDrink" style="display:none"></div>
-  <div class="sect">QUE VEUX-TU FAIRE ?</div>
+  <div class="sect">Que veux-tu faire ?</div>
   <div class="tiles">
     <button class="tile" data-act="goPane" data-v="scan" data-p="produit"><span class="ic c-red"><svg class="i"><use href="#i-bar"/></svg></span><span>Bon produit ?<small>code-barres, tableau, ingrédients</small></span></button>
     <button class="tile" data-act="goPane" data-v="scan" data-p="assiette"><span class="ic c-yel"><svg class="i"><use href="#i-plate"/></svg></span><span>Mon assiette<small>en photo ou en mots</small></span></button>
@@ -708,11 +827,11 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
     <button class="tile" data-act="goPane" data-v="cuisine" data-p="monde"><span class="ic c-blue"><svg class="i"><use href="#i-globe"/></svg></span><span>Tour du monde<small>recettes de tous les pays</small></span></button>
   </div>
   <div class="card" id="homeAsk"><h3 style="margin-top:0">Une question pour le coach ?</h3><textarea id="hAsk" class="grow" rows="1" data-enter="homeAsk" placeholder="ex. Je peux manger quoi ce soir après le sport ?" aria-label="Ta question pour le coach"></textarea><div class="row" style="margin-top:8px"><button class="sm" data-act="homeAsk">Demander</button><button class="ghost sm" data-act="goPane" data-v="coach" data-p="fiches">Conseils pratiques</button></div></div>
-  <div class="sect">TON SPORT</div>
+  <div class="sect">Ton sport</div>
   <div class="card" id="homeSeance"></div>
-  <div class="sect">TES REPAS</div>
+  <div class="sect">Tes repas</div>
   <div class="card" id="homeMenu"></div>
-  <div class="sect">TON SUIVI</div>
+  <div class="sect">Ton suivi</div>
   <div class="grid" style="margin-bottom:14px">
     <div class="card" style="margin:0" id="homeRecov"></div>
     <div class="card" style="margin:0" id="homeWeight"></div>
@@ -2271,6 +2390,12 @@ function renderFiches(){const el=$('fiList');if(!el)return;document.querySelecto
 document.addEventListener('input',e=>{if(e.target.id==='fiQ')renderFiches()});
 const FI_ACTS={fiCat(b){FIC=b.dataset.v;renderFiches()}};
 
+
+/* ---- Signatures : yeux du chat, vraie lune, veilleuse ---- */
+addEventListener('pointermove',e=>{if(RM||document.documentElement.dataset.fx==='off'||document.documentElement.dataset.skin!=='pets')return;const s=document.querySelector('.hero svg.pets');if(!s)return;const r=s.getBoundingClientRect(),c=v=>Math.max(-1,Math.min(1,v));s.style.setProperty('--ex',c((e.clientX-r.left)/r.width*2-1)*2.5+'px');s.style.setProperty('--ey',c((e.clientY-r.top)/300)*2+'px')},{passive:true});
+function skyTick(){try{const ph=((Date.now()-Date.UTC(2000,0,6,18,14))/864e5/29.530588)%1,lit=(1-Math.cos(2*Math.PI*ph))/2;document.documentElement.style.setProperty('--mx',(ph<.5?-1:1)*Math.max(3,lit*32)+'px');const h=new Date().getHours();document.documentElement.toggleAttribute('data-late',h>=22||h<6)}catch(e){}}
+skyTick();setInterval(skyTick,10*6e4);
+
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -2980,14 +3105,14 @@ function route(){
   let h=location.hash.slice(1);if(h==='programme')h='sport';if(h==='machine')h='scan';
   const v=VIEWS.includes(h)?h:'accueil';
   document.querySelectorAll('section[data-v]').forEach(s=>s.classList.toggle('on',s.dataset.v===v));
-  document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===v));
+  document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===(v==='sommeil'?'accueil':v)));{const tb=document.querySelector('.tabs'),ti=['accueil','sport','scan','cuisine','suivi'].indexOf(v==='sommeil'?'accueil':v);if(tb){tb.style.setProperty('--ti',Math.max(ti,0));tb.classList.toggle('noti',ti<0)}}
   $('avatar').classList.toggle('on',v==='moi');
   if(v!=='sommeil'&&bT)stopBreath();const sw=$('sweep');if(sw&&document.documentElement.dataset.fx!=='off'&&route.last&&route.last!==v){sw.classList.remove('go');void sw.offsetWidth;sw.classList.add('go')}route.last=v;if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='suivi'){try{renderWeekCard();renderDuo()}catch(e){}}if(v==='cuisine'){try{renderRef()}catch(e){}}if(v==='sommeil'){renderSleep();renderBModes();renderGrnd();renderGood();sleepKpi()}if(v==='suivi')renderSuivi();$('coachBtn').classList.toggle('on',v==='coach');window.scrollTo(0,0);
 }
 window.addEventListener('scroll',()=>$('appbar').classList.toggle('sc',scrollY>4),{passive:true});
 /* ---------- Accueil ---------- */
 function ring(v,max,col,val,lab){const r=40,c=2*Math.PI*r,f=Math.min(1,max?v/max:0);
-  return `<div class="ring"><svg viewBox="0 0 100 100" role="img" aria-label="${esc(lab)} ${esc(val)}"><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--rtrack)" stroke-width="10"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${col}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-f)}" style="--c:${c};filter:drop-shadow(0 0 5px ${col})" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle" font-size="22" font-weight="800" fill="var(--heroink)">${max?Math.round(f*100)+'%':'•'}</text></svg><b>${esc(val)}</b><span>${esc(lab)}</span></div>`}
+  return `<div class="ring${f>=1?' full':''}"><svg viewBox="0 0 100 100" role="img" aria-label="${esc(lab)} ${esc(val)}"><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--rtrack)" stroke-width="10"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${col}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-f)}" style="--c:${c};filter:drop-shadow(0 0 5px ${col})" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle" font-size="22" font-weight="800" fill="var(--heroink)">${max?Math.round(f*100)+'%':Math.round(v)}</text></svg><b>${esc(val)}</b><span>${esc(lab)}</span></div>`}
 const STANDALONE=()=>!!(navigator.standalone||matchMedia('(display-mode: standalone)').matches);
 const IOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 function renderHome(){
@@ -2995,7 +3120,7 @@ function renderHome(){
   const nom=(P.nom||'').trim();$('avatar').textContent=(nom[0]||'M').toUpperCase();
   $('hello').textContent=(h<5||h>=18?'Bonsoir':'Bonjour')+(nom?' '+nom:'')+' !';
   $('sub').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+(P.obj?' · objectif '+({muscle:'muscle',perte:'perte de poids',seche:'sèche',forme:'forme',endurance:'cardio'}[P.obj]||P.obj):'');
-  $('rings').innerHTML=ring(t.k,m.kcal||0,'var(--r1)',m.kcal?`${Math.round(t.k)} / ${m.kcal}`:`${Math.round(t.k)}`,'kcal')+ring(t.p,tp,'var(--r2)',`${Math.round(t.p)} / ${tp} g`,'protéines')+ring(w,te,'var(--r3)',`${w} / ${te}`,'verres d\'eau');
+  $('rings').innerHTML=ring(t.k,m.kcal||0,'var(--r1)',m.kcal?`${Math.round(t.k)} / ${m.kcal}`:'kcal',m.kcal?'kcal':"aujourd'hui")+ring(t.p,tp,'var(--r2)',`${Math.round(t.p)} / ${tp} g`,'protéines')+ring(w,te,'var(--r3)',`${w} / ${te}`,'verres d\'eau');
   {const steps=[[!!(P.poids&&P.taille&&P.age&&P.obj),'Compléter mon profil','taille, poids, âge, objectif','goPane','moi',''],
     [!!((P.santeL||[]).length||P.sante||store.get('santeOk',0)),'Ma santé','opération, traitements, allergies','goPane','moi',''],
     [!!((P.equipM||[]).length||(P.equipS||[]).length||(P.cuisL||[]).length),'Mon matériel','sport et cuisine','goPane','moi',''],
@@ -3078,6 +3203,7 @@ function forestSVG(N){
   /* hautes herbes au premier plan */
   let blades='',blades2='';for(let i=0;i<46;i++){const x=i*9-4,hgt=24+((i*37)%30),lean=((i*13)%9)-4;const bl=`<path d="M${x} 300 Q${x+lean} ${300-hgt*.6} ${x+lean*1.6} ${300-hgt} Q${x+3+lean} ${300-hgt*.55} ${x+6} 300Z"/>`;if(i%2)blades+=bl;else blades2+=bl}
   g+=`<g class="fx-grass" fill="${c.gr}">${blades}</g><g class="fx-grass b" fill="${c.gr2}">${blades2}</g>`;
+  if(N)g+=[[258,284,7],[276,289,5],[346,286,6]].map(([x,y,r],i)=>`<g class="fx-shroom" style="animation-delay:-${i*1.1}s"><ellipse cx="${x}" cy="${y-r*.6}" rx="${r*2.6}" ry="${r*1.8}" fill="url(#fg1)"/><rect x="${x-1.5}" y="${y-r*.4}" width="3" height="${r+2}" rx="1.5" fill="#d9efe2"/><path d="M${x-r*1.2} ${y-r*.3}q${r*1.2} -${r*1.9} ${r*2.4} 0z" fill="#a6f0c6"/></g>`).join('');
   /* lucioles ou feuilles */
   if(N){for(let i=0;i<22;i++){const x=(i*71)%380+10,y=150+((i*29)%120);g+=`<g class="fx-fly" style="animation-delay:-${(i%9)*.6}s;animation-duration:${4+i%4}s"><circle cx="${x}" cy="${y}" r="6" fill="url(#fg1)" opacity=".9"/><circle cx="${x}" cy="${y}" r="1.6" fill="#fff8c8"/></g>`}
     g+=`<rect x="0" y="230" width="400" height="70" fill="#9fd6c8" opacity=".06"/>`}
@@ -3118,8 +3244,8 @@ const dayIndex=()=>{const d=new Date(),s=new Date(d.getFullYear(),0,0);return Ma
 function renderDaily(){
   const i=dayIndex(),m=MOTIV[i%MOTIV.length],f=FACTS[(i*7+3)%FACTS.length];
   const cm=typeof coachMsg==='function'?coachMsg():'';
-  $('dailyCard').innerHTML=`${cm?`<div class="tip" style="margin-top:0"><b>Ton coach :</b> ${esc(cm)}</div>`:''}<div class="lab">LE MOT DU JOUR</div><div class="dq">« ${esc(m)} »</div>
-  <div class="fact"><span class="ic c-yel"><svg class="i" style="width:20px;height:20px"><use href="#i-bolt"/></svg></span><div><div class="lab" style="color:var(--mute)">LE SAVAIS-TU ?</div><div style="margin-top:2px">${esc(f)}</div></div></div>${(()=>{try{const L=FICHES.filter(x=>x.cat!=='sleeve'||BARIA());if(!L.length)return '';const fi=L[(i*5+1)%L.length],c=fi.conseils[i%fi.conseils.length];return `<button class="fact tipd" data-act="goPane" data-v="coach" data-p="fiches"><span class="ic c-blue"><svg class="i" style="width:20px;height:20px"><use href="#i-star"/></svg></span><div><div class="lab" style="color:var(--mute)">LE CONSEIL DU JOUR · ${esc((FICAT[fi.cat]||'').toUpperCase())}</div><div style="margin-top:2px">${esc(c)}</div></div></button>`}catch(e){return ''}})()}`;
+  $('dailyCard').innerHTML=`${cm?`<div class="tip" style="margin-top:0"><b>Ton coach :</b> ${esc(cm)}</div>`:''}<div class="lab">Le mot du jour</div><div class="dq">« ${esc(m)} »</div>
+  <div class="fact"><span class="ic c-yel"><svg class="i" style="width:20px;height:20px"><use href="#i-bolt"/></svg></span><div><div class="lab" style="color:var(--mute)">Le savais-tu ?</div><div style="margin-top:2px">${esc(f)}</div></div></div>${(()=>{try{const L=FICHES.filter(x=>x.cat!=='sleeve'||BARIA());if(!L.length)return '';const fi=L[(i*5+1)%L.length],c=fi.conseils[i%fi.conseils.length];return `<button class="fact tipd" data-act="goPane" data-v="coach" data-p="fiches"><span class="ic c-blue"><svg class="i" style="width:20px;height:20px"><use href="#i-star"/></svg></span><div><div class="lab" style="color:var(--mute)">Le conseil du jour · ${esc(FICAT[fi.cat]||'')}</div><div style="margin-top:2px">${esc(c)}</div></div></button>`}catch(e){return ''}})()}`;
 }
 (function midnight(){const n=new Date(),t=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1,0,0,5);setTimeout(()=>{[renderDaily,renderHome,typeof renderDay!=='undefined'?renderDay:null,renderMenu,typeof renderSleep!=='undefined'?renderSleep:null].forEach(f=>{try{f&&f()}catch(e){}});midnight()},t-n)})();
 /* sommeil */
@@ -3167,6 +3293,7 @@ document.addEventListener('pointerdown',e=>{
   const b=e.target.closest('button,.tile');
   if(b&&!b.disabled){const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height)*2.2,s=document.createElement('span');s.className='rip';s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;b.appendChild(s);setTimeout(()=>s.remove(),600)}
   if(b)burst(e.clientX,e.clientY);
+  if(b&&document.documentElement.dataset.skin==='pets'){const w=document.querySelector('.hero .wag');if(w){w.style.animationDuration='.16s';clearTimeout(w._t);w._t=setTimeout(()=>w.style.animationDuration='',1600)}}
   if(document.documentElement.dataset.skin==='pets'){const p=document.createElement('span');p.className='pawtap';p.innerHTML=PAW;p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';p.style.transform=`rotate(${Math.round(Math.random()*40-20)}deg)`;document.body.appendChild(p);setTimeout(()=>p.remove(),950)}
 },{passive:true});
 
@@ -3274,7 +3401,7 @@ function chkHTML(compact){const c=CHK[today()]||{};return CHKQ.map(([k,n])=>`<di
 function renderChk(){
   const c=CHK[today()],done=c&&CHKQ.every(([k])=>c[k]);
   $('homeChk').innerHTML=done?`<div class="row sb"><b>Ton check-in</b><button class="ghost sm" data-act="chkEdit">Modifier</button></div><div class="chips">${CHKQ.map(([k,n])=>`<span class="chip">${n} ${c[k]}/5</span>`).join('')}</div><div class="mute">${esc(chkAdvice(c))}</div>`
-    :`<div class="lab" style="font-size:12px;font-weight:800;letter-spacing:.05em;color:var(--red)">COMMENT TU TE SENS ?</div><p class="mute" style="margin:2px 0 6px">10 secondes, et le coach adapte ta journée.</p>${chkHTML()}`;
+    :`<h3 style="margin:0">Comment tu te sens ?</h3><p class="mute" style="margin:2px 0 6px">10 secondes, et le coach adapte ta journée.</p>${chkHTML()}`;
   $('chkForm').innerHTML=chkHTML();
   const days=[...Array(14)].map((_,i)=>dkey(Date.now()-(13-i)*864e5)),sv=$('chkSvg');
   if(sv&&sv.clientWidth){const W=sv.clientWidth,H=120,x=i=>10+i*(W-20)/13,y=v=>H-12-(v-1)*(H-24)/4;
@@ -3304,9 +3431,9 @@ function xpInfo(){const t=stats(),k=streak(),nb=BADGES.filter(b=>b[3](t,k)).leng
   return{t,k,nb,xp,lvl,p:(xp-cur)/(nxt-cur),title:TITLES[Math.min(TITLES.length-1,lvl-1)],toNext:nxt-xp}}
 function renderSuivi(){
   const X=xpInfo();
-  $('lvlCard').innerHTML=`<div class="lv"><div class="medal" style="--p:${Math.round(X.p*100)}%"><b>${X.lvl}</b></div><div><div class="mute" style="font-weight:700">NIVEAU ${X.lvl}</div><h2 style="margin:2px 0">${esc(X.title)}</h2><div class="mute">${X.xp.toLocaleString('fr-FR')} XP · encore ${X.toNext.toLocaleString('fr-FR')} XP pour le niveau ${X.lvl+1}</div></div></div>
+  $('lvlCard').innerHTML=`<div class="lv"><div class="medal" style="--p:${Math.round(X.p*100)}%"><b>${X.lvl}</b></div><div><div class="mute" style="font-weight:700">Niveau ${X.lvl}</div><h2 style="margin:2px 0">${esc(X.title)}</h2><div class="mute">${X.xp.toLocaleString('fr-FR')} XP · encore ${X.toNext.toLocaleString('fr-FR')} XP pour le niveau ${X.lvl+1}</div></div></div>
   <div class="stk"><div><b>${X.k.st}</b><span>jours d'affilée</span></div><div><b>${X.k.jk}</b><span>joker${X.k.jk>1?'s':''} de série</span></div><div><b>${X.nb}/${BADGES.length}</b><span>badges</span></div></div>
-  <p class="mute" style="margin-bottom:0">Un jour raté ? Un joker protège ta série. Tu en gagnes un tous les 7 jours (2 max).</p>`;
+  <p class="mute" style="margin-bottom:0">Un jour raté ? Un joker protège ta série. Tu en gagnes un tous les 7 jours (2 max).</p>`;try{if(X.lvl>store.get('lvlvu',0)){const md=$('lvlCard').querySelector('.medal');if(md&&store.get('lvlvu',0))md.classList.add('up');store.set('lvlvu',X.lvl)}}catch(e){}
   const A=X.k.A;let h='<div class="heat" style="grid-template-rows:repeat(7,1fr);grid-auto-flow:column;grid-template-columns:none">';
   const start=new Date();start.setDate(start.getDate()-90-((start.getDay()+6)%7));for(let i=0;i<91+((new Date().getDay()+6)%7);i++){const d=new Date(start);d.setDate(start.getDate()+i);const k=dkey(d),v=A[k]||0;h+=`<i class="${v>=3?'l3':v===2?'l2':v?'l1':''}${k===today()?' td':''}" title="${k}"></i>`}
   $('heat').innerHTML=h+'</div><div class="legend" style="justify-content:flex-start;margin-top:8px"><span>moins</span><span><i style="background:var(--fill2)"></i><i style="background:color-mix(in srgb,var(--red) 40%,var(--fill))"></i><i style="background:var(--red)"></i></span><span>plus</span></div>';
@@ -3451,7 +3578,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-54';
+const APP_VERSION='2026.11.26-55';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
