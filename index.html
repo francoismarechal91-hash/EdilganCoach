@@ -181,6 +181,8 @@ input[type=checkbox]:focus-visible{outline:3px solid color-mix(in srgb,var(--red
 .kbar .kdone{flex:1;min-height:58px;font-size:18px}
 @media (prefers-reduced-motion:reduce){input[type=checkbox]::before,.kck{transition:none}.kdone.did .kck{animation:none}}
 .bkrem .bkico{font-size:28px;line-height:1}
+.srcnote{display:flex;gap:10px;align-items:flex-start;margin:10px 0 12px;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,var(--cyan,#2f8cf0) 10%,var(--card));font-size:14px;line-height:1.45}.srcnote svg.i{flex:none;width:18px;height:18px;margin-top:2px;opacity:.8}.srcnote a{font-weight:700;color:inherit;text-decoration:underline;text-underline-offset:2px}
+.srctag{display:inline-block;margin-top:3px;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,var(--cyan,#2f8cf0) 16%,transparent);color:var(--ink)}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -869,6 +871,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
  <symbol id="i-add" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></symbol>
  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+ <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.6 4 5.6 4 9s-1.4 6.4-4 9c-2.6-2.6-4-5.6-4-9s1.4-6.4 4-9z"/></symbol>
  <symbol id="i-tick" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-7 1 2 2 3 3 3 0-3-1-5 0-7z"/></symbol>
  <symbol id="i-scale" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="4"/><path d="M9 9a3 3 0 0 1 6 0M12 9l1.5-1.5"/></symbol>
@@ -2295,18 +2298,22 @@ function zoomWorld(z){WZ=z;document.querySelectorAll('#wZone button').forEach(b=
   const f=t=>{const k=D?Math.min(1,(t-t0)/D):1,e=1-Math.pow(1-k,3),v=from.map((x,i)=>x+(to[i]-x)*e);sv.setAttribute('viewBox',v.join(' '));WVB=v;if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
 function pickCountry(a,n){const c=CUIS[a];WSEL={a,n:c?c[1]:n,z:c?c[0]:''};document.querySelectorAll('#wMap path').forEach(p=>p.classList.toggle('sel',p.dataset.a===a&&!!a));
   $('wSel').value=CUIS[a]?a:'';renderCountry();setTimeout(()=>$('wCountry').scrollIntoView({behavior:'smooth',block:'start'}),80)}
-function dishCard(o,q){return `<div class="dish"><div class="dph" data-act="cook" data-r="${reg(o)}" role="button" aria-label="Recette : ${esc(o.nom)}" data-q="${esc(q||o.wiki||o.nom_local||o.nom)}" data-pays="${esc(o.pays||'')}"><span class="mute">Photo…</span></div><b>${esc(o.nom)}</b>${o.type||o.desc?`<small class="mute dsub">${esc([o.type,o.desc].filter(Boolean).join(' · '))}</small>`:''}<div class="row" style="gap:6px;margin-top:auto;padding-top:6px;flex-wrap:nowrap"><button class="sm" data-act="cook" data-r="${reg(o)}">La recette</button><button class="ghost sm" data-act="favR" data-short="1" data-r="${reg(o)}" aria-label="Ajouter aux favoris" style="flex:0 0 44px">${FAVR.some(f=>f.data&&f.data.nom===o.nom)?'★':'☆'}</button></div></div>`}
+function dishCard(o,q){return `<div class="dish"><div class="dph" data-act="cook" data-r="${reg(o)}" role="button" aria-label="Recette : ${esc(o.nom)}" data-q="${esc(q||o.wiki||o.nom_local||o.nom)}" data-pays="${esc(o.pays||'')}"><span class="mute">Photo…</span></div><b>${esc(o.nom)}</b>${o.nom_en?'<small class="srctag">Recette d\'origine traduite</small>':''}${o.type||o.desc?`<small class="mute dsub">${esc([o.type,o.desc].filter(Boolean).join(' · '))}</small>`:''}<div class="row" style="gap:6px;margin-top:auto;padding-top:6px;flex-wrap:nowrap"><button class="sm" data-act="cook" data-r="${reg(o)}">La recette</button><button class="ghost sm" data-act="favR" data-short="1" data-r="${reg(o)}" aria-label="Ajouter aux favoris" style="flex:0 0 44px">${FAVR.some(f=>f.data&&f.data.nom===o.nom)?'★':'☆'}</button></div></div>`}
+const MDBA={US:'American',GB:'British',CA:'Canadian',CN:'Chinese',EG:'Egyptian',PH:'Filipino',FR:'French',GR:'Greek',IN:'Indian',IE:'Irish',IT:'Italian',JP:'Japanese',MX:'Mexican',MA:'Moroccan',NL:'Dutch',PL:'Polish',PT:'Portuguese',RU:'Russian',ES:'Spanish',TH:'Thai',TN:'Tunisian',TR:'Turkish',VN:'Vietnamese',AR:'Argentinian'};
+async function mdbArea(a){const z=MDBA[a];if(!z||navigator.onLine===false)return[];try{const j=await ptmo(fetch('https://www.themealdb.com/api/json/v1/1/filter.php?a='+z).then(r=>r.json()),4000);return arr(j&&j.meals).map(m=>m&&m.strMeal).filter(Boolean)}catch(e){return[]}}
 let WSEEN=store.get('wseen',{});if(!WSEEN||typeof WSEEN!=='object'||Array.isArray(WSEEN))WSEEN={};let WDISC={};
 async function wDiscover(force){if(!WSEL)return;const key=WSEL.a||WSEL.n,box=$('wDisc');if(!box)return;
   if(!force&&WDISC[key]){box.innerHTML=WDISC[key];loadPhotos(box);return}
   box.innerHTML='<div class="busy">Le chef cherche d\'autres plats de ce pays<span class="dots3"><i></i><i></i><i></i></span></div>';
   const c=CUIS[WSEL.a],ex=[...(c?c[3].split(';'):[]),...arr(WSEEN[key])].slice(-40);
+  const real=(await mdbArea(WSEL.a)).filter(n=>!ex.some(e=>sameDish(e,n))).sort(()=>Math.random()-.5).slice(0,3);
   try{const r=await askJSON(`Tu es un chef qui connaît parfaitement la cuisine du monde. Propose 4 plats traditionnels de ce pays : ${WSEL.n}, vraiment différents les uns des autres (par exemple une entrée ou une soupe, un plat, un dessert ou une pâtisserie, un en-cas de rue), connus et appréciés là-bas, et réalisables en France.
-N'en propose AUCUN de cette liste : ${ex.join(', ')||'aucune'}.
-Format JSON : {"plats":[{"nom":"nom en français","nom_local":"nom dans la langue du pays","wiki":"titre exact de l'article Wikipédia français s'il existe","type":"entrée|plat|dessert|en-cas|soupe|boisson","description":"1 phrase qui donne envie"}]}`,{modelTier:'quick',cache:false});
+N'en propose AUCUN de cette liste : ${ex.join(', ')||'aucune'}.${real.length?`
+Ces recettes authentiques existent sur un site de cuisine étranger : ${real.join(' ; ')}. Inclus-en 2 parmi les 4 (si elles sont bien de ce pays), avec leur nom traduit en français dans "nom" et leur nom d'origine EXACT dans "nom_en".`:''}
+Format JSON : {"plats":[{"nom":"nom en français","nom_en":"","nom_local":"nom dans la langue du pays","wiki":"titre exact de l'article Wikipédia français s'il existe","type":"entrée|plat|dessert|en-cas|soupe|boisson","description":"1 phrase qui donne envie"}]}`,{modelTier:'quick',cache:false});
     const L=arr(r.plats).filter(x=>x&&x.nom&&!ex.some(e=>cqNorm(e)===cqNorm(x.nom))).slice(0,4);if(!L.length)throw{code:'busy'};
-    WSEEN[key]=[...arr(WSEEN[key]),...L.map(x=>x.nom)].slice(-40);store.set('wseen',WSEEN);
-    const html=`<div class="dgrid">${L.map(x=>dishCard({nom:x.nom,nom_local:x.nom_local,wiki:x.wiki,pays:WSEL.n,description:x.description||('Plat traditionnel ('+WSEL.n+')'),type:x.type,desc:x.description})).join('')}</div>`;
+    WSEEN[key]=[...arr(WSEEN[key]),...L.map(x=>x.nom),...L.map(x=>x.nom_en).filter(Boolean)].slice(-50);store.set('wseen',WSEEN);
+    const html=`<div class="dgrid">${L.map(x=>dishCard({nom:x.nom,nom_en:real.some(n=>sameDish(n,x.nom_en))?x.nom_en:'',nom_local:x.nom_local,wiki:x.wiki,pays:WSEL.n,description:x.description||('Plat traditionnel ('+WSEL.n+')'),type:x.type,desc:x.description})).join('')}</div>`;
     if($('wDisc')===box&&WSEL&&(WSEL.a||WSEL.n)===key){WDISC[key]=html;box.innerHTML=html;loadPhotos(box)}}
   catch(e){if($('wDisc')===box)box.innerHTML=`<p class="mute">${esc(errMsg(e))}</p><button class="ghost sm" data-act="wMore">Réessayer</button>`}}
 function renderCountry(){const el=$('wCountry');if(!WSEL){el.innerHTML='';return}const c=CUIS[WSEL.a],dishes=c?c[3].split(';'):[];
@@ -2829,8 +2836,45 @@ function normDet(d){d=d&&typeof d==='object'?d:{};const pick=(...ks)=>{for(const
   d.etapes=arr(pick('etapes','étapes','steps','instructions','preparation','préparation')).map(e=>typeof e==='string'?{titre:'Étape',detail:e}:e&&typeof e==='object'?{...e,titre:e.titre||e.title||'Étape',detail:e.detail||e.description||e.texte||''}:null).filter(e=>e&&String(e.detail||'').trim());
   d.ingredients=arr(pick('ingredients','ingrédients')).map(g=>typeof g==='string'?{quantite:'',nom:g}:g&&typeof g==='object'?{...g,nom:g.nom||g.name||'',quantite:g.quantite||g.quantity||''}:null).filter(g=>g&&g.nom);
   d.materiel=strs(pick('materiel','matériel'));d.mise_en_place=strs(pick('mise_en_place'));return d}
+/* ---------- recettes d'origine (sites étrangers) : toujours traduites par l'IA AVANT affichage ---------- */
+const SRCM={};const ptmo=(p,ms)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r('t'),ms))]);
+const srcN=x=>cqNorm(String(x||'').replace(/\(.*?\)/g,'')).trim();
+function sameDish(a,b){a=srcN(a);b=srcN(b);return!!(a&&b&&(a===b||(a.includes(b)&&b.length>=5)||(b.includes(a)&&a.length>=5)))}
+async function srcEnTitle(o){try{const j=await ptmo(fetch('https://fr.wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1&prop=langlinks&lllang=en&titles='+encodeURIComponent(o.wiki||o.nom)).then(r=>r.json()),4000);
+  const pg=Object.values((j.query&&j.query.pages)||{})[0],ll=pg&&pg.langlinks&&pg.langlinks[0];return ll?String(ll['*']||''):''}catch(e){return''}}
+async function srcMealDB(names){for(const q of names){try{const j=await ptmo(fetch('https://www.themealdb.com/api/json/v1/1/search.php?s='+encodeURIComponent(q)).then(r=>r.json()),4000);
+  const m=arr(j&&j.meals).find(x=>x&&names.some(n=>sameDish(x.strMeal,n)));if(!m||!m.strInstructions)continue;const ing=[];
+  for(let i=1;i<=20;i++){const g=String(m['strIngredient'+i]||'').trim();if(g)ing.push((String(m['strMeasure'+i]||'').trim()+' '+g).trim())}
+  return{site:'TheMealDB',lang:'anglais',url:'https://www.themealdb.com/meal/'+m.idMeal,titre:m.strMeal,nIng:ing.length,texte:'Ingredients:\n- '+ing.join('\n- ')+'\n\nInstructions:\n'+String(m.strInstructions)}}catch(e){}}return null}
+async function srcWikibooks(names){for(const q of names){try{const s=await ptmo(fetch('https://en.wikibooks.org/w/api.php?action=query&format=json&origin=*&list=search&srnamespace=102&srlimit=6&srsearch='+encodeURIComponent(q)).then(r=>r.json()),4000);
+  const t=arr(s&&s.query&&s.query.search).map(x=>x.title).find(x=>names.some(n=>sameDish(String(x).replace(/^Cookbook:/,''),n)));if(!t)continue;
+  const j=await ptmo(fetch('https://en.wikibooks.org/w/api.php?action=query&format=json&origin=*&prop=extracts&explaintext=1&redirects=1&titles='+encodeURIComponent(t)).then(r=>r.json()),5000);
+  const pg=Object.values((j.query&&j.query.pages)||{})[0];let tx=String(pg&&pg.extract||'');tx=tx.replace(/\n=+ *(See also|References|External links|Further reading)[\s\S]*$/i,'');
+  if(/ingredients/i.test(tx)&&/(procedure|directions|method|instructions|preparation)/i.test(tx))return{site:'Wikibooks (livre de cuisine)',lang:'anglais',licence:'CC BY-SA',url:'https://en.wikibooks.org/wiki/'+encodeURIComponent(String(t).replace(/ /g,'_')),titre:String(t).replace(/^Cookbook:/,''),texte:tx}}catch(e){}}return null}
+async function findSource(o){const k=srcN(o.nom);if(k in SRCM)return SRCM[k];if(navigator.onLine===false)return null;
+  const en=o.nom_en||await srcEnTitle(o),names=[...new Set([o.nom_en,en,o.nom_local,o.nom].filter(Boolean).map(x=>String(x).replace(/\s*\(.*?\)\s*/g,' ').trim()).filter(x=>x.length>2))];
+  let r=null;try{r=await srcMealDB(names)||await srcWikibooks(names)}catch(e){}
+  if(r)r.texte=r.texte.slice(0,6000);SRCM[k]=r;return r}
+const ENW=/\b(the|and|with|until|into|add|stir|heat|cook|bake|minutes?|cups?|tbsp|tsp|tablespoons?|teaspoons?|ounces?|oz|lbs?|pounds?|inch(es)?|fahrenheit)\b|°\s?F\b/gi;
+function engLeft(d){const t=[...arr(d.ingredients).map(g=>(g.quantite||'')+' '+(g.nom||'')),...arr(d.etapes).map(e=>(e.titre||'')+' '+(e.detail||''))].join(' \n ');return(t.match(ENW)||[]).length}
+async function translateSrc(o,n,src){const ask=extra=>askJSON(`Tu es traducteur culinaire professionnel ET chef pédagogue. ${profil()}
+Voici une recette d'origine publiée sur un site étranger (${src.site}, en ${src.lang}) : « ${src.titre} ».
+<<<
+${src.texte}
+>>>
+1) Traduis-la INTÉGRALEMENT en français impeccable, comme dans un livre de cuisine français publié : vocabulaire culinaire exact (faire revenir, mijoter, réserver, émincer, à feu vif, à couvert…), aucune tournure calquée sur l'anglais, AUCUN mot anglais restant (sauf le nom propre du plat).
+2) Convertis toutes les mesures en système français : cups en ml ou en g selon l'ingrédient, oz et lb en g, °F en °C, pouces en cm, tbsp en c. à soupe, tsp en c. à café. Si un ingrédient est introuvable en France, garde-le et indique l'équivalent courant entre parenthèses.
+3) Reste FIDÈLE à l'original : n'invente aucun ingrédient ni aucune étape et n'en retire aucun. Adapte seulement les quantités à ${n} portion${n>1?'s':''} et découpe en 8 à 16 étapes très claires pour un débutant (gestes, ustensile, feu, temps, repères visuels) ; tu peux expliciter un geste sous-entendu.
+4) Si son profil santé demande une adaptation, mets-la dans "variantes" (pas dans la recette).${extra||''}
+Format JSON : ${DETF}`,{modelTier:'default',cache:false});
+  let d=normDet(await ask());
+  const bad=x=>x.etapes.length<3||x.ingredients.length<2||engLeft(x)>2||(src.nIng&&x.ingredients.length<Math.floor(src.nIng*0.7));
+  if(bad(d)){const d2=normDet(await ask(`\nATTENTION : ta première version ${engLeft(d)>2?'contenait encore de l\'anglais ou des unités américaines':'oubliait des ingrédients ou des étapes'}. Vérifie chaque ligne : tout en français, unités françaises, tous les ingrédients de l'original.`));if(!bad(d2)||d2.etapes.length>d.etapes.length&&engLeft(d2)<=engLeft(d))d=d2}
+  if(d.etapes.length<3||d.ingredients.length<2||engLeft(d)>4)return null;
+  d.source={site:src.site,lang:src.lang,url:src.url,titre:src.titre,licence:src.licence||''};return d}
 async function getDetail(o,n){
   o.det=o.det||{};if(o.det[n]&&arr(o.det[n].etapes).length>=3)return o.det[n];
+  if(o.pays&&!o.noSrc){try{const src=await ptmo(findSource(o),10000);if(src){const d=await translateSrc(o,n,src);if(d){o.det[n]=d;saveFood();return d}}}catch(e){}}
   const base=`${o.nom}${o.moment?' ('+o.moment+')':''}${strs(o.ingredients).length?'. Ingrédients prévus : '+strs(o.ingredients).join(', '):''}${o.pays?'. Recette traditionnelle : '+o.pays+(o.nom_local?' ('+o.nom_local+')':'')+', reste fidèle à l\'authentique tout en l\'adaptant à son profil':''}${o.description?'. '+o.description:''}`;
   let d=normDet(await askJSON(`Tu es chef cuisinier et excellent pédagogue. ${profil()}
 Écris la recette « ${base} » pour ${n} portion${n>1?'s':''}, pour quelqu'un qui n'a jamais cuisiné : il doit pouvoir aller jusqu'au bout sans aucune question.
@@ -2868,6 +2912,7 @@ function renderK(){
   if(K.i<0){
     ov.innerHTML=head+`<div class="dph wide" data-q="${esc(K.o.wiki||K.o.nom_local||d.nom||K.o.nom)}" data-pays="${esc(K.o.pays||'')}" style="margin:6px 0 10px"><span class="mute">Photo…</span></div><h1 style="font-size:clamp(28px,7vw,38px)">${esc(d.nom||K.o.nom)}</h1>
     <div class="macro" style="margin:8px 0">${num(d.temps_total_min)?`<span><b>${esc(d.temps_total_min)}</b> min</span>`:''}${d.difficulte?`<span>${esc(d.difficulte)}</span>`:''}${d.kcal_portion?`<span><b>${esc(d.kcal_portion)}</b> kcal / portion</span>`:''}</div>
+    ${d.source&&d.source.url?`<div class="srcnote"><svg class="i" aria-hidden="true"><use href="#i-globe"/></svg><span>Recette d'origine : <b>${esc(d.source.site)}</b>, un site en ${esc(d.source.lang||'langue étrangère')} (pas un site français). Traduite intégralement en français par le coach, mesures converties.${d.source.licence?' Licence '+esc(d.source.licence)+'.':''} <a href="${esc(d.source.url)}" target="_blank" rel="noopener">Voir l'original</a></span></div>`:''}
     <label for="kN">Nombre de portions</label><div class="row"><select id="kN" style="width:auto">${[1,2,3,4,5,6,8].map(n=>`<option ${n===K.n?'selected':''}>${n}</option>`).join('')}</select><span class="mute">les quantités sont recalculées</span></div>
     <h3 style="margin-top:18px">Ingrédients <span class="mute">(coche quand c'est sorti)</span></h3>
     <div class="shop">${(d.ingredients||[]).map((g,i)=>`<label><input type="checkbox" data-kck="${i}" ${K.ck[i]?'checked':''}><span><b>${esc(g.quantite)}</b> ${esc(g.nom)}${g.preparation?` <span class="mute">— ${esc(g.preparation)}</span>`:''}</span></label>`).join('')}</div>
@@ -3892,10 +3937,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-72';
+const APP_VERSION='2026.11.26-73';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.26-73','Recettes d\'origine du monde entier','Pour la cuisine du monde, le coach va chercher la vraie recette sur des sites étrangers (TheMealDB, Wikibooks), la traduit entièrement en français avec les mesures converties, et te dit d\'où elle vient.','cuisine','monde'],
  ['2026.11.26-71','Encore plus de plats du monde','Chaque pays propose de nouveaux plats à chaque visite, et le bouton « ↻ D\'autres plats » en montre encore. Un pays du jour t\'attend à l\'ouverture.','cuisine','monde'],
  ['2026.11.26-72','Tes données sont protégées','Repas, pesées, séances, calendrier : tout est gardé à chaque mise à jour. Sauvegarde automatique juste avant chaque mise à jour, chaque jour, et une par mois pendant un an. Et si un jour l\'app plante au démarrage, un écran te permet de récupérer une copie.','suivi','donnees'],
  ['2026.11.26-41','Bon produit ?','Photo du paquet, du tableau ou des ingrédients : note sur 100, additifs, avis du coach.','scan','produit'],
