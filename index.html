@@ -4,143 +4,254 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Mon Coach">
-<meta name="theme-color" content="#ef3b2c">
+<meta name="theme-color" content="#f4f2f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d0a11" media="(prefers-color-scheme: dark)">
 <meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="description" content="Ton coach sport et nutrition personnel">
+<link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon-192.png">
 <title>Mon Coach</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* VOICE: un coach franc et motivant, phrases courtes, chiffres utiles
-   IDEA: le carnet de salle de sport — fiche perso, programme coché, fiches machine
-   PICTURE: une planche anatomique face/dos qui s'allume sur les muscles travaillés
-   COLOUR and TYPE: rouge plaque de fonte #ef3b2c, prune #2b1b3a, jaune craie #ffc93c ; Archivo 800/400
-   LAYOUT: bandeau rouge, une colonne mobile, barre d'onglets en bas, cartes plates */
+/* VOICE: un coach franc, chaleureux et motivant ; phrases courtes, chiffres utiles
+   IDEA: une app iPhone native de coaching — grands titres, cartes aérées, anneaux du jour
+   PICTURE: la carte « Aujourd'hui » en dégradé rouge avec trois anneaux (calories, protéines, eau) ; la planche anatomique face/dos
+   COLOUR and TYPE: rouge fonte #f0412f dominant, encre prune-noire en soutien, jaune craie en accent ; Archivo 800 titres / 400-600 texte
+   LAYOUT: barre translucide en haut, grand titre par onglet, sous-onglets en pilules, tab bar flottante en bas */
 :root{color-scheme:light dark;
---bg:light-dark(#ffffff,#15111b);--ink:light-dark(#1d1724,#f3eef6);--mute:light-dark(#6b6275,#a99fb3);
---soft:light-dark(#f4f1f6,#211b29);--line:light-dark(#e3dde8,#352d3f);
---red:#ef3b2c;--plum:#2b1b3a;--yel:#ffc93c;
---hot:#ef3b2c;--warm:#ffc93c;--mus:light-dark(#d6cedd,#4a3f56);--sil:light-dark(#eee9f1,#2b2434)}
+--bg:light-dark(#f4f2f6,#0d0a11);--card:light-dark(#ffffff,#19151f);--fill:light-dark(#f0edf3,#251f2c);--fill2:light-dark(#e7e2ec,#2f2838);
+--ink:light-dark(#17121d,#f4f0f7);--mute:light-dark(#6e6678,#a39bad);--line:light-dark(#ebe6ef,#2e2737);
+--red:#f0412f;--redd:#d42e1d;--tint:light-dark(#fdebe8,#3a1a16);--tintink:light-dark(#c42a19,#ff8a7a);
+--yel:#ffc23d;--blue:#2f8cf0;--green:#1fae79;--plum:#2b1b3a;
+--hot:#f0412f;--warm:#ffc23d;--mus:light-dark(#dcd5e2,#433a4e);--sil:light-dark(#efebf2,#28222f);
+--sh:light-dark(0 1px 2px rgba(30,15,40,.04),0 0 0 rgba(0,0,0,0)),light-dark(0 8px 24px rgba(30,15,40,.06),0 0 0 rgba(0,0,0,0));
+--r:22px}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
-*{box-sizing:border-box;min-width:0}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,sans-serif;overflow-x:clip;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
-h1,h2,h3{font-weight:800;line-height:1.08;text-wrap:balance;margin:0}
-h1{font-size:clamp(32px,8vw,46px);letter-spacing:-.02em}
-h2{font-size:24px;margin-bottom:12px}
-h3{font-size:18px}
-.top{background:var(--red);color:#fff;padding:calc(18px + env(safe-area-inset-top)) max(5vw,18px) 22px}
-.top p{margin:6px 0 0;opacity:.92}
-main{max-width:760px;margin:0 auto;padding:18px max(4vw,14px)}
-section[data-v]{display:none}section[data-v].on{display:block}
-.card{background:var(--soft);border-radius:18px;padding:18px;margin-bottom:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Archivo,-apple-system,system-ui,sans-serif;overflow-x:clip;padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+h1,h2,h3{font-weight:800;line-height:1.1;text-wrap:balance;margin:0;letter-spacing:-.015em}
+h1{font-size:clamp(30px,8.5vw,40px);letter-spacing:-.025em}
+h2{font-size:20px;margin-bottom:10px}
+h3{font-size:17px}
+p{margin:8px 0}
+a{color:var(--red)}
+.i{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* barre du haut */
+.appbar{position:sticky;top:0;z-index:12;display:flex;align-items:center;gap:10px;padding:calc(8px + env(safe-area-inset-top)) max(4vw,16px) 8px;background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid transparent;transition:border-color .2s}
+.appbar.sc{border-bottom-color:var(--line)}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;flex:1;color:var(--ink);text-decoration:none}
+.logo span{width:30px;height:30px;border-radius:9px;background:linear-gradient(140deg,#ff6a3d,#f0412f 55%,#c8263f);display:grid;place-items:center;color:#fff}
+.logo .i{width:18px;height:18px;stroke-width:2.6}
+.ib{width:40px;height:40px;min-height:0;padding:0;border-radius:50%;display:grid;place-items:center;background:var(--fill);color:var(--ink)}
+.ib .i{width:20px;height:20px}
+.ib.av{background:var(--ink);color:var(--bg);font-weight:800;font-size:15px;text-decoration:none}
+main{max-width:720px;margin:0 auto;padding:4px max(4vw,14px) 0}
+section[data-v]{display:none;animation:fade .25s ease}section[data-v].on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.lt{padding:8px 4px 14px}.lt p{color:var(--mute);margin:4px 0 0}
+/* cartes */
+.card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:14px;box-shadow:var(--sh)}
+.card>h2:first-child,.card>.row:first-child h2{margin-top:0}
+.sub{color:var(--mute);font-size:14px;margin:-4px 0 12px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-label{display:block;font-size:14px;font-weight:600;color:var(--mute)}
-input,select,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;margin-top:4px;min-height:46px}
-textarea{min-height:90px;resize:vertical}
-input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:3px solid var(--yel);outline-offset:1px}
 .full{grid-column:1/-1}
-button{font:inherit;font-weight:700;border:0;border-radius:14px;min-height:48px;padding:0 18px;cursor:pointer;background:var(--red);color:#fff}
-button.alt{background:var(--plum);color:#fff}
-button.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
-button.sm{min-height:40px;padding:0 12px;font-size:14px;border-radius:11px}
-button:disabled{opacity:.55}
+label{display:block;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:2px}
+input,select,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--fill);border:1.5px solid transparent;border-radius:13px;padding:11px 13px;margin-top:4px;min-height:48px;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 18px) 21px,calc(100% - 13px) 21px;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
+textarea{min-height:92px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red);background:var(--card)}
+button:focus-visible,a:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+button{font:inherit;font-weight:700;border:0;border-radius:14px;min-height:50px;padding:0 20px;cursor:pointer;background:var(--red);color:#fff;box-shadow:0 6px 16px -6px rgba(240,65,47,.55);transition:transform .12s,opacity .2s}
+button:active{transform:scale(.97)}
+button.alt{background:var(--ink);color:var(--bg);box-shadow:none}
+button.ghost{background:var(--fill);color:var(--ink);box-shadow:none}
+button.tint{background:var(--tint);color:var(--tintink);box-shadow:none}
+button.sm{min-height:40px;padding:0 14px;font-size:14px;border-radius:12px}
+button.wide{width:100%}
+button:disabled{opacity:.45}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .sb{justify-content:space-between}
-.big{font-size:clamp(44px,13vw,64px);font-weight:900;line-height:1;letter-spacing:-.03em}
+.big{font-size:clamp(44px,13vw,60px);font-weight:900;line-height:1;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
 .mute{color:var(--mute);font-size:14px}
-.gauge{position:relative;height:16px;border-radius:9px;margin:18px 0 6px;background:linear-gradient(90deg,#5aa9e6 0 14%,#3fb27f 14% 40%,#ffc93c 40% 60%,#f08a3c 60% 80%,#ef3b2c 80%)}
-.gauge i{position:absolute;top:-7px;width:6px;height:30px;border-radius:3px;background:var(--ink);transform:translateX(-50%);border:2px solid var(--bg)}
-.ticks{display:flex;justify-content:space-between;font-size:13px;color:var(--mute)}
+/* sous-onglets */
+.seg{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -4px 14px;padding:2px 4px}
+.seg::-webkit-scrollbar{display:none}
+.seg button{flex:none;background:var(--card);color:var(--ink);min-height:40px;padding:0 16px;font-size:14px;border-radius:99px;box-shadow:var(--sh)}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.pane{display:none}.pane.on{display:block;animation:fade .2s ease}
+/* accueil */
+.hero{background:linear-gradient(150deg,#ff6a3d 0%,#f0412f 42%,#c8263f 100%);color:#fff;border-radius:26px;padding:20px 18px 18px;margin-bottom:14px;box-shadow:0 16px 34px -18px rgba(200,38,63,.8);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.22),transparent 70%)}
+.hero h1{font-size:clamp(26px,7vw,32px)}
+.hero p{opacity:.9;margin:4px 0 0;font-size:15px}
+.rings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px;position:relative;z-index:1}
+.ring{text-align:center}.ring svg{width:100%;max-width:96px;display:block;margin:0 auto}
+.ring b{display:block;font-size:17px;font-weight:800;margin-top:6px;white-space:nowrap}.ring span{font-size:12px;opacity:.85}
+.ring circle{transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;background:var(--card);color:var(--ink);box-shadow:var(--sh);border-radius:20px;padding:16px;min-height:118px;font-weight:700}
+.tile small{display:block;font-weight:500;color:var(--mute);font-size:13px;margin-top:2px}
+.tile .ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center}
+.tile .ic .i{width:22px;height:22px}
+.c-red{background:var(--tint);color:var(--tintink)}.c-yel{background:light-dark(#fff3d6,#3a2f12);color:light-dark(#9a6500,#ffd27a)}.c-blue{background:light-dark(#e4f0fe,#13263d);color:light-dark(#1d6fd0,#8cc4ff)}.c-ink{background:var(--fill);color:var(--ink)}.c-green{background:light-dark(#e1f6ee,#12302a);color:light-dark(#11805a,#7fe0b9)}
+.hcard{display:flex;gap:14px;align-items:center}
+.hcard .ic{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;flex:none}
+.kv{display:flex;align-items:baseline;gap:6px}.kv b{font-size:28px;font-weight:900;letter-spacing:-.02em}
+.lnk{display:flex;align-items:center;justify-content:space-between;gap:10px;color:var(--ink);text-decoration:none;font-weight:700}
+.lnk .i{width:18px;height:18px;color:var(--mute)}
+.steps{display:grid;gap:10px;margin:12px 0}
+.steps div{display:flex;gap:12px;align-items:center;background:var(--fill);border-radius:14px;padding:10px 12px}
+.steps em{font-style:normal;width:28px;height:28px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-weight:800;flex:none;font-size:14px}
+/* éléments existants */
+.gauge{position:relative;height:14px;border-radius:9px;margin:18px 0 6px;background:linear-gradient(90deg,#5aa9e6 0 14%,#1fae79 14% 40%,#ffc23d 40% 60%,#f08a3c 60% 80%,#f0412f 80%)}
+.gauge i{position:absolute;top:-6px;width:8px;height:26px;border-radius:4px;background:var(--ink);transform:translateX(-50%);border:2.5px solid var(--card)}
+.ticks{display:flex;justify-content:space-between;font-size:12px;color:var(--mute)}
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
-.stats div{background:var(--bg);border-radius:12px;padding:10px}
-.stats b{display:block;font-size:22px;font-weight:800;white-space:nowrap}
-.stats span{font-size:13px;color:var(--mute)}
-.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--plum);display:grid;grid-template-columns:repeat(5,1fr);padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:9}
-.tabs a{color:#cbbfd8;text-decoration:none;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;min-height:52px;border-radius:12px}
-.tabs a.on{color:#fff;background:rgba(255,255,255,.1)}
-.tabs svg,.ic{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.body{width:100%;max-width:420px;display:block;margin:0 auto}
+.stats div{background:var(--fill);border-radius:14px;padding:10px 12px}
+.stats b{display:block;font-size:21px;font-weight:800;white-space:nowrap}
+.stats span{font-size:12px;color:var(--mute)}
+.tabs{position:fixed;left:10px;right:10px;bottom:calc(8px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto;background:color-mix(in srgb,var(--card) 84%,transparent);-webkit-backdrop-filter:saturate(180%) blur(22px);backdrop-filter:saturate(180%) blur(22px);display:grid;grid-template-columns:repeat(5,1fr);padding:6px;border-radius:26px;z-index:9;box-shadow:0 10px 30px -10px rgba(20,10,30,.35),0 0 0 .5px var(--line)}
+.tabs a{color:var(--mute);text-decoration:none;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px;border-radius:20px;transition:color .2s,background .2s}
+.tabs a.on{color:var(--red);background:var(--tint)}
+.tabs .i{width:24px;height:24px}
+.body{width:100%;max-width:400px;display:block;margin:0 auto}
 .pick [data-k]{cursor:pointer}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
-.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
-.chip{background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:99px;padding:5px 12px;font-size:14px;font-weight:600}
-.chip.p{background:var(--hot);color:#fff;border-color:var(--hot)}
-.chip.s{background:var(--warm);color:#2b1b3a;border-color:var(--warm)}
-button.chip{min-height:40px}
-ol,ul{padding-left:22px;margin:8px 0}li{margin:4px 0}
-details.ex{background:var(--bg);border-radius:14px;margin:8px 0;border:1.5px solid var(--line)}
-details.ex summary{list-style:none;display:flex;gap:12px;align-items:center;padding:12px;cursor:pointer}
+.chip{background:var(--fill);color:var(--ink);border:0;border-radius:99px;padding:6px 13px;font-size:14px;font-weight:600;box-shadow:none}
+.chip.p{background:var(--hot);color:#fff}
+.chip.s{background:var(--warm);color:#2b1b3a}
+button.chip{min-height:38px}
+ol,ul{padding-left:22px;margin:8px 0}li{margin:5px 0}
+details.ex{background:var(--fill);border-radius:16px;margin:8px 0}
+details.ex summary{list-style:none;display:flex;gap:12px;align-items:center;padding:13px 14px;cursor:pointer}
 details.ex summary::-webkit-details-marker{display:none}
+details.ex summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--mute);border-bottom:2px solid var(--mute);transform:rotate(45deg);margin-left:4px;transition:transform .2s;flex:none}
+details.ex[open] summary::after{transform:rotate(-135deg)}
 details.ex .in{padding:0 14px 14px}
+details>summary{font-weight:700}
 .exn{flex:1;font-weight:700}
 .dose{white-space:nowrap;font-weight:800;color:var(--red)}
-.vid{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:12px;background:var(--plum);color:#fff;text-decoration:none;font-weight:700;font-size:14px}
-.vid svg{width:20px;height:20px;fill:currentColor}
-.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:2.5px dashed var(--line);border-radius:18px;min-height:180px;padding:16px;text-align:center;cursor:pointer;background:var(--bg)}
-.drop img{max-width:100%;max-height:300px;border-radius:12px}
+.vid{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:12px;background:var(--fill);color:var(--ink);text-decoration:none;font-weight:700;font-size:14px}
+.vid svg{width:18px;height:18px;fill:var(--red)}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:2px dashed var(--fill2);border-radius:20px;min-height:180px;padding:16px;text-align:center;cursor:pointer;background:var(--fill);color:var(--ink)}
+.drop>svg{color:var(--red)}
+.drop img{max-width:100%;max-height:300px;border-radius:14px}
 .drop input{display:none}
-.seg{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;background:var(--soft);padding:5px;border-radius:16px;margin-bottom:16px}
-.seg button{background:transparent;color:var(--ink);min-height:42px;padding:0 2px;font-size:13px;border-radius:12px}
-.ns{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;color:#fff;font-weight:900;font-size:20px;text-transform:uppercase}
-.seg button.on{background:var(--red);color:#fff}
-.pane{display:none}.pane.on{display:block}
-canvas.draw{width:100%;border-radius:14px;touch-action:none;display:block;background:var(--bg)}
-.meal{background:var(--bg);border-radius:14px;padding:14px;margin:10px 0}
-.meal .k{font-size:13px;font-weight:700;color:var(--red)}
-.macro{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--mute);margin:4px 0}
+canvas.draw{width:100%;border-radius:16px;touch-action:none;display:block;background:var(--fill)}
+.meal{background:var(--fill);border-radius:18px;padding:14px;margin:10px 0}
+.meal .k{font-size:12px;font-weight:800;color:var(--red);text-transform:none;letter-spacing:.01em}
+.macro{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--mute);margin:6px 0}
 .macro b{color:var(--ink)}
-.bar{height:12px;border-radius:7px;background:var(--bg);overflow:hidden;margin:6px 0 12px}
-.bar i{display:block;height:100%;background:var(--red);border-radius:7px;transition:width .4s}
-.bar.p i{background:var(--plum)}.bar.w i{background:#3a8dde}
-:root[data-theme=dark] .bar.p i{background:#9d7bc4}
-@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .bar.p i{background:#9d7bc4}}
-.jl{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.bar{height:10px;border-radius:7px;background:var(--fill);overflow:hidden;margin:6px 0 12px}
+.bar i{display:block;height:100%;background:var(--red);border-radius:7px;transition:width .5s}
+.bar.p i{background:var(--yel)}.bar.w i{background:var(--blue)}
+.jl{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
 .jl .n{flex:1}.jl .v{white-space:nowrap;font-weight:700}
-.x{background:transparent;color:var(--mute);min-height:40px;min-width:40px;padding:0;font-size:20px}
+.x{background:transparent;color:var(--mute);min-height:40px;min-width:40px;padding:0;font-size:20px;box-shadow:none}
 .glass{display:flex;gap:6px;flex-wrap:wrap}
-.glass button{min-height:40px;min-width:34px;padding:0;background:var(--bg);border:1.5px solid var(--line);color:#3a8dde}
-.glass button.f{background:#3a8dde;border-color:#3a8dde;color:#fff}
+.glass button{min-height:40px;min-width:36px;padding:0;background:var(--fill);color:var(--blue);box-shadow:none;border-radius:11px}
+.glass button.f{background:var(--blue);color:#fff}
 .msgs{display:flex;flex-direction:column;gap:10px;min-height:200px}
-.bub{max-width:88%;padding:10px 14px;border-radius:18px;white-space:pre-wrap;overflow-wrap:anywhere}
+.bub{max-width:86%;padding:10px 14px;border-radius:20px;white-space:pre-wrap;overflow-wrap:anywhere}
 .bub.me{align-self:flex-end;background:var(--red);color:#fff;border-bottom-right-radius:6px}
-.bub.co{align-self:flex-start;background:var(--bg);border-bottom-left-radius:6px}
-.send{display:flex;gap:8px;margin-top:12px}.send textarea{min-height:48px;height:48px;margin:0}
-.busy{display:flex;align-items:center;gap:10px;color:var(--mute);padding:10px 0}
-.busy::before{content:"";width:18px;height:18px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--red);animation:sp .8s linear infinite;flex:none}
+.bub.co{align-self:flex-start;background:var(--fill);border-bottom-left-radius:6px}
+.send{display:flex;gap:8px;margin-top:12px;align-items:flex-end}.send textarea{min-height:50px;height:50px;margin:0}
+.busy{display:flex;align-items:center;gap:10px;color:var(--mute);padding:12px 0}
+.busy::before{content:"";width:18px;height:18px;border-radius:50%;border:3px solid var(--fill2);border-top-color:var(--red);animation:sp .8s linear infinite;flex:none}
 @keyframes sp{to{transform:rotate(360deg)}}
-.err{background:light-dark(#fde7e4,#3a1a1a);color:light-dark(#8a1c10,#ffb4a8);border-radius:12px;padding:12px;margin:10px 0}
-.warn{background:var(--yel);color:#2b1b3a;border-radius:14px;padding:12px 14px;margin-bottom:16px;font-weight:600;display:none}
-.tip{background:var(--bg);border-left:4px solid var(--yel);border-radius:10px;padding:10px 12px;margin:10px 0}
-.spark{width:100%;height:60px;display:block}
-.shop label{display:flex;gap:10px;align-items:center;color:var(--ink);font-weight:500;font-size:16px;padding:6px 0}
-.shop input{width:22px;height:22px;min-height:0;margin:0;accent-color:var(--red);flex:none}
+.err{background:var(--tint);color:var(--tintink);border-radius:14px;padding:12px 14px;margin:10px 0;font-weight:600}
+.warn{background:light-dark(#fff3d6,#3a2f12);color:light-dark(#6b4600,#ffd27a);border-radius:18px;padding:14px 16px;margin-bottom:14px;font-weight:600;display:none}
+.tip{background:var(--fill);border-left:4px solid var(--yel);border-radius:12px;padding:10px 12px;margin:10px 0}
+.spark{width:100%;height:64px;display:block}
+.shop label{display:flex;gap:12px;align-items:center;color:var(--ink);font-weight:500;font-size:16px;padding:7px 0;margin:0}
+.shop input{width:24px;height:24px;min-height:0;margin:0;accent-color:var(--red);flex:none;-webkit-appearance:checkbox;appearance:auto}
 .shop input:checked+span{text-decoration:line-through;color:var(--mute)}
-#ov{position:fixed;inset:0;background:var(--bg);z-index:20;display:none;overflow:auto;padding:calc(14px + env(safe-area-inset-top)) max(5vw,18px) calc(20px + env(safe-area-inset-bottom))}
-#ov.on{display:block}
+input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
+#ov{position:fixed;inset:0;background:var(--bg);z-index:20;display:none;overflow:auto;padding:calc(12px + env(safe-area-inset-top)) max(5vw,18px) calc(24px + env(safe-area-inset-bottom))}
+#ov.on{display:block;animation:fade .2s ease}
 .ovh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.ovh .row{flex-wrap:nowrap}.ovh>.mute{flex:1}
-.timer{font-size:clamp(80px,26vw,130px);font-weight:900;text-align:center;line-height:1;letter-spacing:-.04em;color:var(--red);font-variant-numeric:tabular-nums;margin:20px 0}
+.timer{font-size:clamp(84px,27vw,132px);font-weight:900;text-align:center;line-height:1;letter-spacing:-.05em;color:var(--red);font-variant-numeric:tabular-nums;margin:24px 0}
 .setin{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
-.setin input{font-size:28px;font-weight:800;text-align:center;min-height:64px}
-.dots{display:flex;gap:6px;margin:8px 0}.dots i{width:28px;height:8px;border-radius:4px;background:var(--line)}.dots i.f{background:var(--red)}
-.tbl{width:100%;border-collapse:collapse;font-size:15px}.tbl td{padding:7px 0;border-top:1px solid var(--line)}.tbl td:last-child{text-align:right;white-space:nowrap;font-weight:700}
-@media(prefers-reduced-motion:reduce){.busy::before{animation:none}.bar i{transition:none}}
-@media(max-width:420px){.stats b{font-size:19px}.seg button{font-size:13px}}
+.setin input{font-size:30px;font-weight:800;text-align:center;min-height:68px}
+.dots{display:flex;gap:6px;margin:10px 0}.dots i{width:28px;height:7px;border-radius:4px;background:var(--fill2)}.dots i.f{background:var(--red)}
+.tbl{width:100%;border-collapse:collapse;font-size:15px}.tbl td{padding:8px 0;border-top:1px solid var(--line)}.tbl tr:first-child td{border-top:0}.tbl td:last-child{text-align:right;white-space:nowrap;font-weight:700}
+.ns{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;color:#fff;font-weight:900;font-size:20px;text-transform:uppercase}
+/* feuille de partage */
+#sheet{position:fixed;inset:0;z-index:30;display:none;background:rgba(10,5,15,.45);align-items:flex-end;justify-content:center}
+#sheet.on{display:flex;animation:fade .2s}
+#sheet .in{background:var(--card);width:100%;max-width:560px;border-radius:26px 26px 0 0;padding:10px 20px calc(24px + env(safe-area-inset-bottom));animation:up .28s cubic-bezier(.2,.8,.2,1)}
+#sheet .grab{width:40px;height:5px;border-radius:3px;background:var(--fill2);margin:0 auto 14px}
+#qr{width:200px;height:200px;margin:14px auto;background:#fff;border-radius:18px;padding:12px;display:grid;place-items:center}
+#qr svg,#qr img{width:100%;height:100%}
+.url{background:var(--fill);border-radius:12px;padding:10px 12px;font-size:14px;overflow-wrap:anywhere;text-align:center}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:380px){.stats b{font-size:18px}.tile{padding:14px}}
 </style>
 </head>
 <body>
-<header class="top">
-  <h1 id="hello">Mon Coach</h1>
-  <p id="sub">Ton coach sportif et nutrition, rien que pour toi.</p>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+ <symbol id="i-dumb" viewBox="0 0 24 24"><path d="M2 12h3M19 12h3M5 8v8M19 8v8M8 6v12M16 6v12M8 12h8"/></symbol>
+ <symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10"/></symbol>
+ <symbol id="i-fork" viewBox="0 0 24 24"><path d="M5 3v8a3 3 0 0 0 6 0V3M8 3v18M16 3c-2 2-2 8 0 9v9"/></symbol>
+ <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+ <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M5 12v7a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7"/></symbol>
+ <symbol id="i-bar" viewBox="0 0 24 24"><path d="M3 5v14M6 5v14M10 5v14M13 5v14M17 5v14M21 5v14"/></symbol>
+ <symbol id="i-plate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/></symbol>
+ <symbol id="i-cam" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+ <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+ <symbol id="i-add" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></symbol>
+ <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+ <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-7 1 2 2 3 3 3 0-3-1-5 0-7z"/></symbol>
+ <symbol id="i-scale" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="4"/><path d="M9 9a3 3 0 0 1 6 0M12 9l1.5-1.5"/></symbol>
+ <symbol id="i-body" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M6 9h12M12 9v6M12 15l-3 6M12 15l3 6"/></symbol>
+ <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+</svg>
+
+<header class="appbar" id="appbar">
+  <a class="logo" href="#accueil"><img src="icon-192.png" alt="" width="32" height="32" style="border-radius:9px;display:block">Mon Coach</a>
+  <button class="ib" data-act="shareApp" aria-label="Partager l'app"><svg class="i"><use href="#i-share"/></svg></button>
+  <a class="ib av" href="#moi" id="avatar" aria-label="Mon profil">M</a>
 </header>
 
 <main>
-<div class="warn" id="noai">Branche l'IA gratuite pour activer le coach : onglet <a href="#moi" style="color:inherit">Moi</a>, carte « Moteur IA » tout en bas (2 minutes).</div>
+<div class="warn" id="noai">Le coach a besoin d'une IA : ajoute une clé gratuite dans <a href="#moi" style="color:inherit">ton profil</a>, carte « Moteurs IA gratuits » (2 minutes).</div>
+
+<!-- ================= ACCUEIL ================= -->
+<section data-v="accueil">
+  <div class="hero">
+    <h1 id="hello">Bonjour</h1>
+    <p id="sub">Ton coach sport et nutrition.</p>
+    <div class="rings" id="rings"></div>
+  </div>
+  <div id="homeStart"></div>
+  <div class="tiles">
+    <button class="tile" data-act="goPane" data-v="scan" data-p="produit"><span class="ic c-red"><svg class="i"><use href="#i-bar"/></svg></span><span>Scanner un produit<small>code-barres ou étiquette</small></span></button>
+    <button class="tile" data-act="goPane" data-v="scan" data-p="assiette"><span class="ic c-yel"><svg class="i"><use href="#i-plate"/></svg></span><span>Mon assiette<small>calories en photo</small></span></button>
+    <button class="tile" data-act="goPane" data-v="scan" data-p="machine"><span class="ic c-blue"><svg class="i"><use href="#i-cam"/></svg></span><span>Une machine<small>comment l'utiliser</small></span></button>
+    <button class="tile" data-act="quick"><span class="ic c-ink"><svg class="i"><use href="#i-bolt"/></svg></span><span>Séance express<small>20 minutes, maintenant</small></span></button>
+  </div>
+  <div class="card" id="homeSeance"></div>
+  <div class="card" id="homeMenu"></div>
+  <div class="grid" style="margin-bottom:14px">
+    <div class="card" style="margin:0" id="homeRecov"></div>
+    <div class="card" style="margin:0" id="homeWeight"></div>
+  </div>
+  <div class="card" id="installCard" style="display:none"></div>
+</section>
 
 <!-- ================= MOI ================= -->
 <section data-v="moi">
+  <div class="lt"><h1>Mon profil</h1><p>Tes infos servent à calculer tes besoins et à personnaliser le coach.</p></div>
   <div class="card">
     <div class="mute">Ton IMC</div>
     <div class="row sb" style="align-items:flex-end">
@@ -151,15 +262,16 @@ canvas.draw{width:100%;border-radius:14px;touch-action:none;display:block;backgr
     <div class="ticks"><span>15</span><span>18,5</span><span>25</span><span>30</span><span>35</span><span>40</span></div>
     <div class="stats">
       <div><b id="stBmr">–</b><span>kcal au repos</span></div>
-      <div><b id="stKcal">–</b><span>kcal / jour visées</span></div>
+      <div><b id="stKcal">–</b><span>kcal / jour</span></div>
       <div><b id="stProt">–</b><span>protéines / jour</span></div>
     </div>
     <p class="mute" style="margin:12px 0 0">L'IMC ne distingue pas muscle et graisse : en prenant du muscle, il peut monter alors que tu t'affines. Regarde aussi ton tour de taille et le miroir.</p>
   </div>
 
   <div class="card">
-    <h2>Mon profil</h2>
+    <h2>Mes infos</h2>
     <form class="grid" onsubmit="return false">
+      <div class="full"><label for="p-nom">Prénom</label><input id="p-nom" placeholder="ex. François" autocomplete="given-name"></div>
       <div><label for="p-sexe">Sexe</label><select id="p-sexe"><option value="H">Homme</option><option value="F">Femme</option></select></div>
       <div><label for="p-age">Âge</label><input id="p-age" type="number" inputmode="numeric" min="14" max="99" placeholder="30"></div>
       <div><label for="p-taille">Taille (cm)</label><input id="p-taille" type="number" inputmode="decimal" min="120" max="230" placeholder="178"></div>
@@ -174,12 +286,31 @@ canvas.draw{width:100%;border-radius:14px;touch-action:none;display:block;backgr
       <div><label for="p-jours">Séances / semaine</label><select id="p-jours"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></div>
       <div><label for="p-lieu">Où je m'entraîne</label><select id="p-lieu"><option value="salle">En salle</option><option value="maison">À la maison</option><option value="mixte">Les deux</option></select></div>
       <div><label for="p-duree">Durée d'une séance</label><select id="p-duree"><option value="30">30 min</option><option value="45">45 min</option><option value="60" selected>1 h</option><option value="90">1 h 30</option></select></div>
-      <div class="full"><label for="p-mat">Matériel à la maison</label><input id="p-mat" placeholder="ex. haltères 2×10 kg, élastiques, banc, barre de traction"></div>
-      <div class="full"><label for="p-regime">Alimentation (allergies, je n'aime pas, végétarien…)</label><input id="p-regime" placeholder="ex. pas de poisson, intolérant au lactose"></div>
-      <div><label for="p-cuis">Équipement cuisine</label><input id="p-cuis" placeholder="ex. airfryer, micro-ondes"></div>
+      <div class="full"><label for="p-mat">Matériel à la maison</label><input id="p-mat" placeholder="ex. haltères 2×10 kg, élastiques, banc"></div>
+      <div class="full"><label for="p-regime">Alimentation (allergies, je n'aime pas…)</label><input id="p-regime" placeholder="ex. pas de poisson, intolérant au lactose"></div>
+      <div><label for="p-cuis">Équipement cuisine</label><input id="p-cuis" placeholder="ex. airfryer"></div>
       <div><label for="p-budget">Budget repas</label><select id="p-budget"><option value="normal">Normal</option><option value="serré">Petit budget</option><option value="large">Pas de limite</option></select></div>
       <div class="full"><label for="p-notes">Blessures ou limites</label><input id="p-notes" placeholder="ex. genou fragile, mal de dos"></div>
     </form>
+  </div>
+
+  <div class="card">
+    <h2>Ma santé</h2>
+    <p class="sub">Coche ce qui te concerne : menus, recettes, portions, séances et conseils s'adaptent automatiquement.</p>
+    <div class="chips" id="santeChips"></div>
+    <div id="opBox" style="display:none;margin-top:8px"><label for="p-opdate">Date de l'opération</label><input id="p-opdate" type="date"></div>
+    <div style="margin-top:10px"><label for="p-medic">Traitements ou médicaments (facultatif)</label><input id="p-medic" placeholder="ex. metformine, vitamines B12, fer"></div>
+    <div style="margin-top:10px"><label for="p-sante">Autre chose à savoir</label><input id="p-sante" placeholder="ex. anémie, migraines, ne supporte pas la viande rouge"></div>
+    <h3 style="margin-top:18px">Objectifs donnés par ton médecin ou ta diététicienne</h3>
+    <p class="sub" style="margin-top:4px">Facultatif. S'ils sont remplis, ils remplacent les calculs de l'app.</p>
+    <div class="grid">
+      <div><label for="p-kcalmed">Calories / jour</label><input id="p-kcalmed" type="number" inputmode="numeric" placeholder="ex. 1200"></div>
+      <div><label for="p-protmed">Protéines / jour (g)</label><input id="p-protmed" type="number" inputmode="numeric" placeholder="ex. 70"></div>
+      <div><label for="p-eaumed">Eau / jour (litres)</label><input id="p-eaumed" type="number" inputmode="decimal" step="0.1" placeholder="ex. 1,5"></div>
+      <div><label for="p-repas">Repas / jour</label><select id="p-repas"><option value="">Normal</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+    </div>
+    <div class="tip" id="santeTip" style="display:none"></div>
+    <p class="mute" style="margin-bottom:0">Ces infos restent sur ton téléphone. L'app ne remplace pas l'avis de ton équipe médicale.</p>
   </div>
 
   <div class="card">
@@ -190,52 +321,89 @@ canvas.draw{width:100%;border-radius:14px;touch-action:none;display:block;backgr
     <div id="bilan"></div>
   </div>
 
-  <div class="card" id="iaCard">
-    <h2>Moteurs IA gratuits</h2>
-    <p class="mute" style="margin-top:0">Colle une ou plusieurs clés gratuites. Le coach utilise la première ; si elle est saturée ou en panne, il passe tout seul à la suivante. Plus tu en mets, moins tu tomberas sur une limite. Gemini est conseillé en premier : c'est lui qui lit le mieux les photos. Les clés restent sur ce téléphone. Les offres gratuites peuvent utiliser tes échanges pour entraîner leurs modèles.</p>
+  <details class="card" id="iaCard"><summary style="cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center"><span><b style="font-size:17px">Réglages avancés</b><div class="mute" style="font-weight:400">Facultatif — l'IA marche déjà sans rien faire</div></span><svg class="i" style="color:var(--mute)"><use href="#i-chev"/></svg></summary>
+    <h2 style="margin-top:16px">Clés IA personnelles</h2>
+    <p class="sub">Colle une ou plusieurs clés gratuites. Le coach utilise la première ; si elle est saturée, il passe tout seul à la suivante. Gemini en premier : c'est lui qui lit le mieux les photos. Les clés restent sur ce téléphone. Les offres gratuites peuvent utiliser tes échanges pour entraîner leurs modèles.</p>
     <div id="provs"></div>
-    <div class="grid" style="margin-top:12px"><div class="full"><label for="iaEng">Utiliser</label><select id="iaEng"><option value="auto">Les IA gratuites (Claude seulement si aucune clé)</option><option value="claude">Claude (quand l'app est ouverte dans claude.ai)</option></select></div></div>
-    <div class="row" style="margin-top:12px"><button class="alt" data-act="saveKey">Enregistrer et tester</button><button class="ghost sm" data-act="exportData">Sauvegarder mes données</button><button class="ghost sm" data-act="importData">Restaurer</button></div>
+    <div style="margin-top:12px"><label for="iaEng">Utiliser</label><select id="iaEng"><option value="auto">Automatique (recommandé)</option><option value="claude">Claude (quand l'app est ouverte dans claude.ai)</option></select></div>
+    <div class="row" style="margin-top:14px"><button class="alt" data-act="saveKey">Enregistrer et tester</button></div>
     <div id="iaRes"></div>
+  </details>
+
+  <div class="card">
+    <h2>L'app</h2>
+    <div class="row"><button data-act="shareApp"><span class="row" style="gap:8px"><svg class="i" style="width:20px;height:20px"><use href="#i-share"/></svg>Partager l'app</span></button><button class="ghost" data-act="installHelp">L'installer sur l'iPhone</button></div>
+    <div class="row" style="margin-top:10px"><button class="ghost sm" data-act="exportData">Sauvegarder mes données</button><button class="ghost sm" data-act="importData">Restaurer</button></div>
+    <p class="mute">Tes données restent sur ce téléphone. Sauvegarde-les avant de changer de téléphone ou d'effacer Safari.</p>
   </div>
 </section>
 
 <!-- ================= SPORT ================= -->
 <section data-v="sport">
-  <div class="card">
-    <div class="row sb"><h2 style="margin:0">Récupération</h2><span class="mute" id="weekCount"></span></div>
-    <div id="recov"></div>
-    <div id="vol"></div>
+  <div class="lt"><h1>Sport</h1><p id="weekCount"></p></div>
+  <div class="seg"><button data-pane="programme" class="on">Programme</button><button data-pane="progres">Progrès</button><button data-pane="zones">Zones à travailler</button></div>
+
+  <div class="pane on" data-pane="programme">
+    <div class="card">
+      <h2>Mon programme</h2>
+      <p class="sub" id="progIntro">Le coach construit ta semaine selon ton objectif, ton niveau, ton matériel et tes zones prioritaires. En séance guidée, il te donne les charges, compte tes séries et ton repos.</p>
+      <div class="row"><button data-act="genProg" id="genProg">Créer mon programme</button><button class="ghost" data-act="quick">Séance express 20 min</button></div>
+    </div>
+    <div id="prog"></div>
   </div>
 
-  <div class="card">
-    <h2>Zones à travailler</h2>
-    <p class="mute" style="margin-top:0">Touche les muscles que tu veux développer en priorité : le coach les mettra en avant dans ton programme. Tu peux aussi entourer les zones sur une photo de toi dans l'onglet Scan.</p>
-    <div id="zonesMap"></div>
-    <div class="chips" id="zonesChips"></div>
+  <div class="pane" data-pane="progres">
+    <div class="card">
+      <h2>Récupération</h2>
+      <div id="recov"></div>
+      <div id="vol"></div>
+    </div>
+    <div class="card" id="prC" style="display:none"><h2>Mes records</h2><table class="tbl" id="prs"></table></div>
+    <div class="card" id="histC" style="display:none"><h2>Historique</h2><div id="hist"></div></div>
   </div>
 
-  <div class="card">
-    <h2>Mon programme</h2>
-    <p class="mute" style="margin-top:0" id="progIntro">Le coach construit une semaine type selon ton objectif, ton niveau, ton matériel et tes zones prioritaires. Lance une séance guidée : il te donne les charges, compte tes séries et ton temps de repos.</p>
-    <div class="row"><button data-act="genProg" id="genProg">Créer mon programme</button><button class="ghost" data-act="quick">Séance express 20 min</button></div>
+  <div class="pane" data-pane="zones">
+    <div class="card">
+      <h2>Zones à travailler</h2>
+      <p class="sub">Touche les muscles à développer en priorité : le coach les mettra en avant. Tu peux aussi les entourer sur une photo de toi (Scan › Mon corps).</p>
+      <div id="zonesMap"></div>
+      <div class="chips" id="zonesChips"></div>
+    </div>
   </div>
-  <div id="prog"></div>
-
-  <div class="card" id="prC" style="display:none"><h2>Mes records</h2><table class="tbl" id="prs"></table></div>
-  <div class="card" id="histC" style="display:none"><h2>Historique</h2><div id="hist"></div></div>
 </section>
 
 <!-- ================= SCAN ================= -->
 <section data-v="scan">
+  <div class="lt"><h1>Scanner</h1><p>Montre une photo, le coach s'occupe du reste.</p></div>
   <div class="seg" id="seg">
-    <button data-pane="machine" class="on">Machine</button><button data-pane="corps">Mon corps</button><button data-pane="produit">Produit</button><button data-pane="assiette">Assiette</button><button data-pane="fpic">Frigo</button>
+    <button data-pane="produit" class="on">Produit</button><button data-pane="assiette">Assiette</button><button data-pane="machine">Machine</button><button data-pane="corps">Mon corps</button><button data-pane="fpic">Frigo</button>
   </div>
 
-  <div class="pane on" data-pane="machine">
+  <div class="pane on" data-pane="produit">
+    <div class="card">
+      <h2>Scanner un produit</h2>
+      <p class="sub">Photo du code-barres (le plus fiable), de l'emballage ou du tableau nutritionnel. Recherche dans Open Food Facts, sinon l'IA lit l'étiquette.</p>
+      <label class="drop" data-drop="produit"><input type="file" accept="image/*" data-in="produit"><svg class="i" style="width:40px;height:40px"><use href="#i-bar"/></svg><b>Photo du code-barres ou du produit</b><span class="mute">bien à plat, net et éclairé</span></label>
+      <div class="row" style="margin-top:12px"><input id="ean" inputmode="numeric" placeholder="ou tape les chiffres du code-barres" style="flex:1;min-width:170px;margin:0"><button data-act="anaProd">Identifier</button></div>
+    </div>
+    <div id="prodRes"></div>
+    <div class="card" id="prodHistC" style="display:none"><h3>Déjà scannés</h3><div class="chips" id="prodHist"></div></div>
+  </div>
+
+  <div class="pane" data-pane="assiette">
+    <div class="card">
+      <h2>Scanne ton assiette</h2>
+      <label class="drop" data-drop="assiette"><input type="file" accept="image/*" data-in="assiette"><svg class="i" style="width:40px;height:40px"><use href="#i-plate"/></svg><b>Photo de ton repas</b><span class="mute">vue de dessus, toute l'assiette</span></label>
+      <div class="row" style="margin-top:12px"><button data-act="anaPlate" data-need="assiette" disabled>Estimer les calories</button></div>
+      <p class="mute">Estimation : l'huile et les sauces se voient mal. Ajuste la portion avant d'ajouter.</p>
+    </div>
+    <div id="plateRes"></div>
+  </div>
+
+  <div class="pane" data-pane="machine">
     <div class="card">
       <h2>C'est quoi cette machine ?</h2>
-      <label class="drop" data-drop="machine"><input type="file" accept="image/*" data-in="machine"><svg class="ic" style="width:44px;height:44px" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="4"/></svg><b>Prends en photo un appareil</b><span class="mute">ou choisis une image dans ta galerie</span></label>
+      <label class="drop" data-drop="machine"><input type="file" accept="image/*" data-in="machine"><svg class="i" style="width:40px;height:40px"><use href="#i-cam"/></svg><b>Prends en photo un appareil</b><span class="mute">ou choisis une image dans ta galerie</span></label>
       <div class="row" style="margin-top:12px"><button data-act="anaMachine" data-need="machine" disabled>Analyser la machine</button></div>
     </div>
     <div id="ana"></div>
@@ -245,41 +413,20 @@ canvas.draw{width:100%;border-radius:14px;touch-action:none;display:block;backgr
   <div class="pane" data-pane="corps">
     <div class="card">
       <h2>Entoure tes zones</h2>
-      <p class="mute" style="margin-top:0">Ajoute une photo de toi, puis entoure au doigt les zones à travailler. La photo reste sur ton téléphone ; seule la version entourée est envoyée au coach pour l'analyse, elle n'est pas gardée.</p>
-      <label class="drop" data-drop="corps" id="corpsDrop"><input type="file" accept="image/*" data-in="corps"><svg class="ic" style="width:44px;height:44px" viewBox="0 0 24 24"><circle cx="12" cy="7" r="3.5"/><path d="M6 21v-5a6 6 0 0 1 12 0v5"/></svg><b>Ajoute une photo de toi</b><span class="mute">de face ou de dos, en entier si possible</span></label>
+      <p class="sub">Ajoute une photo de toi, puis entoure au doigt les zones à travailler. Seule la version entourée est envoyée au coach pour l'analyse, elle n'est pas gardée.</p>
+      <label class="drop" data-drop="corps" id="corpsDrop"><input type="file" accept="image/*" data-in="corps"><svg class="i" style="width:40px;height:40px"><use href="#i-body"/></svg><b>Ajoute une photo de toi</b><span class="mute">de face ou de dos, en entier si possible</span></label>
       <canvas class="draw" id="cv" style="display:none"></canvas>
       <div class="row" style="margin-top:12px" id="cvBtns" hidden><button class="ghost sm" data-act="undo">Annuler le trait</button><button class="ghost sm" data-act="clearDraw">Tout effacer</button><button class="ghost sm" data-act="newBody">Autre photo</button></div>
-      <input id="corpsTxt" placeholder="Précise si tu veux (ex. « bras plus épais, ventre plat »)" style="margin-top:12px">
+      <input id="corpsTxt" placeholder="Précise si tu veux (ex. « bras plus épais »)" style="margin-top:12px">
       <div class="row" style="margin-top:12px"><button data-act="anaCorps" data-need="corps" disabled>Analyser mes zones</button></div>
     </div>
     <div id="corpsRes"></div>
   </div>
 
-  <div class="pane" data-pane="produit">
-    <div class="card">
-      <h2>Scanner un produit</h2>
-      <p class="mute" style="margin-top:0">Photo du code-barres (le plus fiable), de l'emballage ou du tableau nutritionnel. Le produit est cherché dans Open Food Facts ; sinon l'IA lit l'étiquette.</p>
-      <label class="drop" data-drop="produit"><input type="file" accept="image/*" data-in="produit"><svg class="ic" style="width:44px;height:44px" viewBox="0 0 24 24"><path d="M3 5v14M6 5v14M10 5v14M13 5v14M17 5v14M21 5v14"/></svg><b>Photo du code-barres ou du produit</b><span class="mute">bien à plat, net et éclairé</span></label>
-      <div class="row" style="margin-top:12px"><input id="ean" inputmode="numeric" placeholder="ou tape les chiffres du code-barres" style="flex:1;min-width:180px;margin:0"><button data-act="anaProd">Identifier</button></div>
-    </div>
-    <div id="prodRes"></div>
-    <div class="card" id="prodHistC" style="display:none"><h3>Déjà scannés</h3><div class="chips" id="prodHist"></div></div>
-  </div>
-
-  <div class="pane" data-pane="assiette">
-    <div class="card">
-      <h2>Scanne ton assiette</h2>
-      <label class="drop" data-drop="assiette"><input type="file" accept="image/*" data-in="assiette"><svg class="ic" style="width:44px;height:44px" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg><b>Photo de ton repas</b><span class="mute">vue de dessus, toute l'assiette</span></label>
-      <div class="row" style="margin-top:12px"><button data-act="anaPlate" data-need="assiette" disabled>Estimer les calories</button></div>
-      <p class="mute">Estimation : l'huile et les sauces se voient mal. Ajuste la portion avant d'ajouter.</p>
-    </div>
-    <div id="plateRes"></div>
-  </div>
-
   <div class="pane" data-pane="fpic">
     <div class="card">
       <h2>Photo du frigo</h2>
-      <label class="drop" data-drop="fpic"><input type="file" accept="image/*" data-in="fpic"><svg class="ic" style="width:44px;height:44px" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M5 10h14M9 6v2M9 13v3"/></svg><b>Photo de ton frigo ou placard</b><span class="mute">porte ouverte, bien éclairé</span></label>
+      <label class="drop" data-drop="fpic"><input type="file" accept="image/*" data-in="fpic"><svg class="i" style="width:40px;height:40px"><use href="#i-cam"/></svg><b>Photo de ton frigo ou placard</b><span class="mute">porte ouverte, bien éclairé</span></label>
       <div class="row" style="margin-top:12px"><button data-act="anaFridge" data-need="fpic" disabled>Lister mes ingrédients</button></div>
     </div>
     <div id="fridgeRes"></div>
@@ -288,89 +435,105 @@ canvas.draw{width:100%;border-radius:14px;touch-action:none;display:block;backgr
 
 <!-- ================= CUISINE ================= -->
 <section data-v="cuisine">
-  <div class="card">
-    <div class="row sb"><h2 style="margin:0">Aujourd'hui</h2><span class="mute" id="mDate"></span></div>
-    <div style="margin-top:12px"><div class="row sb"><b>Calories</b><span id="gK"></span></div><div class="bar"><i id="bK"></i></div>
-    <div class="row sb"><b>Protéines</b><span id="gP"></span></div><div class="bar p"><i id="bP"></i></div>
-    <div class="row sb"><b>Eau</b><span id="gW"></span></div><div class="glass" id="glass"></div></div>
-    <div class="tip" id="gTip" style="display:none"></div>
-    <div class="row" style="margin:12px 0 4px"><button class="sm" data-act="goScan" data-v="produit">Scanner un produit</button><button class="alt sm" data-act="goScan" data-v="assiette">Photo de mon assiette</button></div>
-    <div id="journal"></div>
-    <label for="qa" style="margin-top:14px">Ajoute ce que tu as mangé, en toutes lettres</label>
-    <div class="row"><input id="qa" placeholder="ex. 2 œufs, une tartine beurrée et un café" style="flex:1;min-width:180px"><button class="alt" data-act="quickAdd">Ajouter</button></div>
-    <div id="qaRes"></div>
-    <div class="chips" id="favs"></div>
-  </div>
+  <div class="lt"><h1>Cuisine</h1><p id="mDate"></p></div>
+  <div class="seg"><button data-pane="journal" class="on">Aujourd'hui</button><button data-pane="menus">Menus</button><button data-pane="frigo">Mon frigo</button><button data-pane="sauces">Sauces</button><button data-pane="favoris">Favoris</button></div>
 
-  <div class="card">
-    <h2>Menu du jour</h2>
-    <p class="mute" style="margin-top:0">Un menu différent chaque jour, calé sur tes calories et ton objectif. Remplace un plat s'il ne te plaît pas.</p>
-    <div class="row"><button data-act="genMenu" id="genMenu">Mon menu d'aujourd'hui</button></div>
-    <div id="menu"></div>
-  </div>
-
-  <div class="card">
-    <h2>Ce que j'ai chez moi</h2>
-    <label class="drop" style="min-height:110px;margin-bottom:12px"><input type="file" accept="image/*" multiple id="ingPh"><svg class="ic" style="width:36px;height:36px" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><b>Montre-moi tes ingrédients en photo</b><span class="mute">frigo, placard, plan de travail… plusieurs photos possibles</span></label>
-    <div id="ingRes"></div>
-    <label for="frigo">Frigo, placard, épicerie</label>
-    <textarea id="frigo" placeholder="ex. 4 œufs, riz, thon en boîte, tomates, oignon, fromage râpé, pâtes, poulet"></textarea>
-    <div class="row" style="margin-top:12px">
-      <select id="fMoment" style="width:auto;margin:0"><option>Déjeuner</option><option>Dîner</option><option>Petit-déjeuner</option><option>Collation</option></select>
-      <button data-act="genFrigo">Compose-moi un plat</button>
-      <button class="alt" data-act="genFrigoMenu">Compose-moi un menu complet</button>
+  <div class="pane on" data-pane="journal">
+    <div class="card">
+      <div class="row sb"><b>Calories</b><span id="gK" class="mute"></span></div><div class="bar"><i id="bK"></i></div>
+      <div class="row sb"><b>Protéines</b><span id="gP" class="mute"></span></div><div class="bar p"><i id="bP"></i></div>
+      <div class="row sb"><b>Eau</b><span id="gW" class="mute"></span></div><div class="glass" id="glass" style="margin-top:6px"></div>
+      <div class="tip" id="gTip" style="display:none"></div>
     </div>
-    <div id="frig"></div>
-  </div>
-
-  <div class="card">
-    <h2>Créateur de sauces</h2>
-    <p class="mute" style="margin-top:0">Dis-moi avec quoi et dans quel style, je t'invente 3 sauces maison, expliquées pas à pas.</p>
-    <div class="grid">
-      <div><label for="sAvec">Pour accompagner</label><select id="sAvec"><option>Viande grillée</option><option>Poulet</option><option>Poisson</option><option>Pâtes</option><option>Salade</option><option>Légumes</option><option>Burger ou sandwich</option><option>Riz ou bowl</option><option>Apéro (dip)</option><option>Frites ou potatoes</option><option>Dessert</option></select></div>
-      <div><label for="sStyle">Style</label><select id="sStyle"><option>Crémeuse</option><option>Piquante</option><option>Légère et protéinée</option><option>Asiatique</option><option>Méditerranéenne</option><option>Barbecue fumée</option><option>Aux herbes fraîches</option><option>Fromagère</option><option>Sucrée-salée</option><option>Classique française</option><option>Surprends-moi</option></select></div>
-      <div><label for="sTemp">Servie</label><select id="sTemp"><option>Peu importe</option><option>Chaude</option><option>Froide</option></select></div>
-      <div><label for="sPiq">Piquant</label><select id="sPiq"><option>Pas du tout</option><option selected>Un peu</option><option>Bien relevé</option><option>Très fort</option></select></div>
-      <div class="full"><label for="sIng">Ingrédients à utiliser (facultatif)</label><input id="sIng" placeholder="ex. yaourt grec, citron, ail, moutarde"></div>
+    <div class="tiles">
+      <button class="tile" data-act="goPane" data-v="scan" data-p="produit"><span class="ic c-red"><svg class="i"><use href="#i-bar"/></svg></span><span>Scanner un produit</span></button>
+      <button class="tile" data-act="goPane" data-v="scan" data-p="assiette"><span class="ic c-yel"><svg class="i"><use href="#i-plate"/></svg></span><span>Photo de l'assiette</span></button>
     </div>
-    <div class="row" style="margin-top:12px"><button data-act="genSauce">Invente-moi des sauces</button><label style="display:flex;gap:8px;align-items:center;color:var(--ink);font-weight:500"><input type="checkbox" id="sFrigo" style="width:22px;height:22px;min-height:0;margin:0;accent-color:var(--red)">Avec ce que j'ai chez moi</label></div>
-    <div id="sauces"></div>
+    <div class="card">
+      <h2>Ce que j'ai mangé</h2>
+      <div id="journal"></div>
+      <label for="qa" style="margin-top:12px">Ajoute en toutes lettres</label>
+      <div class="row"><input id="qa" placeholder="ex. 2 œufs, une tartine et un café" style="flex:1;min-width:170px"><button class="alt" data-act="quickAdd">Ajouter</button></div>
+      <div id="qaRes"></div>
+      <div class="chips" id="favs"></div>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Mes favoris</h2>
-    <div class="chips" id="favTabs"></div>
-    <div id="favList"></div>
+  <div class="pane" data-pane="menus">
+    <div class="card">
+      <h2>Menu du jour</h2>
+      <p class="sub">Un menu différent chaque jour, calé sur tes calories. Remplace un plat s'il ne te plaît pas.</p>
+      <button data-act="genMenu" id="genMenu" class="wide">Mon menu d'aujourd'hui</button>
+      <div id="menu"></div>
+    </div>
+    <div class="card">
+      <h2>Ma semaine et mes courses</h2>
+      <p class="sub">7 jours de repas, la liste de courses par rayon et le batch cooking du dimanche.</p>
+      <button class="alt wide" data-act="genWeek" id="genWeek">Préparer ma semaine</button>
+      <div id="week"></div>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>Ma semaine et mes courses</h2>
-    <p class="mute" style="margin-top:0">7 jours de repas, la liste de courses triée par rayon (sans ce que tu as déjà) et le plan de batch cooking du dimanche.</p>
-    <div class="row"><button data-act="genWeek" id="genWeek">Préparer ma semaine</button></div>
-    <div id="week"></div>
+  <div class="pane" data-pane="frigo">
+    <div class="card">
+      <h2>Ce que j'ai chez moi</h2>
+      <label class="drop" style="min-height:120px;margin-bottom:12px"><input type="file" accept="image/*" multiple id="ingPh"><svg class="i" style="width:34px;height:34px"><use href="#i-cam"/></svg><b>Montre-moi tes ingrédients</b><span class="mute">frigo, placard, plan de travail… plusieurs photos possibles</span></label>
+      <div id="ingRes"></div>
+      <label for="frigo">Frigo, placard, épicerie</label>
+      <textarea id="frigo" placeholder="ex. 4 œufs, riz, thon en boîte, tomates, oignon, fromage râpé, poulet"></textarea>
+      <div class="row" style="margin-top:12px"><label for="fMoment" style="margin:0">Pour le</label><select id="fMoment" style="width:auto;margin:0;flex:1"><option>Déjeuner</option><option>Dîner</option><option>Petit-déjeuner</option><option>Collation</option></select></div>
+      <div class="row" style="margin-top:12px"><button data-act="genFrigo" style="flex:1">Un plat</button><button class="alt" data-act="genFrigoMenu" style="flex:1">Un menu complet</button></div>
+      <div id="frig"></div>
+    </div>
+  </div>
+
+  <div class="pane" data-pane="sauces">
+    <div class="card">
+      <h2>Créateur de sauces</h2>
+      <p class="sub">Dis-moi avec quoi et dans quel style, je t'invente 3 sauces maison, expliquées pas à pas.</p>
+      <div class="grid">
+        <div><label for="sAvec">Pour accompagner</label><select id="sAvec"><option>Viande grillée</option><option>Poulet</option><option>Poisson</option><option>Pâtes</option><option>Salade</option><option>Légumes</option><option>Burger ou sandwich</option><option>Riz ou bowl</option><option>Apéro (dip)</option><option>Frites ou potatoes</option><option>Dessert</option></select></div>
+        <div><label for="sStyle">Style</label><select id="sStyle"><option>Crémeuse</option><option>Piquante</option><option>Légère et protéinée</option><option>Asiatique</option><option>Méditerranéenne</option><option>Barbecue fumée</option><option>Aux herbes fraîches</option><option>Fromagère</option><option>Sucrée-salée</option><option>Classique française</option><option>Surprends-moi</option></select></div>
+        <div><label for="sTemp">Servie</label><select id="sTemp"><option>Peu importe</option><option>Chaude</option><option>Froide</option></select></div>
+        <div><label for="sPiq">Piquant</label><select id="sPiq"><option>Pas du tout</option><option selected>Un peu</option><option>Bien relevé</option><option>Très fort</option></select></div>
+        <div class="full"><label for="sIng">Ingrédients à utiliser (facultatif)</label><input id="sIng" placeholder="ex. yaourt grec, citron, ail, moutarde"></div>
+      </div>
+      <label style="display:flex;gap:10px;align-items:center;color:var(--ink);font-weight:500;font-size:15px;margin:14px 0"><input type="checkbox" id="sFrigo" style="width:22px;height:22px;margin:0;accent-color:var(--red)">Avec ce que j'ai chez moi</label>
+      <button data-act="genSauce" class="wide">Invente-moi des sauces</button>
+      <div id="sauces"></div>
+    </div>
+  </div>
+
+  <div class="pane" data-pane="favoris">
+    <div class="card">
+      <h2>Mes favoris</h2>
+      <div class="chips" id="favTabs"></div>
+      <div id="favList"></div>
+    </div>
   </div>
 </section>
 
 <!-- ================= COACH ================= -->
 <section data-v="coach">
+  <div class="lt"><h1>Coach</h1><p>Pose-lui toutes tes questions : il connaît ton profil, ta journée et tes séances.</p></div>
   <div class="card">
-    <h2>Parle à ton coach</h2>
-    <div class="chips" id="quickQ"></div>
+    <div class="chips" id="quickQ" style="margin-top:0"></div>
     <div class="msgs" id="msgs"></div>
-    <div class="send"><textarea id="ask" placeholder="Pose ta question…" aria-label="Message"></textarea><button data-act="send" id="sendBtn">Envoyer</button></div>
+    <div class="send"><textarea id="ask" placeholder="Écris ton message…" aria-label="Message"></textarea><button data-act="send" id="sendBtn">Envoyer</button></div>
     <div class="row" style="margin-top:10px"><button class="ghost sm" data-act="clearChat">Nouvelle conversation</button></div>
   </div>
 </section>
 </main>
 
 <div id="ov" role="dialog" aria-modal="true"></div>
+<div id="sheet" role="dialog" aria-modal="true" aria-label="Partager"><div class="in" id="sheetIn"></div></div>
 
 <nav class="tabs">
-  <a href="#moi" data-t="moi"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Moi</a>
-  <a href="#sport" data-t="sport"><svg viewBox="0 0 24 24"><path d="M2 12h3M19 12h3M5 8v8M19 8v8M8 6v12M16 6v12M8 12h8"/></svg>Sport</a>
-  <a href="#scan" data-t="scan"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Scan</a>
-  <a href="#cuisine" data-t="cuisine"><svg viewBox="0 0 24 24"><path d="M5 3v8a3 3 0 0 0 6 0V3M8 3v18M16 3c-2 2-2 8 0 9v9"/></svg>Cuisine</a>
-  <a href="#coach" data-t="coach"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>Coach</a>
+  <a href="#accueil" data-t="accueil"><svg class="i"><use href="#i-home"/></svg>Accueil</a>
+  <a href="#sport" data-t="sport"><svg class="i"><use href="#i-dumb"/></svg>Sport</a>
+  <a href="#scan" data-t="scan"><svg class="i"><use href="#i-scan"/></svg>Scanner</a>
+  <a href="#cuisine" data-t="cuisine"><svg class="i"><use href="#i-fork"/></svg>Cuisine</a>
+  <a href="#coach" data-t="coach"><svg class="i"><use href="#i-chat"/></svg>Coach</a>
 </nav>
 
 <script>
@@ -451,19 +614,55 @@ async function freeLLM(msgs,{images=[],json=false}={}){
   if(images.length&&last.code==='novision')throw{code:'noimg'};
   throw rl?{code:'rate_limited'}:last;
 }
-async function aiAvail(){if(useFree())return true;return!!(await getSample())}
-aiAvail().then(ok=>{if(!ok)$('noai').style.display='block'});
+/* IA sans clé : Pollinations (anonyme), puis Puter.js, puis clés facultatives, puis Claude */
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const POLL=['https://text.pollinations.ai/openai','https://gen.pollinations.ai/v1/chat/completions'];
+async function oaiMsgs(msgs,images){const imgs=await Promise.all(images.map(async b=>`data:${b.type||'image/jpeg'};base64,${await b64(b)}`));
+  return msgs.map((x,i)=>({role:x.role,content:i===msgs.length-1&&imgs.length?[{type:'text',text:x.content},...imgs.map(u=>({type:'image_url',image_url:{url:u}}))]:x.content}))}
+async function pollinations(msgs,images,json){
+  const messages=await oaiMsgs(msgs,images);let last={code:'http'};
+  for(const url of POLL){
+    for(let t=0;t<2;t++){
+      let r;try{r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'openai',messages,private:true,referrer:'mon-coach',...(json?{response_format:{type:'json_object'}}:{})})})}catch(e){last={code:'net'};break}
+      if(r.status===429){last={code:'rate_limited'};await sleep(16000);continue}
+      if(!r.ok){last={code:'http'};break}
+      const ct=r.headers.get('content-type')||'';let txt;
+      if(ct.includes('json')){const d=await r.json();txt=d.choices?.[0]?.message?.content||''}else txt=await r.text();
+      if(txt&&txt.trim()){AI.last='Pollinations';return txt}last={code:'empty'};break;
+    }
+  }
+  throw last;
+}
+let puterP=null;
+const loadPuter=()=>puterP||(puterP=new Promise((ok,ko)=>{if(window.puter)return ok(window.puter);const sc=document.createElement('script');sc.src='https://js.puter.com/v2/';sc.onload=()=>ok(window.puter);sc.onerror=()=>{puterP=null;ko({code:'net'})};document.head.appendChild(sc)}));
+async function puterAI(msgs,images){
+  const P=await loadPuter();let r;
+  if(images.length){const u=`data:${images[0].type||'image/jpeg'};base64,${await b64(images[0])}`;r=await P.ai.chat(msgs[msgs.length-1].content,u)}
+  else r=await P.ai.chat(msgs.map(m=>({role:m.role,content:m.content})));
+  const t=typeof r==='string'?r:(r?.message?.content?.[0]?.text||r?.message?.content||r?.text||String(r||''));
+  if(!String(t).trim())throw{code:'empty'};AI.last='Puter';return String(t);
+}
+async function anyAI(msgs,{images=[],json=false}={}){
+  if(AI.engine==='claude'){const s=await getSample();if(s)return null;}
+  const tries=[()=>pollinations(msgs,images,json),()=>puterAI(msgs,images)];
+  if(active().length)tries.push(()=>freeLLM(msgs,{images,json:false}));
+  let last={code:'busy'};
+  for(const f of tries){try{const t=await f();if(json)return parseJSON(t);return t}catch(e){last=e;console.log('IA échec',e)}}
+  throw last.code==='net'?{code:'net'}:{code:'busy'};
+}
+async function aiAvail(){return true}
+async function preferClaude(){const s=await getSample();return!!s&&(AI.engine==='claude'||!/github\.io$|localhost/.test(location.host))}
 const parseJSON=t=>{const a=t.indexOf('{'),b=t.lastIndexOf('}');return JSON.parse(t.slice(a,b+1))};
 async function askJSON(prompt,opts={}){
   const full=prompt+'\n\nRéponds uniquement avec un objet JSON valide, en français, sans texte autour.';
-  if(useFree())return freeLLM([{role:'user',content:full}],{images:opts.images||[],json:true});
+  if(!(await preferClaude())){const r=await anyAI([{role:'user',content:full}],{images:opts.images||[],json:true});if(r!==null)return r}
   const s=await getSample();if(!s)throw{code:'unavailable'};
   if(opts.images&&s.limits){try{const l=await s.limits();if(l&&l.images===false)throw{code:'noimg'}}catch(e){if(e.code)throw e}}
   if(typeof s.json==='function'){try{return await s.json(full,opts)}catch(e){if(e&&['not_granted','rate_limited','unavailable'].includes(e.code))throw e}}
   const r=await s(full,opts);return parseJSON(r.text);
 }
 async function askChat(conv,onText){
-  if(useFree()){const t=await freeLLM(conv);onText(t);return t}
+  if(!(await preferClaude())){const t=await anyAI(conv);if(t!==null){onText(t);return t}}
   const s=await getSample();if(!s)throw{code:'unavailable'};
   const r=await s(conv,{cache:false,onText:({text})=>onText(text)});return r.text;
 }
@@ -471,7 +670,8 @@ const errMsg=e=>e&&e.code==='not_granted'?"Il faut autoriser la page à utiliser
  :e&&e.code==='rate_limited'?"Limite atteinte (l'offre gratuite autorise un certain nombre de demandes par minute et par jour). Réessaie un peu plus tard."
  :e&&e.code==='unavailable'?"Pas d'IA branchée : ajoute au moins une clé gratuite dans l'onglet Moi, tout en bas."
  :e&&e.code==='badkey'?"Les clés IA sont refusées : vérifie-les dans l'onglet Moi."
- :e&&e.code==='net'?"Pas de connexion à l'IA. Vérifie ton réseau ; si tu ouvres l'app depuis claude.ai, Gemini y est bloqué, utilise la version hébergée."
+ :e&&e.code==='busy'?"L'IA gratuite est très demandée en ce moment. Réessaie dans une minute."
+ :e&&e.code==='net'?"Pas de connexion internet. Vérifie ton réseau et réessaie."
  :e&&e.code==='noimg'?"L'analyse de photos n'est pas disponible sur ce compte pour l'instant."
  :e&&e.code==='noimg'?"Aucune de tes IA branchées ne lit les photos : ajoute une clé Gemini (gratuite).":"Le coach n'a pas réussi à répondre. Réessaie.";
 const busy=(el,txt)=>{el.innerHTML='<div class="busy">'+esc(txt)+'</div>'};
@@ -502,7 +702,7 @@ const chips=(p,s=[])=>'<div class="chips">'+p.map(k=>`<span class="chip p">${esc
 const list=(a,tag='ul')=>Array.isArray(a)&&a.length?`<${tag}>${a.map(x=>`<li>${esc(x)}</li>`).join('')}</${tag}>`:'';
 
 /* ---------- Profil & calculs ---------- */
-const PF=['sexe','age','taille','poids','obj','niv','jours','lieu','duree','mat','regime','cuis','budget','notes'];
+const PF=['opdate','medic','sante','kcalmed','protmed','eaumed','repas','nom','sexe','age','taille','poids','obj','niv','jours','lieu','duree','mat','regime','cuis','budget','notes'];
 let P=store.get('profil',{});P.zones=P.zones||[];P.kadj=P.kadj||0;
 const saveP=()=>store.set('profil',P);
 PF.forEach(k=>{const el=$('p-'+k);if(P[k]!=null&&P[k]!=='')el.value=P[k];el.addEventListener('input',()=>{P[k]=el.value;saveP();calc()})});
@@ -515,7 +715,10 @@ function metrics(){
   const adj={muscle:250,perte:-450,seche:-300,forme:0,endurance:0}[P.obj||'muscle']+(+P.kadj||0);
   const kcal=bmr?Math.round(Math.max(bmr*act+adj,bmr*1.1,P.sexe==='F'?1300:1500)/10)*10:null;
   const prot=Math.round(w*(['muscle','perte','seche'].includes(P.obj||'muscle')?1.8:1.4));
-  return{imc,bmr,kcal,prot,eau:Math.round(w*35/250),min:18.5*(t/100)**2,max:24.9*(t/100)**2};
+  let K=kcal,Pr=prot,E=Math.round(w*35/250);
+  if(BARIA())Pr=Math.max(60,Math.round(w*1.0)),K=null,E=6;
+  if(num(P.kcalmed))K=Math.round(num(P.kcalmed));if(num(P.protmed))Pr=Math.round(num(P.protmed));if(num(P.eaumed))E=Math.round(num(P.eaumed)*4);
+  return{imc,bmr,kcal:K,prot:Pr,eau:E,min:18.5*(t/100)**2,max:24.9*(t/100)**2};
 }
 const cat=i=>i<18.5?'Maigreur':i<25?'Poids normal':i<30?'Surpoids':i<35?'Obésité modérée':i<40?'Obésité sévère':'Obésité massive';
 function calc(){
@@ -525,9 +728,45 @@ function calc(){
   $('imc').textContent=fr(m.imc.toFixed(1));$('imcCat').textContent=cat(m.imc);
   $('imcRange').textContent='Poids « normal » pour ta taille : '+Math.round(m.min)+' à '+Math.round(m.max)+' kg';
   const pin=$('imcPin');pin.style.display='block';pin.style.left=Math.min(100,Math.max(0,(m.imc-15)/25*100))+'%';
-  $('stBmr').textContent=m.bmr?m.bmr.toLocaleString('fr-FR'):'–';$('stKcal').textContent=m.kcal?m.kcal.toLocaleString('fr-FR'):'–';$('stProt').textContent=m.prot+' g';
+  $('stBmr').textContent=m.bmr?m.bmr.toLocaleString('fr-FR'):'–';$('stKcal').textContent=m.kcal?m.kcal.toLocaleString('fr-FR'):(BARIA()?'avec ton équipe':'–');$('stProt').textContent=m.prot+' g';
   $('sub').textContent=m.kcal?`${m.kcal.toLocaleString('fr-FR')} kcal et ${m.prot} g de protéines par jour pour ton objectif.`:'Ajoute ton âge pour calculer tes calories.';
   renderDay();
+}
+const SANTE={sleeve:'Sleeve (gastrectomie)',bypass:'Bypass gastrique',anneau:'Anneau gastrique',diab1:'Diabète type 1',diab2:'Diabète type 2',hta:'Hypertension',chol:'Cholestérol',coeur:'Problème cardiaque',rein:'Problème rénal',thyro:'Hypothyroïdie',sopk:'SOPK',rgo:'Reflux (RGO)',lactose:'Intolérance au lactose',gluten:'Sans gluten (cœliaque)',enceinte:'Grossesse',allait:'Allaitement',asthme:'Asthme',dos:'Mal de dos',articul:'Arthrose / articulations'};
+const BARIA=()=>(P.santeL||[]).some(k=>['sleeve','bypass','anneau'].includes(k));
+const RULES={
+ baria:"Chirurgie bariatrique : adapter STRICTEMENT à la phase post-opératoire selon le temps écoulé depuis l'opération (liquide, puis mixé, puis mou, puis texture normale ; en cas de doute, demander à l'équipe médicale) ; toutes petites portions (une petite assiette à dessert, quantités en grammes réduites) ; protéines en priorité et en premier à chaque repas ; manger lentement, petites bouchées bien mâchées ; ne pas boire pendant le repas ni 30 minutes avant et après ; aucune boisson gazeuse, sucrée ni alcool ; éviter les sucres rapides (risque de dumping) et, en début de parcours, les aliments durs, filandreux ou secs (viande sèche, pain de mie frais, riz collant, peaux, fibres dures) ; 5 à 6 petites prises par jour ; rappeler les compléments prescrits. Sport : progressif ; pas d'abdominaux ni de charges lourdes tant que l'équipe médicale ne l'a pas autorisé ; hydratation par petites gorgées entre les repas.",
+ diab:"Diabète : glucides maîtrisés et répartis, index glycémique bas, fibres, jamais de sucres rapides seuls ; indique les glucides de chaque plat ; sport : collation à prévoir et contrôle de la glycémie.",
+ hta:"Hypertension : très peu de sel (pas de charcuterie, plats préparés, bouillons cubes, sauce soja), beaucoup de légumes ; sport : pas de blocage respiratoire ni de charges maximales.",
+ chol:"Cholestérol : peu de graisses saturées, privilégier poisson, huiles d'olive ou de colza, fibres.",
+ coeur:"Problème cardiaque : intensité modérée, jamais d'effort maximal, validation médicale avant tout nouveau programme.",
+ rein:"Problème rénal : protéines modérées sauf avis médical contraire, sel limité.",
+ rgo:"Reflux : éviter gras, épicé, agrumes, tomate crue, café, menthe, gros repas le soir ; pas d'exercice tête en bas après manger.",
+ lactose:"Sans lactose.",gluten:"Strictement sans gluten.",
+ enceinte:"Grossesse : aucun aliment à risque (cru, charcuterie, fromage au lait cru, poisson cru), pas de régime ; sport doux, pas d'abdos classiques ni d'exercices allongé sur le dos après le premier trimestre.",
+ allait:"Allaitement : pas de déficit calorique marqué, bonne hydratation.",
+ thyro:"Hypothyroïdie : alimentation équilibrée, pas de restriction excessive.",
+ sopk:"SOPK : index glycémique bas, protéines et fibres à chaque repas.",
+ asthme:"Asthme : échauffement progressif, cardio modéré.",
+ dos:"Mal de dos : pas de charges lourdes sur la colonne, privilégier gainage et mobilité.",
+ articul:"Arthrose : exercices sans impact (vélo, natation, machines guidées)."};
+function santeTxt(){
+  const L=P.santeL||[];if(!L.length&&!P.medic&&!P.sante)return'';
+  let t='\nSANTÉ (priorité absolue, à respecter dans chaque réponse) : '+L.map(k=>SANTE[k]).join(', ')+'.';
+  if(BARIA()&&P.opdate){const wk=Math.floor((Date.now()-new Date(P.opdate))/6048e5);if(wk>=0)t+=` Opération il y a ${wk} semaine${wk>1?'s':''} (${wk<2?'phase liquide probable':wk<4?'phase mixée probable':wk<8?'phase texture molle probable':'alimentation solide adaptée'}).`}
+  const R=[];if(BARIA())R.push(RULES.baria);if(L.includes('diab1')||L.includes('diab2'))R.push(RULES.diab);L.forEach(k=>{if(RULES[k])R.push(RULES[k])});
+  if(R.length)t+='\nRègles à appliquer : '+R.join(' ');
+  if(P.medic)t+='\nTraitements : '+P.medic+'.';if(P.sante)t+='\nAutre : '+P.sante+'.';
+  if(num(P.kcalmed)||num(P.protmed))t+=`\nObjectifs fixés par son médecin : ${num(P.kcalmed)?P.kcalmed+' kcal/jour':''} ${num(P.protmed)?P.protmed+' g de protéines/jour':''}.`;
+  if(P.repas)t+=`\nIl mange ${P.repas} fois par jour : répartis les menus en ${P.repas} prises.`;
+  t+='\nEn cas de doute médical, dis-lui de demander à son équipe médicale.';
+  return t;
+}
+function renderSante(){
+  const L=P.santeL||[];$('santeChips').innerHTML=Object.entries(SANTE).map(([k,v])=>`<button class="chip${L.includes(k)?' p':''}" data-act="santeT" data-k="${k}" aria-pressed="${L.includes(k)}">${esc(v)}</button>`).join('');
+  $('opBox').style.display=BARIA()?'block':'none';
+  const tip=$('santeTip');
+  if(BARIA()&&!num(P.kcalmed)){tip.style.display='block';tip.innerHTML='<b>Après une chirurgie bariatrique</b>, l\'app ne calcule pas de calories toute seule : entre l\'objectif donné par ton équipe (calories et protéines). En attendant, elle vise au moins 60 g de protéines par jour et des petites portions.'}else tip.style.display='none';
 }
 function profil(extra=false){
   const m=metrics();
@@ -536,6 +775,7 @@ Objectif : ${OBJ[P.obj||'muscle']}. Niveau : ${P.niv||'débutant'}. ${P.jours||3
 ${P.zones.length?'Zones prioritaires à développer : '+P.zones.map(k=>MN[k]).join(', ')+'.':''}
 ${m&&m.kcal?`Besoin visé : environ ${m.kcal} kcal et ${m.prot} g de protéines par jour.`:''}
 ${P.regime?'Alimentation : '+P.regime+'.':''}${P.cuis?' Équipement cuisine : '+P.cuis+'.':''} Budget : ${P.budget||'normal'}. ${P.notes?'Blessures ou limites : '+P.notes+'.':''}`;
+  s+=santeTxt();
   const fe=LOG.slice(-3).filter(l=>l.ressenti).map(l=>`${l.nom} : ${l.ressenti}`);if(fe.length)s+=`\nRessenti des dernières séances : ${fe.join(' ; ')} (adapte l'intensité en conséquence).`;
   if(extra){const t=dayTot();s+=`\nAujourd'hui il a mangé ${Math.round(t.k)} kcal et ${Math.round(t.p)} g de protéines.`;const l=LOG[LOG.length-1];if(l)s+=` Dernière séance : ${l.nom} le ${frd(l.d)}.`}
   return s;
@@ -713,7 +953,7 @@ const dayTot=()=>dayJ().reduce((a,e)=>({k:a.k+num(e.kcal),p:a.p+num(e.p)}),{k:0,
 const saveJ=()=>{const keep=Object.keys(J).sort().slice(-60);J=Object.fromEntries(keep.map(k=>[k,J[k]]));store.set('journal',J)};
 function addFood(it){dayJ().push({nom:it.nom,kcal:Math.round(num(it.kcal)),p:Math.round(num(it.proteines_g??it.p)),g:Math.round(num(it.glucides_g??it.g)),l:Math.round(num(it.lipides_g??it.l))});saveJ();renderDay()}
 function renderDay(){
-  const m=metrics()||{},t=dayTot(),tk=m.kcal||2000,tp=m.prot||100,te=m.eau||8,w=EAU[today()]||0;
+  const m=metrics()||{},t=dayTot(),tk=m.kcal||(BARIA()?1000:2000),tp=m.prot||100,te=m.eau||8,w=EAU[today()]||0;
   $('mDate').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
   $('gK').textContent=`${Math.round(t.k).toLocaleString('fr-FR')} / ${tk.toLocaleString('fr-FR')} kcal`;$('bK').style.width=Math.min(100,t.k/tk*100)+'%';
   $('gP').textContent=`${Math.round(t.p)} / ${tp} g`;$('bP').style.width=Math.min(100,t.p/tp*100)+'%';
@@ -926,7 +1166,7 @@ Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 1
     const r=await askJSON(`Liste les aliments et ingrédients visibles sur cette photo de frigo ou de placard, avec la quantité approximative. Format JSON : {"ingredients":["ex. 6 œufs"]}`,{images:[PH.fpic],modelTier:'default',cache:false});
     const ing=(r.ingredients||[]).join(', ');
     $('fridgeRes').innerHTML=`<div class="card"><h3>J'ai repéré</h3><p>${esc(ing)}</p><div class="row"><button data-act="useFridge">Mettre dans « Ce que j'ai chez moi »</button></div></div>`;FRIDGE=ing})},
-  useFridge(b){$('frigo').value=($('frigo').value.trim()?$('frigo').value.trim()+', ':'')+FRIDGE;store.set('frigo',$('frigo').value);location.hash='cuisine';setTimeout(()=>$('frigo').scrollIntoView({behavior:'smooth'}),100)},
+  useFridge(b){$('frigo').value=($('frigo').value.trim()?$('frigo').value.trim()+', ':'')+FRIDGE;store.set('frigo',$('frigo').value);openPane('cuisine','frigo')},
   eau(b){const v=+b.dataset.v;EAU[today()]=(EAU[today()]===v)?v-1:v;store.set('eau',EAU);renderDay()},
   delJ(b){dayJ().splice(+b.dataset.i,1);saveJ();renderDay()},
   fav(b){const e=dayJ()[+b.dataset.i];if(!FAV.some(f=>f.nom===e.nom)){FAV.push({...e});FAV=FAV.slice(-20);store.set('favoris',FAV)}renderDay()},
@@ -946,8 +1186,23 @@ Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 1
   favMenu(){const d=MENUS[today()],i=FAVR.findIndex(f=>f.data===d);if(i>=0)FAVR.splice(i,1);else FAVR.push({type:'menu',nom:new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long'})+' · '+(d.repas||[]).map(r=>r.nom).slice(1,2).join(''),data:d,d:today()});saveFood();refreshFood()},
   favTab(b){FT=b.dataset.v;renderFav()},
   unfav(b){FAVR.splice(+b.dataset.i,1);saveFood();refreshFood()},
-  useMenu(b){MENUS[today()]=FAVR[+b.dataset.i].data;saveFood();refreshFood();$('menu').scrollIntoView({behavior:'smooth'})},
-  goScan(b){location.hash='scan';setTimeout(()=>document.querySelector(`#seg [data-pane="${b.dataset.v}"]`).click(),50)},
+  useMenu(b){MENUS[today()]=FAVR[+b.dataset.i].data;saveFood();refreshFood();openPane('cuisine','menus')},
+  goScan(b){openPane('scan',b.dataset.v)},
+  async shareApp(){
+    openSheet(`<h2 style="text-align:center">Partager Mon Coach</h2><p class="mute" style="text-align:center;margin-top:-4px">Fais scanner ce code avec l'appareil photo, ou envoie le lien.</p><div id="qr"><div class="busy"></div></div><div class="url">${esc(APP_URL)}</div>
+    <div class="row" style="margin-top:14px"><button data-act="nativeShare" style="flex:1">Envoyer le lien</button><button class="ghost" data-act="copyLink" style="flex:1">Copier</button></div>
+    <p class="mute" style="text-align:center">Chacun a son propre profil et ses données sur son téléphone.</p><button class="ghost wide" data-act="closeSheet">Fermer</button>`);
+    try{const Q=await loadQR(),q=Q(0,'M');q.addData(APP_URL);q.make();$('qr').innerHTML=q.createSvgTag({cellSize:6,margin:0,scalable:true})}catch(e){$('qr').innerHTML='<span class="mute">QR indisponible hors ligne</span>'}},
+  async nativeShare(b){if(navigator.share){try{await navigator.share({title:'Mon Coach',text:'Mon coach sport et nutrition, essaie-le :',url:APP_URL})}catch(e){}}else copy(APP_URL,b)},
+  copyLink(b){copy(APP_URL,b)},
+  closeSheet(){$('sheet').classList.remove('on')},
+  installHelp(){openSheet(installHTML()+'<button class="wide" data-act="closeSheet" style="margin-top:10px">J\'ai compris</button>')},
+  doUpdate(){location.reload()},
+  santeT(b){const k=b.dataset.k,L=P.santeL||[];P.santeL=L.includes(k)?L.filter(x=>x!==k):[...L,k];saveP();renderSante();calc()},
+  genProgHome(b){openPane('sport','programme');setTimeout(()=>$('genProg').click(),80)},
+  genMenuHome(b){openPane('cuisine','menus');setTimeout(()=>$('genMenu').click(),80)},
+  goMoiW(){location.hash='moi';setTimeout(()=>{$('wIn').scrollIntoView({block:'center'});$('wIn').focus()},80)},
+  goPane(b){openPane(b.dataset.v,b.dataset.p)},
   qtyPick(b){$('qty').value=b.dataset.v;$('qty').focus()},
   showProd(b){renderProd(PRODS[+b.dataset.i]);$('prodRes').scrollIntoView({behavior:'smooth'})},
   anaProd(b){run(b,$('prodRes'),'Recherche du produit…',async()=>{
@@ -1051,17 +1306,62 @@ function renderProd(p){
 }
 function renderProdHist(){$('prodHistC').style.display=PRODS.length?'block':'none';$('prodHist').innerHTML=PRODS.map((p,i)=>`<button class="chip" data-act="showProd" data-i="${i}">${esc(p.nom)}</button>`).join('')}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b&&A[b.dataset.act])A[b.dataset.act](b,e)});
-$('seg').addEventListener('click',e=>{const b=e.target.closest('[data-pane]');if(!b)return;document.querySelectorAll('#seg button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.pane===b.dataset.pane))});
+document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{const b=e.target.closest('[data-pane]');if(!b)return;const sec=seg.closest('section');
+  seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));sec.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.pane===b.dataset.pane));b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo(0,0)}));
+function openPane(v,p){if(location.hash!=='#'+v)location.hash=v;setTimeout(()=>{const b=document.querySelector(`section[data-v="${v}"] .seg [data-pane="${p}"]`);if(b)b.click()},30)}
 
 /* ---------- Navigation ---------- */
-const VIEWS=['moi','sport','scan','cuisine','coach'];
+const VIEWS=['accueil','moi','sport','scan','cuisine','coach'];
 function route(){
   let h=location.hash.slice(1);if(h==='programme')h='sport';if(h==='machine')h='scan';
-  const v=VIEWS.includes(h)?h:'moi';
+  const v=VIEWS.includes(h)?h:'accueil';
   document.querySelectorAll('section[data-v]').forEach(s=>s.classList.toggle('on',s.dataset.v===v));
   document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===v));
-  if(v==='moi')drawW();if(v==='sport')recovery();window.scrollTo(0,0);
+  $('avatar').classList.toggle('on',v==='moi');
+  if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();window.scrollTo(0,0);
 }
+window.addEventListener('scroll',()=>$('appbar').classList.toggle('sc',scrollY>4),{passive:true});
+/* ---------- Accueil ---------- */
+function ring(v,max,col,val,lab){const r=40,c=2*Math.PI*r,f=Math.min(1,max?v/max:0);
+  return `<div class="ring"><svg viewBox="0 0 100 100" role="img" aria-label="${esc(lab)} ${esc(val)}"><circle cx="50" cy="50" r="${r}" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="10"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${col}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-f)}" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">${max?Math.round(f*100)+'%':'•'}</text></svg><b>${esc(val)}</b><span>${esc(lab)}</span></div>`}
+const STANDALONE=()=>!!(navigator.standalone||matchMedia('(display-mode: standalone)').matches);
+const IOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function renderHome(){
+  const m=metrics()||{},t=dayTot(),tk=m.kcal||2000,tp=m.prot||100,te=m.eau||8,w=EAU[today()]||0,h=new Date().getHours();
+  const nom=(P.nom||'').trim();$('avatar').textContent=(nom[0]||'M').toUpperCase();
+  $('hello').textContent=(h<5||h>=18?'Bonsoir':'Bonjour')+(nom?' '+nom:'')+' !';
+  $('sub').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+(P.obj?' · objectif '+({muscle:'muscle',perte:'perte de poids',seche:'sèche',forme:'forme',endurance:'cardio'}[P.obj]):'');
+  $('rings').innerHTML=ring(t.k,m.kcal||0,'#fff',m.kcal?`${Math.round(t.k)} / ${m.kcal}`:`${Math.round(t.k)}`,'kcal')+ring(t.p,tp,'#ffd166',`${Math.round(t.p)} / ${tp} g`,'protéines')+ring(w,te,'#9fd3ff',`${w} / ${te}`,'verres d\'eau');
+  $('homeStart').innerHTML=!P.poids||!P.taille?`<a class="card lnk" href="#moi" style="display:flex"><span class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-body"/></svg></span><span>Commence par ton profil<div class="mute" style="font-weight:500">taille, poids, objectif : 1 minute</div></span></span><svg class="i"><use href="#i-chev"/></svg></a>`:'';
+  /* séance du jour */
+  const wk=LOG.filter(l=>Date.now()-l.t<7*864e5).length,doneToday=LOG.some(l=>l.d===today());
+  if(PR&&PR.jours&&PR.jours.length){const j=PR.jours[wk%PR.jours.length];
+    $('homeSeance').innerHTML=`<div class="row sb"><span class="mute" style="font-weight:700">${doneToday?'Bravo, séance faite aujourd\'hui':'Ta prochaine séance'}</span><span class="mute">${wk} / ${P.jours||3} cette semaine</span></div>
+    <h2 style="margin:8px 0 2px">${esc(j.nom)}</h2><div class="mute">${esc(j.focus||'')} · ${(j.exercices||[]).length} exercices · ${esc(j.duree_min||'')} min</div>
+    <div class="row" style="margin-top:14px"><button data-act="start" data-j="${PR.jours.indexOf(j)}" style="flex:1">Démarrer la séance</button><button class="ghost" data-act="goPane" data-v="sport" data-p="programme">Programme</button></div>`}
+  else $('homeSeance').innerHTML=`<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><h3>Ton programme sur mesure</h3><div class="mute">Le coach te crée une semaine d'entraînement adaptée.</div></div></div><button data-act="genProgHome" class="wide" style="margin-top:14px">Créer mon programme</button>`;
+  /* menu */
+  const d=MENUS[today()];
+  $('homeMenu').innerHTML=d?`<div class="row sb"><h3>Au menu aujourd'hui</h3><span class="mute">${esc(d.calories_total)} kcal</span></div>${(d.repas||[]).map(r=>`<div class="jl"><span class="n"><span class="mute">${esc(r.moment)}</span><br><b>${esc(r.nom)}</b></span><button class="ghost sm" data-act="cook" data-r="${reg(r)}">Recette</button></div>`).join('')}`
+    :`<div class="hcard"><span class="ic c-yel"><svg class="i"><use href="#i-fork"/></svg></span><div style="flex:1"><h3>Ton menu du jour</h3><div class="mute">4 repas équilibrés, recettes pas à pas.</div></div></div><button data-act="genMenuHome" class="alt wide" style="margin-top:14px">Composer mon menu</button>`;
+  /* récup + poids */
+  const last={};LOG.forEach(l=>l.ex.forEach(e=>{if(e.sets.length)clean(e.muscles).forEach(k=>{last[k]=Math.max(last[k]||0,l.t)})}));
+  const hh=k=>last[k]?(Date.now()-last[k])/36e5:999;
+  $('homeRecov').innerHTML=`<a class="lnk" href="#sport" data-act="goPane" data-v="sport" data-p="progres"><b>Récupération</b><svg class="i"><use href="#i-chev"/></svg></a>${mapSVG(k=>hh(k)<24?'var(--hot)':hh(k)<60?'var(--warm)':last[k]?'#1fae79':'var(--mus)')}`;
+  const ws=W.slice(-10),lw=ws[ws.length-1],dw=ws.length>1?lw.w-ws[0].w:0;
+  $('homeWeight').innerHTML=`<a class="lnk" href="#moi"><b>Poids</b><svg class="i"><use href="#i-chev"/></svg></a><div class="kv" style="margin-top:10px"><b>${lw?fr(lw.w):(P.poids?fr(P.poids):'–')}</b><span class="mute">kg</span></div><div class="mute">${ws.length>1?(dw>0?'+':'')+fr(dw.toFixed(1))+' kg depuis le '+frd(ws[0].d):'Pèse-toi pour suivre ta courbe'}</div>${m.imc?`<div class="mute" style="margin-top:8px">IMC ${fr(m.imc.toFixed(1))} · ${esc(cat(m.imc))}</div>`:''}<button class="ghost sm" data-act="goMoiW" style="margin-top:12px;width:100%">Me peser</button>`;
+  /* installation */
+  const ic=$('installCard');
+  if(!STANDALONE()&&location.protocol==='https:'&&!/claude/.test(location.host)){ic.style.display='block';ic.innerHTML=installHTML()}else ic.style.display='none';
+}
+function installHTML(){return `<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-add"/></svg></span><div><h3>Installe Mon Coach sur ton iPhone</h3><div class="mute">Une icône sur l'écran d'accueil, en plein écran, comme une vraie app.</div></div></div>
+  <div class="steps"><div><em>1</em><span>En bas de Safari, touche <b>Partager</b> <svg class="i" style="width:18px;height:18px;vertical-align:-3px;color:var(--blue)"><use href="#i-share"/></svg></span></div><div><em>2</em><span>Fais défiler et choisis <b>« Sur l'écran d'accueil »</b></span></div><div><em>3</em><span>Touche <b>Ajouter</b> en haut à droite</span></div></div>
+  <p class="mute" style="margin:0">Astuce : installe l'app avant de remplir ton profil, l'app installée garde ses propres données.</p>`}
+/* ---------- Partage ---------- */
+const APP_URL=/github\.io$/.test(location.host)?location.origin+location.pathname.replace(/index\.html$/,''):'https://francoismarechal91-hash.github.io/EdilganCoach/';
+let qrp=null;const loadQR=()=>qrp||(qrp=new Promise((ok,ko)=>{if(window.qrcode)return ok(window.qrcode);const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';sc.onload=()=>ok(window.qrcode);sc.onerror=()=>{qrp=null;ko()};document.head.appendChild(sc)}));
+async function openSheet(html){$('sheetIn').innerHTML='<div class="grab"></div>'+html;$('sheet').classList.add('on')}
+$('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')$('sheet').classList.remove('on')});
 window.addEventListener('hashchange',route);
 
 $('provs').innerHTML=AI.order.map((p,i)=>`<div style="margin-top:14px"><div class="row sb"><b>${i+1}. ${esc(PROV[p].nom)}</b><a class="vid" style="min-height:38px;font-size:13px" href="${PROV[p].page}" target="_blank" rel="noopener">Créer ma clé</a></div><div class="mute">${esc(PROV[p].aide)}</div><input data-key="${p}" type="password" autocomplete="off" placeholder="Colle ta clé ${esc(PROV[p].nom)}" aria-label="Clé ${esc(PROV[p].nom)}"></div>`).join('');
@@ -1074,7 +1374,21 @@ $('ingPh').addEventListener('change',async e=>{
     const t=$('frigo').value.trim();$('frigo').value=(t?t+', ':'')+all.join(', ');store.set('frigo',$('frigo').value);
     el.innerHTML=`<div class="tip">J'ai repéré ${all.length} ingrédients, ajoutés à ta liste ci-dessous. Corrige si besoin, puis choisis un plat ou un menu complet.</div>`;e.target.value=''});
 });
-calc();renderProg();renderAH();renderProdHist();renderMenu();renderWeek();renderFav();renderChat();route();
+if('serviceWorker' in navigator&&location.protocol==='https:'&&/github\.io$/.test(location.host)){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+/* ---------- Mises à jour automatiques ---------- */
+const APP_VERSION='2026.11.26-4';
+async function checkUpdate(){
+  if(!/github\.io$/.test(location.host))return;
+  try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
+    if(d.v&&d.v!==APP_VERSION){
+      const busyUser=$('ov').classList.contains('on')||document.activeElement&&/INPUT|TEXTAREA/.test(document.activeElement.tagName);
+      if(!busyUser){toast('Nouvelle version : mise à jour…');setTimeout(()=>location.reload(),1200)}
+      else if(!$('upd')){document.body.insertAdjacentHTML('beforeend',`<div id="upd" style="position:fixed;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:15;max-width:540px;margin:0 auto;background:var(--ink);color:var(--bg);border-radius:18px;padding:12px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)"><span style="flex:1;font-weight:600">Une nouvelle version est prête</span><button class="sm" data-act="doUpdate">Mettre à jour</button></div>`)}
+    }}catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
+setInterval(checkUpdate,30*60*1000);setTimeout(checkUpdate,3000);
+calc();renderSante();renderProg();renderAH();renderProdHist();renderMenu();renderWeek();renderFav();renderChat();route();
 }
 </script>
 </body>
