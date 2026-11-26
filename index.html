@@ -398,6 +398,30 @@ html[data-skin=synth] .skel>i{background:linear-gradient(90deg,#2a1956 0%,#4a2f8
 html[data-skin=synth] .shop input,html[data-skin=synth] input[type=checkbox]{accent-color:#ff2a9d}
 html[data-skin=synth] a{color:#22e4ff}
 
+/* mot du jour, sommeil */
+.daily .dq{font-family:Fredoka,Orbitron,Archivo,sans-serif;font-size:21px;line-height:1.3;font-weight:600;margin:6px 0 14px;text-wrap:balance}
+html[data-skin=synth] .daily .dq{font-family:Archivo,sans-serif;font-weight:800}
+.daily .lab{font-size:12px;font-weight:800;letter-spacing:.05em;color:var(--red)}
+.daily .fact{background:var(--fill);border-radius:16px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start}
+.daily .fact .ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:none}
+.daily .dq,.daily .fact{animation:rise .6s cubic-bezier(.2,.8,.2,1) both}.daily .fact{animation-delay:.15s}
+.qual{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:6px}
+.qual button{background:var(--fill);color:var(--ink);box-shadow:none;min-height:50px;padding:0 2px;font-size:13px}
+.qual button:not(.on){color:var(--ink)!important}
+.qual button.on{background:var(--red);color:#fff}
+html[data-skin=foretnuit] .qual button.on{color:#0c1a24}
+.slbars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;align-items:end;height:150px;margin:8px 0}
+.slbars div{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.slbars i{display:block;width:100%;max-width:32px;border-radius:9px 9px 5px 5px;background:var(--red);transition:height .6s cubic-bezier(.2,.8,.2,1)}
+.slbars i.lo{background:var(--yel)}.slbars i.no{background:var(--fill2)}
+.slbars span{font-size:12px;color:var(--mute)}.slbars b{font-size:12px}
+.breath{position:relative;width:220px;height:220px;margin:8px auto;display:grid;place-items:center}
+.bcirc{position:absolute;inset:20px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--blue) 55%,transparent),color-mix(in srgb,var(--blue) 15%,transparent));box-shadow:0 0 40px color-mix(in srgb,var(--blue) 45%,transparent);transform:scale(.55);transition:transform 5s ease-in-out}
+.breath.in .bcirc{transform:scale(1)}.breath b{position:relative;font-size:22px}
+.routine li{margin:10px 0}
+.tipwarn{border-left:5px solid var(--yel)}
+.tipl{display:flex;gap:12px;padding:10px 0;border-top:1px solid var(--line)}.tipl:first-child{border-top:0}
+.tipl em{font-style:normal;width:30px;height:30px;border-radius:50%;background:var(--tint);color:var(--tintink);display:grid;place-items:center;font-weight:800;flex:none}
 /* tuiles : toujours le texte du thème */
 .tile{color:var(--ink)!important}.tile small{color:var(--mute)!important}
 /* ===== Petites animations ===== */
@@ -439,6 +463,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-7 1 2 2 3 3 3 0-3-1-5 0-7z"/></symbol>
  <symbol id="i-scale" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="4"/><path d="M9 9a3 3 0 0 1 6 0M12 9l1.5-1.5"/></symbol>
  <symbol id="i-body" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M6 9h12M12 9v6M12 15l-3 6M12 15l3 6"/></symbol>
+ <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
 </svg>
 
@@ -460,12 +485,15 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
     <div class="rings" id="rings"></div>
   </div>
   <div id="homeStart"></div>
+  <div class="card daily" id="dailyCard"></div>
   <div class="sect">QUE VEUX-TU FAIRE ?</div>
   <div class="tiles">
     <button class="tile" data-act="goPane" data-v="scan" data-p="produit"><span class="ic c-red"><svg class="i"><use href="#i-bar"/></svg></span><span>Scanner un produit<small>code-barres ou étiquette</small></span></button>
     <button class="tile" data-act="goPane" data-v="scan" data-p="assiette"><span class="ic c-yel"><svg class="i"><use href="#i-plate"/></svg></span><span>Mon assiette<small>calories en photo</small></span></button>
     <button class="tile" data-act="goPane" data-v="scan" data-p="machine"><span class="ic c-blue"><svg class="i"><use href="#i-cam"/></svg></span><span>Une machine<small>comment l'utiliser</small></span></button>
     <button class="tile" data-act="quick"><span class="ic c-ink"><svg class="i"><use href="#i-bolt"/></svg></span><span>Séance express<small>20 minutes, maintenant</small></span></button>
+    <button class="tile" onclick="location.hash='sommeil'"><span class="ic c-blue"><svg class="i"><use href="#i-moon"/></svg></span><span>Bien dormir<small>sommeil, conseils, détente</small></span></button>
+    <button class="tile" data-act="goPane" data-v="cuisine" data-p="frigo"><span class="ic c-yel"><svg class="i"><use href="#i-fork"/></svg></span><span>Que cuisiner ?<small>avec ce que j'ai chez moi</small></span></button>
   </div>
   <div class="sect">TON SPORT</div>
   <div class="card" id="homeSeance"></div>
@@ -476,7 +504,68 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
     <div class="card" style="margin:0" id="homeRecov"></div>
     <div class="card" style="margin:0" id="homeWeight"></div>
   </div>
+  <a class="card lnk" href="#sommeil" id="homeSleep" style="display:flex"></a>
   <div class="card" id="installCard" style="display:none"></div>
+</section>
+
+<!-- ================= SOMMEIL ================= -->
+<section data-v="sommeil">
+  <div class="lt"><a href="#accueil" class="mute" style="text-decoration:none;font-weight:700">‹ Accueil</a><h1 style="margin-top:6px">Sommeil</h1><p>Bien dormir, c'est la moitié de la forme.</p></div>
+  <div class="seg"><button data-pane="nuit" class="on">Ma nuit</button><button data-pane="detente">Me détendre</button><button data-pane="conseils">Conseils</button></div>
+
+  <div class="pane on" data-pane="nuit">
+    <div class="card">
+      <h2>Ma nuit dernière</h2>
+      <div class="grid">
+        <div><label for="slC">Couché à</label><input id="slC" type="time" value="23:00"></div>
+        <div><label for="slL">Levé à</label><input id="slL" type="time" value="07:00"></div>
+      </div>
+      <label style="margin-top:12px">Comment as-tu dormi ?</label>
+      <div class="qual" id="slQ"><button data-q="1">Très mal</button><button data-q="2">Mal</button><button data-q="3">Moyen</button><button data-q="4">Bien</button><button data-q="5">Super</button></div>
+      <button class="wide" data-act="slSave" style="margin-top:14px">Enregistrer ma nuit</button>
+    </div>
+    <div class="card">
+      <h2>Ma semaine</h2>
+      <div class="slbars" id="slBars"></div>
+      <p class="mute" id="slAvg"></p>
+    </div>
+    <div class="card">
+      <h2>À quelle heure me coucher ?</h2>
+      <p class="sub">Le sommeil fonctionne par cycles d'environ 1 h 30. Se réveiller en fin de cycle aide à être moins dans le brouillard.</p>
+      <div class="row"><label for="slWake" style="margin:0">Je veux me lever à</label><input id="slWake" type="time" value="07:00" style="width:auto;flex:1;margin:0"></div>
+      <div id="slBed"></div>
+    </div>
+    <div class="card">
+      <h2>Conseils sur mesure</h2>
+      <p class="sub">Le coach regarde tes nuits, ton sport et ta santé.</p>
+      <button class="alt wide" data-act="slCoach">Analyser mon sommeil</button>
+      <div id="slAdv"></div>
+    </div>
+  </div>
+
+  <div class="pane" data-pane="detente">
+    <div class="card" style="text-align:center">
+      <h2>Respiration calme</h2>
+      <p class="sub">Inspire 5 secondes, expire 5 secondes, pendant 5 minutes. Idéal avant de dormir ou quand ça stresse.</p>
+      <div class="breath" id="breath"><div class="bcirc"></div><b id="bTxt">Prêt ?</b></div>
+      <div class="mute" id="bTime" style="margin:10px 0">5:00</div>
+      <button class="wide" data-act="breathGo" id="bBtn">Commencer</button>
+    </div>
+    <div class="card">
+      <h2>Routine du soir</h2>
+      <ol class="routine">
+        <li><b>1 h avant</b> : lumière tamisée, écrans de côté ou en mode nuit.</li>
+        <li><b>30 min avant</b> : douche tiède, lecture, étirements doux.</li>
+        <li><b>Au lit</b> : 5 minutes de respiration calme.</li>
+        <li><b>Pas sommeil après 20 min ?</b> Relève-toi, activité calme, puis reviens.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="pane" data-pane="conseils">
+    <div class="card"><h2>Les 10 règles d'or</h2><div id="slTips"></div></div>
+    <div class="card tipwarn"><h3>À signaler à ton médecin</h3><p style="margin-bottom:0">Ronflements forts, pauses dans la respiration la nuit, réveil fatigué malgré une nuit complète, endormissement dans la journée : ce sont des signes possibles d'apnée du sommeil, plus fréquente en cas de surpoids. Ça se soigne bien, parles-en.</p></div>
+  </div>
 </section>
 
 <!-- ================= MOI ================= -->
@@ -1717,6 +1806,17 @@ Il te demande, avec ses mots : « ${env} ». Crée UNE séance qui répond exact
 Format JSON : {"nom":"titre court de la séance","pourquoi":"1 phrase qui explique en quoi elle répond à sa demande","duree_min":30,"exercices":[${EXF}]} avec 4 à 7 exercices. Clés muscles autorisées : ${KEYS}.`,{modelTier:'default',cache:false});
     ENV=r;$('envieRes').innerHTML=`<div class="meal"><div class="k">Ta séance</div><h3>${esc(r.nom)}</h3><p class="mute" style="margin:4px 0 8px">${esc(r.pourquoi||'')} · ${esc(r.duree_min||'')} min</p>${(r.exercices||[]).map(x=>exHTML(x)).join('')}<button data-act="startEnvie" class="wide" style="margin-top:10px">Commencer cette séance</button></div>`})},
   startEnvie(){startSession({nom:ENV.nom||'Ma séance',exercices:ENV.exercices||[]})},
+  slSave(b){SL[today()]={c:$('slC').value,l:$('slL').value,q:SLQ};const k=Object.keys(SL).sort().slice(-60);SL=Object.fromEntries(k.map(x=>[x,SL[x]]));store.set('sommeil',SL);renderSleep();toast('Nuit enregistrée : '+hm(dur(SL[today()].c,SL[today()].l)))},
+  breathGo(){if(bT){stopBreath();return}let left=300,phase=0;$('bBtn').textContent='Arrêter';
+    const step=()=>{phase=1-phase;$('breath').classList.toggle('in',!!phase);$('bTxt').textContent=phase?'Inspire…':'Expire…'};step();
+    bT=setInterval(()=>{left--;$('bTime').textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');if(left%5===0)step();if(left<=0){stopBreath();toast('Bravo, 5 minutes de calme');}},1000)},
+  slCoach(b){run(b,$('slAdv'),'Analyse de tes nuits',async()=>{
+    const nuits=Object.entries(SL).sort().slice(-14).map(([d,v])=>`${d} : couché ${v.c}, levé ${v.l}, ${hm(dur(v.c,v.l))}, qualité ${v.q}/5`).join('\n')||'aucune nuit enregistrée';
+    const r=await askJSON(`Tu es un coach sommeil bienveillant. ${profil(true)}
+Ses dernières nuits :\n${nuits}
+Analyse simplement (durée, régularité, qualité) et donne des conseils concrets et personnalisés, en lien avec son sport, son alimentation et sa santé. Pas de diagnostic médical ; si des signes inquiétants apparaissent, conseille d'en parler au médecin.
+Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une seule chose à faire ce soir"}`,{modelTier:'default',cache:false});
+    $('slAdv').innerHTML=`<div class="meal"><p style="margin-top:0">${esc(r.bilan)}</p>${list(r.conseils)}${r.ce_soir?`<div class="tip"><b>Ce soir :</b> ${esc(r.ce_soir)}</div>`:''}</div>`})},
   santeT(b){const k=b.dataset.k,L=P.santeL||[];P.santeL=L.includes(k)?L.filter(x=>x!==k):[...L,k];saveP();renderSante();calc()},
   genProgHome(b){openPane('sport','programme');setTimeout(()=>$('genProg').click(),80)},
   genMenuHome(b){openPane('cuisine','menus');setTimeout(()=>$('genMenu').click(),80)},
@@ -1830,14 +1930,14 @@ document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{
 function openPane(v,p){if(location.hash!=='#'+v)location.hash=v;setTimeout(()=>{const b=document.querySelector(`section[data-v="${v}"] .seg [data-pane="${p}"]`);if(b)b.click()},30)}
 
 /* ---------- Navigation ---------- */
-const VIEWS=['accueil','moi','sport','scan','cuisine','coach'];
+const VIEWS=['accueil','moi','sport','scan','cuisine','coach','sommeil'];
 function route(){
   let h=location.hash.slice(1);if(h==='programme')h='sport';if(h==='machine')h='scan';
   const v=VIEWS.includes(h)?h:'accueil';
   document.querySelectorAll('section[data-v]').forEach(s=>s.classList.toggle('on',s.dataset.v===v));
   document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===v));
   $('avatar').classList.toggle('on',v==='moi');
-  if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();window.scrollTo(0,0);
+  if(v!=='sommeil'&&bT)stopBreath();if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='sommeil')renderSleep();window.scrollTo(0,0);
 }
 window.addEventListener('scroll',()=>$('appbar').classList.toggle('sc',scrollY>4),{passive:true});
 /* ---------- Accueil ---------- */
@@ -1953,8 +2053,39 @@ applySkin(store.get('skin','synth'));applySize(store.get('taille','m'));applyHer
 new MutationObserver(()=>ANIM.mount()).observe(document.body,{childList:true,subtree:true});ANIM.mount();
 $('envie').value=store.get('envie','');$('envie').addEventListener('input',()=>store.set('envie',$('envie').value));
 $('envieChips').innerHTML=['Plutôt cardio','Je suis courbaturé','Peu de temps','Haut du corps','Bas du corps','Séance douce','Je veux transpirer','À la maison'].map(v=>`<button class="chip" data-act="envieC" data-v="${v}">${v}</button>`).join('');
+
+/* ---------- Mot du jour, anecdote, sommeil ---------- */
+const MOTIV=["Chaque répétition compte, même les petites.","Tu n'as pas besoin d'être parfait, juste régulier.","Le meilleur moment pour commencer, c'était hier. Le deuxième, c'est maintenant.","Ton corps entend tout ce que ton esprit lui dit : parle-lui bien.","Un pas aujourd'hui vaut mieux que dix promis pour demain.","La motivation te lance, l'habitude te fait avancer.","Pas de raccourci, mais chaque jour te rapproche.","Tu es plus fort que tes excuses.","Bois de l'eau, bouge un peu, souris beaucoup.","Une mauvaise journée ne gâche pas tout un parcours.","Fier de chaque effort, même celui qui ne se voit pas.","Le progrès, c'est mieux qu'hier, pas parfait aujourd'hui.","Tu ne regretteras jamais une séance faite.","Petit à petit, l'oiseau fait son nid. Et toi, tes muscles.","Prends soin de ton corps, c'est le seul endroit où tu vas vivre toute ta vie.","Commence là où tu es, avec ce que tu as.","Tu as survécu à toutes tes journées difficiles jusqu'ici. Celle-ci aussi.","Ce n'est pas un régime, c'est un nouveau rythme.","Dix minutes, c'est toujours mieux que zéro.","Les résultats arrivent à ceux qui ne lâchent pas.","Écoute ton corps, il est ton meilleur coach.","Aujourd'hui, choisis une chose à bien faire. Une seule suffit.","Le repos fait aussi partie de l'entraînement.","Tu n'as pas à aller vite, tu dois juste continuer.","Chaque repas équilibré est une petite victoire.","Le miroir ment parfois, la régularité jamais.","Sois patient avec toi-même, tu construis quelque chose de solide.","Ton futur toi te dit merci pour aujourd'hui.","Transpire aujourd'hui, brille demain.","La discipline, c'est se souvenir de ce que l'on veut vraiment.","Il n'y a pas de petit progrès.","Respire. Bouge. Recommence.","Les jours sans envie, fais juste le minimum. C'est déjà énorme.","Tu fais ça pour toi, et c'est la meilleure raison.","On ne compare pas son chapitre 1 au chapitre 20 des autres.","Le plus dur, c'est de mettre les baskets. Le reste suit.","Chaque jour est une page blanche : écris-en une belle.","La force ne vient pas de ce que tu peux faire, mais de ce que tu dépasses.","Prends l'escalier, la vie aussi se monte marche par marche.","Mange des couleurs, dors assez, bouge chaque jour.","Ce que tu fais souvent compte plus que ce que tu fais parfois.","Tu es en chantier, et c'est magnifique.","Une séance ratée, ça n'existe pas : il y a juste des séances plus courtes.","Fais-le pour la personne qui croyait que tu n'y arriverais pas : toi d'hier.","Garde le cap, même à petite vitesse.","Ton énergie d'aujourd'hui, c'est ton sommeil d'hier.","La constance bat l'intensité.","Sois ton propre supporter.","Le corps atteint ce que l'esprit croit possible.","Aujourd'hui, fais un peu mieux que suffisant.","Une habitude se construit une journée à la fois.","Tu n'as pas raté, tu as appris.","Rien ne change si rien ne change.","Prends soin de toi comme tu prends soin de ceux que tu aimes.","Moins d'excuses, plus d'essais.","Lève-toi, bouge, et regarde la journée changer.","Chaque goutte de sueur est un pas vers ton objectif.","Tu mérites de te sentir bien dans ton corps.","Ralentis si besoin, mais n'arrête pas.","Ce soir, tu seras content d'avoir commencé ce matin."];
+const FACTS=["Les pieuvres ont trois cœurs et un sang bleu.","Une journée sur Vénus dure plus longtemps qu'une année sur Vénus.","Les bananes sont des baies au sens botanique, mais pas les fraises.","Les loutres de mer se tiennent par la patte en dormant pour ne pas dériver.","Le cœur d'une crevette se trouve dans sa tête.","Les flamants roses doivent leur couleur aux pigments de ce qu'ils mangent.","Le cerveau humain utilise environ 20 % de l'énergie du corps.","Les koalas peuvent dormir jusqu'à 20 heures par jour.","La Grande Muraille de Chine n'est pas visible à l'œil nu depuis la Lune.","Le plus long hoquet connu a duré 68 ans.","Les dauphins dorment avec une moitié du cerveau éveillée.","Le plus petit os du corps est l'étrier, dans l'oreille.","Le corps humain compte environ 600 muscles.","La lumière du Soleil met environ 8 minutes à nous parvenir.","Un éclair est environ cinq fois plus chaud que la surface du Soleil.","Le mot « robot » vient du tchèque « robota », qui veut dire corvée.","Avant le XVIIe siècle, les carottes étaient surtout violettes ou jaunes.","La girafe a 7 vertèbres dans le cou, exactement comme nous.","Ton cœur bat environ 100 000 fois par jour.","Les ongles des mains poussent plus vite que ceux des pieds.","L'Australie est plus large que le diamètre de la Lune.","Les colibris sont capables de voler en marche arrière.","Une abeille produit environ un douzième de cuillère à café de miel dans toute sa vie.","Le chat le plus âgé connu, Creme Puff, a vécu 38 ans.","Les chiens transpirent surtout par les coussinets de leurs pattes.","Les chats ne perçoivent pas le goût sucré.","La truffe d'un chien a une empreinte unique, comme nos doigts.","Napoléon mesurait environ 1,69 m, dans la moyenne de son époque.","Les Vikings ne portaient pas de casques à cornes.","Botaniquement, la tomate est un fruit.","La cacahuète n'est pas une noix mais une légumineuse, comme les lentilles.","L'eau chaude peut parfois geler plus vite que l'eau froide : c'est l'effet Mpemba.","Le Sahara était une région verte il y a quelques milliers d'années.","Un petit nuage cotonneux pèse en moyenne plusieurs centaines de tonnes.","Le français a été la langue de la cour d'Angleterre pendant environ trois siècles.","Tes pieds contiennent environ un quart des os de ton corps.","Mal dormir augmente l'appétit : les hormones de la faim se dérèglent.","Marcher 10 minutes après un repas aide à mieux gérer le sucre dans le sang.","Les astronautes grandissent de quelques centimètres dans l'espace.","La Joconde n'a pas de sourcils visibles.","Il y aurait plus d'arbres sur Terre que d'étoiles dans la Voie lactée.","Les étoiles de mer n'ont pas de cerveau.","Les poissons rouges se souviennent de choses pendant des mois, pas 3 secondes.","Les hippopotames ne nagent pas vraiment : ils marchent au fond de l'eau.","Une fourmi peut porter plusieurs dizaines de fois son propre poids.","« Anticonstitutionnellement » compte 25 lettres.","La licorne est l'animal national de l'Écosse.","Le chocolat est toxique pour les chiens et les chats.","Les chats ont une trentaine de muscles dans chaque oreille.","Les éléphants font partie des rares animaux qui se reconnaissent dans un miroir.","Les manchots empereurs peuvent plonger à plus de 500 mètres de profondeur.","Les abeilles indiquent où sont les fleurs en dansant.","On cligne des yeux environ 15 à 20 fois par minute.","Le mont Everest gagne quelques millimètres de hauteur chaque année.","Le muscle consomme plus d'énergie au repos que la graisse.","Un chat ronronne à une fréquence comprise entre 25 et 150 hertz.","Les chiens peuvent sentir certaines odeurs des dizaines de milliers de fois mieux que nous.","Les vaches ont souvent des « meilleures amies » au sein du troupeau.","Le cri du coq peut dépasser les 100 décibels, autant qu'une tronçonneuse.","Les escargots ont des milliers de minuscules dents.","Les pandas passent jusqu'à 14 heures par jour à manger.","Ta peau se renouvelle entièrement en un mois environ.","Rire 15 minutes fait dépenser un peu d'énergie, l'équivalent de quelques dizaines de calories.","La première photographie de l'histoire a demandé plusieurs heures de pose.","Le papillon goûte avec ses pattes."];
+const dayIndex=()=>{const d=new Date(),s=new Date(d.getFullYear(),0,0);return Math.floor((d-s)/864e5)+d.getFullYear()*366};
+function renderDaily(){
+  const i=dayIndex(),m=MOTIV[i%MOTIV.length],f=FACTS[(i*7+3)%FACTS.length];
+  $('dailyCard').innerHTML=`<div class="lab">LE MOT DU JOUR</div><div class="dq">« ${esc(m)} »</div>
+  <div class="fact"><span class="ic c-yel"><svg class="i" style="width:20px;height:20px"><use href="#i-bolt"/></svg></span><div><div class="lab" style="color:var(--mute)">LE SAVAIS-TU ?</div><div style="margin-top:2px">${esc(f)}</div></div></div>`;
+}
+(function midnight(){const n=new Date(),t=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1,0,0,5);setTimeout(()=>{renderDaily();renderHome();midnight()},t-n)})();
+/* sommeil */
+let SL=store.get('sommeil',{}),SLQ=3;
+const tmin=v=>{const[h,m]=(v||'0:0').split(':').map(Number);return h*60+m};
+const dur=(c,l)=>{let d=tmin(l)-tmin(c);if(d<=0)d+=1440;return d};
+const hm=m=>Math.floor(m/60)+' h '+String(Math.round(m%60)).padStart(2,'0');
+function renderSleep(){
+  const days=[...Array(7)].map((_,i)=>{const d=new Date(Date.now()-(6-i)*864e5);return dkey(d)});
+  const vals=days.map(k=>SL[k]?dur(SL[k].c,SL[k].l):0),mx=Math.max(600,...vals);
+  $('slBars').innerHTML=days.map((k,i)=>{const v=vals[i],cls=!v?'no':v<420?'lo':'';return `<div><b>${v?hm(v).replace(' h ','h'):''}</b><i class="${cls}" style="height:${v?Math.max(8,v/mx*110):6}px"></i><span>${new Date(k).toLocaleDateString('fr-FR',{weekday:'short'}).slice(0,3)}</span></div>`}).join('');
+  const got=vals.filter(Boolean);$('slAvg').textContent=got.length?`Moyenne : ${hm(got.reduce((a,b)=>a+b,0)/got.length)} par nuit. Un adulte a besoin en général de 7 à 9 heures.`:'Enregistre ta nuit chaque matin pour voir ta semaine.';
+  const w=tmin($('slWake').value||'07:00');
+  $('slBed').innerHTML='<div class="chips" style="margin-top:12px">'+[6,5].map(c=>{let b=w-c*90-15;b=(b+1440)%1440;return `<span class="chip${c===5?' p':''}" style="font-size:16px;padding:10px 16px">${String(Math.floor(b/60)).padStart(2,'0')}:${String(b%60).padStart(2,'0')} <small style="opacity:.8">(${c} cycles, ${hm(c*90)})</small></span>`}).join('')+'</div><p class="mute" style="margin:0">15 minutes pour t\'endormir sont déjà comptées.</p>';
+  const t=SL[today()];if(t){$('slC').value=t.c;$('slL').value=t.l;SLQ=t.q}
+  document.querySelectorAll('#slQ button').forEach(b=>b.classList.toggle('on',+b.dataset.q===SLQ));
+  const last=SL[today()]||SL[dkey(Date.now()-864e5)];
+  $('homeSleep').innerHTML=`<span class="hcard"><span class="ic c-blue"><svg class="i"><use href="#i-moon"/></svg></span><span><b>${last?'Nuit : '+hm(dur(last.c,last.l)):'Comment as-tu dormi ?'}</b><div class="mute" style="font-weight:500">${last?['','très mal','mal','moyen','bien','super'][last.q]+' · conseils et détente':'Note ta nuit en 10 secondes'}</div></span></span><svg class="i"><use href="#i-chev"/></svg>`;
+}
+const SLTIPS=[["Des horaires réguliers","Couche-toi et lève-toi à peu près à la même heure, même le week-end. C'est le réglage n°1 de ton horloge interne."],["La lumière du matin","Sors ou ouvre grand les volets dans l'heure qui suit le réveil : ça cale ton sommeil du soir."],["Café avant 14 h","La caféine reste plusieurs heures dans le corps. Après le déjeuner, passe au déca ou à la tisane."],["Pas d'écran au lit","La lumière et les notifications réveillent le cerveau. Laisse le téléphone hors de portée."],["Une chambre fraîche et noire","Autour de 18-19 °C, sombre et calme. Un masque ou des bouchons d'oreilles peuvent aider."],["Dîner léger, 2 à 3 h avant","Un repas lourd ou très gras gêne l'endormissement. Après une sleeve, garde des petites portions."],["L'alcool trompe","Il aide à s'endormir mais casse la qualité du sommeil en deuxième partie de nuit."],["Le sport, oui, mais pas trop tard","Bouger améliore le sommeil. Évite seulement les séances très intenses juste avant de dormir."],["Sieste courte","20 minutes maximum, et avant 15 h, sinon elle empiète sur la nuit."],["Le lit, c'est pour dormir","Si tu ne dors pas au bout de 20 minutes, lève-toi, fais quelque chose de calme, puis reviens."]];
+let bT=null;
+function stopBreath(){clearInterval(bT);bT=null;$('breath').classList.remove('in');$('bTxt').textContent='Prêt ?';$('bBtn').textContent='Commencer';$('bTime').textContent='5:00'}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-16';
+const APP_VERSION='2026.11.26-17';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
@@ -1968,6 +2099,10 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 setInterval(checkUpdate,30*60*1000);setTimeout(checkUpdate,3000);
 $('wObj').addEventListener('click',e=>{const b=e.target.closest('[data-o]');if(!b)return;$('wObj').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))});
 if(!P.taille&&!store.get('onb',0)){$('welcome').classList.add('on');document.body.style.overflow='hidden'}
+$('slQ').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(!b)return;SLQ=+b.dataset.q;document.querySelectorAll('#slQ button').forEach(x=>x.classList.toggle('on',x===b))});
+$('slWake').value=store.get('reveil','07:00');$('slWake').addEventListener('input',()=>{store.set('reveil',$('slWake').value);renderSleep()});
+$('slTips').innerHTML=SLTIPS.map(([t,d],i)=>`<div class="tipl"><em>${i+1}</em><div><b>${esc(t)}</b><div class="mute" style="font-size:15px">${esc(d)}</div></div></div>`).join('');
+renderDaily();renderSleep();
 calc();renderEq();renderSante();renderProg();renderAH();renderProdHist();renderMenu();renderWeek();renderFav();renderChat();route();
 }
 </script>
