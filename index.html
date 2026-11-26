@@ -144,6 +144,8 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px var(--fill) inset;-webkit-t
 .askimg{display:flex;align-items:center;gap:10px;margin:0 0 8px}.askimg img{width:64px;height:64px;object-fit:cover;border-radius:12px}.camb{position:relative;flex:none;cursor:pointer;display:grid;place-items:center;width:48px!important;height:48px!important}.bubimg{display:block;max-width:180px;max-height:180px;border-radius:12px;margin-bottom:6px}
 .mplate{width:120px;height:120px;margin:6px auto 4px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--red) 14%,var(--fill));box-shadow:0 0 0 10px color-mix(in srgb,var(--red) 7%,transparent);animation:mpl 6s ease-in-out infinite}.mplate .i{width:56px;height:56px;color:var(--red)}@keyframes mpl{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}@media(prefers-reduced-motion:reduce){.mplate{animation:none}}html[data-fx=off] .mplate{animation:none}
 .start .stp{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--fill);color:var(--ink);border:0;border-radius:14px;padding:10px 12px;margin-top:6px;min-height:56px;font:inherit;text-transform:none;letter-spacing:0;box-shadow:none}html[data-skin] .start .stp{background:var(--fill);background-image:none;color:var(--ink);box-shadow:none}.start .stp i{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--fill2);display:grid;place-items:center;font-style:normal;font-weight:900;font-size:14px}.start .stp.ok{opacity:.6}.start .stp.ok i{background:var(--green);border-color:var(--green);color:#fff}.start .stp small{display:block;font-size:13px;color:var(--mute);font-weight:500}.start .stp:disabled{cursor:default}
+.fold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-2px 0}.fold>summary::-webkit-details-marker{display:none}.fold>summary h2{margin:0}.fold>summary::after{content:"";flex:none;width:10px;height:10px;border-right:2.5px solid var(--mute);border-bottom:2.5px solid var(--mute);transform:rotate(45deg);transition:transform .25s;margin-right:4px}.fold[open]>summary::after{transform:rotate(-135deg)}.fold[open]>summary{margin-bottom:12px}.fsum{display:block;font-size:14px;font-weight:600;margin-top:2px}
+section[data-v=moi].on{display:flex;flex-direction:column}section[data-v=moi]>*{order:13}section[data-v=moi]>.lt{order:0}section[data-v=moi]>:nth-child(3),section[data-v=moi]>:nth-child(4){order:10}section[data-v=moi]>#foldEq,section[data-v=moi]>#foldSante{order:11}section[data-v=moi]>#foldApp{order:12}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -861,8 +863,8 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
 <!-- ================= MOI ================= -->
 <section data-v="moi">
   <div class="lt"><h1>Mon profil</h1><p>Tes infos, ton style.</p></div>
-  <div class="card">
-    <h2>Apparence</h2>
+  <details class="card fold" id="foldApp">
+    <summary><span><h2>Apparence</h2><span class="mute fsum" id="sumApp">thème, taille du texte, animations</span></span></summary>
     <div class="skins" id="skins"></div>
     <div class="eqh" style="margin-top:16px">Mon image d'accueil</div>
     <p class="mute" style="margin:2px 0 8px">Une photo de ton téléphone en fond de l'accueil.</p>
@@ -871,7 +873,7 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
     <div class="seg" id="fxSeg" style="margin:8px 0 0"><button data-fx="on">Activés</button><button data-fx="off">Désactivés</button></div>
     <div class="eqh" style="margin-top:16px">Taille du texte</div>
     <div class="seg" id="sizeSeg" style="margin:8px 0 0"><button data-size="m">Normal</button><button data-size="l">Grand</button><button data-size="xl">Très grand</button></div>
-  </div>
+  </details>
   <div class="card">
     <div class="mute">Ton IMC</div>
     <div class="big" id="imc">–</div>
@@ -910,9 +912,9 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
     </form>
   </div>
 
-  <div class="card">
-    <h2>Mon matériel</h2>
-    <p class="sub">Touche ce que tu as.</p>
+  <details class="card fold" id="foldEq">
+    <summary><span><h2>Mon matériel</h2><span class="mute fsum" id="sumEq">touche ce que tu as</span></span></summary>
+    <p class="sub">Touche ce que tu as : le coach ne te proposera que ce que tu peux faire.</p>
     <div class="eqh">Sport à la maison</div><div class="chips" id="eqM"></div>
     <div class="eqh">À ma salle</div><div class="chips" id="eqS"></div>
     <div class="eqh">Cuisine</div><div class="chips" id="eqC"></div>
@@ -921,10 +923,10 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
     <select id="eqCat" style="margin:0 0 8px"><option value="sport">Appareil de sport</option><option value="cuisine">Appareil de cuisine</option></select><textarea id="eqIn" class="grow" rows="1" data-enter="eqAdd" placeholder="ex. Ninja Creami, presse à cuisses, Bowflex…"></textarea><button class="alt wide" data-act="eqAdd" style="margin-top:8px">Ajouter cet appareil</button>
     <div id="eqRes"></div>
     <div id="eqCustom"></div>
-  </div>
+  </details>
 
-  <div class="card">
-    <h2>Ma santé</h2>
+  <details class="card fold" id="foldSante">
+    <summary><span><h2>Ma santé</h2><span class="mute fsum" id="sumSante">opération, traitements, objectifs médicaux</span></span></summary>
     <p class="sub">Tout s'adapte à ce que tu coches : repas, portions, séances.</p>
     <div class="chips" id="santeChips"></div>
     <div id="opBox" style="display:none;margin-top:8px"><label for="p-opdate">Date de l'opération</label><input id="p-opdate" type="date"></div>
@@ -941,7 +943,7 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
     </div>
     <div class="tip" id="santeTip" style="display:none"></div>
     <p class="mute" style="margin-bottom:0">Reste sur ton téléphone. Ne remplace pas l'avis de ton médecin.</p>
-  </div>
+  </details>
 
   <div class="card">
     <h2>Mes pesées</h2>
@@ -1562,7 +1564,7 @@ function santeTxt(){
   t+='\nEn cas de doute médical, dis-lui de demander à son équipe médicale.';
   return t;
 }
-function renderSante(){
+function renderSante(){setTimeout(renderFoldSums,0);
   const L=P.santeL||[];$('santeChips').innerHTML=Object.entries(SANTE).map(([k,v])=>`<button class="chip${L.includes(k)?' p':''}" data-act="santeT" data-k="${k}" aria-pressed="${L.includes(k)}">${esc(v)}</button>`).join('');
   $('opBox').style.display=BARIA()?'block':'none';
   const tip=$('santeTip');
@@ -1573,7 +1575,10 @@ const EQ={
  S:['Salle complète','Presse à cuisses','Leg extension','Leg curl','Smith machine','Rack à squat','Poulie vis-à-vis','Tirage vertical','Tirage horizontal','Développé couché','Butterfly / pec deck','Machine épaules','Chaise romaine','Abducteurs / adducteurs','Hip thrust machine','Mollets machine','Haltères','Kettlebells','Tapis de course','Vélo','Rameur','Elliptique','Stairmaster'],
  C:['Plaques','Four','Micro-ondes','Airfryer','Multicuiseur (Cookeo)','Robot cuiseur (Thermomix)','Mixeur / blender','Mixeur plongeant','Cuiseur vapeur','Cuiseur à riz','Poêle anti-adhésive','Wok','Cocotte','Plancha / grill','Barbecue','Gaufrier','Appareil à croque','Yaourtière','Extracteur de jus','Balance de cuisine']};
 const EQK={M:'equipM',S:'equipS',C:'cuisL'};
-function renderEq(){
+function renderFoldSums(){try{const n=(P.equipM||[]).length+(P.equipS||[]).length+(P.cuisL||[]).length+(P.custom||[]).length;$('sumEq').textContent=n?n+' élément'+(n>1?'s':'')+' choisi'+(n>1?'s':''):'rien de choisi pour l\'instant';
+  const sl=(P.santeL||[]).map(k=>SANTE[k]).filter(Boolean);$('sumSante').textContent=sl.length?sl.slice(0,3).join(' · ')+(sl.length>3?' …':''):'rien d\'indiqué';if(!sl.length&&!P.sante&&!store.get('santeSeen',0)){$('foldSante').open=true;store.set('santeSeen',1)}
+  const sk={synth:'Synthwave',foret:'Forêt · jour',foretnuit:'Forêt · nuit',pets:'Chats & chiens',clair:'Clair',nuit:'Nuit'}[document.documentElement.dataset.skin]||'';$('sumApp').textContent=sk+' · texte '+({m:'normal',l:'grand',xl:'très grand'}[document.documentElement.dataset.size]||'normal')}catch(e){}}
+function renderEq(){renderFoldSums();
   for(const g of ['M','S','C']){const L=P[EQK[g]]||[];$('eq'+g).innerHTML=EQ[g].map(n=>`<button class="chip${L.includes(n)?' p':''}" data-act="eqT" data-g="${g}" data-n="${esc(n)}" aria-pressed="${L.includes(n)}">${esc(n)}</button>`).join('')}
   const C=P.custom||[];
   $('eqCustom').innerHTML=C.length?'<div class="eqh" style="margin-top:16px">Mes appareils</div>'+C.map((c,i)=>`<div class="jl"><span class="n"><b>${esc(c.nom)}</b> <span class="mute">· ${c.cat==='cuisine'?'cuisine':'sport'}</span><div class="mute">${esc(c.description||'')}</div></span><button class="x" data-act="eqDel" data-i="${i}" aria-label="Retirer">×</button></div>`).join(''):'';
@@ -3061,7 +3066,7 @@ function heroDeco(k){
      <g transform="translate(250 14)"><path class="wag" d="M80 58 q22 -6 22 -30" stroke="#c9a07a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M0 66 Q0 16 42 16 Q84 16 84 66Z" fill="#c9a07a"/><path d="M6 22 Q-10 30 -4 58 Q8 56 16 30Z M78 22 Q94 30 88 58 Q76 56 68 30Z" fill="#8a6145"/><ellipse cx="42" cy="50" rx="18" ry="13" fill="#f1dcc6"/><circle class="blink b2" cx="28" cy="38" r="4" fill="#3c2b2b"/><circle class="blink b2" cx="56" cy="38" r="4" fill="#3c2b2b"/><ellipse cx="42" cy="46" rx="6" ry="4.5" fill="#3c2b2b"/><path d="M42 50 V55 M42 55 Q36 60 32 56 M42 55 Q48 60 52 56" stroke="#3c2b2b" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M38 58 Q42 68 46 58Z" fill="#ff7a93"/></g></svg>`;return h}
   return '';
 }
-function applySkin(k,save){
+function applySkin(k,save){setTimeout(()=>{try{renderFoldSums()}catch(e){}},0);
   const sk=SKINS.find(x=>x.k===k)||SKINS[0];document.documentElement.dataset.skin=sk.k;if(save)store.set('skin',sk.k);
   const d=$('heroDeco');if(d)d.innerHTML=heroDeco(sk.k);if(typeof ambiance==='function')ambiance(sk.k);
   document.querySelector('meta[name=theme-color]').setAttribute('content',sk.tc);
@@ -3071,7 +3076,7 @@ function applySkin(k,save){
 function applyHero(){const h=document.querySelector('.hero'),img=store.get('heroimg','');if(!h)return;
   h.classList.toggle('hasimg',!!img);h.style.backgroundImage=img?`linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.55)),url("${img}")`:'';if($('heroDel'))$('heroDel').hidden=!img}
 $('heroIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const{canvas}=await shrink(f,1000);const url=canvas.toDataURL('image/jpeg',.8);store.set('heroimg',url);if(!store.get('heroimg','')){toast('Image trop lourde, essaie-en une autre');return}applyHero();toast('Image d\'accueil enregistrée')}catch(err){toast('Image illisible')}e.target.value=''});
-function applySize(z,save){document.documentElement.dataset.size=z;if(save)store.set('taille',z);document.querySelectorAll('#sizeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.size===z))}
+function applySize(z,save){setTimeout(()=>{try{renderFoldSums()}catch(e){}},0);document.documentElement.dataset.size=z;if(save)store.set('taille',z);document.querySelectorAll('#sizeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.size===z))}
 $('sizeSeg').addEventListener('click',e=>{const b=e.target.closest('[data-size]');if(b)applySize(b.dataset.size,true)});
 applySkin(store.get('skin','synth'));applySize(store.get('taille','m'));applyHero();
 new MutationObserver(()=>ANIM.mount()).observe(document.body,{childList:true,subtree:true});ANIM.mount();
@@ -3418,7 +3423,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-51';
+const APP_VERSION='2026.11.26-52';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
