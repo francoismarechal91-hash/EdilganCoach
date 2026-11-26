@@ -140,6 +140,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px var(--fill) inset;-webkit-t
 #scanOv{position:fixed;inset:0;z-index:70;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#fff;padding:20px}#scanOv.on{display:flex}#scanOv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}#scanOv .scanBox{position:relative;width:min(80vw,340px);aspect-ratio:16/9;border:3px solid rgba(255,255,255,.9);border-radius:18px;box-shadow:0 0 0 100vmax rgba(0,0,0,.45)}#scanOv .scanBox i{position:absolute;left:8%;right:8%;top:50%;height:2px;background:#ff3b5c;box-shadow:0 0 10px #ff3b5c;animation:scanl 1.6s ease-in-out infinite}@keyframes scanl{0%,100%{transform:translateY(-38px)}50%{transform:translateY(38px)}}#scanOv p,#scanOv button{position:relative;z-index:1}#scanOv p{font-weight:700;text-align:center;text-shadow:0 1px 4px #000;margin:0}#scanOv button{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.5)}
 .duog{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.duoc{background:var(--fill);border-radius:16px;padding:12px;text-align:center}.duoc.me{box-shadow:inset 0 0 0 2px var(--red)}.duoc b{display:block}.duon{font-size:40px;font-weight:900;line-height:1.1;color:var(--red)}.duoc>span{font-size:13px;color:var(--mute)}.duoc ul{list-style:none;padding:0;margin:8px 0 0;font-size:13px;text-align:left}.duoc li{padding:2px 0}.duoc.empty{display:flex;flex-direction:column;justify-content:center}
 .cqi{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;background:var(--fill);color:var(--ink);border:0;border-radius:14px;padding:10px 12px;margin-top:6px;min-height:52px;font:inherit;text-transform:none;letter-spacing:0;box-shadow:none}.cqi small{display:block;font-size:12px;color:var(--mute);font-weight:500}.cqi>span:last-child{text-align:right;flex:none;font-weight:700}html[data-skin] #cqRes .cqi{background:var(--fill);background-image:none;color:var(--ink);box-shadow:none}.cqp{background:var(--fill);border-radius:16px;padding:12px;margin-top:8px}
+.wkst{grid-template-columns:repeat(2,minmax(0,1fr))!important}.wkst div{display:flex;flex-direction:column}.wkst small{font-size:12px;color:var(--mute);margin-top:2px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -719,6 +720,7 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
 
   <div class="pane on" data-pane="progres2">
     <div class="card lvl" id="lvlCard"></div>
+    <div class="card" id="weekCard"><h2>Ma semaine</h2><p class="sub">Depuis lundi, comparé à la semaine dernière.</p><div id="weekBox"></div></div>
     <div class="card" id="duoCard"><h2>À deux</h2><div id="duoBox"></div></div>
     <div class="card"><h2>Ma régularité</h2><p class="sub">Chaque case est un jour où tu as pris soin de toi (sport, repas notés, check-in…).</p><div id="heat"></div></div>
     <div class="card"><h2>Mes badges</h2><div class="badges" id="badges"></div></div>
@@ -762,6 +764,15 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
       <div id="impRes"></div>
       <h3 style="margin-top:18px">Envoyer mes données vers un autre téléphone</h3>
       <button class="alt wide" data-act="exportData" style="margin-top:8px">Copier ma sauvegarde</button></div>
+    <div class="card"><h2>Sources et crédits</h2>
+      <ul class="mute" style="padding-left:18px;margin:0;font-size:14px;line-height:1.5">
+        <li>Composition des aliments : ANSES, table Ciqual 2025 (Licence Ouverte Etalab).</li>
+        <li>Produits du commerce : Open Food Facts (base ODbL, images CC BY-SA), contributeurs bénévoles.</li>
+        <li>Photos des plats du monde : Wikipédia et Wikimedia Commons (licences libres, auteurs sur chaque page).</li>
+        <li>Carte du monde : Natural Earth (domaine public) via world-atlas.</li>
+        <li>Repères : PNNS / mangerbouger.fr, ANSES, HAS, EFSA, OMS, ADEME (saisons), CSEP, CDC (tests de forme).</li>
+        <li>IA gratuites : Pollinations, LLM7, Puter. Les réponses de l'IA peuvent se tromper : en cas de doute sur ta santé, demande à ton médecin ou à ton équipe.</li>
+      </ul></div>
   </div>
 </section>
 
@@ -2174,6 +2185,37 @@ const CQ_ACTS={
   cqAdd(b){const g=num($('cqG').value);if(!CQSEL||!g){$('cqG').focus();return}addFood(cqVal(CQSEL,g));toast('Ajouté : '+CQSEL.nom.split(',')[0]+' ('+Math.round(g)+' g)');CQSEL=null;$('cqQ').value='';$('cqRes').innerHTML=''}
 };
 
+/* ===================== MA SEMAINE : bilan + image à partager ===================== */
+function weekStats(off=0){const wk0=weekKey(Date.now()-off*7*864e5),wk1=dkey(new Date(wk0+'T12:00').getTime()+7*864e5),inW=d=>d>=wk0&&d<wk1;
+  const ses=LOG.filter(l=>inW(l.d)),jd=Object.entries(J).filter(([d,a])=>inW(d)&&Array.isArray(a)&&a.length),m=metrics()||{};
+  const kc=jd.map(([,a])=>a.reduce((s,e)=>s+num(e.kcal),0)),pr=jd.map(([,a])=>a.reduce((s,e)=>s+num(e.p),0)),avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+  const ws=W.filter(x=>inW(x.d)),wPrev=[...W].filter(x=>x.d<wk0).pop(),wLast=ws[ws.length-1];
+  const nights=Object.entries(SL).filter(([d])=>inW(d)).map(([,n])=>dur(n.c,n.l));
+  const eau=Object.entries(EAU).filter(([d,v])=>inW(d)&&v>=(m.eau||8)).length;
+  return{wk0,s:ses.length,min:ses.reduce((a,l)=>a+num(l.min),0),jours:jd.length,kcal:Math.round(avg(kc)),prot:Math.round(avg(pr)),tk:m.kcal,tp:m.prot,dw:wLast&&wPrev?Math.round((wLast.w-wPrev.w)*10)/10:null,sleep:nights.length?Math.round(avg(nights)):0,eau,act:Object.keys(streak().A).filter(inW).length}}
+function weekHTML(){const w=weekStats(),lw=weekStats(1),c=(v,l,sub)=>`<div><b>${v}</b><span>${l}</span>${sub?`<small>${sub}</small>`:''}</div>`,tr=(a,b)=>a>b?'▲':a<b?'▼':'=';
+  const top=[w.s>=(num(P.jours)||3)?'Objectif séances atteint':'',w.eau>=5?'Bien hydraté':'',w.act>=6?'Régularité au top':'',w.prot&&w.tp&&w.prot>=w.tp*.9?'Protéines au rendez-vous':''].filter(Boolean);
+  return `<div class="stats wkst">${c(w.s,'séance'+(w.s>1?'s':''),lw.s||w.s?tr(w.s,lw.s)+' vs '+lw.s:'')}${c(w.min,'minutes de sport','')}${c(w.act+'/7','jours actifs','')}${c(w.jours,'jours de repas notés','')}${c(w.prot?w.prot+' g':'–','protéines / jour',w.tp?'objectif '+w.tp+' g':'')}${c(w.sleep?hm(w.sleep).replace(' h ','h'):'–','de sommeil / nuit','')}${c(w.dw==null?'–':(w.dw>0?'+':'')+fr(w.dw)+' kg','poids sur la semaine','')}${c(w.eau+'/7','jours d\'eau OK','')}</div>
+  ${top.length?`<div class="chips" style="margin-top:10px">${top.map(t=>`<span class="chip p">${esc(t)}</span>`).join('')}</div>`:''}
+  <div class="row" style="margin-top:12px"><button class="sm" data-act="weekCoach">Le mot du coach</button><button class="ghost sm" data-act="weekShare">Partager l'image</button></div><div id="weekCoachRes"></div>`}
+function renderWeekCard(){const el=$('weekBox');if(el)el.innerHTML=weekHTML()}
+async function weekImage(){const w=weekStats(),cs=getComputedStyle(document.documentElement),col=n=>cs.getPropertyValue(n).trim()||'#888';
+  const W2=1080,H2=1350,cv=document.createElement('canvas');cv.width=W2;cv.height=H2;const x=cv.getContext('2d');
+  const g=x.createLinearGradient(0,0,W2,H2);g.addColorStop(0,col('--red'));g.addColorStop(1,col('--blue')||'#335');x.fillStyle=g;x.fillRect(0,0,W2,H2);
+  x.fillStyle='rgba(0,0,0,.22)';x.fillRect(0,0,W2,H2);for(let i=0;i<26;i++){x.fillStyle=`rgba(255,255,255,${Math.random()*.08})`;x.beginPath();x.arc(Math.random()*W2,Math.random()*H2,20+Math.random()*120,0,7);x.fill()}
+  x.fillStyle='#fff';x.font='800 44px system-ui,-apple-system,sans-serif';x.fillText('EdilganSuperCoach',70,110);x.font='600 38px system-ui,sans-serif';x.globalAlpha=.85;x.fillText('Ma semaine du '+new Date(w.wk0+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long'}),70,170);x.globalAlpha=1;
+  x.font='900 92px system-ui,sans-serif';x.fillText((P.nom||'Moi').trim().slice(0,18),70,300);
+  const items=[[w.s,'séances'],[w.min,'minutes de sport'],[w.act+'/7','jours actifs'],[w.prot?w.prot+' g':'–','protéines / jour'],[w.sleep?hm(w.sleep).replace(' h ','h'):'–','sommeil / nuit'],[w.dw==null?'–':(w.dw>0?'+':'')+String(w.dw).replace('.',',')+' kg','poids']];
+  items.forEach(([v,l],i)=>{const cx=70+(i%2)*480,cy=400+Math.floor(i/2)*270;x.fillStyle='rgba(255,255,255,.14)';x.beginPath();x.roundRect?x.roundRect(cx,cy,440,230,36):x.rect(cx,cy,440,230);x.fill();x.fillStyle='#fff';x.font='900 96px system-ui,sans-serif';x.fillText(String(v),cx+36,cy+130);x.font='600 34px system-ui,sans-serif';x.globalAlpha=.85;x.fillText(l,cx+36,cy+190);x.globalAlpha=1});
+  x.font='700 34px system-ui,sans-serif';x.fillText(w.s>=(num(P.jours)||3)?'Objectif de la semaine : réussi !':'On continue, chaque jour compte.',70,H2-80);
+  return new Promise(ok=>cv.toBlob(ok,'image/png'))}
+const WEEK_ACTS={
+  weekCoach(b){const w=weekStats(),lw=weekStats(1);run(b,$('weekCoachRes'),'Le coach regarde ta semaine',async()=>{const t=await askChat([{role:'user',content:`Tu es « EdilganSuperCoach », coach bienveillant mais franc. Tu tutoies, en français, sans markdown, 5 phrases maximum. ${profil(true)}
+Bilan de sa semaine : ${JSON.stringify(w)}. Semaine précédente : ${JSON.stringify(lw)}. (s = séances, min = minutes de sport, act = jours actifs, jours = jours de repas notés, kcal/prot = moyennes par jour notées, tk/tp = objectifs, dw = variation de poids en kg, sleep = minutes de sommeil par nuit, eau = jours où l'objectif d'eau est atteint.)
+Dis ce qui va bien (sois précis), UNE chose à améliorer la semaine prochaine avec une action concrète, et termine par une phrase motivante.`}],x=>{$('weekCoachRes').innerHTML='<div class="tip">'+esc(x)+'</div>'});$('weekCoachRes').innerHTML='<div class="tip">'+esc(t)+'</div>'})},
+  async weekShare(){try{const bl=await weekImage(),f=new File([bl],'ma-semaine.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Ma semaine'});return}const u=URL.createObjectURL(bl);openSheet(`<div class="row sb"><h2 style="margin:0">Ma semaine</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Appuie longuement sur l'image pour l'enregistrer ou la partager.</p><img src="${u}" alt="Bilan de ma semaine" style="width:100%;border-radius:16px">`)}catch(e){if(e&&e.name!=='AbortError')toast('Image impossible à créer ici.')}}
+};
+
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -2880,7 +2922,7 @@ function route(){
   document.querySelectorAll('section[data-v]').forEach(s=>s.classList.toggle('on',s.dataset.v===v));
   document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===v));
   $('avatar').classList.toggle('on',v==='moi');
-  if(v!=='sommeil'&&bT)stopBreath();const sw=$('sweep');if(sw&&document.documentElement.dataset.fx!=='off'&&route.last&&route.last!==v){sw.classList.remove('go');void sw.offsetWidth;sw.classList.add('go')}route.last=v;if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='sommeil'){renderSleep();renderBModes();renderGrnd();renderGood();sleepKpi()}if(v==='suivi')renderSuivi();$('coachBtn').classList.toggle('on',v==='coach');window.scrollTo(0,0);
+  if(v!=='sommeil'&&bT)stopBreath();const sw=$('sweep');if(sw&&document.documentElement.dataset.fx!=='off'&&route.last&&route.last!==v){sw.classList.remove('go');void sw.offsetWidth;sw.classList.add('go')}route.last=v;if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='suivi'){try{renderWeekCard();renderDuo()}catch(e){}}if(v==='cuisine'){try{renderRef()}catch(e){}}if(v==='sommeil'){renderSleep();renderBModes();renderGrnd();renderGood();sleepKpi()}if(v==='suivi')renderSuivi();$('coachBtn').classList.toggle('on',v==='coach');window.scrollTo(0,0);
 }
 window.addEventListener('scroll',()=>$('appbar').classList.toggle('sc',scrollY>4),{passive:true});
 /* ---------- Accueil ---------- */
@@ -3341,7 +3383,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-46';
+const APP_VERSION='2026.11.26-47';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
@@ -3364,8 +3406,8 @@ $('phIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)re
 $('bkIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result),d=o.data||o;let n=0;Object.entries(d).forEach(([k,v])=>{if(k.startsWith('coach_')&&k!=='coach_ia'){localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v));n++}});toast(n+' éléments restaurés');setTimeout(()=>location.reload(),900)}catch(err){toast('Fichier de sauvegarde illisible')}};r.readAsText(f)});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 renderChk();renderDrink();
-Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS);try{initWorld()}catch(e){console.error(e)}$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
-[calc,renderEq,renderSante,renderProg,renderAH,renderProdHist,renderMenu,renderWeek,renderFav,renderChat,renderPrets,renderExo,renderRef,renderDuo].forEach(f=>{try{f()}catch(e){console.error(f.name,e)}});route();
+Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS);try{initWorld()}catch(e){console.error(e)}$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
+[calc,renderEq,renderSante,renderProg,renderAH,renderProdHist,renderMenu,renderWeek,renderFav,renderChat,renderPrets,renderExo,renderRef,renderDuo,renderWeekCard].forEach(f=>{try{f()}catch(e){console.error(f.name,e)}});route();
 }
 </script>
 </body>
