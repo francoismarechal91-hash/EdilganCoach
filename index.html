@@ -141,6 +141,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px var(--fill) inset;-webkit-t
 .duog{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.duoc{background:var(--fill);border-radius:16px;padding:12px;text-align:center}.duoc.me{box-shadow:inset 0 0 0 2px var(--red)}.duoc b{display:block}.duon{font-size:40px;font-weight:900;line-height:1.1;color:var(--red)}.duoc>span{font-size:13px;color:var(--mute)}.duoc ul{list-style:none;padding:0;margin:8px 0 0;font-size:13px;text-align:left}.duoc li{padding:2px 0}.duoc.empty{display:flex;flex-direction:column;justify-content:center}
 .cqi{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;background:var(--fill);color:var(--ink);border:0;border-radius:14px;padding:10px 12px;margin-top:6px;min-height:52px;font:inherit;text-transform:none;letter-spacing:0;box-shadow:none}.cqi small{display:block;font-size:12px;color:var(--mute);font-weight:500}.cqi>span:last-child{text-align:right;flex:none;font-weight:700}html[data-skin] #cqRes .cqi{background:var(--fill);background-image:none;color:var(--ink);box-shadow:none}.cqp{background:var(--fill);border-radius:16px;padding:12px;margin-top:8px}
 .wkst{grid-template-columns:repeat(2,minmax(0,1fr))!important}.wkst div{display:flex;flex-direction:column}.wkst small{font-size:12px;color:var(--mute);margin-top:2px}
+.askimg{display:flex;align-items:center;gap:10px;margin:0 0 8px}.askimg img{width:64px;height:64px;object-fit:cover;border-radius:12px}.camb{position:relative;flex:none;cursor:pointer;display:grid;place-items:center;width:48px!important;height:48px!important}.bubimg{display:block;max-width:180px;max-height:180px;border-radius:12px;margin-bottom:6px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -1202,7 +1203,8 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
   <div class="card">
     <div class="chips" id="quickQ" style="margin-top:0"></div>
     <div class="msgs" id="msgs"></div>
-    <div class="send"><textarea id="ask" class="grow" rows="1" placeholder="Écris ton message…" aria-label="Message"></textarea><button data-act="send" id="sendBtn">Envoyer</button></div>
+    <div id="askImg" class="askimg" hidden></div>
+    <div class="send"><label class="ib camb" title="Joindre une photo" aria-label="Joindre une photo"><input type="file" accept="image/*" id="askPh" style="position:absolute;opacity:0;width:1px;height:1px"><svg class="i"><use href="#i-cam"/></svg></label><textarea id="ask" class="grow" rows="1" placeholder="Écris ton message…" aria-label="Message"></textarea><button data-act="send" id="sendBtn">Envoyer</button></div>
     <div class="row" style="margin-top:10px"><button class="ghost sm" data-act="clearChat">Nouvelle conversation</button></div>
   </div>
 </section>
@@ -2479,15 +2481,16 @@ const Q=["Je n'ai que 20 min aujourd'hui, je fais quoi ?","Que manger avant et a
 $('quickQ').innerHTML=Q.map((q,i)=>`<button class="chip" data-act="qq" data-i="${i}">${esc(q).replace(/ ([?!:;])/g,'&nbsp;$1')}</button>`).join('');
 function bub(role,t){const d=document.createElement('div');d.className='bub '+(role==='user'?'me':'co');d.textContent=t;$('msgs').appendChild(d);return d}
 function renderChat(){$('msgs').innerHTML='';if(!CH.length)bub('assistant','Salut ! Dis-moi ce que tu veux travailler, ce qui te bloque ou ce que tu as mangé, je t\'aide.');CH.forEach(m=>bub(m.role,m.content))}
-let SENDING=false;
+let SENDING=false,ASKIMG=null;
+$('askPh').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;let r;try{r=await shrink(f)}catch(_){r={blob:f}}ASKIMG=r.blob;const u=URL.createObjectURL(ASKIMG);$('askImg').hidden=false;$('askImg').innerHTML=`<img src="${u}" alt="Photo jointe"><button class="ghost sm" data-act="askImgDel">Retirer la photo</button>`;$('ask').placeholder='Ta question sur cette photo…';$('ask').focus()});
 async function send(){
-  const t=$('ask').value.trim();if(!t||SENDING)return;SENDING=true;$('ask').value='';
-  CH.push({role:'user',content:t});bub('user',t);
+  const img=ASKIMG,t=$('ask').value.trim()||(img?'Qu\'en penses-tu ?':'');if(!t||SENDING)return;SENDING=true;$('ask').value='';if(img){ASKIMG=null;$('askImg').hidden=true;$('askImg').innerHTML='';$('ask').placeholder='Écris ton message…';$('askPh').value=''}
+  CH.push({role:'user',content:(img?'[photo] ':'')+t});const ub=bub('user',t);if(img){const im=document.createElement('img');im.src=URL.createObjectURL(img);im.alt='Ta photo';im.className='bubimg';ub.prepend(im)}
   if(/vomir|laxatif|me faire vomir|purge|je me d[ée]go[uû]te/i.test(t))bub('assistant','Je suis là pour t\'aider. Si la relation avec la nourriture est difficile en ce moment, tu n\'es pas seul(e) : ton médecin peut t\'aider, et la ligne Anorexie Boulimie Info Écoute répond au 09 69 325 900.');const out=bub('assistant','…');$('sendBtn').disabled=true;
   try{const sys=`Tu es « EdilganSuperCoach », coach sportif et nutrition bienveillant mais exigeant. Tu tutoies, tu réponds en français, de façon courte, concrète et motivante, sans markdown (pas d'astérisques ni de dièses), avec des listes à tirets si utile. Pour une douleur forte ou un problème médical, conseille de voir un médecin. ${profil(true)}`;
   let conv=CH.slice(-12);if(conv[0].role!=='user')conv=conv.slice(1);
   conv=conv.map((m,i)=>i===0?{role:'user',content:sys+'\n\nMessage : '+m.content}:m);
-  const txt=await askChat(conv,text=>{out.textContent=text;out.scrollIntoView({block:'end'})});
+  const txt=img?await (async()=>{const r=await anyAI([{role:'user',content:sys+'\n\nL\'utilisateur t\'envoie une photo. Décris brièvement ce que tu vois puis réponds à sa question en lien avec son profil. Question : '+t+FR}],{images:[img]});return r==null?'':String(r)})():await askChat(conv,text=>{out.textContent=text;out.scrollIntoView({block:'end'})});
     out.textContent=txt;CH.push({role:'assistant',content:txt});store.set('chat',CH.slice(-40));
   }catch(e){out.textContent=errMsg(e);CH.pop()}finally{SENDING=false;$('sendBtn').disabled=false}
 }
@@ -2499,6 +2502,7 @@ const A={
   logW(){const w=num($('wIn').value)||num(P.poids);if(!w){$('wIn').focus();return}W=W.filter(p=>p.d!==today());W.push({d:today(),w});W.sort((a,b)=>a.d<b.d?-1:1);store.set('pesees',W);P.poids=String(w);$('p-poids').value=w;saveP();calc();$('wIn').value='';drawW()},
   kadj(b){P.kadj=(+P.kadj||0)+(+b.dataset.v);P.kadjD=today();saveP();calc();bilan()},
   kreset(b,e){e.preventDefault();P.kadj=0;saveP();calc();bilan()},
+  askImgDel(){ASKIMG=null;$('askImg').hidden=true;$('askImg').innerHTML='';$('askPh').value='';$('ask').placeholder='Écris ton message…'},
   dislClear(b){DISL=[];store.set('dislikes',DISL);b.parentNode.remove();toast('C\'est oublié.')},
   homeAsk(){const v=$('hAsk').value.trim();if(!v){$('hAsk').focus();return}$('hAsk').value='';location.hash='coach';setTimeout(()=>{$('ask').value=v;send()},250)},
   zclear(){const old=P.zones.slice();P.zones=[];saveP();renderZones();if(old.length)undoToast('Priorités effacées',()=>{P.zones=old;saveP();renderZones()})},
@@ -3383,7 +3387,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-48';
+const APP_VERSION='2026.11.26-49';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
