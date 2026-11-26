@@ -155,6 +155,8 @@ html.idle #amb *,html.idle #amb::before,html.idle #amb::after,html.idle .hero *,
 .pedit{grid-template-columns:1fr 1fr}.pedit label{font-size:13px}.pedit input{font-size:16px;min-height:44px}
 .plgw{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-weight:600;color:var(--mute)}.plg{width:84px!important;min-height:40px!important;padding:6px 8px!important;font-size:16px!important;margin:0!important;text-align:right}
 .restb{display:block;margin:4px 0 0 auto;font-size:12px;font-weight:700;padding:3px 8px;min-height:28px;border-radius:99px;background:var(--fill)!important;background-image:none!important;color:var(--tintink)!important;border:1px solid var(--line);box-shadow:none!important;animation:none!important;text-transform:none;letter-spacing:0}.mealok{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.calg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.calw span{text-align:center;font-size:12px;font-weight:800;color:var(--mute);padding:4px 0}.calh{margin-bottom:6px;flex-wrap:nowrap}.calh b{text-transform:capitalize;font-size:18px}.calh button{min-width:44px;font-size:22px}
+.cday{aspect-ratio:1/1.1;min-height:44px;border:0;border-radius:12px;background:var(--fill)!important;background-image:none!important;color:var(--ink)!important;box-shadow:none!important;animation:none!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:2px;font:inherit;font-weight:700;text-transform:none;letter-spacing:0}.cday em{display:flex;gap:2px;font-style:normal;min-height:6px}.cd{width:6px;height:6px;border-radius:50%;display:block}.cd.r{background:var(--yel)}.cd.s{background:var(--red)}.cd.w{background:var(--blue)}.cd.n{background:#8b7cf6}.cd.t{background:var(--mute)}.cday.tod{box-shadow:inset 0 0 0 2px var(--red)!important}.cday.sel{background:var(--red)!important;color:#fff!important}.cday.sel .cd{box-shadow:0 0 0 1px #fff}.cday.fut{opacity:.35}.cals{margin-top:14px}.cals h3{margin:0 0 6px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -887,8 +889,9 @@ html.ovon .hero *,html.ovon .hero::before,.hero.off *,.hero.off::before,.hero.of
 <!-- ================= SUIVI ================= -->
 <section data-v="suivi">
   <div class="lt"><h1>Suivi</h1><p>Ton corps, ta santé, tes progrès et tes récompenses.</p></div>
-  <div class="seg"><button data-pane="progres2" class="on">Récompenses</button><button data-pane="corps2">Mon corps</button><button data-pane="sante2">Santé</button><button data-pane="donnees">Mes données</button></div>
+  <div class="seg"><button data-pane="progres2" class="on">Récompenses</button><button data-pane="calendrier">Calendrier</button><button data-pane="corps2">Mon corps</button><button data-pane="sante2">Santé</button><button data-pane="donnees">Mes données</button></div>
 
+  <div class="pane" data-pane="calendrier"><div class="card"><h2>Mon calendrier</h2><p class="sub">Chaque jour : tes repas, ton poids, ton sport, ton sommeil et tes notes. Tout est gardé sur ton téléphone, même après les mises à jour.</p><div id="calBox"></div></div></div>
   <div class="pane on" data-pane="progres2">
     <div class="card lvl" id="lvlCard"></div>
     <div class="card" id="weekCard"><h2>Ma semaine</h2><p class="sub">Depuis lundi, comparé à la semaine dernière.</p><div id="weekBox"></div></div>
@@ -935,6 +938,8 @@ html.ovon .hero *,html.ovon .hero::before,.hero.off *,.hero.off::before,.hero.of
       <div id="impRes"></div>
       <h3 style="margin-top:18px">Envoyer mes données vers un autre téléphone</h3>
       <button class="alt wide" data-act="exportData" style="margin-top:8px">Copier ma sauvegarde</button></div>
+    <div class="card"><h2>Sauvegardes automatiques</h2><p class="sub">Chaque jour et avant chaque mise à jour, l'app garde une copie de tes données sur ce téléphone (les 12 dernières). Une mise à jour n'efface jamais tes repas : ceci est une sécurité en plus.</p><div id="autoBk"></div>
+      <p class="mute" style="font-size:14px;margin-bottom:0">Elles restent sur ce téléphone : si tu supprimes l'app ou changes de téléphone, utilise aussi « Sauvegarder dans un fichier ».</p></div>
     <div class="card"><h2>Sources et crédits</h2>
       <ul class="mute" style="padding-left:18px;margin:0;font-size:14px;line-height:1.5">
         <li>Composition des aliments : ANSES, table Ciqual 2025 (Licence Ouverte Etalab).</li>
@@ -1425,9 +1430,10 @@ html.ovon .hero *,html.ovon .hero::before,.hero.off *,.hero.off::before,.hero.of
 
 <script>
 {
+const BOOT_LS=(()=>{const o={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('coach_')&&!/^coach_(phc2?|chat|newsSeen)$/.test(k))o[k]=localStorage.getItem(k)}}catch(e){}return o})();
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const store={get(k,d){try{const v=JSON.parse(localStorage.getItem('coach_'+k));if(v==null)return d;if(d!=null&&(typeof v!==typeof d||Array.isArray(v)!==Array.isArray(d)))return d;return v}catch(e){return d}},set(k,v){const s=JSON.stringify(v);try{localStorage.setItem('coach_'+k,s)}catch(e){if(lsCompact(k)){try{localStorage.setItem('coach_'+k,s);return}catch(e2){}}lsFull(k)}}};
+const store={get(k,d){try{const v=JSON.parse(localStorage.getItem('coach_'+k));if(v==null)return d;if(d!=null&&(typeof v!==typeof d||Array.isArray(v)!==Array.isArray(d))){try{if(!localStorage.getItem('coach__garde_'+k))localStorage.setItem('coach__garde_'+k,localStorage.getItem('coach_'+k))}catch(e){}return d}return v}catch(e){return d}},set(k,v){const s=JSON.stringify(v);try{localStorage.setItem('coach_'+k,s)}catch(e){if(lsCompact(k)){try{localStorage.setItem('coach_'+k,s);return}catch(e2){}}lsFull(k)}}};
 function lsSize(){let n=0;for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);n+=k.length+(localStorage.getItem(k)||'').length}return n}
 /* purge sûre, du moins précieux au plus précieux ; ne touche jamais profil, journal, séances, pesées, favoris */
 function lsCompact(keep){let freed=0;const W=(k,f)=>{if(k===keep)return;try{const s=localStorage.getItem('coach_'+k);if(s==null)return;const v=f(JSON.parse(s));if(v==null){localStorage.removeItem('coach_'+k);freed+=s.length;return}const n=JSON.stringify(v);if(n.length<s.length){localStorage.setItem('coach_'+k,n);freed+=s.length-n.length}}catch(e){}};
@@ -2504,6 +2510,81 @@ document.addEventListener('change',e=>{const t=e.target;if(!t.classList||!t.clas
   if(ng>0&&og>0){const f=ng/og;['kcal','proteines_g','glucides_g','lipides_g'].forEach(k=>{if(a[k]!=null)a[k]=Math.round(num(a[k])*f*10)/10});a.grammes=ng;a.quantite=ng+' g';plSum();setTimeout(renderPlate,0);toast('Recalculé pour '+ng+' g')}
   else if(ng>0){a.grammes=ng;a.quantite=ng+' g';toast('Je recalcule avec ces grammes…');$('plFixTx')&&($('plFixTx').value=`${a.nom} : ${ng} g`);setTimeout(()=>{const b=document.querySelector('[data-act=plFix]');if(b)A.plFix(b)},0)}});
 
+
+/* ===================== SAUVEGARDES AUTOMATIQUES (sur le téléphone, IndexedDB) ===================== */
+const BK_KEEP=12;
+async function bkList(){try{return(await phOp('readonly',st=>st.getAll())||[]).filter(x=>String(x.id).startsWith('__bk_')).sort((a,b)=>b.d-a.d)}catch(e){return[]}}
+async function autoSnap(reason,data){try{data=data||BOOT_LS;if(!data.coach_profil&&!data.coach_journal)return;const day=new Date().toISOString().slice(0,10),id='__bk_'+day+(reason==='maj'?'_maj_'+Date.now():'');
+  await phOp('readwrite',st=>st.put({id,data,d:Date.now(),v:APP_VERSION,reason,n:Object.keys(data).length}));
+  const L=await bkList();for(const x of L.slice(BK_KEEP))await phOp('readwrite',st=>st.delete(x.id))}catch(e){}}
+function bkStats(data){let jd=0,ses=0;try{jd=Object.values(JSON.parse(data.coach_journal||'{}')).filter(a=>Array.isArray(a)&&a.length).length}catch(e){}try{ses=JSON.parse(data.coach_seances||'[]').length}catch(e){}return{jd,ses}}
+async function renderAutoBk(){const el=$('autoBk');if(!el)return;const L=await bkList();
+  el.innerHTML=L.length?L.map(x=>{const st=bkStats(x.data);return `<div class="jl"><span class="n"><b>${new Date(x.d).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})} ${new Date(x.d).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</b><div class="mute">${x.reason==='maj'?'avant la mise à jour · ':''}${st.jd} jour${st.jd>1?'s':''} de repas · ${st.ses} séance${st.ses>1?'s':''}</div></span><button class="ghost sm" data-act="bkAutoRestore" data-id="${esc(x.id)}">Restaurer</button></div>`}).join(''):'<p class="mute">La première sauvegarde automatique se fera aujourd\'hui.</p>'}
+async function bkGuard(){try{const last=localStorage.getItem('coach_lastver');
+  if(last&&last!==APP_VERSION)await autoSnap('maj');else{const L=await bkList(),day=new Date().toISOString().slice(0,10);if(!L.some(x=>x.id==='__bk_'+day))await autoSnap('jour')}
+  localStorage.setItem('coach_lastver',APP_VERSION);
+  /* données disparues ? on propose la dernière sauvegarde automatique */
+  if(!BOOT_LS.coach_profil&&!BOOT_LS.coach_journal&&!store.get('bkAsked',0)){const L=await bkList(),b=L.find(x=>x.data&&(x.data.coach_profil||x.data.coach_journal));if(b){store.set('bkAsked',1);const st=bkStats(b.data);
+    openSheet(`<h2 style="margin-top:0">Retrouver tes données ?</h2><p>J'ai une sauvegarde automatique du <b>${new Date(b.d).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}</b> : ${st.jd} jour${st.jd>1?'s':''} de repas et ${st.ses} séance${st.ses>1?'s':''}.</p><div class="row"><button data-act="bkAutoRestore" data-id="${esc(b.id)}" data-ok="1">Restaurer</button><button class="ghost" data-act="closeSheet">Non merci</button></div>`)}}}catch(e){}}
+setTimeout(bkGuard,2500);
+const BK_ACTS={
+  async bkAutoRestore(b){const id=b.dataset.id;if(!b.dataset.ok&&!b.dataset.sure){b.dataset.sure=1;b.textContent='Sûr ? Touche encore';setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent='Restaurer'}},4000);return}
+    try{const x=await phOp('readonly',st=>st.get(id));if(!x||!x.data)throw 0;const cur={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('coach_'))cur[k]=localStorage.getItem(k)}
+      await autoSnap('avant-restauration',cur);Object.entries(x.data).forEach(([k,v])=>{try{localStorage.setItem(k,v)}catch(e){}});toast('Données restaurées');setTimeout(()=>location.reload(),900)}catch(e){toast('Restauration impossible')}}
+};
+
+/* ===================== CALENDRIER : historique jour par jour, archivé pour toujours (IndexedDB) ===================== */
+let NOTES=store.get('notes',{});if(!NOTES||typeof NOTES!=='object'||Array.isArray(NOTES))NOTES={};
+const CALF=['repas','eau','poids','seances','sommeil','pas','humeur','pilules','note','mes','bonnes','chat','menu'];
+function dayData(d){const ses=LOG.filter(l=>l.d===d).map(l=>({nom:l.nom,min:l.min,type:l.type||'',ressenti:l.ressenti||'',ex:arr(l.ex).map(e=>({nom:e.nom,sets:arr(e.sets).map(x=>({kg:x.kg,reps:x.reps,s:x.s}))}))}));
+  const w=W.find(x=>x.d===d),day0=new Date(d+'T00:00').getTime(),ch=CH.filter(m=>m.t&&m.t>=day0&&m.t<day0+864e5).map(m=>({r:m.role,c:String(m.content).slice(0,600),t:m.t}));
+  return{repas:Array.isArray(J[d])?J[d].map(e=>({nom:e.nom,kcal:e.kcal,p:e.p,g:e.g,l:e.l,part:e.part})):undefined,eau:EAU[d],poids:w?w.w:undefined,seances:ses.length||(LOG[0]&&d>=LOG[0].d)?ses:undefined,sommeil:SL[d],pas:PAS[d],humeur:CHK[d],
+    pilules:PLOG[d]?Object.keys(PLOG[d]).length:undefined,note:NOTES[d],mes:arr(MES).find(x=>x.d===d),bonnes:GOOD[d],chat:ch.length?ch:undefined,menu:MENUS[d]?arr(MENUS[d].repas).map(r=>r&&r.nom).filter(Boolean):undefined}}
+const hasData=m=>CALF.some(k=>m[k]!=null&&!(Array.isArray(m[k])&&!m[k].length)&&!(k==='menu'));
+async function archiveDays(days){for(const d of days){try{const cur=dayData(d),old=await phOp('readonly',st=>st.get('__day_'+d))||{},m={...old,id:'__day_'+d,d};
+  for(const k of CALF){if(cur[k]!==undefined)m[k]=cur[k]}if(hasData(m)||old.id)await phOp('readwrite',st=>st.put(m))}catch(e){}}}
+function memDays(){const s=new Set([...Object.keys(J),...Object.keys(EAU),...W.map(x=>x.d),...LOG.map(l=>l.d),...Object.keys(SL),...Object.keys(PAS),...Object.keys(CHK),...Object.keys(PLOG),...Object.keys(NOTES),...arr(MES).map(x=>x.d)]);return[...s].filter(d=>/^\d{4}-\d\d-\d\d$/.test(d))}
+let archT=0;function archSoon(){clearTimeout(archT);archT=setTimeout(()=>archiveDays([today(),dkey(Date.now()-864e5)]),1500)}
+setTimeout(()=>archiveDays(memDays()),4000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')archiveDays([today()])});
+setInterval(()=>{if(document.visibilityState==='visible')archiveDays([today()])},120000);
+let CALM=null,CALD=null;
+async function calMonth(y,m){const pre=`__day_${y}-${String(m+1).padStart(2,'0')}-`;let A2=[];try{A2=(await phOp('readonly',st=>st.getAll(IDBKeyRange.bound(pre,pre+'￿'))))||[]}catch(e){}
+  const map={};A2.forEach(x=>map[x.d]=x);memDays().filter(d=>d.startsWith(pre.slice(6))).forEach(d=>{const cur=dayData(d),m2={...(map[d]||{}),d};for(const k of CALF)if(cur[k]!==undefined)m2[k]=cur[k];map[d]=m2});return map}
+async function renderCal(){const el=$('calBox');if(!el)return;const now=new Date();if(!CALM)CALM=[now.getFullYear(),now.getMonth()];const[y,m]=CALM,data=await calMonth(y,m);CALDATA=data;
+  const first=new Date(y,m,1),start=(first.getDay()+6)%7,nd=new Date(y,m+1,0).getDate(),td=today();
+  const cells=[];for(let i=0;i<start;i++)cells.push('<i></i>');
+  for(let d=1;d<=nd;d++){const k=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,x=data[k]||{},fut=k>td;
+    const dots=[arr(x.repas).length?'<b class="cd r"></b>':'',arr(x.seances).length?'<b class="cd s"></b>':'',x.poids!=null?'<b class="cd w"></b>':'',x.sommeil?'<b class="cd n"></b>':'',x.note?'<b class="cd t"></b>':''].join('');
+    cells.push(`<button class="cday${k===td?' tod':''}${k===CALD?' sel':''}${fut?' fut':''}" data-act="calDay" data-d="${k}" ${fut?'disabled':''} aria-label="${new Date(k+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}"><span>${d}</span><em>${dots}</em></button>`)}
+  const days=Object.values(data),meals=days.filter(x=>arr(x.repas).length).length,ses=days.reduce((a,x)=>a+arr(x.seances).length,0),ws=days.filter(x=>x.poids!=null).sort((a,b)=>a.d<b.d?-1:1);
+  el.innerHTML=`<div class="row sb calh"><button class="ghost sm" data-act="calMv" data-v="-1" aria-label="Mois précédent">‹</button><b>${first.toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}</b><button class="ghost sm" data-act="calMv" data-v="1" aria-label="Mois suivant" ${y===now.getFullYear()&&m===now.getMonth()?'disabled':''}>›</button></div>
+  <div class="calg calw">${['L','M','M','J','V','S','D'].map(x=>`<span>${x}</span>`).join('')}</div><div class="calg">${cells.join('')}</div>
+  <div class="legend" style="margin-top:8px"><span><i style="background:var(--yel)"></i>repas</span><span><i style="background:var(--red)"></i>sport</span><span><i style="background:var(--blue)"></i>poids</span><span><i style="background:#8b7cf6"></i>sommeil</span><span><i style="background:var(--mute)"></i>note</span></div>
+  <div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:12px"><div><b>${meals}</b><span>jours de repas notés</span></div><div><b>${ses}</b><span>séance${ses>1?'s':''}</span></div><div><b>${ws.length>1?((ws[ws.length-1].poids-ws[0].poids>0?'+':'')+fr(Math.round((ws[ws.length-1].poids-ws[0].poids)*10)/10)+' kg'):ws.length?fr(ws[0].poids)+' kg':'–'}</b><span>${ws.length>1?'de poids ce mois':'poids'}</span></div></div>
+  <div id="calDet"></div>`;
+  if(CALD&&CALD.startsWith(`${y}-${String(m+1).padStart(2,'0')}`))calDetail(CALD)}
+let CALDATA={};
+function calDetail(k){const x=CALDATA[k]||{d:k},el=$('calDet');if(!el)return;CALD=k;document.querySelectorAll('.cday').forEach(b=>b.classList.toggle('sel',b.dataset.d===k));
+  const R=arr(x.repas),tk=R.reduce((a,e)=>a+num(e.kcal),0),tp=R.reduce((a,e)=>a+num(e.p),0),sec=(t,h)=>h?`<div class="cals"><h3>${t}</h3>${h}</div>`:'';
+  const sl=x.sommeil?`<p style="margin:0">Couché à ${esc(x.sommeil.c||'?')}, levé à ${esc(x.sommeil.l||'?')}${x.sommeil.c&&x.sommeil.l?' · '+hm(dur(x.sommeil.c,x.sommeil.l)):''}${x.sommeil.q?' · nuit '+(['','très mauvaise','mauvaise','moyenne','bonne','excellente'][x.sommeil.q]||''):''}</p>`:'';
+  el.innerHTML=`<div class="card" style="margin:14px 0 0"><h2 style="margin-top:0">${new Date(k+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</h2>
+  ${sec('Repas',R.length?`${R.map(e=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${esc(e.p)} g prot · ${esc(e.g)} g gluc · ${esc(e.l)} g lip</div></span><span class="v">${esc(e.kcal)} kcal</span></div>`).join('')}<p style="margin:6px 0 0"><b>Total : ${Math.round(tk).toLocaleString('fr-FR')} kcal · ${Math.round(tp)} g de protéines</b></p>`:'')}
+  ${sec('Sport',arr(x.seances).map(s=>`<div class="meal"><b>${esc(s.nom)}</b> <span class="mute">${esc(s.min)} min${s.ressenti?' · '+esc(s.ressenti):''}</span>${arr(s.ex).length?`<ul style="margin:6px 0 0;padding-left:18px">${s.ex.map(e=>`<li>${esc(e.nom)}${arr(e.sets).length?' : '+e.sets.map(z=>z.s?Math.round(num(z.s))+' s':(num(z.kg)?fr(num(z.kg))+' kg × ':'')+(z.reps||'')).filter(Boolean).join(', '):''}</li>`).join('')}</ul>`:''}</div>`).join(''))}
+  ${sec('Corps',[x.poids!=null?`Poids : <b>${fr(x.poids)} kg</b>`:'',x.mes&&x.mes.taille?`Tour de taille : <b>${esc(x.mes.taille)} cm</b>`:'',x.eau!=null?`Eau : <b>${esc(x.eau)} verre${x.eau>1?'s':''}</b>`:'',x.pas!=null?`Pas : <b>${Number(x.pas).toLocaleString('fr-FR')}</b>`:'',x.pilules!=null?`Prises cochées : <b>${esc(x.pilules)}</b>`:''].filter(Boolean).map(t=>`<div>${t}</div>`).join(''))}
+  ${sec('Sommeil',sl)}
+  ${sec('Humeur',x.humeur?Object.entries(x.humeur).map(([k2,v])=>`<span class="chip">${esc({h:'Humeur',e:'Énergie',c:'Courbatures',s:'Stress',f:'Faim'}[k2]||k2)} ${esc(v)}/5</span>`).join(' '):'')}
+  ${sec('Trois bonnes choses',arr(x.bonnes).filter(Boolean).length?`<ul style="margin:0;padding-left:18px">${arr(x.bonnes).filter(Boolean).map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:'')}
+  ${sec('Avec le coach',arr(x.chat).length?`<details><summary style="cursor:pointer;font-weight:700">${x.chat.length} message${x.chat.length>1?'s':''}</summary>${x.chat.map(c=>`<div class="bub ${c.r==='user'?'me':'co'}" style="max-width:100%">${esc(c.c)}</div>`).join('')}</details>`:'')}
+  <div class="cals"><h3>Ma note du jour</h3><textarea id="calNote" class="grow" rows="2" placeholder="Comment s'est passée cette journée ? Ce que tu veux retenir…" aria-label="Note du jour">${esc(x.note||'')}</textarea><div class="row" style="margin-top:6px"><button class="sm" data-act="calNote" data-d="${k}">Enregistrer la note</button></div></div>
+  ${!R.length&&!arr(x.seances).length&&x.poids==null&&!x.sommeil&&!x.note?'<p class="mute">Rien de noté ce jour-là.</p>':''}</div>`;
+  setTimeout(()=>{try{grow($('calNote'))}catch(e){}},0)}
+const CAL_ACTS={
+  calMv(b){const[y,m]=CALM;const d=new Date(y,m+(+b.dataset.v),1);CALM=[d.getFullYear(),d.getMonth()];CALD=null;renderCal()},
+  calDay(b){calDetail(b.dataset.d);setTimeout(()=>$('calDet')&&$('calDet').scrollIntoView({behavior:'smooth',block:'start'}),60)},
+  calNote(b){const d=b.dataset.d,v=$('calNote').value.trim();if(v)NOTES[d]=v;else delete NOTES[d];store.set('notes',NOTES);archiveDays([d]).then(()=>renderCal());toast('Note enregistrée')}
+};
+
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -2645,7 +2726,7 @@ let J=store.get('journal',{}),EAU=store.get('eau',{}),FAV=store.get('favoris',[]
 for(const k in J)J[k]=objs(Array.isArray(J[k])?J[k]:J[k]&&typeof J[k]==='object'?Object.values(J[k]):[]);
 const dayJ=()=>Array.isArray(J[today()])?J[today()]:(J[today()]=[]);
 const dayTot=()=>dayJ().reduce((a,e)=>({k:a.k+num(e.kcal),p:a.p+num(e.p)}),{k:0,p:0});
-const saveJ=()=>{const keep=Object.keys(J).sort().slice(-60);J=Object.fromEntries(keep.map(k=>[k,J[k]]));store.set('journal',J)};
+const saveJ=()=>{const keep=Object.keys(J).sort().slice(-60);J=Object.fromEntries(keep.map(k=>[k,J[k]]));store.set('journal',J);try{archSoon()}catch(e){}};
 function addFood(it){if(BARIA())store.set('boire',{until:Date.now()+30*6e4});const en={nom:it.nom,kcal:Math.round(num(it.kcal)),p:Math.round(num(it.proteines_g??it.p)),g:Math.round(num(it.glucides_g??it.g)),l:Math.round(num(it.lipides_g??it.l))};if(it.plate)en.plate=it.plate,en.part=it.part??1,en.id=Date.now();dayJ().push(en);saveJ();renderDay();return en}
 function renderDay(){
   const m=metrics()||{},t=dayTot(),tk=m.kcal||(BARIA()?1000:2000),tp=m.prot||100,te=m.eau||8,w=EAU[today()]||0;
@@ -2790,13 +2871,13 @@ let SENDING=false,ASKIMG=null;
 $('askPh').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;let r;try{r=await shrink(f)}catch(_){r={blob:f}}ASKIMG=r.blob;const u=URL.createObjectURL(ASKIMG);$('askImg').hidden=false;$('askImg').innerHTML=`<img src="${u}" alt="Photo jointe"><button class="ghost sm" data-act="askImgDel">Retirer la photo</button>`;$('ask').placeholder='Ta question sur cette photo…';$('ask').focus()});
 async function send(){
   const img=ASKIMG,t=$('ask').value.trim()||(img?'Qu\'en penses-tu ?':'');if(!t||SENDING)return;SENDING=true;$('ask').value='';if(img){ASKIMG=null;$('askImg').hidden=true;$('askImg').innerHTML='';$('ask').placeholder='Écris ton message…';$('askPh').value=''}
-  CH.push({role:'user',content:(img?'[photo] ':'')+t});const ub=bub('user',t);if(img){const im=document.createElement('img');im.src=URL.createObjectURL(img);im.alt='Ta photo';im.className='bubimg';ub.prepend(im)}
+  CH.push({role:'user',content:(img?'[photo] ':'')+t,t:Date.now()});const ub=bub('user',t);if(img){const im=document.createElement('img');im.src=URL.createObjectURL(img);im.alt='Ta photo';im.className='bubimg';ub.prepend(im)}
   if(/vomir|laxatif|me faire vomir|purge|je me d[ée]go[uû]te/i.test(t))bub('assistant','Je suis là pour t\'aider. Si la relation avec la nourriture est difficile en ce moment, tu n\'es pas seul(e) : ton médecin peut t\'aider, et la ligne Anorexie Boulimie Info Écoute répond au 09 69 325 900.');const out=bub('assistant','…');$('sendBtn').disabled=true;
   try{const sys=`Tu es « EdilganSuperCoach », coach sportif et nutrition bienveillant mais exigeant. Tu tutoies, tu réponds en français, de façon courte, concrète et motivante, sans markdown (pas d'astérisques ni de dièses), avec des listes à tirets si utile. Pour une douleur forte ou un problème médical, conseille de voir un médecin. ${profil(true)}`;
   let conv=CH.slice(-12);if(conv[0].role!=='user')conv=conv.slice(1);
   conv=conv.map((m,i)=>i===0?{role:'user',content:sys+'\n\nMessage : '+m.content}:m);
   const txt=img?await (async()=>{const r=await anyAI([{role:'user',content:sys+'\n\nL\'utilisateur t\'envoie une photo. Décris brièvement ce que tu vois puis réponds à sa question en lien avec son profil. Question : '+t+FR}],{images:[img]});return r==null?'':String(r)})():await askChat(conv,text=>{out.textContent=text;out.scrollIntoView({block:'end'})});
-    out.textContent=txt;CH.push({role:'assistant',content:txt});store.set('chat',CH.slice(-40));
+    out.textContent=txt;CH.push({role:'assistant',content:txt,t:Date.now()});store.set('chat',CH.slice(-40));archSoon();
   }catch(e){out.textContent=errMsg(e);CH.pop()}finally{SENDING=false;$('sendBtn').disabled=false}
 }
 $('ask').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
@@ -3254,8 +3335,8 @@ function renderProdHist(){$('prodHistC').style.display=PRODS.length?'block':'non
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b&&A[b.dataset.act])A[b.dataset.act](b,e)});
 document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{const b=e.target.closest('button[data-pane]');if(!b||!seg.contains(b))return;const sec=seg.closest('section');
   seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));sec.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.pane===b.dataset.pane));lazyPane(sec);b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo(0,0)}));
-function lazyPane(sec){if(!sec)return;const L=lazyPane.L||(lazyPane.L={prets:renderPrets,exos:renderExo,fiches:renderFiches,reperes:renderRef,monde:initWorld,programme:renderProg,favoris:renderFav});
-  sec.querySelectorAll('.pane.on').forEach(p=>{const k=p.dataset.pane,f=L[k];if(!f)return;if(k!=='reperes')delete L[k];try{f()}catch(e){console.error(k,e)}});sec.querySelectorAll('textarea.grow').forEach(t=>{if(t.value&&t.getClientRects().length)grow(t)})}
+function lazyPane(sec){if(!sec)return;const L=lazyPane.L||(lazyPane.L={calendrier:renderCal,prets:renderPrets,exos:renderExo,fiches:renderFiches,reperes:renderRef,monde:initWorld,programme:renderProg,favoris:renderFav});
+  sec.querySelectorAll('.pane.on').forEach(p=>{const k=p.dataset.pane,f=L[k];if(!f)return;if(k!=='reperes'&&k!=='calendrier')delete L[k];try{f()}catch(e){console.error(k,e)}});sec.querySelectorAll('textarea.grow').forEach(t=>{if(t.value&&t.getClientRects().length)grow(t)})}
 function openPane(v,p){if(location.hash!=='#'+v)location.hash=v;setTimeout(()=>{const b=document.querySelector(`section[data-v="${v}"] .seg [data-pane="${p}"]`);if(b)b.click()},30)}
 
 /* ---------- Navigation ---------- */
@@ -3266,7 +3347,7 @@ function route(){
   document.querySelectorAll('section[data-v]').forEach(s=>s.classList.toggle('on',s.dataset.v===v));
   document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===(v==='sommeil'?'accueil':v)));{const tb=document.querySelector('.tabs'),ti=['accueil','sport','scan','cuisine','suivi'].indexOf(v==='sommeil'?'accueil':v);if(tb){tb.style.setProperty('--ti',Math.max(ti,0));tb.classList.toggle('noti',ti<0)}}
   $('avatar').classList.toggle('on',v==='moi');
-  if(v!=='sommeil'&&bT)stopBreath();const sw=$('sweep');if(sw&&document.documentElement.dataset.fx!=='off'&&route.last&&route.last!==v){sw.classList.remove('go');void sw.offsetWidth;sw.classList.add('go')}route.last=v;if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='suivi'){try{renderWeekCard();renderDuo()}catch(e){}}lazyPane(document.querySelector(`section[data-v="${v}"]`));if(v==='sommeil'){renderSleep();renderBModes();renderGrnd();renderGood();sleepKpi()}if(v==='suivi')renderSuivi();$('coachBtn').classList.toggle('on',v==='coach');window.scrollTo(0,0);
+  if(v!=='sommeil'&&bT)stopBreath();const sw=$('sweep');if(sw&&document.documentElement.dataset.fx!=='off'&&route.last&&route.last!==v){sw.classList.remove('go');void sw.offsetWidth;sw.classList.add('go')}route.last=v;if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='suivi'){try{renderWeekCard();renderDuo();renderAutoBk()}catch(e){}}lazyPane(document.querySelector(`section[data-v="${v}"]`));if(v==='sommeil'){renderSleep();renderBModes();renderGrnd();renderGood();sleepKpi()}if(v==='suivi')renderSuivi();$('coachBtn').classList.toggle('on',v==='coach');window.scrollTo(0,0);
 }
 window.addEventListener('scroll',()=>$('appbar').classList.toggle('sc',scrollY>4),{passive:true});
 /* ---------- Accueil ---------- */
@@ -3651,13 +3732,14 @@ setInterval(()=>{if(document.visibilityState==='visible'){const d=store.get('boi
 /* photos (IndexedDB) */
 const idb=()=>new Promise((ok,ko)=>{try{const r=indexedDB.open('edilgan',1);r.onupgradeneeded=()=>r.result.createObjectStore('photos',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)}catch(e){ko(e)}});
 const phOp=(mode,fn)=>idb().then(db=>new Promise((ok,ko)=>{const t=db.transaction('photos',mode),st=t.objectStore('photos'),r=fn(st);t.oncomplete=()=>ok(r&&r.result);t.onerror=()=>ko(t.error)}));
-async function renderPhotos(){let L=[];try{L=(await phOp('readonly',st=>st.getAll())||[]).filter(p=>p.id!=='__hero')}catch(e){}L.sort((a,b)=>a.d<b.d?-1:1);
+async function renderPhotos(){let L=[];try{L=(await phOp('readonly',st=>st.getAll())||[]).filter(p=>!String(p.id).startsWith('__'))}catch(e){}L.sort((a,b)=>a.d<b.d?-1:1);
   $('phList').innerHTML=L.map(p=>`<figure><img src="${p.data}" alt="Photo du ${frd(p.d)}"><figcaption>${frd(p.d)} <button class="x" style="min-height:28px;min-width:28px;font-size:16px" data-act="phDel" data-id="${p.id}" aria-label="Supprimer">×</button></figcaption></figure>`).join('');
   $('phCmp').innerHTML=L.length>1?`<div class="cmp" id="cmpBox"><img src="${L[0].data}" alt="Avant"><img class="after" src="${L[L.length-1].data}" alt="Après"><div class="bar2"></div><span style="left:8px">${frd(L[0].d)}</span><span style="right:8px">${frd(L[L.length-1].d)}</span></div><input type="range" min="0" max="100" value="50" id="cmpR" aria-label="Comparer avant et après" style="margin-top:8px;padding:0;min-height:30px;background:none;border:0">`:'';
   const r=$('cmpR');if(r)r.oninput=()=>$('cmpBox').style.setProperty('--cut',r.value+'%')}
 /* sauvegarde fichier */
 async function bkSave(btn){const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('coach_')&&k!=='coach_ia')d[k]=localStorage.getItem(k)}}catch(e){}
-  const json=JSON.stringify({app:'EdilganSuperCoach',date:today(),data:d}),name=`edilgan-sauvegarde-${today()}.json`,file=new File([json],name,{type:'application/json'});
+  let arch=[];try{await archiveDays(memDays());arch=(await phOp('readonly',st=>st.getAll())||[]).filter(x=>String(x.id).startsWith('__day_'))}catch(e){}
+  const json=JSON.stringify({app:'EdilganSuperCoach',date:today(),data:d,archives:arch}),name=`edilgan-sauvegarde-${today()}.json`,file=new File([json],name,{type:'application/json'});
   
   try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'Sauvegarde EdilganSuperCoach'});store.set('lastbk',today());toast('Sauvegarde prête');renderSuivi();return}}catch(e){if(e&&e.name==='AbortError')return}
   const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);store.set('lastbk',today());toast('Sauvegarde téléchargée');renderSuivi()}
@@ -3668,7 +3750,7 @@ function restoreFrom(txt){
   const out=$('impRes');let o;txt=String(txt||'').trim();
   const a=txt.indexOf('{'),b=txt.lastIndexOf('}');
   try{o=JSON.parse(txt.slice(a,b+1))}catch(e){out.innerHTML='<div class="err">Je n\'arrive pas à lire cette sauvegarde. Vérifie qu\'elle a été copiée en entier (elle commence par { et finit par }).</div>';return}
-  const d=o&&o.data&&typeof o.data==='object'?o.data:o;let n=0;
+  const d=o&&o.data&&typeof o.data==='object'?o.data:o;let n=0;if(o&&Array.isArray(o.archives))o.archives.filter(x=>x&&typeof x==='object'&&/^__day_\d{4}-\d\d-\d\d$/.test(x.id)).forEach(x=>{phOp('readwrite',st=>st.put(x)).catch(()=>{})});
   for(const [k0,v] of Object.entries(d||{})){const k=k0.startsWith('coach_')?k0:'coach_'+k0;if(k==='coach_ia')continue;
     const val=typeof v==='string'?v:JSON.stringify(v);try{JSON.parse(val)}catch(e){continue}
     if(k==='coach_onb'||k==='coach_skin'||k==='coach_taille'||k==='coach_fx'){localStorage.setItem(k,val);continue}
@@ -3740,7 +3822,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-68';
+const APP_VERSION='2026.11.26-70';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
@@ -3753,7 +3835,8 @@ const NEWS=[
  ['2026.11.26-54','Conseils pratiques','40 fiches vérifiées : restaurant, fêtes, sommeil, courses…','coach','fiches'],
  ['2026.11.26-55','Nouveau look','Plus lisible, et des animations propres à chaque thème.','moi',''],
  ['2026.11.26-66','Corrige l\'IA','Assiette : dis ce qui est faux, change les grammes ou retire un aliment, et elle retient tes corrections.','scan','assiette'],
- ['2026.11.26-68','Pas tout fini ?','Valide ton repas, puis dis (ou montre en photo) ce que tu as laissé : le journal compte ce que tu as vraiment mangé.','scan','assiette']];
+ ['2026.11.26-68','Pas tout fini ?','Valide ton repas, puis dis (ou montre en photo) ce que tu as laissé : le journal compte ce que tu as vraiment mangé.','scan','assiette'],
+ ['2026.11.26-70','Mon calendrier','Jour par jour : repas, poids, sport, sommeil et ta note. Gardé pour toujours, même après les mises à jour.','suivi','calendrier']];
 function showNews(){let seen=store.get('newsSeen','');if(!seen){if(!P.taille){store.set('newsSeen',APP_VERSION);return}seen='2026.11.26-40'}const vk=v=>String(v).replace(/-(\d+)$/,(m,n)=>'-'+n.padStart(5,'0')),L=NEWS.filter(n=>vk(n[0])>vk(seen)&&(n[4]!=='journal'||n[1]!=='Repas en douceur'||BARIA()));store.set('newsSeen',APP_VERSION);if(!L.length||$('welcome').classList.contains('on'))return;
   const go=()=>{if($('ov').classList.contains('on')||$('scanOv').classList.contains('on')||$('welcome').classList.contains('on')||$('sheet').classList.contains('on'))return setTimeout(go,4000);openSheet(`<div class="row sb"><h2 style="margin:0">Quoi de neuf ?</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Depuis ta dernière visite :</p>${L.map(n=>`<button class="stp news" data-act="newsGo" data-v="${n[3]}" data-p="${n[4]}"><i>★</i><span><b>${esc(n[1])}</b><small>${esc(n[2])}</small></span></button>`).join('')}`)};setTimeout(go,1500)}
 async function checkUpdate(){
@@ -3780,7 +3863,7 @@ $('bkIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;c
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 setTimeout(()=>{try{if(lsSize()>2e6)lsCompact()}catch(e){}},4000);
 renderChk();renderDrink();
-Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS);try{localStorage.removeItem('coach_phc')}catch(e){}netBanner();$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
+Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS,BK_ACTS,CAL_ACTS);try{localStorage.removeItem('coach_phc')}catch(e){}netBanner();$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
 [calc,renderEq,renderSante,renderAH,renderProdHist,renderMenu,renderWeek,renderChat].forEach(f=>{try{f()}catch(e){console.error(f.name,e)}});route();
 }
 /* ==== Audit iPhone : clavier virtuel, typographie française, stockage ==== */
