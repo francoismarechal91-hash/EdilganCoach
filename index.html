@@ -1020,9 +1020,9 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
   <div class="pane on" data-pane="produit">
     <div class="card">
       <h2>Est-ce un bon produit ?</h2>
-      <p class="sub">Montre-moi le produit : je te dis s'il est bon, à quoi il sert et s'il te convient. Une seule photo suffit, plusieurs c'est encore mieux.</p>
+      <p class="sub">Prends en photo le paquet (le devant suffit, je le retrouve), le code-barres, le tableau ou les ingrédients : je te dis s'il est bon, à quoi il sert et s'il te convient.</p>
       <div class="drop3">
-        <label class="drop mini" data-drop="produit"><input type="file" accept="image/*" data-in="produit" aria-label="Photo du code-barres ou du devant"><svg class="i"><use href="#i-bar"/></svg><b>Code-barres</b><span class="mute">ou le devant</span></label>
+        <label class="drop mini" data-drop="produit"><input type="file" accept="image/*" data-in="produit" aria-label="Photo du code-barres ou du devant"><svg class="i"><use href="#i-bar"/></svg><b>Produit</b><span class="mute">devant ou code-barres</span></label>
         <label class="drop mini" data-drop="ptab"><input type="file" accept="image/*" data-in="ptab" aria-label="Photo du tableau nutritionnel"><svg class="i"><use href="#i-chart"/></svg><b>Tableau</b><span class="mute">gras, sucre…</span></label>
         <label class="drop mini" data-drop="ping"><input type="file" accept="image/*" data-in="ping" aria-label="Photo de la liste des ingrédients"><svg class="i"><use href="#i-list"/></svg><b>Ingrédients</b><span class="mute">la liste</span></label>
       </div>
@@ -2581,7 +2581,7 @@ Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une
   goPane(b){openPane(b.dataset.v,b.dataset.p)},
   qtyPick(b){$('qty').value=b.dataset.v;$('qty').focus()},
   showProd(b){renderProd(PRODS[+b.dataset.i]);$('prodRes').scrollIntoView({behavior:'smooth'})},
-  anaProd(b){run(b,$('prodRes'),'Analyse du produit',async()=>{
+  anaProd(b){PALT=[];run(b,$('prodRes'),'Analyse du produit',async()=>{
     const typed=$('ean').value.replace(/\D/g,'');let ean=typed;const st=t=>busy($('prodRes'),t);
     if(!ean)for(const k of ['produit','ping','ptab'])if(PH[k]&&!ean){st('Lecture du code-barres');ean=await decodeBarcode(PH[k])}
     let p=ean?(st('Recherche dans Open Food Facts'),await offLookup(ean)):null;
@@ -2593,6 +2593,7 @@ Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une
     if(PH.ptab&&(miss(p.c100)||p.source!=='Open Food Facts')){st('Lecture du tableau nutritionnel');try{const t=await readLabel(PH.ptab,'ptab');if(!miss(t.c100)){p.c100={...(p.c100||{}),...Object.fromEntries(Object.entries(t.c100).filter(([,v])=>v!=null&&v!==''))};if(p.source==='Open Food Facts')p.source='Open Food Facts + ta photo du tableau'}if(!p.nom&&t.nom)p.nom=t.nom;if(!p.portion&&t.portion)p.portion=t.portion}catch(e){if(!ean)throw e}}
     if(PH.ping&&!p.ingredients){st('Lecture des ingrédients');try{const t=await readLabel(PH.ping,'ping');p.ingredients=t.ingredients;p.allergenes=p.allergenes||t.allergenes;if(!p.nom&&t.nom)p.nom=t.nom}catch(e){if(!ean&&!PH.ptab)throw e}}
     if(PH.produit&&p.source!=='Open Food Facts'&&(!p.nom||miss(p.c100))){st('Lecture de l\'emballage');try{const a=await readLabel(PH.produit,'front');const e2=String(a.ean||'').replace(/\D/g,'');let q=null;if(e2&&e2.length>=8&&e2!==ean)q=await offLookup(e2);
+      if(!q&&(a.nom||a.marque)){st('Recherche de « '+[a.marque,a.nom].filter(Boolean).join(' ')+' »');try{const hits=await offSearch([a.marque,a.nom].filter(Boolean).join(' '));if(hits.length){const best=hits.map(h=>[h,simProd(a,h)]).sort((x,y)=>y[1]-x[1])[0];if(best[1]>=.34){q=await offLookup(best[0].code);PALT=hits.filter(h=>h.code!==best[0].code).slice(0,5)}else PALT=hits.slice(0,6)}}catch(e){}}
       if(q)p={...q,c100:miss(q.c100)?p.c100:q.c100,ingredients:q.ingredients||p.ingredients};else{p.nom=p.nom||a.nom;p.marque=p.marque||a.marque;p.quantite=p.quantite||a.quantite;if(miss(p.c100)&&!miss(a.c100)){p.c100=a.c100;p.source=a.valeurs==='etiquette'?'Lu sur l\'étiquette':'Valeurs estimées (vérifie l\'étiquette)'}p.ingredients=p.ingredients||a.ingredients;p.nutriscore=p.nutriscore||(x=>/^[a-e]$/.test(x)?x:'')(String(a.nutriscore||'').trim().toLowerCase())}}catch(e){if(miss(p.c100)&&!p.ingredients)throw e}}
     p.nom=p.nom||'Produit';
     PRODS=[p,...PRODS.filter(x=>(x.ean&&x.ean===p.ean)?false:x.nom!==p.nom)].slice(0,30);store.set('produits',PRODS);renderProdHist();renderProd(p);$('ean').value='';setTimeout(()=>$('prodRes').scrollIntoView({behavior:'smooth',block:'start'}),60)})},
@@ -2605,7 +2606,7 @@ Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une
   scanStop(){try{SCAN&&SCAN.reset()}catch(e){}SCAN=null;const v=$('scanV');try{v.srcObject&&v.srcObject.getTracks().forEach(t=>t.stop());v.srcObject=null}catch(e){}$('scanOv').classList.remove('on')},
   prodAvisRetry(){if(PROD)prodAvis(PROD)},
   prodSearch(b){const q=$('pq').value.trim();if(q.length<3){$('pq').focus();return}run(b,$('pqRes'),'Recherche',async()=>{
-    let hits=[];try{const r=await fetch('https://search.openfoodfacts.org/search?q='+encodeURIComponent(q)+'&langs=fr&page_size=8&fields=code,product_name,product_name_fr,brands,nutriscore_grade,quantity');if(!r.ok)throw 0;const d=await r.json();hits=arr(d.hits)}catch(e){throw{code:navigator.onLine===false?'net':'busy'}}
+    let hits=[];try{hits=await offSearch(q)}catch(e){throw{code:navigator.onLine===false?'net':'busy'}}
     $('pqRes').innerHTML=hits.length?'<div class="chips" style="margin-top:10px">'+hits.map(h=>`<button class="chip" data-act="pqPick" data-v="${esc(h.code)}">${esc(h.product_name_fr||h.product_name||h.code)}${h.brands?' · '+esc([].concat(h.brands).join(', ')):''}${h.quantity?' · '+esc(h.quantity):''}</button>`).join('')+'</div>':'<p class="mute">Rien trouvé. Essaie avec la marque, ou prends une photo.</p>'})},
   pqPick(b){$('ean').value=b.dataset.v;A.anaProd(b)},
   synth(b){const q=$('qty').value.trim();if(!q){$('qty').focus();return}const p=PROD;run(b,$('synthRes'),'Calcul',async()=>{
@@ -2775,6 +2776,10 @@ Format JSON : {"reponse":"1 phrase directe : c'est bon ou pas, et pourquoi","uti
     if(!$('pAvis')||PROD!==p)return;
     el.innerHTML=`<div class="tip" style="margin:0"><b>${esc(r.reponse||'')}</b>${r.utilite?`<div style="margin-top:6px"><b>À quoi ça sert :</b> ${esc(r.utilite)}</div>`:''}${r.pour_toi?`<div style="margin-top:6px"><b>Pour toi :</b> ${esc(r.pour_toi)}</div>`:''}${r.quand?`<div style="margin-top:6px"><b>Quand :</b> ${esc(r.quand)}</div>`:''}${r.portion?`<div style="margin-top:6px"><b>Portion conseillée :</b> ${esc(r.portion)}</div>`:''}${r.alternative?`<div style="margin-top:6px"><b>Mieux :</b> ${esc(r.alternative)}</div>`:''}</div>`;
   }catch(e){if($('pAvis'))el.innerHTML=`<p class="mute">L'avis du coach n'a pas pu se charger (${esc(errMsg(e))}). La note ci-dessous reste valable.</p><button class="ghost sm" data-act="prodAvisRetry">Réessayer</button>`}}
+async function offSearch(q){const r=await fetch('https://search.openfoodfacts.org/search?q='+encodeURIComponent(q)+'&langs=fr&page_size=8&fields=code,product_name,product_name_fr,brands,quantity,nutriscore_grade');if(!r.ok)throw{code:'busy'};const d=await r.json();return arr(d.hits).filter(h=>h&&h.code)}
+const normT=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]+/g,' ').split(/\s+/).filter(w=>w.length>2);
+function simProd(a,h){const A=new Set(normT((a.marque||'')+' '+(a.nom||''))),B=normT([].concat(h.brands||[]).join(' ')+' '+(h.product_name_fr||h.product_name||''));if(!A.size||!B.length)return 0;const hit=B.filter(w=>A.has(w)).length;return hit/Math.max(3,A.size)}
+let PALT=[];
 async function readLabel(blob,kind){
   if(kind==='ptab'){const r=await askJSON(`Lis ce tableau de valeurs nutritionnelles (photo). Recopie EXACTEMENT les valeurs pour 100 g ou 100 ml. S'il n'y a que des valeurs par portion, recopie-les et indique la taille de la portion en grammes.
 Format JSON : {"pour":"100|portion","portion_g":0,"c100":{"kcal":0,"p":0,"g":0,"sucres":0,"l":0,"ags":0,"fibres":0,"sel":0},"nom":""}`,{images:[blob],modelTier:'default',cache:false});
@@ -2786,8 +2791,8 @@ Format JSON : {"ean":"","nom":"","marque":"","quantite":"poids ou volume du paqu
   return a}
 
 function renderProd(p){
-  PROD=p;
-  $('prodRes').innerHTML=verdictHTML(p)+`
+  PROD=p;const alt=PALT.length?`<div class="card"><b>${p.source==='Open Food Facts'?'Ce n\'est pas le bon produit ?':'C\'est peut-être l\'un de ceux-là :'}</b><div class="chips" style="margin-top:8px">${PALT.map(h=>`<button class="chip" data-act="pqPick" data-v="${esc(h.code)}">${esc(h.product_name_fr||h.product_name||h.code)}${h.brands?' · '+esc([].concat(h.brands).join(', ')):''}${h.quantity?' · '+esc(h.quantity):''}</button>`).join('')}</div></div>`:'';PALT=[];
+  $('prodRes').innerHTML=verdictHTML(p)+alt+`
   <div class="card"><h3>Combien tu en as mangé ?</h3>
   <div class="chips">${[p.portion?'1 portion':'', '100 g','la moitié du paquet','tout le paquet','2 unités'].filter(Boolean).map(q=>`<button class="chip" data-act="qtyPick" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div>
   <textarea id="qty" class="grow" rows="1" data-enter="synth" placeholder="ex. 3 biscuits, un bol, 150 g, la moitié…"></textarea><div class="row" style="margin-top:12px"><button data-act="synth">Faire la synthèse</button></div><div id="synthRes"></div></div>`;
@@ -3268,7 +3273,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-41';
+const APP_VERSION='2026.11.26-42';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
