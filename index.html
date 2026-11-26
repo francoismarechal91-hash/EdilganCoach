@@ -582,6 +582,25 @@ html.idle .cauw .cau,.hero.off .cauw .cau{animation-play-state:paused}
 .rapban.out{opacity:0;transform:translateY(-20px);transition:.25s}
 @keyframes rapin{from{opacity:0;transform:translateY(-30px) scale(.96)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.rapban{animation:none}}
+/* === ag_qa === corrections QA (taille de texte agrandie, cibles tactiles, petits écrans) */
+/* Taille de texte « Grand » / « Très grand » (zoom sur body) : 100dvh / 90dvh sont multipliés par le zoom,
+   la séance guidée et les feuilles dépassaient l'écran (bouton « C'est fait » / « Fermer » inaccessibles). */
+html #ov.on{min-height:0}
+html #sheet .in{max-height:90%}
+/* « Précédent » coupé en « Précéder » (texte Très grand, petits écrans) */
+html #ov.on>.row:has(>[data-act=rNext]) [data-act=rPrev]{font-size:16px;padding-inline:8px}
+/* petits écrans (iPhone SE, paysage) : l'animation rapetisse pour que « C'est fait / Passer » reste visible sans défiler */
+@media(max-height:740px){html #ov.on>.ovanim{width:min(62vw,270px,26vh)}}
+/* contrastes (AA) : filtre actif « Tous / Monde / Tout » blanc sur vert clair en Forêt · nuit (1,5:1) */
+html[data-skin=foretnuit] body .chip.on{color:#0c1a24}
+html[data-skin=synth] body .chip.on{background:#e0137f}
+/* « Tu peux boire maintenant » vert sur blanc : 2:1 en Chats & chiens, 2,8:1 en Clair */
+#drinkCard p[style*="var(--green)"]{color:color-mix(in srgb,var(--green) 50%,var(--ink))!important}
+/* Chats & chiens : moment du repas et dose d'exercice un peu trop pâles (3,5:1 et 4,4:1) ; Forêt : 4,4:1 */
+html[data-skin=pets] body .meal .k{color:#22708f}
+html[data-skin=pets] body .dose{color:#b8375a}
+html[data-skin=foret] body .meal .k{color:#855609}
+/* === /ag_qa === */
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -1344,7 +1363,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
     <div class="card lvl" id="lvlCard"></div>
     <div class="card" id="weekCard"><h2>Ma semaine</h2><p class="sub">Depuis lundi, comparé à la semaine dernière.</p><div id="weekBox"></div></div>
     <div class="card" id="duoCard"><h2>À deux</h2><div id="duoBox"></div></div>
-    <div class="card"><h2>Ma régularité</h2><p class="sub">Chaque case est un jour où tu as pris soin de toi (sport, repas notés, check-in…).</p><div id="heat"></div></div>
+    <div class="card"><h2>Ma régularité</h2><p class="sub">Chaque case est un jour où tu as pris soin de toi (sport, repas notés, ressenti du jour…).</p><div id="heat"></div></div>
     <div class="card"><h2>Mes badges</h2><div class="badges" id="badges"></div></div>
     <a class="card lnk" href="#sommeil" style="display:flex"><span class="hcard"><span class="ic c-blue"><svg class="i"><use href="#i-moon"/></svg></span><span><b>Mon sommeil</b><div class="mute" style="font-weight:500">nuits, coucher idéal, respiration</div></span></span><svg class="i"><use href="#i-chev"/></svg></a>
   </div>
@@ -1856,7 +1875,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
     <div class="wlogo"><svg class="i"><use href="#i-dumb"/></svg></div>
     <h1 id="wT">Bienvenue</h1>
     <p class="mute" style="font-size:16px;margin:6px 0 12px">Quelques infos et c'est parti.</p>
-    <div class="row sb" style="margin-bottom:14px;flex-wrap:nowrap;gap:8px"><span class="mute" style="font-weight:700;font-size:14px">Taille du texte</span><div class="seg" id="wSize" style="margin:0;-webkit-mask:none;mask:none;padding:0"><button data-act="wSize" data-v="m" style="font-size:14px">A</button><button data-act="wSize" data-v="l" style="font-size:17px">A</button><button data-act="wSize" data-v="xl" style="font-size:20px">A</button></div></div>
+    <div class="row sb" style="margin-bottom:14px;flex-wrap:nowrap;gap:8px"><span class="mute" style="font-weight:700;font-size:14px">Taille du texte</span><div class="seg" id="wSize" style="margin:0;-webkit-mask:none;mask:none;padding:0"><button data-act="wSize" data-v="m" style="font-size:14px" aria-label="Texte normal">A</button><button data-act="wSize" data-v="l" style="font-size:17px" aria-label="Texte grand">A</button><button data-act="wSize" data-v="xl" style="font-size:20px" aria-label="Texte très grand">A</button></div></div>
     <div class="grid">
       <div class="full"><label for="w-nom">Ton prénom</label><input id="w-nom" autocomplete="given-name" placeholder="Prénom"></div>
       <div><label for="w-age">Âge</label><input id="w-age" type="number" inputmode="numeric" placeholder="ans"></div>
@@ -1899,7 +1918,7 @@ function lsCompact(keep){let freed=0;try{const all={};for(let i=0;i<localStorage
   W('produits',p=>arr(p).slice(0,15).map((x,i)=>i<5?x:{...x,ingredients:''}));try{PRODS=PRODS.slice(0,15)}catch(e){}
   W('machines',a=>arr(a).slice(0,8));try{AH=AH.slice(0,8)}catch(e){}
   return freed>0}
-function lsFull(k){console.warn('Quota localStorage atteint',k);if(lsFull.t&&Date.now()-lsFull.t<6e4)return;lsFull.t=Date.now();try{toast('Mémoire pleine : cette donnée n\'a pas pu être enregistrée. Fais une sauvegarde (Suivi › Mes données) puis retire l\'image d\'accueil ou de vieux favoris.')}catch(e){}}
+function lsFull(k){console.warn('Quota localStorage atteint',k);if(lsFull.t&&Date.now()-lsFull.t<6e4)return;lsFull.t=Date.now();try{toast('Mémoire pleine : cette donnée n\'a pas pu être enregistrée. Fais une sauvegarde (Suivi › Sauvegarde) puis retire l\'image d\'accueil ou de vieux favoris.')}catch(e){}}
 const dkey=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
 const today=()=>dkey(Date.now());
 const fr=n=>Number(n).toLocaleString('fr-FR',{maximumFractionDigits:1});
@@ -2035,10 +2054,11 @@ async function anyAI(msgs,{images=[],json=false}={}){
   if(AI.engine==='claude'){const s=await getSample();if(s)return null;}
   const tries=images.length?[()=>llm7Vision(msgs,images),()=>puterAI(msgs,images)]:[()=>pollinations(msgs,json),()=>llm7(msgs,json),()=>puterAI(msgs,[])];
   if(active().length)tries.push(()=>freeLLM(msgs,{images,json:false}));
-  let net=navigator.onLine===false;
-  let rest=tries;if(!images.length){const cv=f=>async()=>{const t=await f();return json?parseJSON(t):t};try{return await hedge([cv(tries[0]),cv(tries[1])],12000)}catch(e){console.log('IA échec',e)}rest=tries.slice(2)}
-  for(const f of rest){try{const t=await f();if(json)return parseJSON(t);return t}catch(e){if(e&&e.code==='net'&&tries.length===1)net=true;console.log('IA échec',e)}}
-  if(images.length)throw{code:'vision'};
+  let net=navigator.onLine===false,nE=0,nN=0;const ko=e=>{nE++;if(e&&e.code==='net')nN++};
+  let rest=tries;if(!images.length){const cv=f=>async()=>{const t=await f();return json?parseJSON(t):t};try{return await hedge([cv(tries[0]),cv(tries[1])],12000)}catch(e){ko(e);console.log('IA échec',e)}rest=tries.slice(2)}
+  for(const f of rest){try{const t=await f();if(json)return parseJSON(t);return t}catch(e){ko(e);if(e&&e.code==='net'&&tries.length===1)net=true;console.log('IA échec',e)}}
+  if(nE&&nN===nE)net=true;
+  if(images.length)throw net?{code:'net'}:{code:'vision'};
   throw net?{code:'net'}:{code:'busy'};
 }
 async function aiAvail(){return true}
@@ -2828,9 +2848,9 @@ function renderDuo(){const el=$('duoBox');if(!el)return;const me=myWeek(),o=DUO&
   ${o?`<div class="row" style="margin-top:10px"><button class="ghost sm" data-act="duoCheer">Envoyer un encouragement</button></div>`:''}`}
 const CHEERS=['Allez, on lâche rien cette semaine !','Fier(e) de toi, continue comme ça !','Ce soir, séance à deux ? Je suis chaud(e) !','Un verre d\'eau, une marche, et on assure. On est une équipe !','Tu gères. On se motive ensemble jusqu\'à dimanche !'];
 const DUO_ACTS={
-  async duoSend(){const me=myWeek(),c=duoCode(),t=`${me.n} cette semaine : ${me.s} séance${me.s>1?'s':''}, ${me.m} min de sport, ${me.a} jours actifs, série de ${me.st} jours.\nColle ce code dans EdilganSuperCoach (Suivi › À deux) :\n${c}`;
+  async duoSend(){const me=myWeek(),c=duoCode(),t=`${me.n} cette semaine : ${me.s} séance${me.s>1?'s':''}, ${me.m} min de sport, ${me.a} jours actifs, série de ${me.st} jours.\nColle ce code dans EdilganSuperCoach (Suivi › Mes progrès › À deux) :\n${c}`;
     try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t);toast('Résumé copié : colle-le dans un message.')}catch(e){openSheet(`<h2>Mon résumé</h2><textarea class="grow" rows="4" readonly>${esc(t)}</textarea><button data-act="closeSheet" style="margin-top:10px">Fermer</button>`)}},
-  async duoQR(){openSheet(`<div class="row sb"><h2 style="margin:0">Mon QR de la semaine</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Ta moitié le scanne depuis Suivi › À deux › Scanner son QR.</p><div id="duoQRc" style="display:grid;place-items:center;background:#fff;border-radius:16px;padding:16px;margin-top:10px"><span class="mute">…</span></div>`);
+  async duoQR(){openSheet(`<div class="row sb"><h2 style="margin:0">Mon QR de la semaine</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Ta moitié le scanne depuis Suivi › Mes progrès › À deux › Scanner son QR.</p><div id="duoQRc" style="display:grid;place-items:center;background:#fff;border-radius:16px;padding:16px;margin-top:10px"><span class="mute">…</span></div>`);
     try{const q=await loadQR(),qr=q(0,'M');qr.addData(duoCode());qr.make();$('duoQRc').innerHTML=qr.createSvgTag({cellSize:6,margin:2,scalable:true});const sv=$('duoQRc').querySelector('svg');if(sv){sv.style.width='min(70vw,280px)';sv.style.height='auto'}}catch(e){$('duoQRc').innerHTML='<p class="mute" style="color:#333">QR indisponible hors ligne : utilise « Envoyer mon résumé ».</p>'}},
   duoAdd(){const o=duoParse($('duoIn').value);if(!o){toast('Code non reconnu : il commence par EDG1.');return}DUO=o;store.set('duo',DUO);$('duoIn').value='';renderDuo();toast('Résumé de '+o.n+' ajouté !');confetti()},
   async duoScan(){const ov2=$('scanOv');if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast('Scan impossible ici : colle le code à la place.');return}ov2.classList.add('on');$('scanMsg').textContent='Vise le QR de ta moitié.';
@@ -2884,7 +2904,7 @@ function weekStats(off=0){const wk0=weekKey(Date.now()-off*7*864e5),wk1=dkey(new
   return{wk0,s:ses.length,min:ses.reduce((a,l)=>a+num(l.min),0),jours:jd.length,kcal:Math.round(avg(kc)),prot:Math.round(avg(pr)),tk:m.kcal,tp:m.prot,dw:wLast&&wPrev?Math.round((wLast.w-wPrev.w)*10)/10:null,sleep:nights.length?Math.round(avg(nights)):0,eau,act:Object.keys(streak().A).filter(inW).length}}
 function weekHTML(){const w=weekStats(),lw=weekStats(1),c=(v,l,sub)=>`<div><b>${v}</b><span>${l}</span>${sub?`<small>${sub}</small>`:''}</div>`,tr=(a,b)=>a>b?'▲':a<b?'▼':'=';
   const top=[w.s>=(num(P.jours)||3)?'Objectif séances atteint':'',w.eau>=5?'Bien hydraté':'',w.act>=6?'Régularité au top':'',w.prot&&w.tp&&w.prot>=w.tp*.9?'Protéines au rendez-vous':''].filter(Boolean);
-  return `<div class="stats wkst">${c(w.s,'séance'+(w.s>1?'s':''),lw.s||w.s?tr(w.s,lw.s)+' vs '+lw.s:'')}${c(w.min,'minutes de sport','')}${c(w.act+'/7','jours actifs','')}${c(w.jours,'jours de repas notés','')}${c(w.prot?w.prot+' g':'–','protéines / jour',w.tp?'objectif '+w.tp+' g':'')}${c(w.sleep?hm(w.sleep).replace(' h ','h'):'–','de sommeil / nuit','')}${c(w.dw==null?'–':(w.dw>0?'+':'')+fr(w.dw)+' kg','poids sur la semaine','')}${c(w.eau+'/7','jours d\'eau OK','')}</div>
+  return `<div class="stats wkst">${c(w.s,'séance'+(w.s>1?'s':''),lw.s||w.s?tr(w.s,lw.s)+' vs '+lw.s:'')}${c(w.min,'minutes de sport','')}${c(w.act+'/7','jours actifs','')}${c(w.jours,w.jours>1?'jours de repas notés':'jour de repas noté','')}${c(w.prot?w.prot+' g':'–','protéines / jour',w.tp?'objectif '+w.tp+' g':'')}${c(w.sleep?hm(w.sleep).replace(' h ','h'):'–','de sommeil / nuit','')}${c(w.dw==null?'–':(w.dw>0?'+':'')+fr(w.dw)+' kg','poids sur la semaine','')}${c(w.eau+'/7','jours d\'eau OK','')}</div>
   ${top.length?`<div class="chips" style="margin-top:10px">${top.map(t=>`<span class="chip p">${esc(t)}</span>`).join('')}</div>`:''}
   <div class="row" style="margin-top:12px"><button class="sm" data-act="weekCoach">Le mot du coach</button><button class="ghost sm" data-act="weekShare">Partager l'image</button></div><div id="weekCoachRes"></div>`}
 function renderWeekCard(){const el=$('weekBox');if(el)el.innerHTML=weekHTML()}
@@ -3053,7 +3073,7 @@ function calDetail(k){const x=CALDATA[k]||{d:k},el=$('calDet');if(!el)return;CAL
   const R=arr(x.repas),tk=R.reduce((a,e)=>a+num(e.kcal),0),tp=R.reduce((a,e)=>a+num(e.p),0),sec=(t,h)=>h?`<div class="cals"><h3>${t}</h3>${h}</div>`:'';
   const sl=x.sommeil?`<p style="margin:0">Couché à ${esc(x.sommeil.c||'?')}, levé à ${esc(x.sommeil.l||'?')}${x.sommeil.c&&x.sommeil.l?' · '+hm(dur(x.sommeil.c,x.sommeil.l)):''}${x.sommeil.q?' · nuit '+(['','très mauvaise','mauvaise','moyenne','bonne','excellente'][x.sommeil.q]||''):''}</p>`:'';
   el.innerHTML=`<div class="card" style="margin:14px 0 0"><h2 style="margin-top:0">${new Date(k+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</h2>
-  ${sec('Repas',R.length?`${R.map(e=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${esc(e.p)} g prot · ${esc(e.g)} g gluc · ${esc(e.l)} g lip</div></span><span class="v">${esc(e.kcal)} kcal</span></div>`).join('')}<p style="margin:6px 0 0"><b>Total : ${Math.round(tk).toLocaleString('fr-FR')} kcal · ${Math.round(tp)} g de protéines</b></p>`:'')}
+  ${sec('Repas',R.length?`${R.map(e=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${Math.round(num(e.p))} g prot · ${Math.round(num(e.g))} g gluc · ${Math.round(num(e.l))} g lip</div></span><span class="v">${Math.round(num(e.kcal)).toLocaleString('fr-FR')} kcal</span></div>`).join('')}<p style="margin:6px 0 0"><b>Total : ${Math.round(tk).toLocaleString('fr-FR')} kcal · ${Math.round(tp)} g de protéines</b></p>`:'')}
   ${sec('Sport',arr(x.seances).map(s=>`<div class="meal"><b>${esc(s.nom)}</b> <span class="mute">${esc(s.min)} min${s.ressenti?' · '+esc(s.ressenti):''}</span>${arr(s.ex).length?`<ul style="margin:6px 0 0;padding-left:18px">${s.ex.map(e=>`<li>${esc(e.nom)}${arr(e.sets).length?' : '+e.sets.map(z=>z.s?Math.round(num(z.s))+' s':(num(z.kg)?fr(num(z.kg))+' kg × ':'')+(z.reps||'')).filter(Boolean).join(', '):''}</li>`).join('')}</ul>`:''}</div>`).join(''))}
   ${sec('Corps',[x.poids!=null?`Poids : <b>${fr(x.poids)} kg</b>`:'',x.mes&&x.mes.taille?`Tour de taille : <b>${esc(x.mes.taille)} cm</b>`:'',x.eau!=null?`Eau : <b>${esc(x.eau)} verre${x.eau>1?'s':''}</b>`:'',x.pas!=null?`Pas : <b>${Number(x.pas).toLocaleString('fr-FR')}</b>`:'',x.pilules!=null?`Prises cochées : <b>${esc(x.pilules)}</b>`:''].filter(Boolean).map(t=>`<div>${t}</div>`).join(''))}
   ${sec('Sommeil',sl)}
@@ -3079,7 +3099,7 @@ function renderNow(){const el=$('homeNow');if(!el)return;let n=null;try{n=simple
   const sp=n?(n.done?'faite aujourd\'hui, bravo ✓':esc(n.j.nom)+(n.j.duree_min?' · '+esc(n.j.duree_min)+' min':'')):'une séance prête';
   el.innerHTML=`<div class="sect">Que veux-tu faire ?</div><div class="tiles">${T('nowMeal','i-plate','c-yel','Noter un repas','en photo ou en mots')}${T('nowScan','i-bar','c-red','Scanner un produit','vise le code-barres')}${T('nowSport','i-dumb','c-red','Faire ma séance',sp)}${T('nowCook','i-fork','c-yel','Quoi cuisiner ?','menu, frigo, monde')}${T('nowWeigh','i-scale','c-blue','Me peser','et voir mes progrès')}</div>`}
 function renderProgToday(){const el=$('progToday');if(!el)return;const n=simpleNext();if(!n){el.innerHTML='';el.hidden=true;return}el.hidden=false;
-  el.innerHTML=`<div class="row sb"><span class="mute" style="font-weight:700">${n.done?'Bravo, séance faite aujourd\'hui':'Ta séance du jour'}</span><span class="mute">${LOG.filter(l=>l.d>=weekKey()).length} / ${esc(P.jours||3)} cette semaine</span></div><h2 style="margin:8px 0 2px">${esc(n.j.nom)}</h2><div class="mute">${esc(n.j.focus||'')}${n.j.focus?' · ':''}${arr(n.j.exercices).length} exercices${n.j.duree_min?' · '+esc(n.j.duree_min)+' min':''}</div><button class="wide" data-act="start" data-j="${n.ji}" style="margin-top:14px">${n.done?'En refaire une':'Démarrer la séance'}</button>`}
+  el.innerHTML=`<div class="row sb"><span class="mute" style="font-weight:700">${n.done?'Bravo, séance faite aujourd\'hui':'Ta séance du jour'}</span><span class="mute">${LOG.filter(l=>l.d>=weekKey()).length} / ${esc(P.jours||3)} cette semaine</span></div><h2 style="margin:8px 0 2px">${esc(n.j.nom)}</h2><div class="mute">${esc(n.j.focus||'')}${n.j.focus?' · ':''}${arr(n.j.exercices).length} exercice${arr(n.j.exercices).length>1?'s':''}${n.j.duree_min?' · '+esc(n.j.duree_min)+' min':''}</div><button class="wide" data-act="start" data-j="${n.ji}" style="margin-top:14px">${n.done?'En refaire une':'Démarrer la séance'}</button>`}
 /* onboarding : 3 étapes courtes, « Passer » toujours visible */
 const OB_F=[[['nom','w-nom']],[['age','w-age'],['sexe','w-sexe'],['taille','w-taille'],['poids','w-poids']]];
 function obSave(step){try{(OB_F[step]||[]).forEach(([k,id])=>{const el=$(id),v=el?String(el.value).trim():'';if(v){P[k]=v;const pe=$('p-'+k);if(pe){if(pe.tagName==='SELECT')ensureOpt(pe,v);else pe.value=v}}});if(step===0){const o=document.querySelector('#wObj .on');if(o){P.obj=o.dataset.o;const po=$('p-obj');if(po)po.value=P.obj}}saveP();calc()}catch(e){}}
@@ -3377,6 +3397,19 @@ const RAP_ACTS={
   rapGo(b){rapClose();const[v,p]=String(b.dataset.go||'').split('|');if(v)openPane(v,p)},
   rapLater(){if(RAPCUR)RAPSNZ={until:Date.now()+20*6e4,due:RAPCUR};rapClose();toast('Je te le rappelle dans 20 minutes')},
   rapX(){rapClose()}};
+/* === ag_qa === corrections QA : garde-fous (double appui), compatibilité avec les icônes ag_visual */
+/* Double appui (fréquent chez les seniors, et iOS envoie 2 « click ») : le 2e appui au même endroit en moins de 380 ms
+   est ignoré. Évite : étape sautée dans les séances (« C'est fait »), favori ajouté puis retiré, verre d'eau coché puis
+   décoché, et « Remplacer » touché par erreur quand « Je l'ai mangé » rétrécit en « Ajouté ! ».
+   Les boutons faits pour être répétés (+15 s, +1 tour, mois précédent) ne sont pas concernés. */
+{const REP=/^(rest|rCount|calMv)$/;let lt=-1e9,lx=-99,ly=-99;
+ document.addEventListener('click',e=>{if(!e.isTrusted)return;const b=e.target&&e.target.closest&&e.target.closest('[data-act]');if(!b)return;
+  const t=e.timeStamp,near=Math.abs(e.clientX-lx)<16&&Math.abs(e.clientY-ly)<16;
+  if(t-lt<380&&near&&!REP.test(b.dataset.act)){e.stopImmediatePropagation();e.preventDefault();return}
+  lt=t;lx=e.clientX;ly=e.clientY},true)}
+/* Accueil : la carte « Sommeil » restait vide (carte blanche sans nom) tant qu'on n'avait pas ouvert Sommeil */
+setTimeout(()=>{try{const hs=$('homeSleep');if(hs&&!hs.innerHTML.trim())renderSleep()}catch(e){}},0);
+/* === /ag_qa === */
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -3408,7 +3441,7 @@ function renderHist(){
   const bw=num(P.poids)||0,F=P.sexe==='F',lev=(n,e)=>{if(!bw)return'';const r=e/bw,N=/squat|presse/i.test(n)?(F?[.75,1.25]:[1,1.5]):/couch|bench/i.test(n)?(F?[.5,.75]:[.75,1.25]):/soulev|deadlift/i.test(n)?(F?[1,1.5]:[1.25,2]):null;return N?` · niveau ${r>=N[1]?'intermédiaire+':r>=N[0]?'intermédiaire':'débutant'} (${fr(r.toFixed(2))}× ton poids)`:''};
   $('prs').innerHTML=b.slice(0,15).map(([n,v])=>`<tr><td>${esc(n)}<div class="mute">${v.r} répétitions · ${frd(v.d)} · max estimé ${Math.round(v.e1)} kg${lev(n,v.e1)}</div></td><td>${fr(v.kg)} kg</td></tr>`).join('');
   $('histC').style.display=LOG.length?'block':'none';
-  $('hist').innerHTML=LOG.slice(-10).reverse().map(l=>{const vol=l.ex.reduce((s,e)=>s+e.sets.reduce((a,x)=>a+num(x.kg)*num(x.reps),0),0);return `<div class="jl"><span class="n"><b>${esc(l.nom)}</b><div class="mute">${frd(l.d)} · ${esc(l.min)} min · ${l.ex.filter(e=>e.sets.length).length} exercices</div></span><span class="v">${vol?Math.round(vol).toLocaleString('fr-FR')+' kg':''}</span></div>`}).join('');
+  $('hist').innerHTML=LOG.slice(-10).reverse().map(l=>{const vol=l.ex.reduce((s,e)=>s+e.sets.reduce((a,x)=>a+num(x.kg)*num(x.reps),0),0);return `<div class="jl"><span class="n"><b>${esc(l.nom)}</b><div class="mute">${frd(l.d)} · ${esc(l.min)} min · ${(n=>n+' exercice'+(n>1?'s':''))(l.ex.filter(e=>e.sets.length).length)}</div></span><span class="v">${vol?Math.round(vol).toLocaleString('fr-FR')+' kg':''}</span></div>`}).join('');
 }
 const EXF=`{"nom":"","anim":"le mouvement le plus proche parmi : ${Object.keys(ANIM.S).join(', ')}","machine":"nom usuel de l'appareil ou du matériel utilisé (ex. presse à cuisses, poulie haute, haltères, banc incliné) ou « poids du corps »","reglage":"réglage de la machine en 1 phrase (hauteur du siège, poulie, dossier…) ou vide","series":3,"reps":"COURT, ex. 10-12 ou 30 s ou 5 min (les détails vont dans conseil)","repos_s":90,"tempo":"2-0-2","muscles":["clé"],"muscles_secondaires":["clé"],"execution":"2 phrases claires","conseil":"1 phrase"}`;
 
@@ -3463,7 +3496,7 @@ function endS(){
   const vol=done.reduce((s,e)=>s+e.sets.reduce((a,x)=>a+num(x.kg)*num(x.reps),0),0);
   clearInterval(tick);
   ov.innerHTML=`<div style="text-align:center;padding-top:40px"><h1>${done.length?'Séance terminée !':'Séance annulée'}</h1>
-  ${done.length?`<div class="big" style="color:var(--red);margin:20px 0">${Math.round((Date.now()-S.t)/6e4)} min</div><p>${done.length} exercices · ${done.reduce((s,e)=>s+e.sets.length,0)} séries${vol?' · '+Math.round(vol).toLocaleString('fr-FR')+' kg soulevés':''}</p><p class="mute">Pense à boire et à manger des protéines dans les 2 heures.</p>
+  ${done.length?`<div class="big" style="color:var(--red);margin:20px 0">${Math.round((Date.now()-S.t)/6e4)} min</div><p>${done.length} exercice${done.length>1?'s':''} · ${(n=>n+' série'+(n>1?'s':''))(done.reduce((s,e)=>s+e.sets.length,0))}${vol?' · '+Math.round(vol).toLocaleString('fr-FR')+' kg soulevés':''}</p><p class="mute">Pense à boire et à manger des protéines dans les 2 heures.</p>
   <h3 style="margin-top:24px">C'était comment ?</h3><div class="row" style="justify-content:center;margin-top:10px">${['Trop facile','Parfait','Trop dur'].map(f=>`<button class="ghost sm" data-act="feel" data-v="${f}">${f}</button>`).join('')}</div>`:''}
   <button data-act="closeS" style="margin-top:20px">Fermer</button></div>`;
   if(done.length){say('Séance terminée. Bravo !');confetti()}
@@ -3532,7 +3565,7 @@ function renderDay(){
   if(!BARIA()&&low>=3){tip.style.display='block';tip.innerHTML='Ces derniers jours, tu as souvent mangé moins que ce dont ton corps a besoin. Manger suffisamment protège tes muscles et ton énergie. Si c\'est difficile en ce moment, tu peux en parler à ton médecin, ou à la ligne Anorexie Boulimie Info Écoute : 09 69 325 900.';return}
   if(dayJ().length&&h>=14&&tp-t.p>25){tip.style.display='block';tip.textContent=`Il te manque ${Math.round(tp-t.p)} g de protéines aujourd'hui : pense à un skyr, du poulet, des œufs ou du thon.`}
   else if(m.kcal&&t.k>tk*1.1){tip.style.display='block';tip.textContent='Tu as dépassé ton objectif du jour. Pas de panique : c\'est la moyenne de la semaine qui compte.'}else tip.style.display='none';
-  $('journal').innerHTML=dayJ().map((e,i)=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${esc(e.p)}&nbsp;g prot · ${esc(e.g)}&nbsp;g gluc · ${esc(e.l)}&nbsp;g lip</div></span><span class="v">${esc(e.kcal)} kcal${e.plate?`<button class="restb" data-act="leftJ" data-i="${i}">${(e.part??1)<1?'Mangé à '+Math.round((e.part??1)*100)+' %':'Tout fini ?'}</button>`:''}</span><button class="x" data-act="fav" data-i="${i}" aria-label="${FAV.some(f=>f.nom===e.nom)?'Retirer '+esc(e.nom)+' des favoris':'Mettre '+esc(e.nom)+' en favori'}">${FAV.some(f=>f.nom===e.nom)?'★':'☆'}</button><button class="x" data-act="delJ" data-i="${i}" aria-label="Supprimer ${esc(e.nom)}">×</button></div>`).join('')||'<p class="mute" style="margin:6px 0 0">Rien de noté aujourd\'hui : cherche un aliment ou décris ton repas juste en dessous.</p>';
+  $('journal').innerHTML=dayJ().map((e,i)=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${Math.round(num(e.p))}&nbsp;g prot · ${Math.round(num(e.g))}&nbsp;g gluc · ${Math.round(num(e.l))}&nbsp;g lip</div></span><span class="v">${Math.round(num(e.kcal)).toLocaleString('fr-FR')} kcal${e.plate?`<button class="restb" data-act="leftJ" data-i="${i}">${(e.part??1)<1?'Mangé à '+Math.round((e.part??1)*100)+' %':'Tout fini ?'}</button>`:''}</span><button class="x" data-act="fav" data-i="${i}" aria-label="${FAV.some(f=>f.nom===e.nom)?'Retirer '+esc(e.nom)+' des favoris':'Mettre '+esc(e.nom)+' en favori'}">${FAV.some(f=>f.nom===e.nom)?'★':'☆'}</button><button class="x" data-act="delJ" data-i="${i}" aria-label="Supprimer ${esc(e.nom)}">×</button></div>`).join('')||'<p class="mute" style="margin:6px 0 0">Rien de noté aujourd\'hui : cherche un aliment ou décris ton repas juste en dessous.</p>';
   $('favs').innerHTML=FAV.length?'<span class="mute" style="width:100%">Favoris, un toucher pour ajouter :</span>'+FAV.map((f,i)=>`<button class="chip" data-act="addFav" data-i="${i}">${esc(f.nom)} · ${esc(f.kcal)} kcal</button>`).join(''):'';
 }
 const MEALF=`{"moment":"","nom":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"temps_min":15,"cout":"€","ingredients":["quantité + ingrédient"],"preparation":["étape"]}`;
@@ -3676,7 +3709,7 @@ function refreshFood(){renderMenu();renderFav();document.querySelectorAll('[data
 function renderMenu(){
   const d=MENUS[today()];if(!d){$('menu').innerHTML='';$('genMenu').textContent='Créer mon menu du jour';return}
   $('genMenu').textContent='Un tout autre menu';
-  $('menu').innerHTML=`<p style="margin:14px 0 0"><b>${esc(d.calories_total)} kcal</b> · ${esc(d.proteines_total_g)} g de protéines</p>`+arr(d.repas).map((m,i)=>mealHTML(m,`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button><button class="ghost sm" data-act="swapMeal" data-i="${i}">Remplacer</button>`)).join('')+(d.astuce?`<p class="mute">${esc(d.astuce)}</p>`:'')+
+  $('menu').innerHTML=`<p style="margin:14px 0 0"><b>${num(d.calories_total)?Math.round(num(d.calories_total)).toLocaleString('fr-FR'):esc(d.calories_total)} kcal</b> · ${esc(d.proteines_total_g)} g de protéines</p>`+arr(d.repas).map((m,i)=>mealHTML(m,`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button><button class="ghost sm" data-act="swapMeal" data-i="${i}">Remplacer</button>`)).join('')+(d.astuce?`<p class="mute">${esc(d.astuce)}</p>`:'')+
   `<div class="row"><button class="alt sm" data-act="favMenu">${FAVR.some(f=>f.type==='menu'&&sameMenu(f.data,d))?'Menu en favori ★':'Ajouter ce menu aux favoris'}</button><button class="ghost sm" data-act="copyMenu">Copier la liste des ingrédients</button></div>`+moreBar('genMenu','menu');
 }
 let FR_R=[];
@@ -3751,7 +3784,7 @@ Propose UN exercice de remplacement pour « ${x.nom} » qui travaille les mêmes
       for(const p of active()){try{const m=await pickModels(p);const t=await callProv(p,[{role:'user',content:'Réponds juste : OK'}],[],false);out.push(`<div class="jl"><span class="n"><b>${esc(PROV[p].nom)}</b><div class="mute">${esc(m.text)}${m.vision?' · photos : oui':' · photos : non'}</div></span><span class="v" style="color:#3dffc5">Marche</span></div>`)}
         catch(e){out.push(`<div class="jl"><span class="n"><b>${esc(PROV[p].nom)}</b><div class="mute">${esc(errMsg(e))}</div></span><span class="v" style="color:var(--red)">Échec</span></div>`)}}
       $('iaRes').innerHTML=out.join('');$('noai').style.display='none'})},
-  async exportData(b){if(!await copy(exportCode(),b)){toast('Copie impossible ici : utilise « Sauvegarder dans un fichier » (Suivi › Mes données).');return}store.set('lastbk',today());toast('Sauvegarde copiée. Colle-la dans la nouvelle app : Suivi › Mes données.')},
+  async exportData(b){if(!await copy(exportCode(),b)){toast('Copie impossible ici : utilise « Sauvegarder dans un fichier » (Suivi › Sauvegarde).');return}store.set('lastbk',today());toast('Sauvegarde copiée. Colle-la dans la nouvelle app : Suivi › Sauvegarde.')},
   importData(){openPane('suivi','donnees');setTimeout(()=>$('impT').focus(),120)},
   async pasteImp(){try{const t=await navigator.clipboard.readText();if(t){$('impT').value=t;toast('Collé')}}catch(e){toast('Appuie longuement dans la case puis « Coller »')}},
   doImport(){restoreFrom($('impT').value)},
@@ -3911,7 +3944,7 @@ Ses dernières nuits :\n${nuits}
 Analyse simplement (durée, régularité, qualité) et donne des conseils concrets et personnalisés, en lien avec son sport, son alimentation et sa santé. Pas de diagnostic médical ; si des signes inquiétants apparaissent, conseille d'en parler au médecin.
 Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une seule chose à faire ce soir"}`,{modelTier:'default',cache:false});
     $('slAdv').innerHTML=`<div class="meal"><p style="margin-top:0">${esc(r.bilan)}</p>${list(r.conseils)}${r.ce_soir?`<div class="tip"><b>Ce soir :</b> ${esc(r.ce_soir)}</div>`:''}</div>`})},
-  chk(b){const c=CHK[today()]||{};c[b.dataset.k]=+b.dataset.v;CHK[today()]=c;const k=Object.keys(CHK).sort().slice(-120);CHK=Object.fromEntries(k.map(x=>[x,CHK[x]]));store.set('checkin',CHK);renderChk();if(CHKQ.every(([q])=>c[q]))toast('Check-in noté, merci !')},
+  chk(b){const c=CHK[today()]||{};c[b.dataset.k]=+b.dataset.v;CHK[today()]=c;const k=Object.keys(CHK).sort().slice(-120);CHK=Object.fromEntries(k.map(x=>[x,CHK[x]]));store.set('checkin',CHK);renderChk();if(CHKQ.every(([q])=>c[q]))toast('C\'est noté, merci !')},
   chkEdit(){const c=CHK[today()];if(c){delete c.s}store.set('checkin',CHK);renderChk()},
   logW2(){const w=num($('wIn2').value);if(!w){$('wIn2').focus();return}$('wIn').value=w;A.logW();$('wIn2').value='';renderSuivi()},
   mesSave(){const o={d:today()};let any=0;MESF.forEach(([k])=>{const v=num($('ms-'+k).value);if(v){o[k]=v;any=1}});if(!any){toast('Entre au moins une mesure');return}
@@ -3924,7 +3957,7 @@ Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une
   pillDel(b){const old=PILLS.slice();PILLS=PILLS.filter(p=>p.id!==b.dataset.id);store.set('pilulier',PILLS);renderPills();undoToast('Rappel supprimé',()=>{PILLS=old;store.set('pilulier',PILLS);renderPills()})},
   drinkAfter(){store.set('boire',{until:Date.now()+30*6e4});renderDrink();toast('Minuteur lancé : 30 minutes')},
   drinkStop(){try{localStorage.removeItem('coach_boire')}catch(e){}renderDrink()},
-  phDel(b){if(!b.dataset.sure){b.dataset.sure=1;const o=b.textContent;b.textContent='Sûr ?';setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent=o}},3000);return}phOp('readwrite',st=>st.delete(b.dataset.id)).then(renderPhotos)},
+  phDel(b){if(!b.dataset.sure){b.dataset.sure=1;const o=b.innerHTML;b.textContent='Sûr ?';setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.innerHTML=o}},3000);return}phOp('readwrite',st=>st.delete(b.dataset.id)).then(renderPhotos)},
   bkSave(b){bkSave(b)},
   bkLater(){store.set('bkSnooze',dkey(Date.now()+14*864e5));renderHome()},
   santeT(b){const k=b.dataset.k,L=P.santeL||[];P.santeL=L.includes(k)?L.filter(x=>x!==k):[...L,k];saveP();renderSante();calc();[renderDrink,renderDaily,()=>{if(lazyPane.L&&!lazyPane.L.fiches)renderFiches()}].forEach(f=>{try{f()}catch(e){}})},
@@ -4213,12 +4246,12 @@ function renderHome(){try{renderNow()}catch(e){}
   const wk=LOG.filter(l=>l.d>=weekKey()).length,doneToday=LOG.some(l=>l.d===today());
   if(PR&&arr(PR.jours).length){let li=-1;for(let i=LOG.length-1;i>=0&&li<0;i--)li=PR.jours.findIndex(j=>j.nom===LOG[i].nom);const j=PR.jours[(li+1)%PR.jours.length];
     $('homeSeance').innerHTML=`<div class="row sb"><span class="mute" style="font-weight:700">${doneToday?'Bravo, séance faite aujourd\'hui':'Ta prochaine séance'}</span><span class="mute">${wk} / ${P.jours||3} cette semaine</span></div>
-    <h2 style="margin:8px 0 2px">${esc(j.nom)}</h2><div class="mute">${esc(j.focus||'')} · ${arr(j.exercices).length} exercices · ${esc(j.duree_min||'')} min</div>
+    <h2 style="margin:8px 0 2px">${esc(j.nom)}</h2><div class="mute">${esc(j.focus||'')} · ${arr(j.exercices).length} exercice${arr(j.exercices).length>1?'s':''} · ${esc(j.duree_min||'')} min</div>
     <div class="row" style="margin-top:14px"><button data-act="start" data-j="${PR.jours.indexOf(j)}" style="flex:1">Démarrer la séance</button><button class="ghost" data-act="goPane" data-v="sport" data-p="programme">Programme</button></div>`}
   else $('homeSeance').innerHTML=`<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><h3>Ton programme sur mesure</h3><div class="mute">Le coach te crée une semaine d'entraînement adaptée.</div></div></div><div class="row" style="margin-top:14px"><button data-act="genProgHome" style="flex:1">Créer mon programme</button><button class="ghost" data-act="goPane" data-v="sport" data-p="prets" style="flex:1">Séance prête</button></div>`;
   /* menu */
   const d=MENUS[today()];
-  $('homeMenu').innerHTML=d?`<div class="row sb"><h3>Au menu aujourd'hui</h3><span class="mute">${esc(d.calories_total)} kcal</span></div>${arr(d.repas).map(r=>`<div class="jl"><span class="n"><span class="mute">${esc(r.moment)}</span><br><b>${esc(r.nom)}</b></span><button class="ghost sm" data-act="cook" data-r="${reg(r)}">Recette</button></div>`).join('')}`
+  $('homeMenu').innerHTML=d?`<div class="row sb"><h3>Au menu aujourd'hui</h3><span class="mute">${num(d.calories_total)?Math.round(num(d.calories_total)).toLocaleString('fr-FR'):esc(d.calories_total)} kcal</span></div>${arr(d.repas).map(r=>`<div class="jl"><span class="n"><span class="mute">${esc(r.moment)}</span><br><b>${esc(r.nom)}</b></span><button class="ghost sm" data-act="cook" data-r="${reg(r)}">Recette</button></div>`).join('')}`
     :`<div class="hcard"><span class="ic c-yel"><svg class="i"><use href="#i-fork"/></svg></span><div style="flex:1"><h3>Ton menu du jour</h3><div class="mute">${BARIA()?'Des petits repas adaptés à ta phase, recettes pas à pas.':'4 repas équilibrés, recettes pas à pas.'}</div></div></div><button data-act="genMenuHome" class="alt wide" style="margin-top:14px">Composer mon menu</button>`;
   /* récup + poids */
   const last={};LOG.forEach(l=>l.ex.forEach(e=>{if(e.sets.length)clean(e.muscles).forEach(k=>{last[k]=Math.max(last[k]||0,l.t)})}));
@@ -4237,7 +4270,7 @@ function installHTML(){if(DEFERRED)return `<div class="hcard"><span class="ic c-
   <div class="steps"><div><em>1</em><span>Dans Chrome, touche le menu <b>⋮</b> en haut à droite</span></div><div><em>2</em><span>Choisis <b>« Installer l'application »</b> ou <b>« Ajouter à l'écran d'accueil »</b></span></div><div><em>3</em><span>Confirme avec <b>Installer</b></span></div></div>`;
   return `<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-add"/></svg></span><div><h3>Installe EdilganSuperCoach sur ton iPhone</h3><div class="mute">Une icône sur l'écran d'accueil, en plein écran, comme une vraie app.</div></div></div>
   <div class="steps"><div><em>1</em><span>Dans Safari, touche <b>Partager</b> (iOS 26 : d'abord <b>•••</b>, à côté de l'adresse) <svg class="i" style="width:18px;height:18px;vertical-align:-3px;color:var(--blue)"><use href="#i-share"/></svg></span></div><div><em>2</em><span>Fais défiler et choisis <b>« Sur l'écran d'accueil »</b></span></div><div><em>3</em><span>Laisse « Ouvrir en tant qu'app web » activé s'il apparaît, puis touche <b>Ajouter</b></span></div></div>
-  <p class="mute" style="margin:0">Ensuite, ouvre EdilganSuperCoach depuis son icône. Attention : l'app installée repart de zéro. Si tu as déjà noté des choses ici, fais d'abord Profil › L'app › <b>Sauvegarder mes données</b>, puis colle-la dans l'app installée (Suivi › Mes données).</p>`}
+  <p class="mute" style="margin:0">Ensuite, ouvre EdilganSuperCoach depuis son icône. Attention : l'app installée repart de zéro. Si tu as déjà noté des choses ici, fais d'abord Suivi › Sauvegarde › <b>Copier ma sauvegarde</b>, puis colle-la dans l'app installée (Suivi › Sauvegarde).</p>`}
 /* ---------- Partage ---------- */
 const APP_URL=/github\.io$/.test(location.host)?location.origin+location.pathname.replace(/index\.html$/,''):'https://francoismarechal91-hash.github.io/EdilganCoach/';
 let qrp=null;const loadQR=()=>qrp||(qrp=new Promise((ok,ko)=>{if(window.qrcode)return ok(window.qrcode);const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';sc.onload=()=>ok(window.qrcode);sc.onerror=()=>{qrp=null;ko()};document.head.appendChild(sc)}));
@@ -4313,7 +4346,7 @@ async function loadHero(){try{const legacy=store.get('heroimg','');if(legacy){aw
 function applyHero(){const h=document.querySelector('.hero'),img=HEROURL;if(!h)return;
   h.classList.toggle('hasimg',!!img);h.style.backgroundImage=img?`linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.55)),url("${img}")`:'';if($('heroDel'))$('heroDel').hidden=!img}
 $('heroIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const{canvas}=await shrink(f,1000);const url=canvas.toDataURL('image/jpeg',.8);try{await phOp('readwrite',st=>st.put({id:'__hero',data:url,d:today()}))}catch(e2){store.set('heroimg',url);if(store.get('heroimg','')!==url){toast('Mémoire pleine : image non enregistrée');return}}HEROURL=url;applyHero();toast('Image d\'accueil enregistrée')}catch(err){toast('Image illisible')}e.target.value=''});
-function applySize(z,save){setTimeout(()=>{try{renderFoldSums()}catch(e){}},0);document.documentElement.dataset.size=z;if(save)store.set('taille',z);document.querySelectorAll('#sizeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.size===z))}
+function applySize(z,save){setTimeout(()=>{try{renderFoldSums()}catch(e){}},0);document.documentElement.dataset.size=z;if(save)store.set('taille',z);document.querySelectorAll('#sizeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.size===z));document.querySelectorAll('#wSize button').forEach(b=>{b.classList.toggle('on',b.dataset.v===z);b.setAttribute('aria-pressed',String(b.dataset.v===z))})}
 $('sizeSeg').addEventListener('click',e=>{const b=e.target.closest('[data-size]');if(b)applySize(b.dataset.size,true)});
 {let k0=store.get('skin','');if(!k0){k0=BOOT_LS.coach_profil||BOOT_LS.coach_onb?'synth':'clair';if(BOOT_LS.coach_profil||BOOT_LS.coach_onb)store.set('skin',k0)}applySkin(k0)}applySize(store.get('taille','m'));setTimeout(loadHero,0);
 const domNoise=ms=>ms.every(m=>{for(const n of m.addedNodes)if(n.nodeType===1&&!(m.target.closest&&m.target.closest('[data-anim]')))return false;return true});
@@ -4484,7 +4517,7 @@ const chkTxt=()=>{const c=CHK[today()];return c?`Check-in du jour (1 à 5) : hum
 function chkHTML(compact){const c=CHK[today()]||{};return CHKQ.map(([k,n])=>`<div class="chkrow"><b>${n}</b><div class="dots5">${[1,2,3,4,5].map(v=>`<button data-act="chk" data-k="${k}" data-v="${v}" class="${c[k]===v?'on':''}" aria-label="${n} ${v} sur 5">${v}</button>`).join('')}</div></div>`).join('')+`<div class="mute" style="display:flex;justify-content:space-between;padding-left:100px;font-size:12px"><span>faible</span><span>fort</span></div>`}
 function renderChk(){
   const c=CHK[today()],done=c&&CHKQ.every(([k])=>c[k]);
-  $('homeChk').innerHTML=done?`<div class="row sb"><b>Ton check-in</b><button class="ghost sm" data-act="chkEdit">Modifier</button></div><div class="chips">${CHKQ.map(([k,n])=>`<span class="chip">${n} ${c[k]}/5</span>`).join('')}</div><div class="mute">${esc(chkAdvice(c))}</div>`
+  $('homeChk').innerHTML=done?`<div class="row sb"><b>Ton ressenti du jour</b><button class="ghost sm" data-act="chkEdit">Modifier</button></div><div class="chips">${CHKQ.map(([k,n])=>`<span class="chip">${n} ${c[k]}/5</span>`).join('')}</div><div class="mute">${esc(chkAdvice(c))}</div>`
     :`<h3 style="margin:0">Comment tu te sens ?</h3><p class="mute" style="margin:2px 0 6px">10 secondes, et le coach adapte ta journée.</p>${chkHTML()}`;
   $('chkForm').innerHTML=chkHTML();
   const days=[...Array(14)].map((_,i)=>dkey(Date.now()-(13-i)*864e5)),sv=$('chkSvg');
@@ -4507,7 +4540,7 @@ const BADGES=[['s1','Première séance','1 séance',t=>t.s>=1],['s10','Régulier
  ['t1','Une tonne','1 000 kg soulevés',t=>t.vol>=1000],['t10','Dix tonnes','10 000 kg soulevés',t=>t.vol>=10000],['r1','Record !','1er record battu',t=>t.rec>=1],['r10','Briseur de records','10 records',t=>t.rec>=10],
  ['st7','Une semaine','7 jours d\'affilée',(t,k)=>k.st>=7],['st30','Inarrêtable','30 jours d\'affilée',(t,k)=>k.st>=30],['j7','Carnet tenu','7 jours de repas notés',t=>t.jdays>=7],['eau5','Bien hydraté','objectif eau 5 jours',t=>t.eauDays>=5],
  ['k5','-5 kg','depuis la 1re pesée',t=>t.lost>=5],['k10','-10 kg','depuis la 1re pesée',t=>t.lost>=10],['cm5','-5 cm','tour de taille',t=>t.cm>=5],['w5','Victorieux','5 victoires notées',t=>t.wins>=5],
- ['n7','Dormeur averti','7 nuits notées',t=>t.nights>=7],['c7','À l\'écoute','7 check-ins',t=>t.chk>=7],['p7','Pilulier au top','7 jours complets',t=>t.pillDays>=7],['sc5','Détective','5 produits scannés',t=>t.scan>=5],['m3','Expert machines','3 machines analysées',t=>t.mach>=3],['f3','Gourmet','3 favoris en cuisine',t=>t.fav>=3]];
+ ['n7','Dormeur averti','7 nuits notées',t=>t.nights>=7],['c7','À l\'écoute','7 jours de ressenti noté',t=>t.chk>=7],['p7','Pilulier au top','7 jours complets',t=>t.pillDays>=7],['sc5','Détective','5 produits scannés',t=>t.scan>=5],['m3','Expert machines','3 machines analysées',t=>t.mach>=3],['f3','Gourmet','3 favoris en cuisine',t=>t.fav>=3]];
 const TITLES=['Premiers pas','Bon élan','Sur la lancée','Belle forme','Athlète','Cœur vaillant','Force tranquille','Au sommet','Légende','Super Coach'];
 function xpInfo(){const t=stats(),k=streak(),nb=BADGES.filter(b=>b[3](t,k)).length;
   const xp=t.s*50+t.jdays*10+t.chk*5+t.nights*5+t.pes*5+t.wins*15+t.eauDays*10+t.pillDays*10+nb*25+t.rec*20;
@@ -4663,10 +4696,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-77';
+const APP_VERSION='2026.11.26-78';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.26-78','Plus fiable','14 corrections : texte en grand mieux géré, double appui sans erreur, contrastes, chiffres arrondis partout pareil, message clair sans internet.','accueil',''],
  ['2026.11.26-77','Des rappels','Touche la cloche en haut : boire, médicaments, repas, pesée, séance, coucher. Le coach te fait signe quand l\'app est ouverte, et tu peux ajouter tes rappels au calendrier de ton téléphone pour être prévenu même app fermée.','accueil',''],
  ['2026.11.26-76','Montre combien tu en as mangé','Après un produit scanné, tu peux montrer en photo ce que tu as mangé (ta tartine, ton bol…) : le coach estime la quantité. Et il ne compte plus 125 g de rillettes pour une cracotte !','scan','produit'],
  ['2026.11.26-75','Des thèmes vivants','Chaque thème a maintenant sa matière et sa lumière : néon en Synthwave, papier et taches de soleil en Forêt, lucioles la nuit, peluche cousue pour Chats & chiens. Les reflets suivent ton doigt. Nouveau thème Océan ! Réglage « Animations : riches, sobres ou aucune ».','moi',''],
