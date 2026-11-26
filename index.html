@@ -491,6 +491,47 @@ html[data-fx=off] *,html[data-fx=off] *::before,html[data-fx=off] *::after{anima
 .pill button.ck.on{background:var(--green);color:#fff;animation:pop .35s}
 .drinkb{border-left:5px solid var(--blue)}
 .drink .big{font-size:44px}
+
+/* ===== Encore plus d'animations par thème ===== */
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+.blink{transform-box:fill-box;transform-origin:center;animation:blink 4.6s infinite}.blink.b2{animation-delay:-2.1s;animation-duration:5.3s}
+@keyframes blink{0%,91%,100%{transform:scaleY(1)}94%{transform:scaleY(.08)}}
+.ear{transform-box:fill-box;transform-origin:70% 100%;animation:ear 6s infinite}@keyframes ear{0%,86%,100%{transform:rotate(0)}89%{transform:rotate(-14deg)}92%{transform:rotate(4deg)}}
+.wag{transform-box:fill-box;transform-origin:0% 100%;animation:wag .45s ease-in-out infinite alternate}@keyframes wag{from{transform:rotate(-16deg)}to{transform:rotate(20deg)}}
+/* particules au toucher */
+.pt{position:fixed;z-index:85;pointer-events:none;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;animation:ptf .75s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes ptf{0%{transform:translate(0,0) scale(1) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.3) rotate(var(--rt));opacity:0}}
+.pt.ln{width:3px;height:14px;border-radius:2px}.pt.lf{width:11px;height:11px;border-radius:0 100% 0 100%}.pt.st{width:10px;height:10px;border-radius:0;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%)}
+.pt.hr{width:12px;height:12px;border-radius:0;clip-path:path('M6 11 C-2 5 1 -1 6 3 C11 -1 14 5 6 11Z')}
+/* Synthwave : cadre néon tournant, balayage d'écran, glitch au changement d'onglet */
+html[data-skin=synth] .hero::before,html[data-skin=synth] .lvl::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:2px;background:conic-gradient(from var(--ang),#ff2a9d,#22e4ff,#9b5cff,#ffcf5c,#ff2a9d);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spinb 5s linear infinite;z-index:3;pointer-events:none}
+@keyframes spinb{to{--ang:360deg}}
+html[data-skin=synth] body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:95;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+html[data-skin=synth] .lt h1{position:relative}
+html[data-skin=synth] section.on .lt h1{animation:glitch .6s steps(2) 1,neon 5s ease-in-out .6s infinite}
+@keyframes glitch{0%{text-shadow:3px 0 #22e4ff,-3px 0 #ff2a9d;transform:translateX(2px)}25%{transform:translateX(-3px) skewX(-6deg)}50%{text-shadow:-2px 0 #22e4ff,2px 0 #ff2a9d;transform:none}100%{text-shadow:none}}
+html[data-skin=synth] .tabs a.on{animation:pulseTab 2.4s ease-in-out infinite}@keyframes pulseTab{50%{box-shadow:0 0 18px rgba(255,42,157,.55)}}
+html[data-skin=synth] .chip.p,html[data-skin=synth] .seg button.on{animation:pulseTab 3s ease-in-out infinite}
+/* Forêt jour : papillons */
+html[data-skin=foret] #amb .bf{width:22px;height:16px;animation:bfly linear infinite}
+html[data-skin=foret] #amb .bf b{position:absolute;top:0;width:11px;height:14px;border-radius:60% 40% 50% 50%;background:var(--c,#f2b84b);animation:flap .18s ease-in-out infinite alternate;opacity:.85}
+html[data-skin=foret] #amb .bf b:first-child{left:0;transform-origin:100% 50%}html[data-skin=foret] #amb .bf b:last-child{right:0;transform-origin:0 50%;animation-direction:alternate-reverse}
+@keyframes flap{from{transform:scaleX(1)}to{transform:scaleX(.25)}}
+@keyframes bfly{0%{transform:translate(-10vw,60vh)}25%{transform:translate(25vw,40vh)}50%{transform:translate(55vw,52vh)}75%{transform:translate(80vw,30vh)}100%{transform:translate(112vw,42vh)}}
+/* Forêt nuit et Nuit : étoiles filantes, lune qui respire */
+html:is([data-skin=foretnuit],[data-skin=nuit]) #amb .sh{width:110px;height:2px;background:linear-gradient(90deg,transparent,#fff);border-radius:2px;transform:rotate(-24deg);animation:shoot 11s linear infinite;opacity:0}
+html[data-skin=foretnuit] .hero svg circle[r="19"]{animation:moon 5s ease-in-out infinite alternate}@keyframes moon{to{filter:drop-shadow(0 0 14px #fff6d6)}}
+/* Clair : bulles */
+html[data-skin=clair] #amb .bu{bottom:-20px;width:14px;height:14px;border-radius:50%;border:2px solid rgba(240,65,47,.25);animation:hrise linear infinite}
+/* transition entre onglets */
+#sweep{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:0}
+#sweep.go{animation:sweep .5s ease-out}
+@keyframes sweep{0%{opacity:.9;clip-path:inset(0 0 100% 0)}50%{opacity:.5;clip-path:inset(0 0 0 0)}100%{opacity:0;clip-path:inset(100% 0 0 0)}}
+html[data-skin=synth] #sweep{background:linear-gradient(180deg,transparent,rgba(255,42,157,.25),rgba(34,228,255,.25),transparent)}
+html[data-skin=foret] #sweep{background:linear-gradient(180deg,transparent,rgba(124,207,92,.25),transparent)}
+html[data-skin=foretnuit] #sweep{background:linear-gradient(180deg,transparent,rgba(255,236,140,.18),transparent)}
+html[data-skin=pets] #sweep{background:linear-gradient(180deg,transparent,rgba(255,122,147,.22),transparent)}
+html:is([data-skin=clair],[data-skin=nuit]) #sweep{background:linear-gradient(180deg,transparent,rgba(240,65,47,.16),transparent)}
 /* tuiles : toujours le texte du thème */
 .tile{color:var(--ink)!important}.tile small{color:var(--mute)!important}
 /* ===== Petites animations ===== */
@@ -540,7 +581,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
 </svg>
 
-<div id="amb" aria-hidden="true"></div>
+<div id="amb" aria-hidden="true"></div><div id="sweep" aria-hidden="true"></div>
 <header class="appbar" id="appbar">
   <a class="logo" href="#accueil"><span><svg class="i"><use href="#i-dumb"/></svg></span><span class="lname">Edilgan<b>Super</b>Coach</span></a>
   <a class="ib" href="#coach" aria-label="Parler au coach" id="coachBtn"><svg class="i"><use href="#i-chat"/></svg></a>
@@ -2081,7 +2122,7 @@ function route(){
   document.querySelectorAll('section[data-v]').forEach(s=>s.classList.toggle('on',s.dataset.v===v));
   document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===v));
   $('avatar').classList.toggle('on',v==='moi');
-  if(v!=='sommeil'&&bT)stopBreath();if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='sommeil')renderSleep();if(v==='suivi')renderSuivi();$('coachBtn').classList.toggle('on',v==='coach');window.scrollTo(0,0);
+  if(v!=='sommeil'&&bT)stopBreath();const sw=$('sweep');if(sw&&document.documentElement.dataset.fx!=='off'&&route.last&&route.last!==v){sw.classList.remove('go');void sw.offsetWidth;sw.classList.add('go')}route.last=v;if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='sommeil')renderSleep();if(v==='suivi')renderSuivi();$('coachBtn').classList.toggle('on',v==='coach');window.scrollTo(0,0);
 }
 window.addEventListener('scroll',()=>$('appbar').classList.toggle('sc',scrollY>4),{passive:true});
 /* ---------- Accueil ---------- */
@@ -2177,8 +2218,8 @@ function heroDeco(k){
   if(k==='foret'||k==='foretnuit')return forestSVG(k==='foretnuit');
   if(k==='pets'){let h='';[[8,10,22,-20],[80,8,18,25],[60,30,14,10],[20,46,16,-35],[88,44,20,15]].forEach(([x,y,s,r])=>h+=`<span class="paw" style="left:${x}%;top:${y}%;width:${s}px;height:${s}px;transform:rotate(${r}deg)">${PAW}</span>`);
     h+=`<svg class="pets" viewBox="0 0 400 80" preserveAspectRatio="xMidYMax meet" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:80px;top:auto">
-     <g transform="translate(70 18)"><path d="M0 62 Q0 18 40 18 Q80 18 80 62Z" fill="#f3c7a6"/><path d="M8 30 L4 4 L28 20Z M72 30 L76 4 L52 20Z" fill="#f3c7a6"/><path d="M12 24 L10 12 L22 20Z M68 24 L70 12 L58 20Z" fill="#ff9aae"/><circle cx="28" cy="40" r="4" fill="#3c2b2b"/><circle cx="52" cy="40" r="4" fill="#3c2b2b"/><path d="M36 48 L44 48 L40 52Z" fill="#ff7a93"/><path d="M40 52 Q34 58 30 54 M40 52 Q46 58 50 54" stroke="#3c2b2b" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M14 46 H0 M14 50 H2 M66 46 H80 M66 50 H78" stroke="#c89a7a" stroke-width="1.6"/></g>
-     <g transform="translate(250 14)"><path d="M0 66 Q0 16 42 16 Q84 16 84 66Z" fill="#c9a07a"/><path d="M6 22 Q-10 30 -4 58 Q8 56 16 30Z M78 22 Q94 30 88 58 Q76 56 68 30Z" fill="#8a6145"/><ellipse cx="42" cy="50" rx="18" ry="13" fill="#f1dcc6"/><circle cx="28" cy="38" r="4" fill="#3c2b2b"/><circle cx="56" cy="38" r="4" fill="#3c2b2b"/><ellipse cx="42" cy="46" rx="6" ry="4.5" fill="#3c2b2b"/><path d="M42 50 V55 M42 55 Q36 60 32 56 M42 55 Q48 60 52 56" stroke="#3c2b2b" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M38 58 Q42 68 46 58Z" fill="#ff7a93"/></g></svg>`;return h}
+     <g transform="translate(70 18)"><path d="M0 62 Q0 18 40 18 Q80 18 80 62Z" fill="#f3c7a6"/><path class="ear" d="M8 30 L4 4 L28 20Z" fill="#f3c7a6"/><path d="M72 30 L76 4 L52 20Z" fill="#f3c7a6"/><path d="M12 24 L10 12 L22 20Z M68 24 L70 12 L58 20Z" fill="#ff9aae"/><circle class="blink" cx="28" cy="40" r="4" fill="#3c2b2b"/><circle class="blink" cx="52" cy="40" r="4" fill="#3c2b2b"/><path d="M36 48 L44 48 L40 52Z" fill="#ff7a93"/><path d="M40 52 Q34 58 30 54 M40 52 Q46 58 50 54" stroke="#3c2b2b" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M14 46 H0 M14 50 H2 M66 46 H80 M66 50 H78" stroke="#c89a7a" stroke-width="1.6"/></g>
+     <g transform="translate(250 14)"><path class="wag" d="M80 58 q22 -6 22 -30" stroke="#c9a07a" stroke-width="8" fill="none" stroke-linecap="round"/><path d="M0 66 Q0 16 42 16 Q84 16 84 66Z" fill="#c9a07a"/><path d="M6 22 Q-10 30 -4 58 Q8 56 16 30Z M78 22 Q94 30 88 58 Q76 56 68 30Z" fill="#8a6145"/><ellipse cx="42" cy="50" rx="18" ry="13" fill="#f1dcc6"/><circle class="blink b2" cx="28" cy="38" r="4" fill="#3c2b2b"/><circle class="blink b2" cx="56" cy="38" r="4" fill="#3c2b2b"/><ellipse cx="42" cy="46" rx="6" ry="4.5" fill="#3c2b2b"/><path d="M42 50 V55 M42 55 Q36 60 32 56 M42 55 Q48 60 52 56" stroke="#3c2b2b" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M38 58 Q42 68 46 58Z" fill="#ff7a93"/></g></svg>`;return h}
   return '';
 }
 function applySkin(k,save){
@@ -2234,19 +2275,26 @@ const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function ambiance(k){
   const a=$('amb');if(!a)return;let h='';const r=(i,m)=>((i*9301+49297)%233280)/233280*m;
   if(k==='synth')h='<i class="hz"></i><i class="sh"></i><i class="sh" style="animation-delay:-4.5s;top:20%"></i>';
+  /*bf*/if(false)h+=['#f2b84b','#ff8fb1','#8fd3ff'].map((c,i)=>`<i class="bf" style="--c:${c};animation-duration:${18+i*6}s;animation-delay:-${i*7}s"><b></b><b></b></i>`).join('');
+  if(k==='foretnuit'||k==='nuit')h+='<i class="sh"></i><i class="sh" style="animation-delay:-6s"></i>';
+  if(k==='clair')h+=[...Array(8)].map((_,i)=>`<i class="bu" style="left:${(i*13+7)%100}%;animation-duration:${14+i%5*3}s;animation-delay:-${i*2.5}s"></i>`).join('');
   if(k==='foret'){h='<i class="sun" style="left:-10vw;top:-6vw"></i>';for(let i=0;i<7;i++)h+=`<i class="lf" style="left:${r(i+1,100)}%;animation-duration:${14+r(i+3,10)}s;animation-delay:-${r(i+7,20)}s"></i>`}
+  if(k==='foret')h+=['#f2b84b','#ff8fb1','#8fd3ff'].map((c,i)=>`<i class="bf" style="--c:${c};animation-duration:${18+i*6}s;animation-delay:-${i*7}s"><b></b><b></b></i>`).join('');
   if(k==='foretnuit')for(let i=0;i<16;i++)h+=`<i class="ff" style="left:${r(i+2,100)}%;top:${r(i+5,100)}%;--dx:${(r(i+9,80)-40).toFixed(0)}px;--dy:${(r(i+4,80)-40).toFixed(0)}px;animation-duration:${4+r(i+1,5)}s;animation-delay:-${r(i+6,6)}s"></i>`;
   if(k==='pets')for(let i=0;i<6;i++)h+=`<i class="ht" style="left:${r(i+3,100)}%;animation-duration:${16+r(i+2,12)}s;animation-delay:-${r(i+8,24)}s"></i>`;
   if(k==='clair')h='<i class="bl" style="left:-20vw;top:-10vh;background:#ff6a3d"></i><i class="bl" style="right:-25vw;top:40vh;background:#ffc23d;animation-delay:-7s"></i>';
   if(k==='nuit')for(let i=0;i<40;i++)h+=`<i class="st" style="left:${r(i+1,100)}%;top:${r(i+11,100)}%;animation-delay:-${r(i+3,3)}s;opacity:${.2+r(i+5,.6)}"></i>`;
   a.innerHTML=h;
 }
+function burst(x,y){const k=document.documentElement.dataset.skin,C={synth:['#ff2a9d','#22e4ff','#ffcf5c'],foret:['#7ccf5c','#e0b13c','#3f8a3a'],foretnuit:['#fff6b8','#ffe27a','#b9f294'],pets:['#ff7a93','#ffc857','#6cc3e0'],clair:['#f0412f','#ffc23d','#2f8cf0'],nuit:['#ffffff','#ffc23d','#f0412f']}[k]||['#fff'],cls={synth:'ln',foret:'lf',foretnuit:'',pets:'hr',clair:'',nuit:'st'}[k]||'';
+  for(let i=0;i<9;i++){const a=i/9*Math.PI*2+Math.random()*.4,r=34+Math.random()*30,d=document.createElement('i');d.className='pt '+cls;d.style.cssText=`left:${x}px;top:${y}px;background:${C[i%C.length]};--dx:${Math.cos(a)*r}px;--dy:${Math.sin(a)*r-(k==='foret'?-10:10)}px;--rt:${Math.round(Math.random()*360)}deg;${k==='foretnuit'||k==='synth'?`box-shadow:0 0 8px ${C[i%C.length]}`:''}`;document.body.appendChild(d);setTimeout(()=>d.remove(),800)}}
 function applyFx(v,save){document.documentElement.dataset.fx=v;if(save)store.set('fx',v);document.querySelectorAll('#fxSeg button').forEach(b=>b.classList.toggle('on',b.dataset.fx===v))}
 $('fxSeg').addEventListener('click',e=>{const b=e.target.closest('[data-fx]');if(b)applyFx(b.dataset.fx,true)});
 document.addEventListener('pointerdown',e=>{
   if(document.documentElement.dataset.fx==='off')return;
   const b=e.target.closest('button,.tile');
   if(b&&!b.disabled){const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height)*2.2,s=document.createElement('span');s.className='rip';s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;b.appendChild(s);setTimeout(()=>s.remove(),600)}
+  if(b)burst(e.clientX,e.clientY);
   if(document.documentElement.dataset.skin==='pets'){const p=document.createElement('span');p.className='pawtap';p.innerHTML=PAW;p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';p.style.transform=`rotate(${Math.round(Math.random()*40-20)}deg)`;document.body.appendChild(p);setTimeout(()=>p.remove(),950)}
 },{passive:true});
 
@@ -2381,7 +2429,7 @@ document.addEventListener('keydown',e=>{const t=e.target;if(e.key==='Enter'&&!e.
 new MutationObserver(()=>document.querySelectorAll('textarea.grow').forEach(t=>{if(t.value&&!t.dataset.g){t.dataset.g=1;grow(t)}})).observe(document.body,{childList:true,subtree:true});
 setTimeout(()=>document.querySelectorAll('textarea.grow').forEach(grow),300);
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-23';
+const APP_VERSION='2026.11.26-24';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
