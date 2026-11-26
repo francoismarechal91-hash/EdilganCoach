@@ -2875,7 +2875,7 @@ Format JSON : {"nom":"","description":"1 phrase simple","usages":["…"],"certit
   wSize(b){applySize(b.dataset.v,true);document.querySelectorAll('#wSize button').forEach(x=>x.classList.toggle('on',x===b))},
   wRestore(){store.set('onb',1);$('welcome').classList.remove('on');document.body.style.overflow='';openPane('suivi','donnees')},
   wLater(){store.set('onb',1);$('welcome').classList.remove('on');document.body.style.overflow=''},
-  heroDel(){try{localStorage.removeItem('coach_heroimg')}catch(e){}applyHero()},
+  heroDel(){try{localStorage.removeItem('coach_heroimg')}catch(e){}phOp('readwrite',st=>st.delete('__hero')).catch(()=>{});HEROURL='';applyHero()},
   skin(b){applySkin(b.dataset.k,true);toast('Thème « '+SKINS.find(x=>x.k===b.dataset.k).n+' » appliqué');renderHome()},
   envieC(b){const t=$('envie');t.value=(t.value.trim()?t.value.trim()+' ':'')+b.dataset.v;t.focus();store.set('envie',t.value)},
   semaineEnvie(b){if(!$('envie').value.trim()){$('envie').focus();return}b.dataset.envie=1;A.genProg(b);setTimeout(()=>$('prog').scrollIntoView({behavior:'smooth'}),100)},
@@ -3288,12 +3288,14 @@ function applySkin(k,save){setTimeout(()=>{try{renderFoldSums()}catch(e){}},0);
   document.querySelector('link[rel=apple-touch-icon]').setAttribute('href',{synth:'icon.png',foret:'icon-foret.png',foretnuit:'icon-foretnuit.png',pets:'icon-pets.png',clair:'icon-clair.png',nuit:'icon-clair.png'}[sk.k]);
   if($('skins'))$('skins').innerHTML=SKINS.map(x=>`<button class="skin${x.k===sk.k?' on':''}" data-act="skin" data-k="${x.k}" aria-pressed="${x.k===sk.k}"><span class="pv" style="background:${x.pv}">${x.d.map((c,i)=>`<i style="left:${10+i*24}px;background:${c};box-shadow:0 0 0 2px rgba(255,255,255,.6)"></i>`).join('')}</span><b>${esc(x.n)}</b></button>`).join('');
 }
-function applyHero(){const h=document.querySelector('.hero'),img=store.get('heroimg','');if(!h)return;
+let HEROURL='';
+async function loadHero(){try{const legacy=store.get('heroimg','');if(legacy){await phOp('readwrite',st=>st.put({id:'__hero',data:legacy,d:today()}));localStorage.removeItem('coach_heroimg');HEROURL=legacy}else{const r=await phOp('readonly',st=>st.get('__hero'));HEROURL=r&&r.data||''}}catch(e){HEROURL=store.get('heroimg','')}applyHero()}
+function applyHero(){const h=document.querySelector('.hero'),img=HEROURL;if(!h)return;
   h.classList.toggle('hasimg',!!img);h.style.backgroundImage=img?`linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.55)),url("${img}")`:'';if($('heroDel'))$('heroDel').hidden=!img}
-$('heroIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const{canvas}=await shrink(f,1000);const url=canvas.toDataURL('image/jpeg',.8);store.set('heroimg',url);if(!store.get('heroimg','')){toast('Image trop lourde, essaie-en une autre');return}applyHero();toast('Image d\'accueil enregistrée')}catch(err){toast('Image illisible')}e.target.value=''});
+$('heroIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const{canvas}=await shrink(f,1000);const url=canvas.toDataURL('image/jpeg',.8);try{await phOp('readwrite',st=>st.put({id:'__hero',data:url,d:today()}))}catch(e2){store.set('heroimg',url)}HEROURL=url;applyHero();toast('Image d\'accueil enregistrée')}catch(err){toast('Image illisible')}e.target.value=''});
 function applySize(z,save){setTimeout(()=>{try{renderFoldSums()}catch(e){}},0);document.documentElement.dataset.size=z;if(save)store.set('taille',z);document.querySelectorAll('#sizeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.size===z))}
 $('sizeSeg').addEventListener('click',e=>{const b=e.target.closest('[data-size]');if(b)applySize(b.dataset.size,true)});
-applySkin(store.get('skin','synth'));applySize(store.get('taille','m'));applyHero();
+applySkin(store.get('skin','synth'));applySize(store.get('taille','m'));setTimeout(loadHero,0);
 const domNoise=ms=>ms.every(m=>{for(const n of m.addedNodes)if(n.nodeType===1&&!(m.target.closest&&m.target.closest('[data-anim]')))return false;return true});
 new MutationObserver(ms=>{if(!domNoise(ms))ANIM.mount()}).observe(document.body,{childList:true,subtree:true});ANIM.mount();
 $('envie').value=store.get('envie','');$('envie').addEventListener('input',()=>store.set('envie',$('envie').value));
@@ -3551,7 +3553,7 @@ setInterval(()=>{if(document.visibilityState==='visible'){const d=store.get('boi
 /* photos (IndexedDB) */
 const idb=()=>new Promise((ok,ko)=>{try{const r=indexedDB.open('edilgan',1);r.onupgradeneeded=()=>r.result.createObjectStore('photos',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)}catch(e){ko(e)}});
 const phOp=(mode,fn)=>idb().then(db=>new Promise((ok,ko)=>{const t=db.transaction('photos',mode),st=t.objectStore('photos'),r=fn(st);t.oncomplete=()=>ok(r&&r.result);t.onerror=()=>ko(t.error)}));
-async function renderPhotos(){let L=[];try{L=await phOp('readonly',st=>st.getAll())||[]}catch(e){}L.sort((a,b)=>a.d<b.d?-1:1);
+async function renderPhotos(){let L=[];try{L=(await phOp('readonly',st=>st.getAll())||[]).filter(p=>p.id!=='__hero')}catch(e){}L.sort((a,b)=>a.d<b.d?-1:1);
   $('phList').innerHTML=L.map(p=>`<figure><img src="${p.data}" alt="Photo du ${frd(p.d)}"><figcaption>${frd(p.d)} <button class="x" style="min-height:28px;min-width:28px;font-size:16px" data-act="phDel" data-id="${p.id}" aria-label="Supprimer">×</button></figcaption></figure>`).join('');
   $('phCmp').innerHTML=L.length>1?`<div class="cmp" id="cmpBox"><img src="${L[0].data}" alt="Avant"><img class="after" src="${L[L.length-1].data}" alt="Après"><div class="bar2"></div><span style="left:8px">${frd(L[0].d)}</span><span style="right:8px">${frd(L[L.length-1].d)}</span></div><input type="range" min="0" max="100" value="50" id="cmpR" aria-label="Comparer avant et après" style="margin-top:8px;padding:0;min-height:30px;background:none;border:0">`:'';
   const r=$('cmpR');if(r)r.oninput=()=>$('cmpBox').style.setProperty('--cut',r.value+'%')}
@@ -3640,7 +3642,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-61';
+const APP_VERSION='2026.11.26-62';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
