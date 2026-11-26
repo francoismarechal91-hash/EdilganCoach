@@ -3691,7 +3691,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-66';
+const APP_VERSION='2026.11.26-67';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
@@ -3702,7 +3702,8 @@ const NEWS=[
  ['2026.11.26-49','Photo dans le chat','Envoie une photo au coach avec ta question.','coach','chat'],
  ['2026.11.26-50','Repas en douceur','Minuteur guidé pour manger lentement après la sleeve.','cuisine','journal'],
  ['2026.11.26-54','Conseils pratiques','40 fiches vérifiées : restaurant, fêtes, sommeil, courses…','coach','fiches'],
- ['2026.11.26-55','Nouveau look','Plus lisible, et des animations propres à chaque thème.','moi','']];
+ ['2026.11.26-55','Nouveau look','Plus lisible, et des animations propres à chaque thème.','moi',''],
+ ['2026.11.26-66','Corrige l\'IA','Assiette : dis ce qui est faux, change les grammes ou retire un aliment, et elle retient tes corrections.','scan','assiette']];
 function showNews(){let seen=store.get('newsSeen','');if(!seen){if(!P.taille){store.set('newsSeen',APP_VERSION);return}seen='2026.11.26-40'}const vk=v=>String(v).replace(/-(\d+)$/,(m,n)=>'-'+n.padStart(5,'0')),L=NEWS.filter(n=>vk(n[0])>vk(seen)&&(n[4]!=='journal'||n[1]!=='Repas en douceur'||BARIA()));store.set('newsSeen',APP_VERSION);if(!L.length||$('welcome').classList.contains('on'))return;
   const go=()=>{if($('ov').classList.contains('on')||$('scanOv').classList.contains('on')||$('welcome').classList.contains('on')||$('sheet').classList.contains('on'))return setTimeout(go,4000);openSheet(`<div class="row sb"><h2 style="margin:0">Quoi de neuf ?</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Depuis ta dernière visite :</p>${L.map(n=>`<button class="stp news" data-act="newsGo" data-v="${n[3]}" data-p="${n[4]}"><i>★</i><span><b>${esc(n[1])}</b><small>${esc(n[2])}</small></span></button>`).join('')}`)};setTimeout(go,1500)}
 async function checkUpdate(){
