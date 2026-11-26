@@ -1427,7 +1427,7 @@ const store={get(k,d){try{const v=JSON.parse(localStorage.getItem('coach_'+k));i
 function lsSize(){let n=0;for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);n+=k.length+(localStorage.getItem(k)||'').length}return n}
 /* purge sûre, du moins précieux au plus précieux ; ne touche jamais profil, journal, séances, pesées, favoris */
 function lsCompact(keep){let freed=0;const W=(k,f)=>{if(k===keep)return;try{const s=localStorage.getItem('coach_'+k);if(s==null)return;const v=f(JSON.parse(s));if(v==null){localStorage.removeItem('coach_'+k);freed+=s.length;return}const n=JSON.stringify(v);if(n.length<s.length){localStorage.setItem('coach_'+k,n);freed+=s.length-n.length}}catch(e){}};
-  W('phc',()=>null);try{PHC={}}catch(e){}
+  W('phc2',()=>null);try{PHC={}}catch(e){}
   const noDet=m=>{for(const d in m)if(d!==today())arr(m[d]&&m[d].repas).forEach(r=>{if(r&&r.det)delete r.det});return m};W('menus',noDet);try{noDet(MENUS)}catch(e){}
   W('chat',c=>arr(c).slice(-20));try{CH=CH.slice(-20)}catch(e){}
   W('produits',p=>arr(p).slice(0,15).map((x,i)=>i<5?x:{...x,ingredients:''}));try{PRODS=PRODS.slice(0,15)}catch(e){}
@@ -2923,7 +2923,7 @@ Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une
   drinkStop(){try{localStorage.removeItem('coach_boire')}catch(e){}renderDrink()},
   phDel(b){if(!b.dataset.sure){b.dataset.sure=1;const o=b.textContent;b.textContent='Sûr ?';setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent=o}},3000);return}phOp('readwrite',st=>st.delete(b.dataset.id)).then(renderPhotos)},
   bkSave(b){bkSave(b)},
-  santeT(b){const k=b.dataset.k,L=P.santeL||[];P.santeL=L.includes(k)?L.filter(x=>x!==k):[...L,k];saveP();renderSante();calc()},
+  santeT(b){const k=b.dataset.k,L=P.santeL||[];P.santeL=L.includes(k)?L.filter(x=>x!==k):[...L,k];saveP();renderSante();calc();[renderDrink,renderDaily,()=>{if(lazyPane.L&&!lazyPane.L.fiches)renderFiches()}].forEach(f=>{try{f()}catch(e){}})},
   genProgHome(b){openPane('sport','programme');setTimeout(()=>$('genProg').click(),80)},
   genMenuHome(b){openPane('cuisine','menus');setTimeout(()=>$('genMenu').click(),80)},
   goMoiW(){location.hash='moi';setTimeout(()=>{$('wIn').scrollIntoView({block:'center'});$('wIn').focus()},80)},
@@ -3159,16 +3159,16 @@ function renderProd(p){
 }
 function renderProdHist(){$('prodHistC').style.display=PRODS.length?'block':'none';$('prodHist').innerHTML=PRODS.map((p,i)=>{let a=null;try{a=prodAnalyse(p)}catch(e){}return `<button class="chip" data-act="showProd" data-i="${i}">${a&&a.known?`<i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${a.col};margin-right:6px"></i>`:''}${esc(p.nom)}</button>`}).join('')}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b&&A[b.dataset.act])A[b.dataset.act](b,e)});
-document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{const b=e.target.closest('[data-pane]');if(!b)return;const sec=seg.closest('section');
+document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{const b=e.target.closest('button[data-pane]');if(!b||!seg.contains(b))return;const sec=seg.closest('section');
   seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));sec.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.pane===b.dataset.pane));lazyPane(sec);b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo(0,0)}));
 function lazyPane(sec){if(!sec)return;const L=lazyPane.L||(lazyPane.L={prets:renderPrets,exos:renderExo,fiches:renderFiches,reperes:renderRef,monde:initWorld,programme:renderProg,favoris:renderFav});
-  sec.querySelectorAll('.pane.on').forEach(p=>{const k=p.dataset.pane,f=L[k];if(!f)return;if(k!=='reperes')delete L[k];try{f()}catch(e){console.error(k,e)}})}
+  sec.querySelectorAll('.pane.on').forEach(p=>{const k=p.dataset.pane,f=L[k];if(!f)return;if(k!=='reperes')delete L[k];try{f()}catch(e){console.error(k,e)}});sec.querySelectorAll('textarea.grow').forEach(t=>{if(t.value&&t.getClientRects().length)grow(t)})}
 function openPane(v,p){if(location.hash!=='#'+v)location.hash=v;setTimeout(()=>{const b=document.querySelector(`section[data-v="${v}"] .seg [data-pane="${p}"]`);if(b)b.click()},30)}
 
 /* ---------- Navigation ---------- */
 const VIEWS=['accueil','moi','sport','scan','cuisine','coach','sommeil','suivi'];
 function route(){
-  $('sheet').classList.remove('on');if($('scanOv').classList.contains('on')&&A.scanStop)A.scanStop();let h=location.hash.slice(1);if(h==='programme')h='sport';if(h==='machine')h='scan';
+  $('sheet').classList.remove('on');if($('scanOv').classList.contains('on')&&A.scanStop)A.scanStop();let h=location.hash.slice(1);if(h==='programme')h='sport';if(h==='machine'){h='scan';setTimeout(()=>{const b=document.querySelector('section[data-v="scan"] .seg [data-pane="machine"]');if(b&&!b.classList.contains('on'))b.click()},0)}
   const v=VIEWS.includes(h)?h:'accueil';
   document.querySelectorAll('section[data-v]').forEach(s=>s.classList.toggle('on',s.dataset.v===v));
   document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===(v==='sommeil'?'accueil':v)));{const tb=document.querySelector('.tabs'),ti=['accueil','sport','scan','cuisine','suivi'].indexOf(v==='sommeil'?'accueil':v);if(tb){tb.style.setProperty('--ti',Math.max(ti,0));tb.classList.toggle('noti',ti<0)}}
@@ -3587,11 +3587,11 @@ function restoreFrom(txt){
   store.set('onb',1);confetti();setTimeout(()=>location.reload(),4000);
 }
 /* ---------- Zones de texte qui s'agrandissent ---------- */
-function grow(t){if(!t||t.tagName!=='TEXTAREA')return;t.style.height='auto';t.style.height=Math.min(t.scrollHeight+3,320)+'px';t.style.overflowY=t.scrollHeight>320?'auto':'hidden'}
+function grow(t){if(!t||t.tagName!=='TEXTAREA'||!t.getClientRects().length)return;t.style.height='auto';t.style.height=Math.min(t.scrollHeight+3,320)+'px';t.style.overflowY=t.scrollHeight>320?'auto':'hidden'}
 document.addEventListener('input',e=>{if(e.target.classList&&e.target.classList.contains('grow'))grow(e.target)});
 document.addEventListener('focusin',e=>{if(e.target.classList&&e.target.classList.contains('grow'))grow(e.target)});
 document.addEventListener('keydown',e=>{const t=e.target;if(e.key==='Enter'&&!e.shiftKey&&t.dataset&&t.dataset.enter&&A[t.dataset.enter]){e.preventDefault();const b=document.querySelector(`[data-act="${t.dataset.enter}"]`);A[t.dataset.enter](b||t,e)}});
-new MutationObserver(ms=>{if(!domNoise(ms))document.querySelectorAll('textarea.grow').forEach(t=>{if(t.value&&!t.dataset.g){t.dataset.g=1;grow(t)}})}).observe(document.body,{childList:true,subtree:true});
+new MutationObserver(ms=>{if(!domNoise(ms))document.querySelectorAll('textarea.grow').forEach(t=>{if(t.value&&!t.dataset.g&&t.getClientRects().length){t.dataset.g=1;grow(t)}})}).observe(document.body,{childList:true,subtree:true});
 setTimeout(()=>document.querySelectorAll('textarea.grow').forEach(t=>{if(t.offsetParent)grow(t)}),300);
 
 /* ===================== BIEN-ÊTRE ===================== */
@@ -3647,7 +3647,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-63';
+const APP_VERSION='2026.11.26-64';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
@@ -3660,12 +3660,12 @@ const NEWS=[
  ['2026.11.26-54','Conseils pratiques','40 fiches vérifiées : restaurant, fêtes, sommeil, courses…','coach','fiches'],
  ['2026.11.26-55','Nouveau look','Plus lisible, et des animations propres à chaque thème.','moi','']];
 function showNews(){let seen=store.get('newsSeen','');if(!seen){if(!P.taille){store.set('newsSeen',APP_VERSION);return}seen='2026.11.26-40'}const L=NEWS.filter(n=>n[0]>seen&&(n[4]!=='journal'||n[1]!=='Repas en douceur'||BARIA()));store.set('newsSeen',APP_VERSION);if(!L.length||$('welcome').classList.contains('on'))return;
-  setTimeout(()=>openSheet(`<div class="row sb"><h2 style="margin:0">Quoi de neuf ?</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Depuis ta dernière visite :</p>${L.map(n=>`<button class="stp news" data-act="newsGo" data-v="${n[3]}" data-p="${n[4]}"><i>★</i><span><b>${esc(n[1])}</b><small>${esc(n[2])}</small></span></button>`).join('')}`),1500)}
+  const go=()=>{if($('ov').classList.contains('on')||$('scanOv').classList.contains('on')||$('welcome').classList.contains('on')||$('sheet').classList.contains('on'))return setTimeout(go,4000);openSheet(`<div class="row sb"><h2 style="margin:0">Quoi de neuf ?</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Depuis ta dernière visite :</p>${L.map(n=>`<button class="stp news" data-act="newsGo" data-v="${n[3]}" data-p="${n[4]}"><i>★</i><span><b>${esc(n[1])}</b><small>${esc(n[2])}</small></span></button>`).join('')}`)};setTimeout(go,1500)}
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
     const uk='upd:'+d.v;if(d.v&&d.v!==APP_VERSION&&Date.now()-(+sessionStorage.getItem(uk)||0)>6e5){sessionStorage.setItem(uk,Date.now());
-      const busyUser=$('ov').classList.contains('on')||document.activeElement&&/INPUT|TEXTAREA/.test(document.activeElement.tagName);
+      const busyUser=$('ov').classList.contains('on')||$('welcome').classList.contains('on')||$('scanOv').classList.contains('on')||$('sheet').classList.contains('on')||!!NZ||!!bT||SENDING||!!document.querySelector('.skel')||document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
       if(!busyUser){toast('Nouvelle version : mise à jour…');setTimeout(()=>location.reload(),1200)}
       else if(!$('upd')){document.body.insertAdjacentHTML('beforeend',`<div id="upd" style="position:fixed;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:15;max-width:540px;margin:0 auto;background:var(--ink);color:var(--bg);border-radius:18px;padding:12px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)"><span style="flex:1;font-weight:600">Une nouvelle version est prête</span><button class="sm" data-act="doUpdate">Mettre à jour</button></div>`)}
     }}catch(e){}
