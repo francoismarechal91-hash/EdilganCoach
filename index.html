@@ -885,6 +885,10 @@ html:not([data-fx=off]) #ov.on[data-kdir]>:nth-child(4){animation-delay:.04s}htm
 html:not(#_) section[data-v=accueil]>.tiles>.tile:active{transform:scale(.98)}
 @supports (transition-timing-function:linear(0,1)){html[data-fx=on] :is(a.card,a.lnk,label.drop,.skin):not(:active){transition:transform .6s linear(0,.36 8%,.8 18%,1.05 30%,1.09 36%,1.05 46%,.99 60%,1.002 78%,1)}}
 /* === /ag_finish === */
+.pushc{border-radius:18px;padding:14px;background:color-mix(in srgb,var(--red) 8%,var(--fill));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--red) 25%,transparent)}.pushc.ok{background:color-mix(in srgb,var(--green,#22a06b) 10%,var(--fill));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--green,#22a06b) 35%,transparent)}
+.pushc .row b{display:block;font-size:16.5px}.pushc small{display:block;color:var(--mute);font-size:13.5px;line-height:1.35}.pushp{margin:10px 0 10px;font-size:15px;line-height:1.45}.pushp.ok{font-weight:700;color:var(--green,#22a06b)}
+.pushol{margin:8px 0 0;padding-left:22px;display:grid;gap:10px;font-size:14.5px;line-height:1.45}.btnl{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border-radius:12px;background:var(--red);color:#fff!important;font-weight:700;text-decoration:none}.btnl.big{display:flex;width:100%;min-height:54px;font-size:17px}
+.rapcal summary{cursor:pointer;font-weight:700;padding:10px 0;min-height:44px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -3637,10 +3641,13 @@ function rapHTML(){const n=Object.keys(RAPD).reduce((a,k)=>a+rapTimes(k).length,
   return`<div class="row sb"><h2 style="margin:0">Mes rappels</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div>
   <p class="sub" style="margin-top:6px">Choisis ce que le coach doit te rappeler.</p>
   <div id="rapBox">${Object.keys(RAPD).map(k=>`<div class="rapr${RAP[k].on?' on':''}"><label class="rapt"><input type="checkbox" data-rk="${k}" ${RAP[k].on?'checked':''}><span class="rapi" aria-hidden="true">${RAPN[k][1]}</span><span><b>${RAPN[k][0]}</b><small>${esc(rapSum(k))}</small></span></label>${RAP[k].on?rapFields(k):''}</div>`).join('')}</div>
-  <div class="tip" style="margin-top:14px"><b>App ouverte :</b> le coach te fait signe à l'heure prévue (avec un petit son). <b>App fermée :</b> ajoute tes rappels au calendrier de ton téléphone, il te préviendra tout seul.</div>
+  <div id="pushBox" style="margin-top:14px">${pushHTML()}</div>
+  <details class="rapcal" style="margin-top:14px"><summary>Autre solution : le calendrier du téléphone</summary>
+  <p class="mute" style="font-size:14px;margin:6px 0 0">Tes rappels deviennent des événements du Calendrier, avec une alerte à l'heure pile, même app fermée.</p>
   <button data-act="rapCal" style="width:100%;margin-top:10px" ${n?'':'disabled'}><svg class="i" aria-hidden="true"><use href="#i-bell"/></svg> Ajouter ${n?n+' rappel'+(n>1?'s':''):'mes rappels'} à mon calendrier</button>
   <button class="ghost sm" data-act="rapCalShare" style="width:100%;margin-top:8px" ${n?'':'disabled'}>Ça ne s'ouvre pas ? Enregistrer le fichier</button>
-  <p class="mute" style="font-size:13.5px;margin-top:10px">Ton téléphone te propose « Ajouter tout » : touche-le.${cd?` Déjà ajouté le ${frd(cd)} : si tu changes tes rappels, supprime d'abord les anciens dans le Calendrier (touche un rappel › Supprimer › « Tous les événements futurs »).`:''}</p>`}
+  <p class="mute" style="font-size:13.5px;margin-top:10px">Ton téléphone te propose « Ajouter tout » : touche-le.${cd?` Déjà ajouté le ${frd(cd)} : si tu changes tes rappels, supprime d'abord les anciens dans le Calendrier (touche un rappel › Supprimer › « Tous les événements futurs »).`:''}</p></details>
+  <p class="mute" style="font-size:13px;margin-top:12px">Quand l'app est ouverte, le coach te fait aussi signe à l'écran, avec un petit son.</p>`}
 function rapRefresh(){const b=$('rapBtn');if(b)b.classList.toggle('lit',Object.keys(RAPD).some(k=>RAP[k].on));if($('sheet').classList.contains('on')&&$('rapBox')){const y=$('sheetIn').scrollTop;$('sheetIn').innerHTML='<div class="grab"></div>'+rapHTML();$('sheetIn').scrollTop=y}}
 function rapSave(){store.set('rappels',RAP);rapRefresh();try{renderDrink()}catch(e){}}
 document.addEventListener('change',e=>{const t=e.target;if(!t.closest||!t.closest('#rapBox'))return;
@@ -3658,7 +3665,7 @@ function rapDue(){const now=new Date(),d=today(),cur=now.getHours()*60+now.getMi
   if(RAPSNZ&&RAPSNZ.until<=Date.now()){const z=RAPSNZ;RAPSNZ=null;return z.due}
   for(const k of Object.keys(RAPD))for(const x of rapTimes(k)){if(x.days&&!x.days.includes(dow))continue;const m=tmin(x.h),id=k+x.h;if(cur>=m&&cur-m<=45&&!sh[id])due={k,x,id}}return due}
 function rapMark(id){const d=today();const sh=RAPSH[d]||{};sh[id]=1;RAPSH={[d]:sh};store.set('rapShown',RAPSH)}
-function rapTick(){if(document.visibilityState!=='visible'||$('welcome').classList.contains('on')||document.querySelector('.rapban'))return;const due=rapDue();if(!due)return;rapMark(due.id);const d=today();
+function rapTick(){if(pushState()==='on'||document.visibilityState!=='visible'||$('welcome').classList.contains('on')||document.querySelector('.rapban'))return;const due=rapDue();if(!due)return;rapMark(due.id);const d=today();
   if(due.k==='eau'){const m=metrics()||{},b=store.get('boire',null);if((EAU[d]||0)>=(m.eau||8)||(b&&b.until>Date.now()))return}
   if(due.k==='pills'&&due.x.pid&&(PLOG[d]||{})[due.x.pid])return;
   if(due.k==='seance'&&LOG.some(l=>l.d===d))return;
@@ -3670,7 +3677,7 @@ function rapTick(){if(document.visibilityState!=='visible'||$('welcome').classLi
 let RAPCUR=null;const rapClose=()=>document.querySelectorAll('.rapban').forEach(x=>{x.classList.add('out');setTimeout(()=>x.remove(),250)});
 setInterval(rapTick,30000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(rapTick,1200)});setTimeout(rapTick,6000);setTimeout(rapRefresh,0);
 const RAP_ACTS={
-  rapOpen(b){openSheet(rapHTML());const k=b&&b.dataset&&b.dataset.k;if(k)setTimeout(()=>{const c=document.querySelector(`[data-rk="${k}"]`);if(c){c.closest('.rapr').scrollIntoView({block:'center'});if(!c.checked){c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))}}},60)},
+  rapOpen(b){openSheet(rapHTML());pushKeys().then(()=>{pushSync();rapRefresh()});const k=b&&b.dataset&&b.dataset.k;if(k)setTimeout(()=>{const c=document.querySelector(`[data-rk="${k}"]`);if(c){c.closest('.rapr').scrollIntoView({block:'center'});if(!c.checked){c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))}}},60)},
   rapDay(b){const d=+b.dataset.d,j=arr(RAP.seance.j).map(Number);RAP.seance.j=j.includes(d)?j.filter(x=>x!==d):[...j,d];rapSave()},
   rapCal(){const{n,txt}=buildICS();if(!n){toast('Active au moins un rappel.');return}const u=URL.createObjectURL(new Blob([txt],{type:'text/calendar;charset=utf-8'})),a=document.createElement('a');a.href=u;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(u)},60000);store.set('rapCalD',today());setTimeout(rapRefresh,400)},
   async rapCalShare(){const{n,txt}=buildICS();if(!n)return;const f=new File([txt],'rappels-edilgan.ics',{type:'text/calendar'});
@@ -3820,6 +3827,61 @@ const FIN=(()=>{
  return {amb:k=>k==='aurore'?ambAur():''};
 })();
 /* === /ag_finish === */
+/* ---------- notifications « même téléphone en veille » (Web Push envoyé par GitHub Actions) ---------- */
+const PUSH_REPO='francoismarechal91-hash/EdilganCoach';
+const pB64=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const pUnB64=s=>{s=String(s).replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return Uint8Array.from(atob(s),c=>c.charCodeAt(0))};
+let PUSHK=null;async function pushKeys(force){if(PUSHK&&!force)return PUSHK;try{const r=await fetch('push/public.json?t='+Date.now(),{cache:'no-store'});PUSHK=r.ok?await r.json():false}catch(e){PUSHK=PUSHK||false}return PUSHK}
+const pushCan=()=>'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;
+const isIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function pushItems(){const U={eau:'#accueil',pills:'#suivi',repas:'#cuisine',pesee:'#suivi',seance:'#sport',coucher:'#sommeil'},out=[];for(const k of Object.keys(RAPD))for(const x of rapTimes(k))out.push({k,h:x.h,days:x.days||null,t:String(x.t).slice(0,100),d:String(x.d||'').slice(0,180),u:U[k]||''});return out}
+const pushHash=()=>{const s=JSON.stringify(pushItems());let h=7;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return String(h)};
+async function boxSeal(obj,boxB64){const S=crypto.subtle,te=new TextEncoder(),pub=await S.importKey('raw',pUnB64(boxB64),{name:'ECDH',namedCurve:'P-256'},false,[]),eph=await S.generateKey({name:'ECDH',namedCurve:'P-256'},true,['deriveBits']);
+  const bits=await S.deriveBits({name:'ECDH',public:pub},eph.privateKey,256),hk=await S.importKey('raw',bits,'HKDF',false,['deriveKey']);
+  const key=await S.deriveKey({name:'HKDF',hash:'SHA-256',salt:te.encode('edilgan-box'),info:te.encode('aes')},hk,{name:'AES-GCM',length:256},false,['encrypt']);
+  const iv=crypto.getRandomValues(new Uint8Array(12)),ct=new Uint8Array(await S.encrypt({name:'AES-GCM',iv},key,te.encode(JSON.stringify(obj)))),ep=new Uint8Array(await S.exportKey('raw',eph.publicKey));
+  const out=new Uint8Array(77+ct.length);out.set(ep,0);out.set(iv,65);out.set(ct,77);return pB64(out)}
+async function pushFlag(kind){try{const r=await caches.match('push-'+kind,{cacheName:'edg-flags'});return r?+(await r.text()):0}catch(e){return 0}}
+async function pushSync(){const R=store.get('pushReg',null);if(!R||!R.id)return;const ok=await pushFlag('ok'),off=await pushFlag('off');let ch=0;
+  if(ok&&ok>(R.d||0)-120000&&!R.ok){R.ok=1;R.pend=0;ch=1}if(off&&off>(R.d||0)-120000&&R.off&&R.ok!==-1){R.ok=-1;R.pend=0;ch=1}if(ch){store.set('pushReg',R);rapRefresh()}}
+function pushState(){const R=store.get('pushReg',null)||{};if(!pushCan())return isIOS()&&!STANDALONE()?'install':'nosupport';if(PUSHK===false)return 'setup';if(!PUSHK)return 'loading';
+  if(typeof Notification!=='undefined'&&Notification.permission==='denied')return 'denied';if(R.url&&R.pend)return 'pending';if(R.ok===1&&!R.off)return R.hash===pushHash()?'on':'changed';return 'off'}
+function pushHTML(){const st=pushState(),R=store.get('pushReg',null)||{},n=pushItems().length,seed=store.get('pushSeed','');
+  const head=`<div class="pushc ${st==='on'?'ok':''}"><div class="row" style="gap:12px;flex-wrap:nowrap;align-items:flex-start"><span class="rapi" aria-hidden="true">🔔</span><div style="flex:1;min-width:0"><b>Notifications sur ton téléphone</b><small>Même écran verrouillé, ou pendant que tu es dans une autre appli.</small></div></div>`;
+  let body='';
+  if(st==='install')body=`<p class="pushp">Sur iPhone, les notifications ne marchent qu'avec l'app <b>installée sur l'écran d'accueil</b> : dans Safari, touche Partager › « Sur l'écran d'accueil », puis ouvre l'app depuis son icône.</p>`;
+  else if(st==='nosupport')body=`<p class="pushp">Ce téléphone ou ce navigateur ne permet pas les notifications web. Utilise le calendrier ci-dessous.</p>`;
+  else if(st==='loading')body=`<p class="pushp mute">Vérification…</p>`;
+  else if(st==='denied')body=`<p class="pushp">Les notifications sont bloquées pour l'app. Autorise-les dans <b>Réglages › Notifications › EdilganSuperCoach</b>, puis reviens ici.</p>`;
+  else if(st==='setup')body=`<p class="pushp">Première fois : une petite configuration à faire <b>une seule fois</b> sur ton compte GitHub (2 minutes), pour que les rappels partent même app fermée.</p>
+    <ol class="pushol"><li><button class="sm" data-act="pushSeed">${seed?'Copier à nouveau ma clé':'Créer et copier ma clé secrète'}</button>${seed?'<div class="mute" style="font-size:13px;margin-top:4px">Clé copiée. Garde-la pour toi.</div>':''}</li>
+    <li><button class="sm" data-act="pushLink" data-u="https://github.com/${PUSH_REPO}/settings/secrets/actions/new">Ouvrir GitHub</button><div style="margin-top:4px">Nom : <b>EDG_PUSH</b> · colle la clé dans « Secret » · touche « Add secret ».</div></li>
+    <li>Attends une dizaine de minutes, puis <button class="ghost sm" data-act="pushCheck">Vérifier</button></li></ol>`;
+  else if(st==='pending')body=`<p class="pushp"><b>Dernière étape :</b> enregistre ton téléphone. Une page GitHub s'ouvre : touche <b>« Submit new issue »</b> (ou « Créer »). Une notification de confirmation arrive 1 à 3 minutes après.</p><button data-act="pushLink" style="width:100%;min-height:54px;font-size:17px">Enregistrer mon téléphone</button><div class="row" style="margin-top:8px;gap:8px"><button class="ghost sm" data-act="pushShareLink">Envoyer le lien (si GitHub demande de se connecter)</button><button class="ghost sm" data-act="pushGo">Recommencer</button></div>`;
+  else if(st==='on')body=`<p class="pushp ok">✓ Activées : ${n} rappel${n>1?'s':''} programmé${n>1?'s':''}. Ils arrivent à quelques minutes près.</p><div class="row" style="gap:8px"><button class="ghost sm" data-act="pushOff">Désactiver sur ce téléphone</button></div>`;
+  else if(st==='changed')body=`<p class="pushp">Tes rappels ont changé : mets à jour les notifications.</p><button data-act="pushGo" style="width:100%">Mettre à jour (${n} rappel${n>1?'s':''})</button>`;
+  else body=n?`<button data-act="pushGo" style="width:100%">Activer les notifications (${n} rappel${n>1?'s':''})</button>`:`<p class="pushp mute">Active d'abord au moins un rappel ci-dessus.</p>`;
+  return head+body+'</div>'}
+const PUSH_ACTS={
+  async pushSeed(b){let s=store.get('pushSeed','');if(!s){s=pB64(crypto.getRandomValues(new Uint8Array(32)));store.set('pushSeed',s)}if(await copy(s,b))toast('Clé copiée : colle-la sur GitHub dans « Secret ».');else{openSheet(`<h2 style="margin-top:0">Ta clé secrète</h2><p>Sélectionne et copie ce texte :</p><textarea readonly style="font:15px ui-monospace,monospace" rows="3">${esc(s)}</textarea><button data-act="rapOpen">Retour</button>`);return}rapRefresh()},
+  async pushCheck(b){b.disabled=true;await pushKeys(true);b.disabled=false;if(!PUSHK)toast('Pas encore prêt : réessaie dans quelques minutes.');else toast('C\'est prêt !');rapRefresh()},
+  async pushGo(b){if(!pushCan()){rapRefresh();return}let perm='default';try{perm=await Notification.requestPermission()}catch(e){perm=Notification.permission}
+    if(perm!=='granted'){toast('Sans ton accord, pas de notifications. Tu peux l\'autoriser dans Réglages › Notifications.');rapRefresh();return}
+    b.disabled=true;b.textContent='Préparation…';try{const K=await pushKeys();if(!K)throw 0;const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
+      try{if(sub&&sub.options&&sub.options.applicationServerKey&&pB64(sub.options.applicationServerKey)!==K.vapid){await sub.unsubscribe();sub=null}}catch(e){}
+      if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:pUnB64(K.vapid)});
+      const R=store.get('pushReg',null)||{},id=R.id||pB64(crypto.getRandomValues(new Uint8Array(18))),items=pushItems();
+      const tok=await boxSeal({v:1,id,sub:sub.toJSON(),tz:(Intl.DateTimeFormat().resolvedOptions().timeZone)||'Europe/Paris',items,off:!items.length},K.box);
+      const url=`https://github.com/${PUSH_REPO}/issues/new?title=${encodeURIComponent('Rappels EdilganSuperCoach')}&body=${encodeURIComponent('Enregistrement de mes rappels, chiffré. Il suffit de toucher « Submit new issue » (ou « Créer »).\n\nEDGP1:'+tok)}`;
+      store.set('pushReg',{id,hash:pushHash(),d:Date.now(),url,pend:1,ok:R.ok===1&&!R.off?1:0,off:0});rapRefresh();toast('Presque fini : touche « Enregistrer mon téléphone ».')}
+    catch(e){toast('Activation impossible pour l\'instant. Réessaie dans un moment.');rapRefresh()}},
+  async pushOff(b){try{const K=await pushKeys(),reg=await navigator.serviceWorker.ready,sub=await reg.pushManager.getSubscription(),R=store.get('pushReg',null)||{};if(!K||!sub||!R.id)throw 0;
+      const tok=await boxSeal({v:1,id:R.id,sub:sub.toJSON(),tz:'Europe/Paris',items:[],off:true},K.box);
+      const url=`https://github.com/${PUSH_REPO}/issues/new?title=${encodeURIComponent('Rappels EdilganSuperCoach')}&body=${encodeURIComponent('Désactivation des rappels sur ce téléphone, chiffrée. Touche « Submit new issue ».\n\nEDGP1:'+tok)}`;
+      store.set('pushReg',{...R,url,pend:1,off:1,ok:0,d:Date.now()});rapRefresh()}catch(e){toast('Désactivation impossible pour l\'instant.')}},
+  pushLink(b){const u=b.dataset.u||((store.get('pushReg',null)||{}).url);if(!u)return;const w=window.open(u,'_blank','noopener');if(!w)location.href=u},
+  async pushShareLink(){const R=store.get('pushReg',null);if(!R||!R.url)return;try{if(navigator.share){await navigator.share({title:'Enregistrer mes rappels',text:'Ouvre ce lien sur un téléphone connecté au GitHub de l\'app, puis touche « Submit new issue ».',url:R.url});return}}catch(e){if(e&&e.name==='AbortError')return}if(await copy(R.url,document.createElement('button')))toast('Lien copié')}};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pushSync()});setTimeout(pushSync,3000);
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -5108,10 +5170,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-79';
+const APP_VERSION='2026.11.26-80';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.26-80','Rappels même téléphone en veille','Les rappels (boire, médicaments, repas…) peuvent maintenant arriver en vraie notification, écran verrouillé ou dans une autre appli. Touche la cloche › « Activer les notifications ».','accueil',''],
  ['2026.11.26-79','Nouveau thème Aurore boréale','Aurores qui dansent, ciel étoilé, sapins enneigés et cartes en glace. Synthwave plus élégant, jolies illustrations quand une liste est vide, et les fenêtres se ferment en les glissant vers le bas.','moi',''],
  ['2026.11.26-78','Plus fiable','14 corrections : texte en grand mieux géré, double appui sans erreur, contrastes, chiffres arrondis partout pareil, message clair sans internet.','accueil',''],
  ['2026.11.26-77','Des rappels','Touche la cloche en haut : boire, médicaments, repas, pesée, séance, coucher. Le coach te fait signe quand l\'app est ouverte, et tu peux ajouter tes rappels au calendrier de ton téléphone pour être prévenu même app fermée.','accueil',''],
@@ -5159,7 +5222,7 @@ $('bkIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;c
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 setTimeout(()=>{try{if(lsSize()>2e6)lsCompact()}catch(e){}},4000);
 renderChk();renderDrink();
-Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS,BK_ACTS,CAL_ACTS,RAP_ACTS);try{localStorage.removeItem('coach_phc')}catch(e){}netBanner();$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
+Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS,BK_ACTS,CAL_ACTS,RAP_ACTS,PUSH_ACTS);try{localStorage.removeItem('coach_phc')}catch(e){}netBanner();$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
 [calc,renderEq,renderSante,renderAH,renderProdHist,renderMenu,renderWeek,renderChat].forEach(f=>{try{f()}catch(e){console.error(f.name,e)}});route();
 }
 /* ==== Audit iPhone : clavier virtuel, typographie française, stockage ==== */

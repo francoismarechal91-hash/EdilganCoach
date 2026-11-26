@@ -4,7 +4,7 @@
         - repli sur la page uniquement pour une navigation (jamais pour un .json) ;
         - précache tolérant (un fichier en échec ne bloque plus les autres), sans passer par le cache HTTP ;
         - suppression des anciens caches. */
-const C='edilgan-v5';
+const C='edilgan-v6';
 const SHELL=['./','manifest.json','icon.png','icon-192.png','icon-512.png','world.json','ciqual.json','fonts/bricolage-var-latin.woff2','fonts/orbitron-var-latin.woff2','fonts/fredoka-var-latin.woff2','fonts/nunito-var-latin.woff2'];
 const NAV_MS=3500;
 const okToCache=r=>!!r&&r.status===200&&r.type==='basic';
@@ -15,7 +15,7 @@ self.addEventListener('install',e=>{
     fetch(new Request(u,{cache:'reload'})).then(r=>okToCache(r)?c.put(u,r):null).catch(()=>null)))));
 });
 self.addEventListener('activate',e=>{
-  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
+  e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C&&k!=='edg-flags').map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
 });
 self.addEventListener('fetch',e=>{
   const req=e.request,u=new URL(req.url);
@@ -34,3 +34,10 @@ self.addEventListener('fetch',e=>{
     catch(err){return (await caches.match(req,{ignoreSearch:true}))||Response.error()}
   })());
 });
+
+/* Notifications de rappels (envoyées par GitHub Actions, même téléphone en veille) */
+self.addEventListener('push',e=>{let d={};try{d=e.data?e.data.json():{}}catch(_){d={body:e.data?e.data.text():''}}
+  const t=d.title||'EdilganSuperCoach',flag=d.kind?caches.open('edg-flags').then(c=>c.put('push-'+d.kind,new Response(String(Date.now())))).catch(()=>{}):null;
+  e.waitUntil(Promise.all([self.registration.showNotification(t,{body:d.body||'',icon:'icon-192.png',badge:'icon-192.png',tag:d.tag||'edg',renotify:true,data:{url:d.url||'./'}}),flag]))});
+self.addEventListener('notificationclick',e=>{e.notification.close();const url=new URL((e.notification.data&&e.notification.data.url)||'./',self.registration.scope).href;
+  e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(L=>{for(const c of L){if('focus' in c){if(c.navigate)c.navigate(url).catch(()=>{});return c.focus()}}return self.clients.openWindow(url)}))});
