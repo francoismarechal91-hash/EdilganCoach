@@ -154,6 +154,7 @@ html.idle #amb *,html.idle #amb::before,html.idle #amb::after,html.idle .hero *,
 .plt .x{min-width:40px;min-height:40px;font-size:20px;padding:0}.plfix{margin-top:8px;border-top:1px solid var(--line);padding-top:4px}
 .pedit{grid-template-columns:1fr 1fr}.pedit label{font-size:13px}.pedit input{font-size:16px;min-height:44px}
 .plgw{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-weight:600;color:var(--mute)}.plg{width:84px!important;min-height:40px!important;padding:6px 8px!important;font-size:16px!important;margin:0!important;text-align:right}
+.restb{display:block;margin:4px 0 0 auto;font-size:12px;font-weight:700;padding:3px 8px;min-height:28px;border-radius:99px;background:var(--fill)!important;background-image:none!important;color:var(--tintink)!important;border:1px solid var(--line);box-shadow:none!important;animation:none!important;text-transform:none;letter-spacing:0}.mealok{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -1580,7 +1581,12 @@ async function anyAI(msgs,{images=[],json=false}={}){
 }
 async function aiAvail(){return true}
 async function preferClaude(){const s=await getSample();return!!s&&(AI.engine==='claude'||!/github\.io$|localhost/.test(location.host))}
-const parseJSON=t=>{t=String(t).replace(/```(json)?/gi,'');const b=t.lastIndexOf('}');for(let a=t.indexOf('{');a>=0&&a<b;a=t.indexOf('{',a+1)){try{return JSON.parse(t.slice(a,b+1))}catch(e){}}throw{code:'busy'}};
+const parseJSON=t=>{t=String(t).replace(/```(json)?/gi,'');const a=t.indexOf('{');if(a<0)throw{code:'busy'};
+  let inS=false,esc2=false;const stack=[],snaps=[];
+  for(let i=a;i<t.length;i++){const c=t[i];if(inS){if(esc2)esc2=false;else if(c==='\\')esc2=true;else if(c==='"')inS=false;continue}
+    if(c==='"'){inS=true;continue}if(c==='{'||c==='[')stack.push(c==='{'?'}':']');else if(c==='}'||c===']'){stack.pop();if(!stack.length){try{return JSON.parse(t.slice(a,i+1))}catch(e){break}}}else if(c===',')snaps.push([i,stack.slice()])}
+  for(let k=snaps.length-1;k>=Math.max(0,snaps.length-60);k--){const[i,stk]=snaps[k];try{const o=JSON.parse(t.slice(a,i)+stk.slice().reverse().join(''));o._tronque=1;return o}catch(e){}}
+  const b=t.lastIndexOf('}');for(let x=t.indexOf('{');x>=0&&x<b;x=t.indexOf('{',x+1)){try{return JSON.parse(t.slice(x,b+1))}catch(e){}}throw{code:'busy'}};
 /* Garde-fou langue : toute réponse doit être en français */
 function looksEnglish(t){t=' '+String(t||'').toLowerCase().replace(/[^a-zàâäçéèêëîïôöùûüœ' ]+/g,' ')+' ';const n=w=>(t.match(new RegExp(' '+w+' ','g'))||[]).length;
   const en=['the','and','with','your','you','of','to','is','for','this','are','minutes','reps'].reduce((a,w)=>a+n(w),0),frc=['le','la','les','et','de','des','du','avec','ton','tu','pour','est','une','un'].reduce((a,w)=>a+n(w),0)+(t.match(/[àâçéèêîôùû]/g)||[]).length*.5;
@@ -1615,6 +1621,7 @@ const errMsg=e=>e&&e.code==='not_granted'?"Il faut autoriser la page à utiliser
  :e&&e.code==='unavailable'?"Pas d'IA disponible : ajoute une clé gratuite dans ton profil (rond en haut à droite), carte « Réglages avancés »."
  :e&&e.code==='badkey'?"Tes clés IA sont refusées : vérifie-les dans ton profil, carte « Réglages avancés »."
  :e&&e.code==='vision'?"Pour lire les photos, l'app utilise l'IA gratuite Puter : une fenêtre te propose de créer un compte gratuit la première fois. Accepte-la puis réessaie. Sinon, écris ce que tu vois en texte."
+ :e&&e.code==='recette'?"L'IA n'a pas réussi à écrire cette recette en entier. Touche « Réessayer » : la deuxième fois marche presque toujours."
  :e&&e.code==='nofound'?"Ce code-barres n'est pas dans la base Open Food Facts. Prends l'étiquette en photo (tableau nutritionnel) et je la lirai."
  :e&&e.code==='busy'?"L'IA gratuite est très demandée en ce moment. Réessaie dans une minute."
  :e&&e.code==='net'?"Pas de connexion internet. Vérifie ton réseau et réessaie."
@@ -2475,8 +2482,22 @@ function renderPlate(){const r=PLATE;if(!r)return;
       <div class="chips">${["il n'y a pas de matière grasse","c'est du jus de cuisson, pas de l'huile","pas de sauce","la portion est plus petite","la portion est plus grande","c'est fait maison","c'est du poulet, pas du porc"].map(v=>`<button class="chip" data-act="plFixChip" data-v="${esc(v)}">${esc(v)}</button>`).join('')}</div>
       <textarea id="plFixTx" class="grow" rows="2" placeholder="ex. Non, pas de matière grasse : c'est le jus de cuisson du steak. Et il y a 150 g de haricots verts." aria-label="Ta correction"></textarea>
       <div class="row" style="margin-top:8px"><button class="alt" data-act="plFix">Corriger l'estimation</button></div><div id="plFixRes"></div></details>
-    <label for="plQ" style="margin-top:10px">Ta portion réelle</label><select id="plQ"><option value=".5">La moitié</option><option value=".75">Un peu moins</option><option value="1" selected>Comme estimé</option><option value="1.25">Un peu plus</option><option value="1.5">Une fois et demie</option></select>
-    <div class="row" style="margin-top:12px"><button data-act="addPlate">Ajouter à mon journal</button></div></div>`}
+    <div class="mealok"><h3 style="margin:0 0 8px">Ton repas</h3>${r.added?`<p style="margin:0"><b>✓ Ajouté à ton journal.</b> Pas tout fini ? Dis-le ici ou plus tard depuis ton journal (bouton « Tout fini ? »).</p><div class="row" style="margin-top:8px"><button class="alt sm" data-act="leftOpen" data-ctx="plate">J'ai laissé quelque chose</button><button class="ghost sm" data-act="goPane" data-v="cuisine" data-p="journal">Voir mon journal</button></div><div id="leftBox-plate"></div>`
+      :`<div class="row"><button data-act="plAll" style="flex:1">✓ J'ai tout mangé</button><button class="alt" data-act="leftOpen" data-ctx="plate" style="flex:1">Je n'ai pas tout fini</button></div><div id="leftBox-plate"></div><p class="mute" style="font-size:14px;margin:8px 0 0">Tu peux aussi valider maintenant et dire plus tard ce que tu as laissé.</p>`}</div></div>`}
+/* ---- Restes : ce que je n'ai pas mangé (mots, part rapide ou photo de l'assiette après) ---- */
+function leftHTML(ctx){return `<div class="leftb"><p class="mute" style="margin:8px 0 6px">Dis-moi ce que tu as laissé, ou montre-moi l'assiette après le repas.</p>
+  <div class="chips">${[['.25','J\'en ai laissé un quart'],['.5','La moitié'],['.75','Les trois quarts'],['1','Je n\'y ai pas touché']].map(([f,l])=>`<button class="chip" data-act="leftQ" data-ctx="${ctx}" data-f="${f}">${l}</button>`).join('')}</div>
+  <textarea id="leftTx-${ctx}" class="grow" rows="2" placeholder="ex. la moitié des frites et deux bouchées de steak" aria-label="Ce que tu as laissé"></textarea>
+  <label class="drop mini" data-drop="reste-${ctx}" style="margin-top:8px;min-height:84px"><input type="file" accept="image/*" data-in="reste-${ctx}" aria-label="Photo de l'assiette après le repas"><svg class="i"><use href="#i-cam"/></svg><b>Photo de l'assiette après</b><span class="mute">facultatif</span></label>
+  <div class="row" style="margin-top:8px"><button data-act="leftGo" data-ctx="${ctx}">Calculer ce que j'ai mangé</button></div><div id="leftRes-${ctx}"></div></div>`}
+function servedOf(ctx){if(ctx==='plate')return PLATE;const e=dayJ()[+ctx.slice(1)];return e&&e.plate}
+function eatenFrom(served,parts){const al=arr(served.aliments).map((a,i)=>{const k=Math.max(0,Math.min(1,1-num(parts[i]??0)));return{...a,_k:k,kcal:num(a.kcal)*k,proteines_g:num(a.proteines_g)*k,glucides_g:num(a.glucides_g)*k,lipides_g:num(a.lipides_g)*k,grammes:num(a.grammes)?Math.round(num(a.grammes)*k):a.grammes}});
+  const t=k=>Math.round(al.reduce((x,a)=>x+num(a[k]),0)),tot0=num(served.kcal)||1;let kc=t('kcal');if(!al.length){const f=1-num(parts[0]??0);return{kcal:Math.round(num(served.kcal)*f),p:Math.round(num(served.proteines_g)*f),g:Math.round(num(served.glucides_g)*f),l:Math.round(num(served.lipides_g)*f),part:f,al}}
+  return{kcal:kc,p:t('proteines_g'),g:t('glucides_g'),l:t('lipides_g'),part:Math.max(0,Math.min(1,kc/tot0)),al}}
+function showEaten(ctx,ea,note){const served=servedOf(ctx);const el=$('leftRes-'+ctx);if(!el)return;LEFTP[ctx]=ea;
+  el.innerHTML=`<div class="tip" style="margin-top:10px"><b>Tu as mangé environ ${Math.round(ea.kcal)} kcal</b> sur ${Math.round(num(served.kcal))} servies (${Math.round(ea.part*100)} %) · ${ea.p} g de protéines.${note?`<div class="mute" style="margin-top:4px">${esc(note)}</div>`:''}${ea.al.length?`<ul style="margin:6px 0 0;padding-left:18px">${ea.al.map(a=>`<li>${esc(a.nom)} : ${a._k>=.99?'tout':a._k<=.01?'rien':Math.round(a._k*100)+' %'}</li>`).join('')}</ul>`:''}</div><div class="row" style="margin-top:8px"><button data-act="leftOk" data-ctx="${ctx}">Valider</button></div>`}
+let LEFTP={};
+
 
 
 document.addEventListener('change',e=>{const t=e.target;if(!t.classList||!t.classList.contains('plg')||!PLATE)return;const a=PLATE.aliments[+t.dataset.i];if(!a)return;const ng=num(t.value),og=num(a.grammes);
@@ -2581,7 +2602,8 @@ const PH={};const DROP0={};document.querySelectorAll('[data-drop]').forEach(d=>D
 function resetDrop(id){delete PH[id];const d=document.querySelector(`[data-drop="${id}"]`);if(!d)return;[...d.childNodes].forEach(n=>{if(n.nodeName!=='INPUT')n.remove()});(DROP0[id]||[]).forEach(n=>d.appendChild(n.cloneNode(true)));const i=d.querySelector('input');if(i)i.value=''}
 function resetProdPh(){['produit','ptab','ping'].forEach(resetDrop);PH._done=0}
 function shrink(file,max=1280){return new Promise((ok,ko)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?ok({blob:b,canvas:c}):ko(),'image/jpeg',.85)};im.onerror=ko;im.src=u})}
-document.querySelectorAll('[data-in]').forEach(inp=>inp.addEventListener('change',async()=>{
+function bindDrops(root){(root||document).querySelectorAll('[data-in]:not([data-b])').forEach(inp=>{inp.dataset.b=1;inp.addEventListener('change',()=>dropChange(inp))})}
+async function dropChange(inp){
   const id=inp.dataset.in,f=inp.files[0];if(!f)return;let r;
   try{r=await shrink(f)}catch(_){r={blob:f}}
   if(id==='produit'&&PH._done)resetProdPh();PH[id]=r.blob;try{inp.value=''}catch(e){}document.querySelectorAll(`[data-need="${id}"]`).forEach(b=>{b.disabled=false;const n=b.parentNode.querySelector('.need');if(n)n.remove()});
@@ -2589,7 +2611,8 @@ document.querySelectorAll('[data-in]').forEach(inp=>inp.addEventListener('change
   const d=document.querySelector(`[data-drop="${id}"]`);d.querySelectorAll('img,b,span,svg').forEach(n=>n.remove());
   const im=document.createElement('img');im.src=URL.createObjectURL(r.blob);im.alt='Ta photo';d.appendChild(im);
   const t=document.createElement('span');t.className='mute';t.textContent='Touche pour changer de photo';d.appendChild(t);
-}));
+}
+bindDrops(document);
 /* dessin sur la photo du corps */
 const cv=$('cv'),cx=cv.getContext('2d');let BASE=null,STROKES=[],cur=null;
 function initDraw(c){BASE=c;cv.width=c.width;cv.height=c.height;STROKES=[];redraw();cv.style.display='block';$('corpsDrop').style.display='none';$('cvBtns').hidden=false}
@@ -2623,7 +2646,7 @@ for(const k in J)J[k]=objs(Array.isArray(J[k])?J[k]:J[k]&&typeof J[k]==='object'
 const dayJ=()=>Array.isArray(J[today()])?J[today()]:(J[today()]=[]);
 const dayTot=()=>dayJ().reduce((a,e)=>({k:a.k+num(e.kcal),p:a.p+num(e.p)}),{k:0,p:0});
 const saveJ=()=>{const keep=Object.keys(J).sort().slice(-60);J=Object.fromEntries(keep.map(k=>[k,J[k]]));store.set('journal',J)};
-function addFood(it){if(BARIA())store.set('boire',{until:Date.now()+30*6e4});dayJ().push({nom:it.nom,kcal:Math.round(num(it.kcal)),p:Math.round(num(it.proteines_g??it.p)),g:Math.round(num(it.glucides_g??it.g)),l:Math.round(num(it.lipides_g??it.l))});saveJ();renderDay()}
+function addFood(it){if(BARIA())store.set('boire',{until:Date.now()+30*6e4});const en={nom:it.nom,kcal:Math.round(num(it.kcal)),p:Math.round(num(it.proteines_g??it.p)),g:Math.round(num(it.glucides_g??it.g)),l:Math.round(num(it.lipides_g??it.l))};if(it.plate)en.plate=it.plate,en.part=it.part??1,en.id=Date.now();dayJ().push(en);saveJ();renderDay();return en}
 function renderDay(){
   const m=metrics()||{},t=dayTot(),tk=m.kcal||(BARIA()?1000:2000),tp=m.prot||100,te=m.eau||8,w=EAU[today()]||0;
   $('mDate').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
@@ -2636,7 +2659,7 @@ function renderDay(){
   if(!BARIA()&&low>=3){tip.style.display='block';tip.innerHTML='Ces derniers jours, tu as souvent mangé moins que ce dont ton corps a besoin. Manger suffisamment protège tes muscles et ton énergie. Si c\'est difficile en ce moment, tu peux en parler à ton médecin, ou à la ligne Anorexie Boulimie Info Écoute : 09 69 325 900.';return}
   if(dayJ().length&&h>=14&&tp-t.p>25){tip.style.display='block';tip.textContent=`Il te manque ${Math.round(tp-t.p)} g de protéines aujourd'hui : pense à un skyr, du poulet, des œufs ou du thon.`}
   else if(m.kcal&&t.k>tk*1.1){tip.style.display='block';tip.textContent='Tu as dépassé ton objectif du jour. Pas de panique : c\'est la moyenne de la semaine qui compte.'}else tip.style.display='none';
-  $('journal').innerHTML=dayJ().map((e,i)=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${esc(e.p)}&nbsp;g prot · ${esc(e.g)}&nbsp;g gluc · ${esc(e.l)}&nbsp;g lip</div></span><span class="v">${esc(e.kcal)} kcal</span><button class="x" data-act="fav" data-i="${i}" aria-label="${FAV.some(f=>f.nom===e.nom)?'Retirer '+esc(e.nom)+' des favoris':'Mettre '+esc(e.nom)+' en favori'}">${FAV.some(f=>f.nom===e.nom)?'★':'☆'}</button><button class="x" data-act="delJ" data-i="${i}" aria-label="Supprimer ${esc(e.nom)}">×</button></div>`).join('')||'<p class="mute" style="margin:6px 0 0">Rien de noté aujourd\'hui : cherche un aliment ou décris ton repas juste en dessous.</p>';
+  $('journal').innerHTML=dayJ().map((e,i)=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${esc(e.p)}&nbsp;g prot · ${esc(e.g)}&nbsp;g gluc · ${esc(e.l)}&nbsp;g lip</div></span><span class="v">${esc(e.kcal)} kcal${e.plate?`<button class="restb" data-act="leftJ" data-i="${i}">${(e.part??1)<1?'Mangé à '+Math.round((e.part??1)*100)+' %':'Tout fini ?'}</button>`:''}</span><button class="x" data-act="fav" data-i="${i}" aria-label="${FAV.some(f=>f.nom===e.nom)?'Retirer '+esc(e.nom)+' des favoris':'Mettre '+esc(e.nom)+' en favori'}">${FAV.some(f=>f.nom===e.nom)?'★':'☆'}</button><button class="x" data-act="delJ" data-i="${i}" aria-label="Supprimer ${esc(e.nom)}">×</button></div>`).join('')||'<p class="mute" style="margin:6px 0 0">Rien de noté aujourd\'hui : cherche un aliment ou décris ton repas juste en dessous.</p>';
   $('favs').innerHTML=FAV.length?'<span class="mute" style="width:100%">Favoris, un toucher pour ajouter :</span>'+FAV.map((f,i)=>`<button class="chip" data-act="addFav" data-i="${i}">${esc(f.nom)} · ${esc(f.kcal)} kcal</button>`).join(''):'';
 }
 const MEALF=`{"moment":"","nom":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"temps_min":15,"cout":"€","ingredients":["quantité + ingrédient"],"preparation":["étape"]}`;
@@ -2654,13 +2677,23 @@ const mealHTML=(m,act='',type='recette')=>`<div class="meal"><div class="k">${es
  <details><summary style="cursor:pointer;font-weight:700;padding:8px 0">Aperçu des ingrédients</summary>${list(m.ingredients)}<div class="row">${yt('recette '+m.nom,'Vidéo de la recette')}${m.pays?'':`<button class="ghost sm" data-act="dishPhoto" data-q="${esc(m.nom)}">Voir en photo</button>`}</div></details>
  <div class="row" style="margin-top:6px">${cookBtn(m)}${favBtn(m,type)}${act}</div></div>`;
 const DETF=`{"nom":"","portions":2,"temps_total_min":30,"difficulte":"facile|moyen|difficile","kcal_portion":0,"materiel":["ustensile précis (taille de poêle, casserole…)"],"ingredients":[{"quantite":"200 g (≈ 1 paume)","nom":"","preparation":"ex. émincé finement, à température ambiante"}],"mise_en_place":["tout ce qu'il faut préparer avant d'allumer le feu, dans l'ordre"],"etapes":[{"titre":"verbe court","detail":"4 à 6 phrases très concrètes : le geste exact, l'ustensile, la puissance du feu (doux/moyen/vif et repère 1 à 9 sur une plaque), la durée, quoi surveiller","duree_min":0,"astuce":"astuce de chef","repere":"comment savoir que c'est bon (couleur, odeur, texture, bruit)","erreur":"erreur fréquente et comment la rattraper"}],"dressage":"comment servir joliment","conservation":"","variantes":["…"]}`;
+function normDet(d){d=d&&typeof d==='object'?d:{};const pick=(...ks)=>{for(const k of ks)if(d[k]!=null)return d[k]};
+  d.etapes=arr(pick('etapes','étapes','steps','instructions','preparation','préparation')).map(e=>typeof e==='string'?{titre:'Étape',detail:e}:e&&typeof e==='object'?{...e,titre:e.titre||e.title||'Étape',detail:e.detail||e.description||e.texte||''}:null).filter(e=>e&&String(e.detail||'').trim());
+  d.ingredients=arr(pick('ingredients','ingrédients')).map(g=>typeof g==='string'?{quantite:'',nom:g}:g&&typeof g==='object'?{...g,nom:g.nom||g.name||'',quantite:g.quantite||g.quantity||''}:null).filter(g=>g&&g.nom);
+  d.materiel=strs(pick('materiel','matériel'));d.mise_en_place=strs(pick('mise_en_place'));return d}
 async function getDetail(o,n){
-  o.det=o.det||{};if(o.det[n])return o.det[n];
+  o.det=o.det||{};if(o.det[n]&&arr(o.det[n].etapes).length>=3)return o.det[n];
   const base=`${o.nom}${o.moment?' ('+o.moment+')':''}${strs(o.ingredients).length?'. Ingrédients prévus : '+strs(o.ingredients).join(', '):''}${o.pays?'. Recette traditionnelle : '+o.pays+(o.nom_local?' ('+o.nom_local+')':'')+', reste fidèle à l\'authentique tout en l\'adaptant à son profil':''}${o.description?'. '+o.description:''}`;
-  const d=await askJSON(`Tu es chef cuisinier et excellent pédagogue. ${profil()}
+  let d=normDet(await askJSON(`Tu es chef cuisinier et excellent pédagogue. ${profil()}
 Écris la recette « ${base} » pour ${n} portion${n>1?'s':''}, pour quelqu'un qui n'a jamais cuisiné : il doit pouvoir aller jusqu'au bout sans aucune question.
 Pas à pas ultra détaillé en 8 à 16 étapes : chaque geste, l'ustensile, le feu, les temps exacts, les repères visuels et olfactifs, les erreurs à éviter et comment rattraper. Quantités précises en grammes, cuillères ou pièces, adaptées à ${n} portion${n>1?'s':''}.
-Format JSON : ${DETF}`,{modelTier:'default'});
+Format JSON : ${DETF}`,{modelTier:'default',cache:false}));
+  if(d.etapes.length<3||d.ingredients.length<2){
+    const d2=normDet(await askJSON(`Tu es chef cuisinier. ${profil()}
+Écris la recette « ${base} » pour ${n} portion${n>1?'s':''}, claire et complète mais CONCISE : 6 à 10 étapes de 2 à 3 phrases chacune, avec temps et repères. Quantités précises.
+Format JSON : {"nom":"","portions":${n},"temps_total_min":30,"difficulte":"facile|moyen|difficile","kcal_portion":0,"materiel":["…"],"ingredients":[{"quantite":"200 g","nom":""}],"etapes":[{"titre":"verbe court","detail":"2 à 3 phrases","duree_min":0,"repere":"comment savoir que c'est bon"}]}`,{modelTier:'default',cache:false}));
+    if(d2.etapes.length>d.etapes.length)d=d2}
+  if(d.etapes.length<3||d.ingredients.length<2)throw{code:'recette'};
   o.det[n]=d;saveFood();return d;
 }
 /* ---------- Mode cuisine ---------- */
@@ -2686,7 +2719,7 @@ function renderK(){
   const d=K.d,et=d.etapes||[],head=`<div class="ovh"><span class="mute" style="flex:1">${esc(d.nom||K.o.nom)}</span><b class="ktm" style="color:var(--red);white-space:nowrap"></b><button class="ghost sm" data-act="kClose">Fermer</button></div>`;
   if(K.i<0){
     ov.innerHTML=head+`<div class="dph wide" data-q="${esc(K.o.wiki||K.o.nom_local||d.nom||K.o.nom)}" data-pays="${esc(K.o.pays||'')}" style="margin:6px 0 10px"><span class="mute">Photo…</span></div><h1 style="font-size:clamp(28px,7vw,38px)">${esc(d.nom||K.o.nom)}</h1>
-    <div class="macro" style="margin:8px 0"><span><b>${esc(d.temps_total_min)}</b> min</span><span>${esc(d.difficulte||'')}</span>${d.kcal_portion?`<span><b>${esc(d.kcal_portion)}</b> kcal / portion</span>`:''}</div>
+    <div class="macro" style="margin:8px 0">${num(d.temps_total_min)?`<span><b>${esc(d.temps_total_min)}</b> min</span>`:''}${d.difficulte?`<span>${esc(d.difficulte)}</span>`:''}${d.kcal_portion?`<span><b>${esc(d.kcal_portion)}</b> kcal / portion</span>`:''}</div>
     <label for="kN">Nombre de portions</label><div class="row"><select id="kN" style="width:auto">${[1,2,3,4,5,6,8].map(n=>`<option ${n===K.n?'selected':''}>${n}</option>`).join('')}</select><span class="mute">les quantités sont recalculées</span></div>
     <h3 style="margin-top:18px">Ingrédients <span class="mute">(coche quand c'est sorti)</span></h3>
     <div class="shop">${(d.ingredients||[]).map((g,i)=>`<label><input type="checkbox" data-kck="${i}" ${K.ck[i]?'checked':''}><span><b>${esc(g.quantite)}</b> ${esc(g.nom)}${g.preparation?` <span class="mute">— ${esc(g.preparation)}</span>`:''}</span></label>`).join('')}</div>
@@ -2864,6 +2897,22 @@ Format JSON : {"nom":"","nom_recherche":"nom usuel pour chercher une vidéo","de
 Clés de muscles autorisées : ${KEYS}.`,{modelTier:'default',cache:false});
     if(r.nom){AH=[r,...AH.filter(a=>a.nom!==r.nom&&a!==ANA_LAST)].slice(0,15);store.set('machines',AH);renderAH()}renderAna(r);toast('Fiche corrigée')})},
   prodEdit(){if(!PROD)return;const c={...(PROD.c100||{})};['kcal','l','ags','g','sucres','fibres','p','sel'].forEach(k=>{const v=$('pe-'+k)?.value;if(v!=null&&v!=='')c[k]=num(v);else if(v==='')c[k]=null});PROD.c100=c;if(!/corrigé/.test(PROD.source||''))PROD.source=(PROD.source||'')+' · corrigé par toi';PRODS=[PROD,...PRODS.filter(x=>x!==PROD)].slice(0,30);store.set('produits',PRODS);renderProdHist();renderProd(PROD);toast('Note recalculée')},
+  plAll(b){if(!PLATE)return;const en=addFood({nom:PLATE.nom||'Mon repas',kcal:PLATE.kcal,p:PLATE.proteines_g,g:PLATE.glucides_g,l:PLATE.lipides_g,plate:{nom:PLATE.nom,aliments:PLATE.aliments,kcal:PLATE.kcal,proteines_g:PLATE.proteines_g,glucides_g:PLATE.glucides_g,lipides_g:PLATE.lipides_g},part:1});PLATE.added=en.id;try{resetDrop('assiette');$('plTxt').value=''}catch(e){}renderPlate();toast('Repas ajouté à ton journal')},
+  leftOpen(b){const c=b.dataset.ctx,box=$('leftBox-'+c);if(box){box.innerHTML=box.innerHTML?'':leftHTML(c);bindDrops(box)}},
+  leftJ(b){const i=+b.dataset.i,e=dayJ()[i];if(!e||!e.plate)return;const c='j'+i;openSheet(`<div class="row sb"><h2 style="margin:0">${esc(e.plate.nom||e.nom)}</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Servi : ${Math.round(num(e.plate.kcal))} kcal. Compté pour l'instant : ${e.kcal} kcal.</p><div class="row"><button class="ghost sm" data-act="leftQ" data-ctx="${c}" data-f="0">J'ai tout mangé</button></div>${leftHTML(c)}`);bindDrops($('sheetIn'))},
+  leftQ(b){const c=b.dataset.ctx,f=num(b.dataset.f),served=servedOf(c);if(!served)return;const n=arr(served.aliments).length||1;showEaten(c,eatenFrom(served,Array(n).fill(f)));if(f===0)A.leftOk({dataset:{ctx:c}})},
+  leftGo(b){const c=b.dataset.ctx,served=servedOf(c),tx=($('leftTx-'+c)?.value||'').trim(),ph=PH['reste-'+c];if(!served)return;if(!tx&&!ph){toast('Écris ce que tu as laissé ou ajoute une photo.');return}
+    run(b,$('leftRes-'+c),ph?'Je regarde ce qui reste':'Je calcule',async()=>{const L=arr(served.aliments);
+      const r=await askJSON(`Tu es nutritionniste. Voici le repas qui était servi : ${JSON.stringify(L.length?L.map(a=>({nom:a.nom,grammes:a.grammes,kcal:a.kcal})):{nom:served.nom,kcal:served.kcal})}.
+La personne n'a pas tout mangé.${tx?` Ce qu'elle dit avoir laissé : « ${tx} ».`:''}${ph?' La photo montre son assiette APRÈS le repas (les restes).':''}
+Pour CHAQUE aliment de la liste, dans le même ordre, estime la part qui reste dans l'assiette (0 = tout mangé, 1 = pas touché). Ce qu'elle écrit est prioritaire sur la photo.
+Format JSON : {"restes":[{"nom":"","part_restante":0.5}],"commentaire":"1 phrase"}`,{images:ph?[ph]:[],modelTier:'default',cache:false});
+      const R=arr(r.restes),parts=(L.length?L:[served]).map((a,i)=>{const m=R.find(x=>x&&cqNorm(x.nom)===cqNorm(a.nom))||R[i];return m?num(m.part_restante):0});
+      showEaten(c,eatenFrom(served,parts),r.commentaire)})},
+  leftOk(b){const c=b.dataset.ctx,ea=LEFTP[c]||(c!=='plate'?eatenFrom(servedOf(c),[0]):null);if(!ea)return;
+    if(c==='plate'){if(PLATE.added){const e=dayJ().find(x=>x.id===PLATE.added);if(e){Object.assign(e,{kcal:Math.round(ea.kcal),p:ea.p,g:ea.g,l:ea.l,part:ea.part});saveJ();renderDay()}}else{const en=addFood({nom:(PLATE.nom||'Mon repas')+(ea.part<.99?' ('+Math.round(ea.part*100)+' %)':''),kcal:ea.kcal,p:ea.p,g:ea.g,l:ea.l,plate:{nom:PLATE.nom,aliments:PLATE.aliments,kcal:PLATE.kcal,proteines_g:PLATE.proteines_g,glucides_g:PLATE.glucides_g,lipides_g:PLATE.lipides_g},part:ea.part});PLATE.added=en.id;try{resetDrop('assiette');$('plTxt').value=''}catch(e){}}renderPlate();toast('Repas enregistré : '+Math.round(ea.kcal)+' kcal')}
+    else{const e=dayJ()[+c.slice(1)];if(e){Object.assign(e,{kcal:Math.round(ea.kcal),p:ea.p,g:ea.g,l:ea.l,part:ea.part});e.nom=(e.plate.nom||e.nom.replace(/ \(\d+ %\)$/,''))+(ea.part<.99?' ('+Math.round(ea.part*100)+' %)':'');saveJ();renderDay()}$('sheet').classList.remove('on');toast('Journal mis à jour : '+Math.round(ea.kcal)+' kcal')}
+    delete LEFTP[c];delete PH['reste-'+c]},
   plFixChip(b){const t=$('plFixTx');t.value=(t.value.trim()?t.value.trim()+', ':'')+b.dataset.v;t.focus()},
   plDel(b){if(!PLATE)return;PLATE.aliments.splice(+b.dataset.i,1);plSum();renderPlate()},
   addPlate(b){const q=+$('plQ').value;addFood({nom:PLATE.nom,kcal:num(PLATE.kcal)*q,p:num(PLATE.proteines_g)*q,g:num(PLATE.glucides_g)*q,l:num(PLATE.lipides_g)*q});b.textContent='Ajouté !';b.disabled=true;resetDrop('assiette');$('plTxt').value=''},
@@ -3691,7 +3740,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-67';
+const APP_VERSION='2026.11.26-68';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
@@ -3703,7 +3752,8 @@ const NEWS=[
  ['2026.11.26-50','Repas en douceur','Minuteur guidé pour manger lentement après la sleeve.','cuisine','journal'],
  ['2026.11.26-54','Conseils pratiques','40 fiches vérifiées : restaurant, fêtes, sommeil, courses…','coach','fiches'],
  ['2026.11.26-55','Nouveau look','Plus lisible, et des animations propres à chaque thème.','moi',''],
- ['2026.11.26-66','Corrige l\'IA','Assiette : dis ce qui est faux, change les grammes ou retire un aliment, et elle retient tes corrections.','scan','assiette']];
+ ['2026.11.26-66','Corrige l\'IA','Assiette : dis ce qui est faux, change les grammes ou retire un aliment, et elle retient tes corrections.','scan','assiette'],
+ ['2026.11.26-68','Pas tout fini ?','Valide ton repas, puis dis (ou montre en photo) ce que tu as laissé : le journal compte ce que tu as vraiment mangé.','scan','assiette']];
 function showNews(){let seen=store.get('newsSeen','');if(!seen){if(!P.taille){store.set('newsSeen',APP_VERSION);return}seen='2026.11.26-40'}const vk=v=>String(v).replace(/-(\d+)$/,(m,n)=>'-'+n.padStart(5,'0')),L=NEWS.filter(n=>vk(n[0])>vk(seen)&&(n[4]!=='journal'||n[1]!=='Repas en douceur'||BARIA()));store.set('newsSeen',APP_VERSION);if(!L.length||$('welcome').classList.contains('on'))return;
   const go=()=>{if($('ov').classList.contains('on')||$('scanOv').classList.contains('on')||$('welcome').classList.contains('on')||$('sheet').classList.contains('on'))return setTimeout(go,4000);openSheet(`<div class="row sb"><h2 style="margin:0">Quoi de neuf ?</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Depuis ta dernière visite :</p>${L.map(n=>`<button class="stp news" data-act="newsGo" data-v="${n[3]}" data-p="${n[4]}"><i>★</i><span><b>${esc(n[1])}</b><small>${esc(n[2])}</small></span></button>`).join('')}`)};setTimeout(go,1500)}
 async function checkUpdate(){
