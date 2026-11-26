@@ -151,6 +151,9 @@ section[data-v=moi].on{display:flex;flex-direction:column}section[data-v=moi]>*{
 .tipd{width:100%;text-align:left;border:0;font:inherit;color:inherit;text-transform:none;letter-spacing:0;cursor:pointer;margin-top:10px}html[data-skin] .tipd{background:var(--fill);background-image:none;color:var(--ink);box-shadow:none}
 .news{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--fill)!important;background-image:none!important;color:var(--ink)!important;border:0;border-radius:14px;padding:10px 12px;margin-top:8px;min-height:60px;font:inherit;text-transform:none;letter-spacing:0;box-shadow:none!important;animation:none!important}.news i{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-style:normal;background:var(--red);color:#fff}.news small{display:block;font-size:14px;color:var(--mute);font-weight:500}
 html.idle #amb *,html.idle #amb::before,html.idle #amb::after,html.idle .hero *,html.idle .hero::before,html.idle .hero::after{animation-play-state:paused!important}
+.plt .x{min-width:40px;min-height:40px;font-size:20px;padding:0}.plfix{margin-top:8px;border-top:1px solid var(--line);padding-top:4px}
+.pedit{grid-template-columns:1fr 1fr}.pedit label{font-size:13px}.pedit input{font-size:16px;min-height:44px}
+.plgw{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font-weight:600;color:var(--mute)}.plg{width:84px!important;min-height:40px!important;padding:6px 8px!important;font-size:16px!important;margin:0!important;text-align:right}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -2457,6 +2460,29 @@ skyTick();setInterval(skyTick,10*6e4);
 /* ---- Économie de batterie : décor en pause après 30 s sans toucher l'écran ---- */
 {let it=0;const R2=document.documentElement,wake=()=>{if(R2.classList.contains('idle'))R2.classList.remove('idle');clearTimeout(it);it=setTimeout(()=>R2.classList.add('idle'),30000)};['pointerdown','keydown','scroll','touchstart'].forEach(ev=>addEventListener(ev,wake,{passive:true}));wake();document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')wake()})}
 
+
+/* ---- Assiette : estimation, correction, suppression d'un aliment ---- */
+const PLATEF=`{"nom":"nom court du plat","aliments":[{"nom":"","grammes":150,"quantite":"ex. 150 g ou 1 tranche","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0}],"kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"confiance":"faible|moyenne|bonne","avis":"1-2 phrases sur ce repas par rapport à son objectif"}`;
+function normPlate(r){r=r||{};r.aliments=arr(r.aliments).filter(a=>a&&typeof a==='object');r.aliments.forEach(a=>{if(!num(a.grammes)){const m=String(a.quantite||'').match(/(\d+(?:[.,]\d+)?)\s*(g|ml)\b/i);if(m)a.grammes=num(m[1])}});const hasM=r.aliments.length&&r.aliments.every(a=>a.kcal!=null);if(hasM&&r.aliments.some(a=>a.proteines_g!=null)){const t=k=>Math.round(r.aliments.reduce((x,a)=>x+num(a[k]),0));const k=t('kcal');if(k)r.kcal=k;r.proteines_g=t('proteines_g');r.glucides_g=t('glucides_g');r.lipides_g=t('lipides_g')}return r}
+function plSum(){const P2=PLATE,t=k=>Math.round(P2.aliments.reduce((x,a)=>x+num(a[k]),0));P2.kcal=t('kcal');if(P2.aliments.some(a=>a.proteines_g!=null)){P2.proteines_g=t('proteines_g');P2.glucides_g=t('glucides_g');P2.lipides_g=t('lipides_g')}}
+function renderPlate(){const r=PLATE;if(!r)return;
+  $('plateRes').innerHTML=`<div class="card"><h2>${esc(r.nom||'Mon repas')}</h2>${r.corr&&r.corr.length?`<div class="chip p" style="margin-bottom:8px">Corrigé selon tes précisions</div>`:''}<div class="big" style="color:var(--red)" id="plK">${esc(Math.round(num(r.kcal)))}<span style="font-size:20px"> kcal</span></div>
+    <div class="macro"><span><b>${esc(Math.round(num(r.proteines_g)))}</b> g prot.</span><span><b>${esc(Math.round(num(r.glucides_g)))}</b> g gluc.</span><span><b>${esc(Math.round(num(r.lipides_g)))}</b> g lip.</span>${r.confiance?`<span>Confiance ${esc(r.confiance)}</span>`:''}</div>
+    <p class="mute" style="margin:6px 0 0;font-size:14px">Tu connais les grammes ? Change-les directement : tout se recalcule.</p><table class="tbl plt">${r.aliments.map((a,i)=>`<tr><td>${esc(a.nom)}${a.quantite&&!/^\s*\d+\s*(g|ml)\s*$/i.test(a.quantite)?` <span class="mute">${esc(a.quantite)}</span>`:''}<div class="plgw"><input class="plg" type="number" inputmode="decimal" min="0" data-i="${i}" value="${num(a.grammes)?Math.round(num(a.grammes)):''}" placeholder="?" aria-label="Grammes de ${esc(a.nom)}"> g</div></td><td>${esc(Math.round(num(a.kcal)))} kcal</td><td style="width:44px"><button class="x" data-act="plDel" data-i="${i}" aria-label="Retirer ${esc(a.nom)}">×</button></td></tr>`).join('')}</table>
+    ${r.avis?`<p>${esc(r.avis)}</p>`:''}
+    <details class="plfix" ${r.corr&&r.corr.length?'':''}><summary style="cursor:pointer;font-weight:800;padding:8px 0">Ce n'est pas tout à fait ça ? Corrige-moi</summary>
+      <p class="mute" style="margin-top:0">Dis-moi ce qui est faux, je recalcule. Je retiens tes corrections pour les prochaines photos.</p>
+      <div class="chips">${["il n'y a pas de matière grasse","c'est du jus de cuisson, pas de l'huile","pas de sauce","la portion est plus petite","la portion est plus grande","c'est fait maison","c'est du poulet, pas du porc"].map(v=>`<button class="chip" data-act="plFixChip" data-v="${esc(v)}">${esc(v)}</button>`).join('')}</div>
+      <textarea id="plFixTx" class="grow" rows="2" placeholder="ex. Non, pas de matière grasse : c'est le jus de cuisson du steak. Et il y a 150 g de haricots verts." aria-label="Ta correction"></textarea>
+      <div class="row" style="margin-top:8px"><button class="alt" data-act="plFix">Corriger l'estimation</button></div><div id="plFixRes"></div></details>
+    <label for="plQ" style="margin-top:10px">Ta portion réelle</label><select id="plQ"><option value=".5">La moitié</option><option value=".75">Un peu moins</option><option value="1" selected>Comme estimé</option><option value="1.25">Un peu plus</option><option value="1.5">Une fois et demie</option></select>
+    <div class="row" style="margin-top:12px"><button data-act="addPlate">Ajouter à mon journal</button></div></div>`}
+
+
+document.addEventListener('change',e=>{const t=e.target;if(!t.classList||!t.classList.contains('plg')||!PLATE)return;const a=PLATE.aliments[+t.dataset.i];if(!a)return;const ng=num(t.value),og=num(a.grammes);
+  if(ng>0&&og>0){const f=ng/og;['kcal','proteines_g','glucides_g','lipides_g'].forEach(k=>{if(a[k]!=null)a[k]=Math.round(num(a[k])*f*10)/10});a.grammes=ng;a.quantite=ng+' g';plSum();setTimeout(renderPlate,0);toast('Recalculé pour '+ng+' g')}
+  else if(ng>0){a.grammes=ng;a.quantite=ng+' g';toast('Je recalcule avec ces grammes…');$('plFixTx')&&($('plFixTx').value=`${a.nom} : ${ng} g`);setTimeout(()=>{const b=document.querySelector('[data-act=plFix]');if(b)A.plFix(b)},0)}});
+
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -2581,8 +2607,13 @@ function renderAna(r){
   <div class="card"><h3>Pour ton objectif</h3><div class="big" style="font-size:40px;margin:8px 0;color:var(--red)">${esc(r.series)} × ${esc(r.repetitions)}</div><div class="mute">Repos ${esc(r.repos_s)} s · ${esc(r.charge)}</div></div>
   <div class="card"><h3>Réglages</h3>${list(r.reglages)}<h3 style="margin-top:14px">Comment l'utiliser</h3>${list(r.etapes,'ol')}
   <h3 style="margin-top:14px">Erreurs à éviter</h3>${list(r.erreurs)}${r.securite?`<p class="mute"><b>Sécurité :</b> ${esc(r.securite)}</p>`:''}
-  ${Array.isArray(r.variantes)&&r.variantes.length?`<h3 style="margin-top:14px">Autres exercices sur cet appareil</h3>${list(r.variantes)}`:''}</div>`;
+  ${Array.isArray(r.variantes)&&r.variantes.length?`<h3 style="margin-top:14px">Autres exercices sur cet appareil</h3>${list(r.variantes)}`:''}</div>
+  <div class="card"><details><summary style="cursor:pointer;font-weight:800;padding:4px 0">Ce n'est pas cette machine ? Corrige-moi</summary>
+  <p class="mute" style="margin-top:0">Dis-moi ce que c'est vraiment (nom, marque, ce qu'on y fait) : je refais la fiche.</p>
+  <textarea id="maFix" class="grow" rows="1" placeholder="ex. Non, c'est un hack squat, on pousse avec les épaules" aria-label="Ta correction"></textarea>
+  <div class="row" style="margin-top:8px"><button class="alt" data-act="maFix">Refaire la fiche</button></div></details></div>`;ANA_LAST=r;
 }
+let ANA_LAST=null;
 let AH=objs(store.get('machines',[]));
 function renderAH(){$('anaHistC').style.display=AH.length?'block':'none';$('anaHist').innerHTML=AH.map((a,i)=>`<button class="chip" data-act="showAna" data-i="${i}">${esc(a.nom)}</button>`).join('')}
 
@@ -2814,15 +2845,27 @@ Format JSON : {"zones":["clé"],"explication":"2-3 phrases","exercices":[${EXF}]
   useZones(b){P.zones=[...new Set([...P.zones,...clean(CORPS.zones)])];saveP();renderZones();b.textContent='Ajouté ! Refais ton programme dans Sport.'},
   startCorps(){startSession({nom:'Séance ciblée',exercices:CORPS.exercices||[]})},
   plAdd(b){const t=$('plTxt');t.value=(t.value.trim()?t.value.trim()+', ':'')+b.dataset.v;grow&&grow(t);t.focus()},
-  anaPlate(b){const tx=$('plTxt').value.trim();if(!PH.assiette&&!tx){toast('Ajoute une photo ou décris ton repas.');$('plTxt').focus();return}run(b,$('plateRes'),PH.assiette?'Analyse de l\'assiette':'Calcul de ton repas',async()=>{
-    const r=await askJSON(`Tu es nutritionniste. ${PH.assiette?'Identifie les aliments sur la photo du repas':'Voici la description d\'un repas'} et estime les portions et valeurs nutritionnelles (pense à l'huile et aux sauces probables).${tx?`\nCe que la personne précise sur son assiette (PRIORITAIRE sur ce que tu crois voir : ingrédients, quantités, cuisson, matières grasses) : « ${tx} ».`:''} ${profil()}
-Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 150 g","kcal":0}],"kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"confiance":"faible|moyenne|bonne","avis":"1-2 phrases sur ce repas par rapport à son objectif"}`,{images:PH.assiette?[PH.assiette]:[],modelTier:'default',cache:false});
-    PLATE=r;
-    $('plateRes').innerHTML=`<div class="card"><h2>${esc(r.nom)}</h2><div class="big" style="color:var(--red)" id="plK">${esc(r.kcal)}<span style="font-size:20px"> kcal</span></div>
-    <div class="macro"><span><b>${esc(r.proteines_g)}</b> g prot.</span><span><b>${esc(r.glucides_g)}</b> g gluc.</span><span><b>${esc(r.lipides_g)}</b> g lip.</span><span>Confiance ${esc(r.confiance)}</span></div>
-    <table class="tbl">${arr(r.aliments).map(a=>`<tr><td>${esc(a.nom)} <span class="mute">${esc(a.quantite)}</span></td><td>${esc(a.kcal)} kcal</td></tr>`).join('')}</table>
-    <p>${esc(r.avis)}</p><label for="plQ">Ta portion réelle</label><select id="plQ"><option value=".5">La moitié</option><option value=".75">Un peu moins</option><option value="1" selected>Comme estimé</option><option value="1.25">Un peu plus</option><option value="1.5">Une fois et demie</option></select>
-    <div class="row" style="margin-top:12px"><button data-act="addPlate">Ajouter à mon journal</button></div></div>`})},
+  anaPlate(b){const tx=$('plTxt').value.trim();if(!PH.assiette&&!tx){toast('Ajoute une photo ou décris ton repas.');$('plTxt').focus();return}const mem=store.get('platefix',[]);run(b,$('plateRes'),PH.assiette?'Analyse de l\'assiette':'Calcul de ton repas',async()=>{
+    const r=await askJSON(`Tu es nutritionniste. ${PH.assiette?'Identifie les aliments sur la photo du repas':'Voici la description d\'un repas'} et estime les portions et valeurs nutritionnelles (pense à l'huile et aux sauces probables, mais n'invente pas de matière grasse si rien ne le montre : un liquide brun ou rosé autour d'une viande est souvent du jus de cuisson).${tx?`\nCe que la personne précise sur son assiette (PRIORITAIRE sur ce que tu crois voir : ingrédients, quantités, cuisson, matières grasses) : « ${tx} ».`:''}${mem.length?`\nCorrections que la personne t'a déjà faites sur d'autres photos (retiens-les) : ${mem.join(' ; ')}.`:''} ${profil()}
+Format JSON : ${PLATEF}`,{images:PH.assiette?[PH.assiette]:[],modelTier:'default',cache:false});
+    PLATE=normPlate(r);PLATE.src=tx;renderPlate()})},
+  plFix(b){const t=$('plFixTx').value.trim();if(!t){$('plFixTx').focus();return}if(!PLATE)return;const prev={nom:PLATE.nom,aliments:PLATE.aliments,kcal:PLATE.kcal,proteines_g:PLATE.proteines_g,glucides_g:PLATE.glucides_g,lipides_g:PLATE.lipides_g};
+    run(b,$('plFixRes'),'Je corrige mon estimation',async()=>{
+    const r=await askJSON(`Tu es nutritionniste. Voici ton estimation précédente d'un repas : ${JSON.stringify(prev)}.
+La personne a son assiette sous les yeux et te corrige : « ${t} »${PLATE.corr&&PLATE.corr.length?` (corrections précédentes, toujours valables : ${PLATE.corr.join(' ; ')})`:''}.
+Elle a raison : corrige l'estimation en respectant STRICTEMENT ses corrections (retire, remplace ou ajuste les aliments et les quantités concernés), sans rien inventer d'autre, et recalcule les valeurs. ${profil()}
+Format JSON : ${PLATEF}`,{modelTier:'default',cache:false});
+    const corr=[...(PLATE.corr||[]),t];PLATE=normPlate(r);PLATE.corr=corr;
+    const mem=store.get('platefix',[]);store.set('platefix',[...mem.filter(x=>x!==t),t].slice(-8));renderPlate();toast('Estimation corrigée')})},
+  maFix(b){const t=$('maFix').value.trim();if(!t){$('maFix').focus();return}const prev=ANA_LAST?{nom:ANA_LAST.nom,description:ANA_LAST.description}:{};run(b,$('ana'),'Je refais la fiche',async()=>{
+    const r=await askJSON(`Tu es un coach sportif expert du matériel de musculation. Tu avais identifié : ${JSON.stringify(prev)}. L'utilisateur, qui a l'appareil devant lui, te corrige : « ${t} ». Il a raison : refais entièrement la fiche pour le bon appareil. ${profil()}
+Explique comment s'en servir correctement et quelles séries faire pour son objectif.
+Format JSON : {"nom":"","nom_recherche":"nom usuel pour chercher une vidéo","description":"1-2 phrases","muscles_principaux":["clé"],"muscles_secondaires":["clé"],"reglages":["…"],"etapes":["…"],"erreurs":["…"],"securite":"","series":3,"repetitions":"8-12","repos_s":90,"charge":"conseil de charge","variantes":["autre exercice possible sur cet appareil"],"anim":"le mouvement le plus proche parmi : ${Object.keys(ANIM.S).join(', ')}"}
+Clés de muscles autorisées : ${KEYS}.`,{modelTier:'default',cache:false});
+    if(r.nom){AH=[r,...AH.filter(a=>a.nom!==r.nom&&a!==ANA_LAST)].slice(0,15);store.set('machines',AH);renderAH()}renderAna(r);toast('Fiche corrigée')})},
+  prodEdit(){if(!PROD)return;const c={...(PROD.c100||{})};['kcal','l','ags','g','sucres','fibres','p','sel'].forEach(k=>{const v=$('pe-'+k)?.value;if(v!=null&&v!=='')c[k]=num(v);else if(v==='')c[k]=null});PROD.c100=c;if(!/corrigé/.test(PROD.source||''))PROD.source=(PROD.source||'')+' · corrigé par toi';PRODS=[PROD,...PRODS.filter(x=>x!==PROD)].slice(0,30);store.set('produits',PRODS);renderProdHist();renderProd(PROD);toast('Note recalculée')},
+  plFixChip(b){const t=$('plFixTx');t.value=(t.value.trim()?t.value.trim()+', ':'')+b.dataset.v;t.focus()},
+  plDel(b){if(!PLATE)return;PLATE.aliments.splice(+b.dataset.i,1);plSum();renderPlate()},
   addPlate(b){const q=+$('plQ').value;addFood({nom:PLATE.nom,kcal:num(PLATE.kcal)*q,p:num(PLATE.proteines_g)*q,g:num(PLATE.glucides_g)*q,l:num(PLATE.lipides_g)*q});b.textContent='Ajouté !';b.disabled=true;resetDrop('assiette');$('plTxt').value=''},
   anaFridge(b){run(b,$('fridgeRes'),'Lecture de la photo',async()=>{
     const r=await askJSON(`Liste les aliments et ingrédients visibles sur cette photo de frigo ou de placard, avec la quantité approximative. Format JSON : {"ingredients":["ex. 6 œufs"]}`,{images:[PH.fpic],modelTier:'default',cache:false});
@@ -3117,6 +3160,7 @@ function verdictHTML(p){const a=prodAnalyse(p),c=a.c,u=a.drink?'100 ml':'100 g';
   ${a.noVal?`<div class="tip" style="border-left-color:var(--yel)">Valeurs nutritionnelles manquantes : ajoute une photo du tableau pour une note plus précise.</div>`:''}<table class="tbl"${a.noVal?' hidden':''}><tr><td><b>Pour ${u}</b></td><td></td><td></td></tr><tr><td>Énergie</td><td>${c.kcal==null||c.kcal===''?'–':Math.round(num(c.kcal))+' kcal'}</td><td></td></tr>${lvl('l','Matières grasses',c.l,'g')}${lvl('sa','dont saturées',c.ags,'g')}<tr><td>Glucides</td><td>${c.g==null||c.g===''?'–':fr(Math.round(num(c.g)*10)/10)+' g'}</td><td></td></tr>${lvl('su','dont sucres',c.sucres,'g')}<tr><td>Fibres</td><td>${c.fibres==null||c.fibres===''?'–':fr(num(c.fibres))+' g'}</td><td></td></tr><tr><td>Protéines</td><td>${c.p==null||c.p===''?'–':fr(Math.round(num(c.p)*10)/10)+' g'}</td><td></td></tr>${lvl('se','Sel',c.sel,'g')}</table>
   ${p.portion?`<p class="mute">Portion indiquée : ${esc(p.portion)}</p>`:''}${p.allergenes?`<p class="mute"><b>Allergènes :</b> ${esc(p.allergenes)}</p>`:''}
   ${a.mark?`<details><summary style="cursor:pointer;font-weight:700;padding:8px 0">Ingrédients (sucres et additifs surlignés)</summary><p class="mute ingtxt">${a.mark}</p></details>`:''}
+  <details style="margin-top:6px"><summary style="cursor:pointer;font-weight:700;padding:8px 0">Une valeur est fausse ? Corrige-la</summary><p class="mute" style="margin-top:0">Recopie les chiffres de l'étiquette (pour ${u}) : la note est recalculée tout de suite.</p><div class="grid pedit">${[['kcal','Énergie (kcal)'],['l','Matières grasses (g)'],['ags','dont saturées (g)'],['g','Glucides (g)'],['sucres','dont sucres (g)'],['fibres','Fibres (g)'],['p','Protéines (g)'],['sel','Sel (g)']].map(([k,l])=>`<div><label for="pe-${k}">${l}</label><input id="pe-${k}" type="number" inputmode="decimal" step="0.01" value="${c[k]==null||c[k]===''?'':esc(c[k])}"></div>`).join('')}</div><div class="row" style="margin-top:8px"><button class="alt" data-act="prodEdit">Recalculer la note</button></div></details>
   <p class="mute" style="font-size:13px;margin-bottom:0">Source : ${esc(p.source||'')}${p.ean?' · code '+esc(p.ean):''}${p.ean&&/Open Food Facts/.test(p.source||'')?` · <a href="https://fr.openfoodfacts.org/produit/${encodeURIComponent(p.ean)}" target="_blank" rel="noopener">voir la fiche</a>`:''}. Note indicative calculée par l'app (Nutri-Score, transformation, additifs). Ce n'est pas un avis médical.</p></div>`}
 async function prodAvis(p){const el=$('pAvis');if(!el)return;const a=prodAnalyse(p);if(!a.known)return;
   el.innerHTML='<div class="busy">Le coach regarde ce produit pour toi<span class="dots3"><i></i><i></i><i></i></span></div>';
@@ -3647,7 +3691,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-65';
+const APP_VERSION='2026.11.26-66';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
