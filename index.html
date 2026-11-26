@@ -1708,6 +1708,7 @@ const EQK={M:'equipM',S:'equipS',C:'cuisL'};
 function renderFoldSums(){try{const n=(P.equipM||[]).length+(P.equipS||[]).length+(P.cuisL||[]).length+(P.custom||[]).length;$('sumEq').textContent=n?n+' élément'+(n>1?'s':'')+' choisi'+(n>1?'s':''):'rien de choisi pour l\'instant';
   const sl=(P.santeL||[]).map(k=>SANTE[k]).filter(Boolean);$('sumSante').textContent=sl.length?sl.slice(0,3).join(' · ')+(sl.length>3?' …':''):'rien d\'indiqué';if(!sl.length&&!P.sante&&!store.get('santeSeen',0)){$('foldSante').open=true;store.set('santeSeen',1)}
   const sk={synth:'Synthwave',foret:'Forêt · jour',foretnuit:'Forêt · nuit',pets:'Chats & chiens',clair:'Clair',nuit:'Nuit'}[document.documentElement.dataset.skin]||'';$('sumApp').textContent=sk+' · texte '+({m:'normal',l:'grand',xl:'très grand'}[document.documentElement.dataset.size]||'normal')}catch(e){}}
+document.addEventListener('toggle',e=>{if(e.target&&e.target.id==='foldSante'&&e.target.open&&!store.get('santeOk',0)){setTimeout(()=>{store.set('santeOk',1)},4000)}},true);
 function renderEq(){renderFoldSums();
   for(const g of ['M','S','C']){const L=P[EQK[g]]||[];$('eq'+g).innerHTML=EQ[g].map(n=>`<button class="chip${L.includes(n)?' p':''}" data-act="eqT" data-g="${g}" data-n="${esc(n)}" aria-pressed="${L.includes(n)}">${esc(n)}</button>`).join('')}
   const C=P.custom||[];
@@ -1782,8 +1783,8 @@ function recovery(){
   const last={};LOG.forEach(l=>l.ex.forEach(e=>{if(e.sets.length)clean(e.muscles).forEach(k=>{last[k]=Math.max(last[k]||0,l.t)})}));
   const h=k=>last[k]?(Date.now()-last[k])/36e5:999;
   const col=k=>h(k)<24?'var(--hot)':h(k)<60?'var(--warm)':last[k]?'var(--green)':'var(--mus)';
-  const wk=LOG.filter(l=>Date.now()-l.t<7*864e5).length;
-  $('weekCount').textContent=`${wk} / ${P.jours||3} séances cette semaine`;
+  const wk=LOG.filter(l=>l.d>=weekKey()).length;
+  $('weekCount').textContent=`${wk} / ${P.jours||3} séances depuis lundi`;
   const fresh=Object.keys(MN).filter(k=>h(k)>=60&&last[k]).map(k=>MN[k]);
   $('recov').innerHTML=(LOG.length?mapSVG(col):'<p class="mute">Après ta première séance, tu verras ici quels muscles se reposent.</p>')+
    (LOG.length?`<div class="legend"><span><i style="background:var(--hot)"></i>Moins de 24 h</span><span><i style="background:var(--warm)"></i>En récupération</span><span><i style="background:#3dffc5"></i>Prêt</span></div>${fresh.length?`<p class="mute">Prêts à bosser : ${esc(fresh.join(', '))}</p>`:''}`:'');
@@ -2187,14 +2188,14 @@ function renderCountry(){const el=$('wCountry');if(!WSEL){el.innerHTML='';return
   <div id="wRes"></div></div>`;
   loadPhotos(el)}
 /* photos : Wikipédia (vraies photos, libres) puis illustration IA en secours */
-let PHC=store.get('phc',{});
-async function wikiPhoto(q){if(PHC[q]!==undefined)return PHC[q];
+let PHC=store.get('phc2',{});
+async function wikiPhoto(q,key){key=key||q;if(PHC[q]!==undefined)return PHC[q];
   try{const r=await fetch('https://fr.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&generator=search&gsrnamespace=0&gsrlimit=3&prop=pageimages&piprop=thumbnail&pithumbsize=640&gsrsearch='+encodeURIComponent(q));const d=await r.json();
-    const qw=normT(q).filter(w=>w.length>3),pg=arr(d.query&&d.query.pages).sort((a,b)=>a.index-b.index).find(p=>p.thumbnail&&p.thumbnail.source&&!/\.svg/i.test(p.thumbnail.source)&&(!qw.length||normT(p.title).some(t=>qw.some(w=>t.startsWith(w.slice(0,5))||w.startsWith(t.slice(0,5))))));
-    const v=pg?{src:pg.thumbnail.source,t:pg.title}:null;PHC[q]=v;const ks=Object.keys(PHC);if(ks.length>300)delete PHC[ks[0]];store.set('phc',PHC);return v}catch(e){return undefined}}
+    const qw=normT(key).filter(w=>w.length>3),pg=arr(d.query&&d.query.pages).sort((a,b)=>a.index-b.index).find(p=>p.thumbnail&&p.thumbnail.source&&!/\.svg/i.test(p.thumbnail.source)&&(!qw.length||normT(p.title).some(t=>qw.some(w=>t.startsWith(w.slice(0,5))||w.startsWith(t.slice(0,5))))));
+    const v=pg?{src:pg.thumbnail.source,t:pg.title}:null;PHC[q]=v;const ks=Object.keys(PHC);if(ks.length>300)delete PHC[ks[0]];store.set('phc2',PHC);return v}catch(e){return undefined}}
 const aiPic=(q,pays)=>'https://image.pollinations.ai/prompt/'+encodeURIComponent(`photo culinaire réaliste du plat ${q}${pays?' ('+pays+')':''}, servi dans une assiette, vue de trois quarts, lumière naturelle, appétissant`)+'?width=640&height=440&nologo=true&seed='+(q.length*7919%9973);
 async function fillPhoto(box){if(box.dataset.done)return;box.dataset.done=1;const q=box.dataset.q,pays=box.dataset.pays||'';
-  let w=pays?await wikiPhoto(q+' '+pays):null;if(!w)w=await wikiPhoto(q);
+  let w=pays?await wikiPhoto(q+' '+pays,q):null;if(!w)w=await wikiPhoto(q);
   if(w){box.innerHTML=`<img src="${esc(w.src)}" alt="${esc(q)}" loading="lazy"><a class="credit" href="https://fr.wikipedia.org/wiki/${encodeURIComponent(w.t)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Photo : Wikipédia</a>`;return}
   box.innerHTML=`<img src="${esc(aiPic(q,pays))}" alt="${esc(q)}" loading="lazy"><span class="credit">Illustration IA (indicative)</span>`;
   const im=box.querySelector('img');im.onerror=()=>{box.innerHTML=`<a class="vid" href="${IMGQ(q+' plat')}" target="_blank" rel="noopener">Voir des photos</a>`}}
@@ -2533,7 +2534,7 @@ function addFood(it){if(BARIA())store.set('boire',{until:Date.now()+30*6e4});day
 function renderDay(){
   const m=metrics()||{},t=dayTot(),tk=m.kcal||(BARIA()?1000:2000),tp=m.prot||100,te=m.eau||8,w=EAU[today()]||0;
   $('mDate').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  $('gK').textContent=`${Math.round(t.k).toLocaleString('fr-FR')} / ${tk.toLocaleString('fr-FR')} kcal`;$('bK').style.width=Math.min(100,t.k/tk*100)+'%';
+  $('gK').textContent=m.kcal?`${Math.round(t.k).toLocaleString('fr-FR')} / ${tk.toLocaleString('fr-FR')} kcal`:`${Math.round(t.k).toLocaleString('fr-FR')} kcal${BARIA()?' · pas d\'objectif : suis ton équipe':''}`;$('bK').style.width=(m.kcal?Math.min(100,t.k/tk*100):0)+'%';
   $('gP').textContent=`${Math.round(t.p)} / ${tp} g`;$('bP').style.width=Math.min(100,t.p/tp*100)+'%';
   $('gW').textContent=`${w} / ${te} verres`;
   $('glass').innerHTML=Array.from({length:Math.max(te,w)},(_,i)=>`<button class="${i<w?'f':''}" data-act="eau" data-v="${i+1}" aria-label="${i+1} verres">💧</button>`).join('').replace(/💧/g,'<svg class="i" style="width:18px;height:18px" viewBox="0 0 24 24"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/></svg>');
@@ -3000,9 +3001,10 @@ function prodAnalyse(p){
   const lv=(v,t)=>v==null||v===''?'':num(v)<=t[0]?'lo':num(v)>t[1]?'hi':'md';
   const L={su:lv(c.sucres,lim.su),l:lv(c.l,lim.l),sa:lv(c.ags,lim.sa),se:lv(c.sel,lim.se)};
   const ns=p.nutriscore||nsCalc(c,drink),nsEst=!p.nutriscore&&!!ns,nova=+p.nova||0;
-  let sc=ns?{a:90,b:72,c:52,d:32,e:15}[ns]:50;
+  let sc=ns?{a:90,b:72,c:52,d:32,e:15}[ns]:drink&&c.kcal!=null&&c.kcal!==''?(num(c.sucres)>8?15:num(c.sucres)>4?30:num(c.sucres)>1.5?50:num(c.kcal)<=2?92:70):50;
   if(nova===4)sc-=10;else if(nova&&nova<=2)sc+=4;
   sc-=Math.min(24,risky.length*6);if(sw.length)sc-=4;if(palm)sc-=4;if(hydro)sc-=10;if(compl)sc+=3;if(sugFirst)sc-=6;
+  if(drink&&(sw.length||gaz&&num(c.sucres)>0))sc=Math.min(sc,60);if(alcool)sc=Math.min(sc,30);
   sc=Math.max(3,Math.min(98,Math.round(sc)));
   const known=!!(ns||ing||(c.kcal!=null&&c.kcal!==''));
   const lab=sc>=75?'Excellent':sc>=55?'Bon':sc>=35?'Moyen':'À limiter',col=sc>=75?'#1e9e4a':sc>=55?'#7fb72e':sc>=35?'#e39b00':'#e0482e';
@@ -3130,7 +3132,7 @@ function renderHome(){
     [!!store.get('lastbk',''),'Faire une sauvegarde','pour ne rien perdre','goPane','suivi','donnees']],done=steps.filter(x=>x[0]).length;
   $('homeStart').innerHTML=store.get('startHide',0)||done===steps.length?'':`<div class="card start"><div class="row sb"><b>Bien démarrer</b><span class="mute">${done}/${steps.length}</span></div><div class="rbar" style="height:8px;margin:8px 0 6px"><i style="width:${Math.round(done/steps.length*100)}%"></i></div>${steps.map(([ok,t,sub,act,v,pn])=>`<button class="stp${ok?' ok':''}" data-act="${act}" data-v="${v}" data-p="${pn}" ${ok?'disabled':''}><i>${ok?'✓':''}</i><span><b>${t}</b><small>${sub}</small></span></button>`).join('')}<button class="ghost sm" data-act="startHide" style="margin-top:8px">Masquer</button></div>`}
   /* séance du jour */
-  const wk=LOG.filter(l=>Date.now()-l.t<7*864e5).length,doneToday=LOG.some(l=>l.d===today());
+  const wk=LOG.filter(l=>l.d>=weekKey()).length,doneToday=LOG.some(l=>l.d===today());
   if(PR&&arr(PR.jours).length){let li=-1;for(let i=LOG.length-1;i>=0&&li<0;i--)li=PR.jours.findIndex(j=>j.nom===LOG[i].nom);const j=PR.jours[(li+1)%PR.jours.length];
     $('homeSeance').innerHTML=`<div class="row sb"><span class="mute" style="font-weight:700">${doneToday?'Bravo, séance faite aujourd\'hui':'Ta prochaine séance'}</span><span class="mute">${wk} / ${P.jours||3} cette semaine</span></div>
     <h2 style="margin:8px 0 2px">${esc(j.nom)}</h2><div class="mute">${esc(j.focus||'')} · ${arr(j.exercices).length} exercices · ${esc(j.duree_min||'')} min</div>
@@ -3578,7 +3580,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-55';
+const APP_VERSION='2026.11.26-56';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
@@ -3601,7 +3603,7 @@ $('phIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)re
 $('bkIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result),d=o.data||o;let n=0;Object.entries(d).forEach(([k,v])=>{if(k.startsWith('coach_')&&k!=='coach_ia'){localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v));n++}});toast(n+' éléments restaurés');setTimeout(()=>location.reload(),900)}catch(err){toast('Fichier de sauvegarde illisible')}};r.readAsText(f)});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 renderChk();renderDrink();
-Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS);netBanner();try{initWorld()}catch(e){console.error(e)}$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
+Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS);try{localStorage.removeItem('coach_phc')}catch(e){}netBanner();try{initWorld()}catch(e){console.error(e)}$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
 [calc,renderEq,renderSante,renderProg,renderAH,renderProdHist,renderMenu,renderWeek,renderFav,renderChat,renderPrets,renderExo,renderRef,renderDuo,renderWeekCard,renderFiches].forEach(f=>{try{f()}catch(e){console.error(f.name,e)}});route();
 }
 </script>
