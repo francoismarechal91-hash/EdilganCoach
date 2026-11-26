@@ -889,6 +889,14 @@ html:not(#_) section[data-v=accueil]>.tiles>.tile:active{transform:scale(.98)}
 .pushc .row b{display:block;font-size:16.5px}.pushc small{display:block;color:var(--mute);font-size:13.5px;line-height:1.35}.pushp{margin:10px 0 10px;font-size:15px;line-height:1.45}.pushp.ok{font-weight:700;color:var(--green,#22a06b)}
 .pushol{margin:8px 0 0;padding-left:22px;display:grid;gap:10px;font-size:14.5px;line-height:1.45}.btnl{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;border-radius:12px;background:var(--red);color:#fff!important;font-weight:700;text-decoration:none}.btnl.big{display:flex;width:100%;min-height:54px;font-size:17px}
 .rapcal summary{cursor:pointer;font-weight:700;padding:10px 0;min-height:44px}
+.wmh{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:18px}.wmh button,.wch button{white-space:nowrap;flex:none}
+.wcourse{margin-top:14px}.wch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.wch h4{margin:0;font-size:17px}
+.drow{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,46%);gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;margin:0 -4px;padding-inline:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}.drow::-webkit-scrollbar{display:none}
+.drow>.dish{scroll-snap-align:start}.drow>.dsk-err{grid-column:1/-1}
+.dsk{background:var(--fill);border-radius:16px;padding:8px;display:flex;flex-direction:column;gap:8px;min-height:190px}.dsk em{display:block;aspect-ratio:4/3;border-radius:12px}.dsk b{display:block;height:12px;border-radius:6px}.dsk b.w6{width:60%}
+.dsk em,.dsk b{background:linear-gradient(90deg,color-mix(in srgb,var(--ink) 7%,transparent) 0%,color-mix(in srgb,var(--ink) 14%,transparent) 50%,color-mix(in srgb,var(--ink) 7%,transparent) 100%);background-size:200% 100%;animation:dskl 1.3s linear infinite}
+@keyframes dskl{to{background-position:-200% 0}}@media (prefers-reduced-motion:reduce){.dsk em,.dsk b{animation:none}}
+.wclass{margin-top:16px}.wclass summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -3019,28 +3027,42 @@ function pickCountry(a,n){const c=CUIS[a];WSEL={a,n:c?c[1]:n,z:c?c[0]:''};docume
 function dishCard(o,q){return `<div class="dish"><div class="dph" data-act="cook" data-r="${reg(o)}" role="button" aria-label="Recette : ${esc(o.nom)}" data-q="${esc(q||o.wiki||o.nom_local||o.nom)}" data-pays="${esc(o.pays||'')}"><span class="mute">Photo…</span></div><b>${esc(o.nom)}</b>${o.nom_en?'<small class="srctag">Recette d\'origine traduite</small>':''}${o.type||o.desc?`<small class="mute dsub">${esc([o.type,o.desc].filter(Boolean).join(' · '))}</small>`:''}<div class="row" style="gap:6px;margin-top:auto;padding-top:6px;flex-wrap:nowrap"><button class="sm" data-act="cook" data-r="${reg(o)}">La recette</button><button class="ghost sm" data-act="favR" data-short="1" data-r="${reg(o)}" aria-label="Ajouter aux favoris" style="flex:0 0 44px">${FAVR.some(f=>f.data&&f.data.nom===o.nom)?'★':'☆'}</button></div></div>`}
 const MDBA={US:'American',GB:'British',CA:'Canadian',CN:'Chinese',EG:'Egyptian',PH:'Filipino',FR:'French',GR:'Greek',IN:'Indian',IE:'Irish',IT:'Italian',JP:'Japanese',MX:'Mexican',MA:'Moroccan',NL:'Dutch',PL:'Polish',PT:'Portuguese',RU:'Russian',ES:'Spanish',TH:'Thai',TN:'Tunisian',TR:'Turkish',VN:'Vietnamese',AR:'Argentinian'};
 async function mdbArea(a){const z=MDBA[a];if(!z||navigator.onLine===false)return[];try{const j=await ptmo(fetch('https://www.themealdb.com/api/json/v1/1/filter.php?a='+z).then(r=>r.json()),4000);return arr(j&&j.meals).map(m=>m&&m.strMeal).filter(Boolean)}catch(e){return[]}}
-let WSEEN=store.get('wseen',{});if(!WSEEN||typeof WSEEN!=='object'||Array.isArray(WSEEN))WSEEN={};let WDISC={};
-async function wDiscover(force){if(!WSEL)return;const key=WSEL.a||WSEL.n,box=$('wDisc');if(!box)return;
-  if(!force&&WDISC[key]){box.innerHTML=WDISC[key];loadPhotos(box);return}
-  box.innerHTML=finSkel(box,'Le chef cherche d\'autres plats de ce pays');
-  const c=CUIS[WSEL.a],ex=[...(c?c[3].split(';'):[]),...arr(WSEEN[key])].slice(-40);
-  const real=(await mdbArea(WSEL.a)).filter(n=>!ex.some(e=>sameDish(e,n))).sort(()=>Math.random()-.5).slice(0,3);
-  try{const r=await askJSON(`Tu es un chef qui connaît parfaitement la cuisine du monde. Propose 4 plats traditionnels de ce pays : ${WSEL.n}, vraiment différents les uns des autres (par exemple une entrée ou une soupe, un plat, un dessert ou une pâtisserie, un en-cas de rue), connus et appréciés là-bas, et réalisables en France.
-N'en propose AUCUN de cette liste : ${ex.join(', ')||'aucune'}.${real.length?`
-Ces recettes authentiques existent sur un site de cuisine étranger : ${real.join(' ; ')}. Inclus-en 2 parmi les 4 (si elles sont bien de ce pays), avec leur nom traduit en français dans "nom" et leur nom d'origine EXACT dans "nom_en".`:''}
-Format JSON : {"plats":[{"nom":"nom en français","nom_en":"","nom_local":"nom dans la langue du pays","wiki":"titre exact de l'article Wikipédia français s'il existe","type":"entrée|plat|dessert|en-cas|soupe|boisson","description":"1 phrase qui donne envie"}]}`,{modelTier:'quick',cache:false});
-    const L=arr(r.plats).filter(x=>x&&x.nom&&!ex.some(e=>cqNorm(e)===cqNorm(x.nom))).slice(0,4);if(!L.length)throw{code:'busy'};
-    WSEEN[key]=[...arr(WSEEN[key]),...L.map(x=>x.nom),...L.map(x=>x.nom_en).filter(Boolean)].slice(-50);store.set('wseen',WSEEN);
-    const html=`<div class="dgrid">${L.map(x=>dishCard({nom:x.nom,nom_en:real.some(n=>sameDish(n,x.nom_en))?x.nom_en:'',nom_local:x.nom_local,wiki:x.wiki,pays:WSEL.n,description:x.description||('Plat traditionnel ('+WSEL.n+')'),type:x.type,desc:x.description})).join('')}</div>`;
-    if($('wDisc')===box&&WSEL&&(WSEL.a||WSEL.n)===key){WDISC[key]=html;box.innerHTML=html;loadPhotos(box)}}
-  catch(e){if($('wDisc')===box)box.innerHTML=`<p class="mute">${esc(errMsg(e))}</p><button class="ghost sm" data-act="wMore">Réessayer</button>`}}
+let WSEEN=store.get('wseen',{});if(!WSEEN||typeof WSEEN!=='object'||Array.isArray(WSEEN))WSEEN={};
+/* Menu du pays : 3 entrées, 3 plats, 3 desserts, chaque partie rechargeable, sans jamais remontrer les mêmes */
+const WCOURSE=[['entree','Entrées','🥗','entrées (ou soupes, mezzés, petites assiettes)'],['plat','Plats','🍲','plats principaux'],['dessert','Desserts','🍰','desserts ou pâtisseries']];
+let WMENU={};
+const wSkel=()=>'<div class="dsk"><em></em><b></b><b class="w6"></b></div>'.repeat(3);
+function wCourseHTML(c,L){return L.map(x=>dishCard({nom:x.nom,nom_en:x.nom_en||'',nom_local:x.nom_local,wiki:x.wiki,pays:WSEL.n,description:x.description||((c==='entree'?'Entrée':c==='plat'?'Plat':'Dessert')+' traditionnel ('+WSEL.n+')'),desc:x.description},x.q)).join('')}
+function wPaint(c){const box=$('wC_'+c),key=WSEL&&(WSEL.a||WSEL.n);if(!box||!key)return;const L=(WMENU[key]||{})[c];if(!L)return;box.innerHTML=wCourseHTML(c,L);box.scrollLeft=0;loadPhotos(box)}
+async function wLoad(courses,force){if(!WSEL)return;const key=WSEL.a||WSEL.n,M=WMENU[key]=WMENU[key]||{};
+  const todo=courses.filter(c=>force||!M[c]);courses.filter(c=>!todo.includes(c)).forEach(wPaint);if(!todo.length)return;
+  todo.forEach(c=>{const b=$('wC_'+c);if(b)b.innerHTML=wSkel()});
+  const shown=WCOURSE.flatMap(([c])=>arr(M[c]).map(x=>x.nom)),ex=[...new Set([...arr(WSEEN[key]),...shown])].slice(-60);
+  const real=(await mdbArea(WSEL.a)).filter(n=>!ex.some(e=>sameDish(e,n))).sort(()=>Math.random()-.5).slice(0,4);
+  const want=todo.map(c=>{const w=WCOURSE.find(x=>x[0]===c);return`"${c}s":[3 ${w[3]}]`}).join(', ');
+  try{const r=await askJSON(`Tu es un chef qui connaît parfaitement la cuisine du monde. Pays : ${WSEL.n}.
+Propose, pour ce pays, 3 ${todo.map(c=>WCOURSE.find(x=>x[0]===c)[3]).join(', puis 3 ')} — des recettes traditionnelles AUTHENTIQUES, vraiment différentes les unes des autres, connues et appréciées là-bas, réalisables en France.
+N'en propose AUCUNE de cette liste (déjà montrées) : ${ex.join(', ')||'aucune'}.${real.length?`
+Ces recettes authentiques existent sur un site de cuisine étranger : ${real.join(' ; ')}. Si l'une correspond à ce qu'on te demande, inclus-la avec son nom traduit en français dans "nom" et son nom d'origine EXACT dans "nom_en".`:''}
+Format JSON : {${todo.map(c=>`"${c}s":[{"nom":"nom en français","nom_en":"","nom_local":"nom dans la langue du pays","wiki":"titre exact de l'article Wikipédia français s'il existe","description":"1 phrase qui donne envie"}]`).join(',')}}`,{modelTier:'quick',cache:false});
+    if(!WSEL||(WSEL.a||WSEL.n)!==key)return;let got=0;
+    for(const c of todo){const L=arr(r[c+'s']||r[c==='entree'?'entrées':c==='plat'?'plats_principaux':'desserts']).filter(x=>x&&x.nom&&!ex.some(e=>cqNorm(e)===cqNorm(x.nom))).slice(0,3);
+      L.forEach(x=>{if(x.nom_en&&!real.some(n=>sameDish(n,x.nom_en)))x.nom_en=''});
+      if(L.length){M[c]=L;got++;WSEEN[key]=[...arr(WSEEN[key]),...L.map(x=>x.nom),...L.map(x=>x.nom_en).filter(Boolean)].slice(-60);wPaint(c)}
+      else{const b=$('wC_'+c);if(b)b.innerHTML=`<p class="mute">Rien de nouveau pour l'instant.</p>`}}
+    store.set('wseen',WSEEN);if(!got)throw{code:'busy'}}
+  catch(e){const cl=CUIS[WSEL.a];todo.forEach(c=>{const b=$('wC_'+c);if(!b)return;
+      if(c==='plat'&&cl&&!M.plat){M.plat=cl[3].split(';').slice(0,3).map(d=>({nom:d.replace(/ \(.*\)$/,''),q:d}));wPaint('plat')}
+      else b.innerHTML=`<div class="dsk-err"><p class="mute">${esc(errMsg(e))}</p><button class="ghost sm" data-act="wRe" data-c="${c}">Réessayer</button></div>`})}}
 function renderCountry(){const el=$('wCountry');if(!WSEL){el.innerHTML='';return}const c=CUIS[WSEL.a],dishes=c?c[3].split(';'):[];
   el.innerHTML=`<div class="card wc"><div class="row" style="gap:12px;align-items:center;flex-wrap:nowrap"><span class="wflag" aria-hidden="true">${flag(WSEL.a)}</span><div style="min-width:0"><h2 style="margin:0">${esc(WSEL.n)}</h2><p class="sub" style="margin:2px 0 0">${esc(c?c[2]:'Laisse-moi te faire découvrir sa cuisine.')}</p></div></div>
-  ${dishes.length?`<h3 style="margin-top:16px">Les grands classiques</h3><div class="dgrid">${dishes.map(d=>dishCard({nom:d.replace(/ \(.*\)$/,''),pays:WSEL.n,description:'Plat traditionnel ('+WSEL.n+')'},d)).join('')}</div>`:''}
-  <div class="row sb" style="margin-top:18px;flex-wrap:nowrap;gap:8px"><h3 style="margin:0">${dishes.length?'À découvrir aussi':'Ses spécialités'}</h3><button class="alt sm" data-act="wMore">↻ D'autres plats</button></div><div id="wDisc"></div>
-  <div class="row" style="margin-top:14px"><button data-act="wIdeas" style="flex:1">Idées pour moi</button><button class="alt" data-act="wMenu" style="flex:1">Menu du pays</button></div>
+  <div class="wmh"><div><h3 style="margin:0">Le menu du pays</h3><p class="mute" style="margin:2px 0 0;font-size:14px">Ça ne te dit rien ? Touche « D'autres » pour changer.</p></div><button class="alt sm" data-act="wReAll" aria-label="Changer tout le menu">↻ Tout changer</button></div>
+  ${WCOURSE.map(([k,lab,ic])=>`<div class="wcourse"><div class="wch"><h4><span aria-hidden="true">${ic}</span> ${lab}</h4><button class="ghost sm" data-act="wRe" data-c="${k}" aria-label="D'autres ${lab.toLowerCase()}">↻ D'autres</button></div><div class="drow" id="wC_${k}"></div></div>`).join('')}
+  ${dishes.length?`<details class="wclass"><summary>Les grands classiques (${dishes.length})</summary><div class="dgrid" style="margin-top:8px">${dishes.map(d=>dishCard({nom:d.replace(/ \(.*\)$/,''),pays:WSEL.n,description:'Plat traditionnel ('+WSEL.n+')'},d)).join('')}</div></details>`:''}
+  <div class="row" style="margin-top:14px"><button data-act="wIdeas" style="flex:1">Idées adaptées à moi</button><button class="alt" data-act="wMenu" style="flex:1">Une soirée à thème</button></div>
   <div id="wRes"></div></div>`;
-  loadPhotos(el);wDiscover(false)}
+  const cl=el.querySelector('.wclass');if(cl)cl.addEventListener('toggle',()=>{if(cl.open)loadPhotos(cl)},{once:true});
+  wLoad(WCOURSE.map(x=>x[0]),false)}
 /* photos : Wikipédia (vraies photos, libres) puis illustration IA en secours */
 let PHC=store.get('phc2',{});
 async function wikiPhoto(q,key){key=key||q;if(PHC[q]!==undefined)return PHC[q];
@@ -3058,7 +3080,9 @@ function loadPhotos(root){root.querySelectorAll('.dph:not([data-done])').forEach
 const WRECF=`{"recettes":[{"nom":"nom en français","nom_local":"nom dans la langue du pays","wiki":"titre de l'article Wikipédia français du plat d'origine","description":"1 phrase qui donne envie","moment":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"temps_min":30,"cout":"€","ingredients":["quantité + ingrédient (avec un équivalent facile à trouver en France si besoin)"],"adaptation":"ce qui a été adapté pour lui, en 1 phrase (vide si rien)"}]}`;
 function wRecHTML(m){const q=m.wiki||m.nom_local||m.nom;return `<div class="dph wide" data-q="${esc(q)}" data-pays="${esc(WSEL?WSEL.n:'')}"><span class="mute">Photo…</span></div>`+mealHTML({...m,pays:WSEL?WSEL.n:'',description:[m.description,m.nom_local&&m.nom_local!==m.nom?'('+m.nom_local+')':'',m.adaptation?'Adapté pour toi : '+m.adaptation:''].filter(Boolean).join(' ')},`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button>`)}
 const WORLD_ACTS={
-  wMore(){wDiscover(true)},
+  wMore(){wLoad(WCOURSE.map(x=>x[0]),true)},
+  wReAll(){wLoad(WCOURSE.map(x=>x[0]),true)},
+  wRe(b){wLoad([b.dataset.c],true)},
   wZone(b){zoomWorld(b.dataset.z)},
   wRand(){const ks=Object.keys(CUIS).filter(k=>!WSEL||k!==WSEL.a),a=ks[Math.floor(Math.random()*ks.length)];zoomWorld(CUIS[a][0]);pickCountry(a)},
   wIdeas(b){if(!WSEL)return;const dis=dislike('monde');run(b,$('wRes'),'Le chef voyage jusqu\'en '+WSEL.n,async()=>{
@@ -5170,10 +5194,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-80';
+const APP_VERSION='2026.11.26-81';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.26-81','Le menu de chaque pays','Pour chaque pays : 3 entrées, 3 plats et 3 desserts. Un plat ne te plaît pas ? « ↻ D\'autres » change juste cette partie, « Tout changer » refait tout le menu, sans jamais remontrer les mêmes.','cuisine','monde'],
  ['2026.11.26-80','Rappels même téléphone en veille','Les rappels (boire, médicaments, repas…) peuvent maintenant arriver en vraie notification, écran verrouillé ou dans une autre appli. Touche la cloche › « Activer les notifications ».','accueil',''],
  ['2026.11.26-79','Nouveau thème Aurore boréale','Aurores qui dansent, ciel étoilé, sapins enneigés et cartes en glace. Synthwave plus élégant, jolies illustrations quand une liste est vide, et les fenêtres se ferment en les glissant vers le bas.','moi',''],
  ['2026.11.26-78','Plus fiable','14 corrections : texte en grand mieux géré, double appui sans erreur, contrastes, chiffres arrondis partout pareil, message clair sans internet.','accueil',''],
