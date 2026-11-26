@@ -254,8 +254,8 @@ html[data-skin=foretnuit] .ring svg{background:radial-gradient(circle,rgba(12,26
 html[data-skin=foret] .appbar{background:rgba(238,244,230,.82)}html[data-skin=foretnuit] .appbar{background:rgba(12,26,36,.8)}
 :is(html[data-skin=foret],html[data-skin=foretnuit]) :is(.logo span,.wlogo){background:linear-gradient(140deg,#7ccf5c,#3f8a3a);color:#fff}
 html[data-skin=foret] .ib.av{background:#3f8a3a;color:#fff}html[data-skin=foretnuit] .ib.av{background:#9be36f;color:#0c1a24}
-html[data-skin=foret] button{box-shadow:0 6px 14px -6px rgba(63,138,58,.6)}
-html[data-skin=foretnuit] button{color:#0c1a24;box-shadow:0 0 18px -4px rgba(155,227,111,.6)}
+:where(html[data-skin=foret]) button{box-shadow:0 6px 14px -6px rgba(63,138,58,.6)}
+:where(html[data-skin=foretnuit]) button{color:#0c1a24;box-shadow:0 0 18px -4px rgba(155,227,111,.6)}
 html[data-skin=foret] button.alt{background:#24341f;color:#fffdf6}html[data-skin=foretnuit] button.alt{background:transparent;color:#ffe27a;box-shadow:inset 0 0 0 2px #ffe27a}
 :is(html[data-skin=foret],html[data-skin=foretnuit]) :is(button.ghost,button.tint,.chip,.seg button,.glass button){color:var(--ink)}
 html[data-skin=foretnuit] :is(.chip.p,.seg button.on){color:#0c1a24}
@@ -296,7 +296,7 @@ html[data-skin=pets] .ring svg{background:radial-gradient(circle,rgba(255,255,25
 html[data-skin=pets] .appbar{background:rgba(255,245,239,.85)}
 html[data-skin=pets] .logo span,html[data-skin=pets] .wlogo{background:linear-gradient(140deg,#ff9aae,#ff7a93)}
 html[data-skin=pets] .ib.av{background:#ff7a93;color:#fff}
-html[data-skin=pets] button{border-radius:18px;box-shadow:0 6px 14px -6px rgba(255,122,147,.7)}
+:where(html[data-skin=pets]) button{border-radius:18px;box-shadow:0 6px 14px -6px rgba(255,122,147,.7)}
 html[data-skin=pets] button.alt{background:#3c2b2b;color:#fff}
 html[data-skin=pets] .seg button.on{background:#ff7a93;color:#fff}
 html[data-skin=pets] .tabs a.on{color:#d44f6b;background:#ffe7ec}
@@ -338,17 +338,17 @@ html[data-skin=synth] .logo span,html[data-skin=synth] .wlogo{background:linear-
 html[data-skin=synth] .ib{background:var(--fill);color:var(--ink);box-shadow:0 0 0 1px rgba(155,92,255,.35)}
 html[data-skin=synth] .ib.av{background:linear-gradient(140deg,#ff2a9d,#9b5cff);color:#fff;box-shadow:var(--glow)}
 html[data-skin=synth] .card{background:linear-gradient(180deg,rgba(42,25,86,.92),rgba(30,17,64,.92));border:1px solid rgba(155,92,255,.28);box-shadow:0 10px 30px -14px rgba(0,0,0,.7)}
-html[data-skin=synth] button{background:linear-gradient(135deg,#ff2a9d,#c03bff);box-shadow:0 0 0 1px rgba(255,124,198,.5),0 8px 22px -8px rgba(255,42,157,.8)}
+:where(html[data-skin=synth]) button{background:linear-gradient(135deg,#e0137f,#a92ee0);box-shadow:0 0 0 1px rgba(255,124,198,.5),0 8px 22px -8px rgba(255,42,157,.8)}
 html[data-skin=synth] button.alt{background:transparent;color:var(--cyan);box-shadow:inset 0 0 0 2px var(--cyan),0 0 16px -4px rgba(34,228,255,.6)}
 html[data-skin=synth] button.ghost{background:var(--fill);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(155,92,255,.35)}
 html[data-skin=synth] button.tint{background:var(--tint);color:var(--tintink);box-shadow:inset 0 0 0 1px rgba(255,42,157,.4)}
-html[data-skin=synth] input,html[data-skin=synth] select,html[data-skin=synth] textarea{background:rgba(19,10,42,.6);border:1.5px solid rgba(155,92,255,.35);color:var(--ink)}
+html[data-skin=synth] input,html[data-skin=synth] select,html[data-skin=synth] textarea{background-color:rgba(19,10,42,.6);border:1.5px solid rgba(155,92,255,.35);color:var(--ink)}
 html[data-skin=synth] input:focus,html[data-skin=synth] select:focus,html[data-skin=synth] textarea:focus{border-color:var(--cyan);background:rgba(19,10,42,.85);box-shadow:0 0 0 3px rgba(34,228,255,.18)}
 html[data-skin=synth] input::placeholder,html[data-skin=synth] textarea::placeholder{color:#8a79b5}
 html[data-skin=synth] .seg button{background:var(--card);color:var(--mute);box-shadow:inset 0 0 0 1px rgba(155,92,255,.35)}
 html[data-skin=synth] .seg button.on{background:linear-gradient(135deg,#ff2a9d,#9b5cff);color:#fff;box-shadow:var(--glow)}
 html[data-skin=synth] .chip{background:var(--fill);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(155,92,255,.3)}
-html[data-skin=synth] .chip.p{background:linear-gradient(135deg,#ff2a9d,#c03bff);color:#fff;box-shadow:0 0 12px -2px rgba(255,42,157,.7)}
+html[data-skin=synth] .chip.p{background:linear-gradient(135deg,#e0137f,#a92ee0);color:#fff;box-shadow:0 0 12px -2px rgba(255,42,157,.7)}
 html[data-skin=synth] .chip.s{background:rgba(34,228,255,.16);color:var(--cyan);box-shadow:inset 0 0 0 1px var(--cyan)}
 html[data-skin=synth] .tabs{background:rgba(24,12,52,.86);box-shadow:0 0 0 1px rgba(155,92,255,.45),0 0 30px -6px rgba(155,92,255,.55),0 14px 34px -10px rgba(0,0,0,.8)}
 html[data-skin=synth] .tabs a{color:#9d8cc8}
@@ -379,7 +379,7 @@ html[data-skin=synth] .dose{color:#ff7cc6}
 html[data-skin=synth] .big{background:linear-gradient(180deg,#fff,#ff9fd4);-webkit-background-clip:text;background-clip:text;color:transparent}
 html[data-skin=synth] .timer{color:#ff2a9d;text-shadow:0 0 24px rgba(255,42,157,.8);font-family:Orbitron,Archivo,sans-serif}
 html[data-skin=synth] .bar{background:rgba(19,10,42,.7)}
-html[data-skin=synth] .bar i{background:linear-gradient(90deg,#ff2a9d,#c03bff);box-shadow:0 0 10px rgba(255,42,157,.8)}
+html[data-skin=synth] .bar i{background:linear-gradient(90deg,#e0137f,#a92ee0);box-shadow:0 0 10px rgba(255,42,157,.8)}
 html[data-skin=synth] .bar.p i{background:linear-gradient(90deg,#ffcf5c,#ff9b4a);box-shadow:0 0 10px rgba(255,207,92,.7)}
 html[data-skin=synth] .glass button{background:rgba(19,10,42,.6);color:var(--cyan);box-shadow:inset 0 0 0 1px rgba(34,228,255,.4)}
 html[data-skin=synth] .glass button.f{background:var(--cyan);color:#130a2a;box-shadow:0 0 12px rgba(34,228,255,.8)}
@@ -388,7 +388,7 @@ html[data-skin=synth] .err{background:rgba(255,42,157,.14);color:#ff9fd4}
 html[data-skin=synth] .warn{background:rgba(255,207,92,.12);color:#ffcf5c;box-shadow:inset 0 0 0 1px rgba(255,207,92,.4)}
 html[data-skin=synth] .vid{background:rgba(19,10,42,.6);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(255,42,157,.4)}
 html[data-skin=synth] .vid svg{fill:#ff2a9d}
-html[data-skin=synth] .bub.me{background:linear-gradient(135deg,#ff2a9d,#c03bff)}
+html[data-skin=synth] .bub.me{background:linear-gradient(135deg,#e0137f,#a92ee0)}
 html[data-skin=synth] .bub.co{background:rgba(19,10,42,.6);box-shadow:inset 0 0 0 1px rgba(155,92,255,.3)}
 html[data-skin=synth] .dots i.f{background:#ff2a9d;box-shadow:0 0 8px #ff2a9d}
 html[data-skin=synth] .gauge i{border-color:var(--card);background:#fff;box-shadow:0 0 10px #fff}
@@ -434,7 +434,7 @@ html[data-skin=synth] #amb .hz{left:-10%;right:-10%;bottom:-40px;height:38vh;bac
 @keyframes hzmove{to{background-position:0 34px,0 34px}}
 html[data-skin=synth] #amb .sh{width:120px;height:2px;background:linear-gradient(90deg,transparent,#fff,#ff7cc6);border-radius:2px;top:10%;left:110%;transform:rotate(-20deg);animation:shoot 9s linear infinite;opacity:0}
 @keyframes shoot{0%{left:110%;top:6%;opacity:0}2%{opacity:1}9%{left:-30%;top:34%;opacity:0}100%{left:-30%;opacity:0}}
-html[data-skin=synth] button:not(.ghost):not(.alt):not(.chip):not(.ib):not(.tile):not(.skin):not(.tint):not(.x):not(.seg *):not(.glass *):not(.qual *):not(.wobj *){background-size:200% 100%;background-image:linear-gradient(110deg,#ff2a9d 0%,#c03bff 45%,#ff2a9d 90%);animation:sheen 6s ease-in-out infinite}
+html[data-skin=synth] button:not(.ghost):not(.alt):not(.chip):not(.ib):not(.tile):not(.skin):not(.tint):not(.x):not(.seg *):not(.glass *):not(.qual *):not(.wobj *){background-size:200% 100%;background-image:linear-gradient(110deg,#e0137f 0%,#a92ee0 45%,#e0137f 90%);animation:sheen 6s ease-in-out infinite}
 @keyframes sheen{50%{background-position:100% 0}}
 html[data-skin=synth] .lt h1{animation:neon 5s ease-in-out infinite}
 @keyframes neon{0%,100%{filter:drop-shadow(0 0 10px rgba(255,42,157,.45))}50%{filter:drop-shadow(0 0 18px rgba(255,42,157,.8))}}
@@ -552,6 +552,68 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
 @keyframes conf{to{transform:translate(var(--x),105vh) rotate(var(--r));opacity:.2}}
 .sect{font-size:13px;font-weight:800;color:var(--mute);margin:18px 4px 10px;letter-spacing:.02em}
 .logo span .i{animation:lift 3.2s ease-in-out infinite}@keyframes lift{0%,70%,100%{transform:none}80%{transform:translateY(-2px) rotate(-8deg)}}
+
+/* ===== Corrections de l'audit visuel ===== */
+html[data-skin=pets]{--red:#c93a60;--hot:#c93a60;--tintink:#b8375a}
+html[data-skin=foretnuit] :is(.chip.s,.bub.me){color:#0c1a24}
+html[data-skin=foret]{--red:#357a30;--hot:#357a30}
+html[data-skin=foret] .chip.p{color:#fff}
+html:is([data-skin=clair],[data-skin=nuit]){--red:#d93a26}
+html:is([data-skin=clair],[data-skin=nuit]) .hero{background:linear-gradient(150deg,#e2472c,#c42a19 55%,#a8213a)}
+.ovh>.mute{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ovanim{max-width:170px}
+#ov h1{font-size:clamp(22px,6vw,28px)!important}
+#ov [data-act=doneSet]{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));z-index:3}
+#ov>.row:last-child{position:sticky;bottom:calc(6px + env(safe-area-inset-bottom));z-index:3;background:var(--bg);padding:8px 0}
+#journal .jl{display:grid;grid-template-columns:1fr 44px 44px;column-gap:4px}
+#journal .jl .v{grid-row:2;grid-column:1;color:var(--red)}
+#journal .jl .x{grid-row:1/3;width:44px;height:44px;background:none;box-shadow:none;color:var(--mute)}
+.send button{flex:none}.send textarea{resize:none}
+.meal button.ghost{background:var(--card)}
+.card .seg button:not(.on){background:var(--fill)}
+.ib,.glass button{width:44px;min-width:44px;height:44px}
+button.sm,button.chip,.seg button,.vid{min-height:44px}
+.lt>a.mute{display:inline-flex;align-items:center;min-height:44px}
+.tabs a{font-size:12px}
+.seg{margin-inline:calc(-1*max(4vw,14px));padding-inline:max(4vw,14px);-webkit-mask:linear-gradient(90deg,#000 85%,transparent);mask:linear-gradient(90deg,#000 85%,transparent)}
+button:disabled{opacity:1;background:var(--fill2)!important;color:var(--mute)!important;box-shadow:none!important;animation:none!important}
+#homeSeance .row{display:grid}
+#homeRecov,#homeWeight{grid-column:1/-1}
+html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
+.hero p,.ring span{text-shadow:0 1px 3px color-mix(in srgb,var(--bg) 85%,transparent)}
+.ticks{position:relative;height:18px}.ticks span{position:absolute;transform:translateX(-50%)}
+.ticks span:nth-child(1){left:0;transform:none}.ticks span:nth-child(2){left:14%}.ticks span:nth-child(3){left:40%}.ticks span:nth-child(4){left:60%}.ticks span:nth-child(5){left:80%}.ticks span:nth-child(6){right:0;left:auto;transform:none}
+.stats span{display:block;line-height:1.25}
+#quickQ{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}#quickQ .chip{flex:none}
+.tip.alerte{border-left-color:#e0533d!important}
+.wobj button:last-child:nth-child(odd){grid-column:1/-1}
+.animMini{overflow:hidden}.animMini svg{transform:scale(1.6);transform-origin:50% 75%}
+.chip.p::before,.seg button.on::before{content:"✓ ";font-weight:900}
+.seg button.on::before{content:""}
+
+/* ===== Adaptation à tous les écrans ===== */
+@media(max-width:350px){
+ body{font-size:15px}h1{font-size:26px}.lt h1{font-size:26px!important}
+ main{padding-inline:10px}.card{padding:14px;border-radius:18px}
+ .tiles{gap:8px}.tile{padding:12px;min-height:104px;font-size:14px}.tile .ic{width:36px;height:36px}
+ .stats,.stk{gap:6px}.stats b,.stk b{font-size:16px}.stats div,.stk div{padding:8px}
+ .ring b{font-size:13px}.ring span{font-size:11px}
+ .tabs{left:6px;right:6px;padding:4px}.tabs a{font-size:10px}.tabs .i{width:22px;height:22px}
+ .logo .lname{font-size:13px}.appbar{gap:6px}.ib{width:40px;min-width:40px;height:40px}
+ .grid{grid-template-columns:minmax(0,1fr)}.qual button{font-size:11px}
+ .setin input{font-size:24px}.timer{font-size:72px}
+ .skins{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(min-width:600px){
+ main{max-width:760px}.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .hero{padding:26px 26px 24px}.ring svg{max-width:120px}
+}
+@media(min-width:900px){
+ main{max-width:980px}section[data-v=accueil].on{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:0 18px;align-items:start}
+ section[data-v=accueil]>.hero,section[data-v=accueil]>.daily,section[data-v=accueil]>#homeStart{grid-column:1/-1}
+ section[data-v=accueil]>.sect{grid-column:1/-1}
+}
+@media(orientation:landscape) and (max-height:500px){.tabs{bottom:4px}.hero{min-height:0!important}#ov .anim{max-width:150px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:380px){.stats b{font-size:18px}.tile{padding:14px}}
 </style>
@@ -921,7 +983,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
       <h2>Scanner un produit</h2>
       <p class="sub">Le code-barres, l'emballage ou l'étiquette.</p>
       <label class="drop" data-drop="produit"><input type="file" accept="image/*" data-in="produit"><svg class="i" style="width:40px;height:40px"><use href="#i-bar"/></svg><b>Photo du code-barres ou du produit</b><span class="mute">bien à plat, net et éclairé</span></label>
-      <div class="row" style="margin-top:12px"><input id="ean" inputmode="numeric" placeholder="ou tape les chiffres du code-barres" style="flex:1;min-width:170px;margin:0"><button data-act="anaProd">Identifier</button></div>
+      <div class="row" style="margin-top:12px"><input id="ean" inputmode="numeric" placeholder="ou tape le code-barres" style="flex:1;min-width:170px;margin:0"><button data-act="anaProd">Identifier</button></div>
     </div>
     <div id="prodRes"></div>
     <div class="card" id="prodHistC" style="display:none"><h3>Déjà scannés</h3><div class="chips" id="prodHist"></div></div>
@@ -931,7 +993,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
     <div class="card">
       <h2>Scanne ton assiette</h2>
       <label class="drop" data-drop="assiette"><input type="file" accept="image/*" data-in="assiette"><svg class="i" style="width:40px;height:40px"><use href="#i-plate"/></svg><b>Photo de ton repas</b><span class="mute">vue de dessus, toute l'assiette</span></label>
-      <div class="row" style="margin-top:12px"><button data-act="anaPlate" data-need="assiette" disabled>Estimer les calories</button></div>
+      <div class="row" style="margin-top:12px"><button data-act="anaPlate" data-need="assiette" disabled>Estimer les calories</button><span class="mute need">Ajoute d'abord une photo</span></div>
       <p class="mute">C'est une estimation : ajuste la portion si besoin.</p>
     </div>
     <div id="plateRes"></div>
@@ -941,7 +1003,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
     <div class="card">
       <h2>C'est quoi cette machine ?</h2>
       <label class="drop" data-drop="machine"><input type="file" accept="image/*" data-in="machine"><svg class="i" style="width:40px;height:40px"><use href="#i-cam"/></svg><b>Prends en photo un appareil</b><span class="mute">ou choisis une image dans ta galerie</span></label>
-      <div class="row" style="margin-top:12px"><button data-act="anaMachine" data-need="machine" disabled>Analyser la machine</button></div>
+      <div class="row" style="margin-top:12px"><button data-act="anaMachine" data-need="machine" disabled>Analyser la machine</button><span class="mute need">Ajoute d'abord une photo</span></div>
     </div>
     <div id="ana"></div>
     <div class="card" id="anaHistC" style="display:none"><h3>Déjà analysées</h3><div class="chips" id="anaHist"></div></div>
@@ -955,7 +1017,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
       <canvas class="draw" id="cv" style="display:none"></canvas>
       <div class="row" style="margin-top:12px" id="cvBtns" hidden><button class="ghost sm" data-act="undo">Annuler le trait</button><button class="ghost sm" data-act="clearDraw">Tout effacer</button><button class="ghost sm" data-act="newBody">Autre photo</button></div>
       <textarea id="corpsTxt" class="grow" rows="1" placeholder="Précise si tu veux (ex. « bras plus épais, ventre plus plat »)" style="margin-top:12px"></textarea>
-      <div class="row" style="margin-top:12px"><button data-act="anaCorps" data-need="corps" disabled>Analyser mes zones</button></div>
+      <div class="row" style="margin-top:12px"><button data-act="anaCorps" data-need="corps" disabled>Analyser mes zones</button><span class="mute need">Ajoute d'abord une photo</span></div>
     </div>
     <div id="corpsRes"></div>
   </div>
@@ -964,7 +1026,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
     <div class="card">
       <h2>Photo du frigo</h2>
       <label class="drop" data-drop="fpic"><input type="file" accept="image/*" data-in="fpic"><svg class="i" style="width:40px;height:40px"><use href="#i-cam"/></svg><b>Photo de ton frigo ou placard</b><span class="mute">porte ouverte, bien éclairé</span></label>
-      <div class="row" style="margin-top:12px"><button data-act="anaFridge" data-need="fpic" disabled>Lister mes ingrédients</button></div>
+      <div class="row" style="margin-top:12px"><button data-act="anaFridge" data-need="fpic" disabled>Lister mes ingrédients</button><span class="mute need">Ajoute d'abord une photo</span></div>
     </div>
     <div id="fridgeRes"></div>
   </div>
@@ -1404,7 +1466,7 @@ function lastSets(name){for(let i=LOG.length-1;i>=0;i--){const e=LOG[i].ex.find(
 function recovery(){
   const last={};LOG.forEach(l=>l.ex.forEach(e=>{if(e.sets.length)clean(e.muscles).forEach(k=>{last[k]=Math.max(last[k]||0,l.t)})}));
   const h=k=>last[k]?(Date.now()-last[k])/36e5:999;
-  const col=k=>h(k)<24?'var(--hot)':h(k)<60?'var(--warm)':last[k]?'#3dffc5':'var(--mus)';
+  const col=k=>h(k)<24?'var(--hot)':h(k)<60?'var(--warm)':last[k]?'var(--green)':'var(--mus)';
   const wk=LOG.filter(l=>Date.now()-l.t<7*864e5).length;
   $('weekCount').textContent=`${wk} / ${P.jours||3} séances cette semaine`;
   const fresh=Object.keys(MN).filter(k=>h(k)>=60&&last[k]).map(k=>MN[k]);
@@ -1692,7 +1754,7 @@ function shrink(file,max=1280){return new Promise((ok,ko)=>{const u=URL.createOb
 document.querySelectorAll('[data-in]').forEach(inp=>inp.addEventListener('change',async()=>{
   const id=inp.dataset.in,f=inp.files[0];if(!f)return;let r;
   try{r=await shrink(f)}catch(_){r={blob:f}}
-  PH[id]=r.blob;document.querySelectorAll(`[data-need="${id}"]`).forEach(b=>b.disabled=false);
+  PH[id]=r.blob;document.querySelectorAll(`[data-need="${id}"]`).forEach(b=>{b.disabled=false;const n=b.parentNode.querySelector('.need');if(n)n.remove()});
   if(id==='corps'&&r.canvas){initDraw(r.canvas);return}
   const d=document.querySelector(`[data-drop="${id}"]`);d.querySelectorAll('img,b,span,svg').forEach(n=>n.remove());
   const im=document.createElement('img');im.src=URL.createObjectURL(r.blob);im.alt='Ta photo';d.appendChild(im);
@@ -1736,7 +1798,7 @@ function renderDay(){
   const tip=$('gTip'),h=new Date().getHours();
   if(dayJ().length&&h>=14&&tp-t.p>25){tip.style.display='block';tip.textContent=`Il te manque ${Math.round(tp-t.p)} g de protéines aujourd'hui : pense à un skyr, du poulet, des œufs ou du thon.`}
   else if(t.k>tk*1.1){tip.style.display='block';tip.textContent='Tu as dépassé ton objectif du jour. Pas de panique : c\'est la moyenne de la semaine qui compte.'}else tip.style.display='none';
-  $('journal').innerHTML=dayJ().map((e,i)=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${e.p} g prot · ${e.g} g gluc · ${e.l} g lip</div></span><span class="v">${e.kcal} kcal</span><button class="x" data-act="fav" data-i="${i}" aria-label="Favori">☆</button><button class="x" data-act="delJ" data-i="${i}" aria-label="Supprimer">×</button></div>`).join('');
+  $('journal').innerHTML=dayJ().map((e,i)=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${e.p}&nbsp;g prot · ${e.g}&nbsp;g gluc · ${e.l}&nbsp;g lip</div></span><span class="v">${e.kcal} kcal</span><button class="x" data-act="fav" data-i="${i}" aria-label="Favori">☆</button><button class="x" data-act="delJ" data-i="${i}" aria-label="Supprimer">×</button></div>`).join('');
   $('favs').innerHTML=FAV.length?'<span class="mute" style="width:100%">Favoris, un toucher pour ajouter :</span>'+FAV.map((f,i)=>`<button class="chip" data-act="addFav" data-i="${i}">${esc(f.nom)} · ${f.kcal}</button>`).join(''):'';
 }
 const MEALF=`{"moment":"","nom":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"temps_min":15,"cout":"€","ingredients":["quantité + ingrédient"],"preparation":["étape"]}`;
@@ -1811,7 +1873,7 @@ function renderK(){
   <p style="font-size:19px;line-height:1.6">${esc(e.detail)}</p>
   ${e.repere?`<div class="tip"><b>C'est bon quand :</b> ${esc(e.repere)}</div>`:''}
   ${e.astuce?`<div class="tip"><b>Astuce :</b> ${esc(e.astuce)}</div>`:''}
-  ${e.erreur?`<div class="tip" style="border-left-color:var(--red)"><b>Attention :</b> ${esc(e.erreur)}</div>`:''}
+  ${e.erreur?`<div class="tip alerte"><b>Attention :</b> ${esc(e.erreur)}</div>`:''}
   <div class="row" style="margin:14px 0">${num(e.duree_min)>0?`<button class="alt sm" data-act="kTimer">Lancer ${esc(e.duree_min)} min</button>`:''}<button class="ghost sm" data-act="kRead">Lire à voix haute</button></div>
   <details style="margin-bottom:14px"><summary style="cursor:pointer;font-weight:700;padding:8px 0">Rappel des ingrédients</summary>${list((d.ingredients||[]).map(g=>g.quantite+' '+g.nom+(g.preparation?' ('+g.preparation+')':'')))}</details>
   <div class="row"><button class="ghost" data-act="kGo" data-v="${K.i-1}" style="flex:1">Précédente</button><button data-act="kGo" data-v="${K.i+1}" style="flex:2">${K.i===et.length-1?'Terminer':'Étape suivante'}</button></div>`;
@@ -1850,7 +1912,7 @@ async function copy(txt,btn){try{await navigator.clipboard.writeText(txt);const 
 /* ---------- Coach ---------- */
 let CH=store.get('chat',[]);
 const Q=["Je n'ai que 20 min aujourd'hui, je fais quoi ?","Que manger avant et après la séance ?","J'ai des courbatures, je m'entraîne quand même ?","Je mange au resto ce soir, je prends quoi ?","Comment je sais si je progresse ?"];
-$('quickQ').innerHTML=Q.map((q,i)=>`<button class="chip" data-act="qq" data-i="${i}">${esc(q)}</button>`).join('');
+$('quickQ').innerHTML=Q.map((q,i)=>`<button class="chip" data-act="qq" data-i="${i}">${esc(q).replace(/ ([?!:;])/g,'&nbsp;$1')}</button>`).join('');
 function bub(role,t){const d=document.createElement('div');d.className='bub '+(role==='user'?'me':'co');d.textContent=t;$('msgs').appendChild(d);return d}
 function renderChat(){$('msgs').innerHTML='';if(!CH.length)bub('assistant','Salut ! Dis-moi ce que tu veux travailler, ce qui te bloque ou ce que tu as mangé, je t\'aide.');CH.forEach(m=>bub(m.role,m.content))}
 async function send(){
@@ -1971,6 +2033,7 @@ Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 1
   favTab(b){FT=b.dataset.v;renderFav()},
   unfav(b){FAVR.splice(+b.dataset.i,1);saveFood();refreshFood()},
   useMenu(b){MENUS[today()]=FAVR[+b.dataset.i].data;saveFood();refreshFood();openPane('cuisine','menus')},
+  async installNow(){if(!DEFERRED)return;DEFERRED.prompt();try{await DEFERRED.userChoice}catch(e){}DEFERRED=null;renderHome()},
   goScan(b){openPane('scan',b.dataset.v)},
   async shareApp(){
     openSheet(`<h2 style="text-align:center">Partager EdilganSuperCoach</h2><p class="mute" style="text-align:center;margin-top:-4px">À scanner avec l'appareil photo.</p><div id="qr"><div class="busy"></div></div><div class="url">${esc(APP_URL)}</div>
@@ -2187,14 +2250,19 @@ function renderHome(){
   /* récup + poids */
   const last={};LOG.forEach(l=>l.ex.forEach(e=>{if(e.sets.length)clean(e.muscles).forEach(k=>{last[k]=Math.max(last[k]||0,l.t)})}));
   const hh=k=>last[k]?(Date.now()-last[k])/36e5:999;
-  $('homeRecov').innerHTML=`<a class="lnk" href="#sport" data-act="goPane" data-v="sport" data-p="progres"><b>Récupération</b><svg class="i"><use href="#i-chev"/></svg></a>${mapSVG(k=>hh(k)<24?'var(--hot)':hh(k)<60?'var(--warm)':last[k]?'#3dffc5':'var(--mus)')}`;
+  $('homeRecov').innerHTML=`<a class="lnk" href="#sport" data-act="goPane" data-v="sport" data-p="progres"><b>Récupération</b><svg class="i"><use href="#i-chev"/></svg></a>${mapSVG(k=>hh(k)<24?'var(--hot)':hh(k)<60?'var(--warm)':last[k]?'var(--green)':'var(--mus)')}`;
   const ws=W.slice(-10),lw=ws[ws.length-1],dw=ws.length>1?lw.w-ws[0].w:0;
   $('homeWeight').innerHTML=`<a class="lnk" href="#moi"><b>Poids</b><svg class="i"><use href="#i-chev"/></svg></a><div class="kv" style="margin-top:10px"><b>${lw?fr(lw.w):(P.poids?fr(P.poids):'–')}</b><span class="mute">kg</span></div><div class="mute">${ws.length>1?(dw>0?'+':'')+fr(dw.toFixed(1))+' kg depuis le '+frd(ws[0].d):'Pèse-toi pour suivre ta courbe'}</div>${m.imc?`<div class="mute" style="margin-top:8px">IMC ${fr(m.imc.toFixed(1))} · ${esc(cat(m.imc))}</div>`:''}<button class="ghost sm" data-act="goMoiW" style="margin-top:12px;width:100%">Me peser</button>`;
   /* installation */
   const ic=$('installCard');
-  if(!STANDALONE()&&location.protocol==='https:'&&!/claude/.test(location.host)){ic.style.display='block';ic.innerHTML=installHTML()}else ic.style.display='none';
+  if(!STANDALONE()&&(DEFERRED||location.protocol==='https:')&&!/claude/.test(location.host)){ic.style.display='block';ic.innerHTML=installHTML()}else ic.style.display='none';
 }
-function installHTML(){return `<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-add"/></svg></span><div><h3>Installe EdilganSuperCoach sur ton iPhone</h3><div class="mute">Une icône sur l'écran d'accueil, en plein écran, comme une vraie app.</div></div></div>
+let DEFERRED=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();DEFERRED=e;if($('installCard'))renderHome()});
+const ANDROID=/android/i.test(navigator.userAgent);
+function installHTML(){if(DEFERRED)return `<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-add"/></svg></span><div><h3>Installe EdilganSuperCoach</h3><div class="mute">Une icône sur ton écran d'accueil, en plein écran, comme une vraie app.</div></div></div><button class="wide" data-act="installNow" style="margin-top:12px">Installer l'app</button>`;
+  if(ANDROID)return `<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-add"/></svg></span><div><h3>Installe EdilganSuperCoach sur ton téléphone</h3><div class="mute">Une icône sur l'écran d'accueil, en plein écran.</div></div></div>
+  <div class="steps"><div><em>1</em><span>Dans Chrome, touche le menu <b>⋮</b> en haut à droite</span></div><div><em>2</em><span>Choisis <b>« Installer l'application »</b> ou <b>« Ajouter à l'écran d'accueil »</b></span></div><div><em>3</em><span>Confirme avec <b>Installer</b></span></div></div>`;
+  return `<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-add"/></svg></span><div><h3>Installe EdilganSuperCoach sur ton iPhone</h3><div class="mute">Une icône sur l'écran d'accueil, en plein écran, comme une vraie app.</div></div></div>
   <div class="steps"><div><em>1</em><span>En bas de Safari, touche <b>Partager</b> <svg class="i" style="width:18px;height:18px;vertical-align:-3px;color:var(--blue)"><use href="#i-share"/></svg></span></div><div><em>2</em><span>Fais défiler et choisis <b>« Sur l'écran d'accueil »</b></span></div><div><em>3</em><span>Touche <b>Ajouter</b> en haut à droite</span></div></div>
   <p class="mute" style="margin:0">Ensuite, ouvre EdilganSuperCoach depuis son icône.</p>`}
 /* ---------- Partage ---------- */
@@ -2567,7 +2635,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-26';
+const APP_VERSION='2026.11.26-28';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
