@@ -571,6 +571,7 @@ html.idle .cauw .cau,.hero.off .cauw .cau{animation-play-state:paused}
 .skin[data-k=ocean] .pv::after{left:-5%;right:-5%;bottom:-6px;height:18px;border-radius:50%;background:#f2e0ae}
 .skin .pv i{z-index:1}
 /* === /ag_theme === */
+.qph{margin-top:10px;min-height:64px!important;flex-direction:row!important;gap:12px;justify-content:flex-start!important;text-align:left;padding:10px 14px!important}.qph b{display:block}.qph span{display:block;font-size:13px;opacity:.75}.qph img{max-height:120px;border-radius:12px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -3878,15 +3879,20 @@ Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une
     let hits=[];try{hits=await offSearch(q)}catch(e){throw{code:navigator.onLine===false?'net':'busy'}}
     $('pqRes').innerHTML=hits.length?'<div class="chips" style="margin-top:10px">'+hits.map(h=>`<button class="chip" data-act="pqPick" data-v="${esc(h.code)}">${esc(h.product_name_fr||h.product_name||h.code)}${h.brands?' · '+esc([].concat(h.brands).join(', ')):''}${h.quantity?' · '+esc(h.quantity):''}</button>`).join('')+'</div>':'<p class="mute">Rien trouvé. Essaie avec la marque, ou prends une photo.</p>'})},
   pqPick(b){const box=b.closest('.chips');PKEEP=box?[...box.querySelectorAll('[data-act=pqPick]')].filter(x=>x!==b).map(x=>({code:x.dataset.v,product_name:x.textContent})):null;$('ean').value=b.dataset.v;A.anaProd(b)},
-  synth(b){const q=$('qty').value.trim();if(!q){$('qty').focus();return}const p=PROD;if(!p||numN((p.c100||{}).kcal)==null){$('synthRes').innerHTML='<div class="err">Je n\'ai pas encore les calories de ce produit : ajoute une photo du tableau nutritionnel (au dos) puis touche « Analyser le produit ».</div>';return}run(b,$('synthRes'),'Calcul',async()=>{
+  synth(b){const q=$('qty').value.trim(),ph=PH.pqty;if(!q&&!ph){$('qty').focus();toast('Écris combien tu en as mangé, ou montre-le en photo.');return}const p=PROD;if(!p||numN((p.c100||{}).kcal)==null){$('synthRes').innerHTML='<div class="err">Je n\'ai pas encore les calories de ce produit : ajoute une photo du tableau nutritionnel (au dos) puis touche « Analyser le produit ».</div>';return}run(b,$('synthRes'),'Calcul',async()=>{
     const r=await askJSON(`Tu es coach en nutrition. ${profil(true)}
 Produit : ${JSON.stringify({nom:p.nom,marque:p.marque,quantite_paquet:p.quantite,portion:p.portion,pour_100g:p.c100,nutriscore:p.nutriscore,nova:p.nova})}.
-L'utilisateur dit en avoir mangé : « ${q} ».
-1) Convertis en grammes (ou ml) mangés, en t'aidant du poids du paquet et de la portion. 2) Fais une synthèse de coach courte et franche par rapport à son objectif : ce qui est bien, ce qui l'est moins (sucres, sel, gras saturés, ultra-transformé), une alternative plus adaptée si utile, et comment équilibrer le reste de sa journée. N'écris aucun chiffre de calories ni de macros dans les textes (ils sont affichés à côté).
-Format JSON : {"grammes":0,"synthese":"2 à 3 phrases","points_forts":["…"],"points_faibles":["…"],"alternative":"","pour_la_suite":"1 phrase"}`,{modelTier:'quick',cache:false});
-    const g=num(r.grammes),c=p.c100||{},k=x=>Math.round(num(x)*g/100*10)/10;
+${q?`L'utilisateur dit en avoir mangé : « ${q} ».`:''}${ph?`
+Une PHOTO montre ce qu'il a mangé : estime la quantité DE CE PRODUIT visible (pas le reste : pain, cracotte, légumes…), en t'aidant des repères de taille (une cracotte ou biscotte ≈ 10 × 8 cm, une tranche de pain de mie ≈ 11 × 11 cm, une cuillère à soupe ≈ 15 g, une couche fine tartinée ≈ 10 à 15 g par cracotte, une couche généreuse ≈ 20 à 30 g).`:''}
+Repères de portions (n'exagère jamais, prends l'estimation la plus courante, pas la plus grande) : une tartine, une biscotte ou une cracotte tartinée = 10 à 20 g de produit à tartiner (beurre 5 à 10 g ; rillettes, pâte à tartiner, fromage frais, houmous 15 à 20 g) ; une cuillère à café = 5 g ; une cuillère à soupe = 15 g ; un biscuit = poids du paquet ÷ nombre de biscuits ; un bol = 250 à 300 ml.
+1) Convertis en grammes (ou ml) mangés de CE produit, en t'aidant du poids du paquet et de la portion. 2) Fais une synthèse de coach courte et franche par rapport à son objectif : ce qui est bien, ce qui l'est moins (sucres, sel, gras saturés, ultra-transformé), une alternative plus adaptée si utile, et comment équilibrer le reste de sa journée. N'écris aucun chiffre de calories ni de macros dans les textes (ils sont affichés à côté).
+Format JSON : {"grammes":0,"comment":"en 1 courte phrase, comment tu as estimé la quantité","synthese":"2 à 3 phrases","points_forts":["…"],"points_faibles":["…"],"alternative":"","pour_la_suite":"1 phrase"}`,ph?{images:[ph],modelTier:'default',cache:false}:{modelTier:'quick',cache:false});
+    let g=num(r.grammes),fixd='';
+    {const t=cqNorm(q),m=t.match(/(\d+|une?|deux|trois|quatre|cinq)\s+(cracottes?|biscottes?|tartines?|tranches?|crackers?|galettes?|wasa|toasts?)/),nb={un:1,une:1,deux:2,trois:3,quatre:4,cinq:5};
+     if(/(etal|tartin|sur (une?|\d+) (cracotte|biscotte|tartine|tranche|galette|toast))/.test(t)){const n=m?(nb[m[1]]||+m[1]||1):1,cap=n*30;if(g>cap){g=n*18;fixd=`(estimation ramenée à environ 18 g par ${m?m[2].replace(/s$/,''):'tartine'})`}}}
+    const c=p.c100||{},k=x=>Math.round(num(x)*g/100*10)/10;
     SYN={nom:`${p.nom} (${Math.round(g)} g)`,kcal:k(c.kcal),p:k(c.p),g:k(c.g),l:k(c.l)};
-    $('synthRes').innerHTML=`<div style="margin-top:14px"><div class="mute">${esc(q)} ≈ ${Math.round(g)} g</div><div class="big" style="color:var(--red)">${Math.round(SYN.kcal)}<span style="font-size:20px"> kcal</span></div>
+    $('synthRes').innerHTML=`<div style="margin-top:14px"><div class="mute">${esc(q||'D\'après ta photo')} ≈ ${Math.round(g)} g ${esc(fixd)}</div>${r.comment?`<div class="mute" style="font-size:13.5px">${esc(r.comment)}</div>`:''}<div class="big" style="color:var(--red)">${Math.round(SYN.kcal)}<span style="font-size:20px"> kcal</span></div>
     <div class="macro"><span><b>${fr(SYN.p)}</b> g prot.</span><span><b>${fr(SYN.g)}</b> g gluc.</span><span><b>${fr(k(c.sucres))}</b> g sucres</span><span><b>${fr(SYN.l)}</b> g lip.</span><span><b>${fr(k(c.sel))}</b> g sel</span></div>
     <p>${esc(r.synthese)}</p>${r.points_forts&&r.points_forts.length?`<b>Les +</b>${list(r.points_forts)}`:''}${r.points_faibles&&r.points_faibles.length?`<b>Les −</b>${list(r.points_faibles)}`:''}
     ${r.alternative?`<div class="tip"><b>Mieux pour toi :</b> ${esc(r.alternative)}</div>`:''}${r.pour_la_suite?`<div class="tip"><b>Pour la suite :</b> ${esc(r.pour_la_suite)}</div>`:''}
@@ -4074,8 +4080,10 @@ function renderProd(p){
   $('prodRes').innerHTML=verdictHTML(p)+alt+`
   <div class="card"><h3>Combien tu en as mangé ?</h3>
   <div class="chips">${[p.portion?'1 portion':'', '100 g','la moitié du paquet','tout le paquet','2 unités'].filter(Boolean).map(q=>`<button class="chip" data-act="qtyPick" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div>
-  <textarea id="qty" class="grow" rows="1" data-enter="synth" placeholder="ex. 3 biscuits, un bol, 150 g, la moitié…"></textarea><div class="row" style="margin-top:12px"><button data-act="synth">Faire la synthèse</button></div><div id="synthRes"></div></div>`;
-  prodAvis(p);
+  <textarea id="qty" class="grow" rows="1" data-enter="synth" placeholder="ex. 3 biscuits, un bol, 150 g, tartiné sur 2 cracottes…"></textarea>
+  <label class="drop mini qph" data-drop="pqty"><input type="file" accept="image/*" data-in="pqty" aria-label="Photo de ce que tu as mangé"><svg class="i"><use href="#i-cam"/></svg><b>Montrer en photo</b><span>ta tartine, ton bol, ton assiette… je regarde la quantité</span></label>
+  <div class="row" style="margin-top:12px"><button data-act="synth">Faire la synthèse</button></div><div id="synthRes"></div></div>`;
+  delete PH.pqty;bindDrops($('prodRes'));prodAvis(p);
 }
 function renderProdHist(){$('prodHistC').style.display=PRODS.length?'block':'none';$('prodHist').innerHTML=PRODS.map((p,i)=>{let a=null;try{a=prodAnalyse(p)}catch(e){}return `<button class="chip" data-act="showProd" data-i="${i}">${a&&a.known?`<i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${a.col};margin-right:6px"></i>`:''}${esc(p.nom)}</button>`}).join('')}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b&&A[b.dataset.act])A[b.dataset.act](b,e)});
@@ -4571,10 +4579,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-75';
+const APP_VERSION='2026.11.26-76';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.26-76','Montre combien tu en as mangé','Après un produit scanné, tu peux montrer en photo ce que tu as mangé (ta tartine, ton bol…) : le coach estime la quantité. Et il ne compte plus 125 g de rillettes pour une cracotte !','scan','produit'],
  ['2026.11.26-75','Des thèmes vivants','Chaque thème a maintenant sa matière et sa lumière : néon en Synthwave, papier et taches de soleil en Forêt, lucioles la nuit, peluche cousue pour Chats & chiens. Les reflets suivent ton doigt. Nouveau thème Océan ! Réglage « Animations : riches, sobres ou aucune ».','moi',''],
  ['2026.11.26-74','Plus simple à prendre en main','L\'accueil te propose 5 grosses actions : noter un repas, scanner un produit, faire ta séance, quoi cuisiner, te peser. Les rubriques ont des noms plus clairs et les longues explications se cachent derrière un « ? ».','accueil',''],
  ['2026.11.26-74','Un nouveau style, plus soigné','Nouvelle police pour les titres et les chiffres, vraies icônes dessinées, boutons plus sobres, typographie française propre.','accueil',''],
