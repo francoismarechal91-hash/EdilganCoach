@@ -4,8 +4,8 @@
         - repli sur la page uniquement pour une navigation (jamais pour un .json) ;
         - précache tolérant (un fichier en échec ne bloque plus les autres), sans passer par le cache HTTP ;
         - suppression des anciens caches. */
-const C='edilgan-v3';
-const SHELL=['./','manifest.json','icon.png','icon-192.png','icon-512.png','world.json','ciqual.json'];
+const C='edilgan-v4';
+const SHELL=['./','manifest.json','icon.png','icon-192.png','icon-512.png','world.json','ciqual.json','fonts/bricolage-var-latin.woff2'];
 const NAV_MS=3500;
 const okToCache=r=>!!r&&r.status===200&&r.type==='basic';
 
