@@ -463,6 +463,33 @@ button,.tile{position:relative;overflow:hidden}
 .rip{position:absolute;border-radius:50%;pointer-events:none;background:currentColor;opacity:.28;transform:scale(0);animation:rip .55s ease-out forwards}
 @keyframes rip{to{transform:scale(1);opacity:0}}
 html[data-fx=off] *,html[data-fx=off] *::before,html[data-fx=off] *::after{animation-duration:0s!important;animation-iteration-count:1!important;transition-duration:0s!important}
+
+/* ===== Suivi ===== */
+.lvl{background:linear-gradient(135deg,color-mix(in srgb,var(--red) 22%,var(--card)),var(--card));position:relative;overflow:hidden}
+.lvl .lv{display:flex;align-items:center;gap:16px}
+.lvl .medal{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;font-size:30px;font-weight:900;color:#fff;background:conic-gradient(var(--red) var(--p),color-mix(in srgb,var(--red) 20%,transparent) 0);flex:none;position:relative}
+.lvl .medal::after{content:"";position:absolute;inset:7px;border-radius:50%;background:var(--card)}
+.lvl .medal b{position:relative;z-index:1;color:var(--ink)}
+.lvl .medal{animation:medal 3s ease-in-out infinite}@keyframes medal{50%{box-shadow:0 0 22px color-mix(in srgb,var(--red) 55%,transparent)}}
+.stk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}.stk div{background:var(--fill);border-radius:14px;padding:10px;text-align:center}.stk b{display:block;font-size:22px}.stk span{font-size:12px;color:var(--mute)}
+.heat{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:4px}.heat i{aspect-ratio:1;border-radius:4px;background:var(--fill2)}.heat i.l1{background:color-mix(in srgb,var(--red) 40%,var(--fill))}.heat i.l2{background:color-mix(in srgb,var(--red) 70%,var(--fill))}.heat i.l3{background:var(--red)}.heat i.td{outline:2px solid var(--ink)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
+.bdg{background:var(--fill);border-radius:16px;padding:12px 8px;text-align:center;font-size:12.5px;font-weight:700;line-height:1.25}
+.bdg .bi{width:44px;height:44px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;background:var(--fill2);color:var(--mute)}
+.bdg.on .bi{background:var(--red);color:#fff;box-shadow:0 0 16px -2px color-mix(in srgb,var(--red) 70%,transparent);animation:pop .5s}
+.bdg:not(.on){opacity:.55}.bdg small{display:block;font-weight:500;color:var(--mute);margin-top:3px}
+.phgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.phgrid figure{margin:0;position:relative}.phgrid img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px;display:block}.phgrid figcaption{font-size:12px;color:var(--mute);text-align:center;margin-top:3px}
+.cmp{position:relative;margin-top:12px;border-radius:16px;overflow:hidden;aspect-ratio:3/4;background:var(--fill)}.cmp img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.cmp .after{clip-path:inset(0 0 0 var(--cut,50%))}.cmp .bar2{position:absolute;top:0;bottom:0;left:var(--cut,50%);width:3px;background:#fff;box-shadow:0 0 8px rgba(0,0,0,.5)}
+.cmp span{position:absolute;bottom:8px;padding:3px 8px;border-radius:8px;background:rgba(0,0,0,.55);color:#fff;font-size:12px;font-weight:700}
+.chkrow{display:flex;align-items:center;gap:8px;margin:8px 0}.chkrow>b{width:92px;font-size:14px;flex:none}
+.chkrow .dots5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;flex:1}
+.chkrow button{min-height:42px;padding:0;background:var(--fill);color:var(--ink)!important;box-shadow:none;font-size:15px}
+.chkrow button.on{background:var(--red);color:#fff!important;transform:scale(1.06)}
+.pill{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}.pill:first-child{border-top:0}
+.pill button.ck{width:44px;height:44px;min-height:0;padding:0;border-radius:50%;background:var(--fill);color:var(--mute);box-shadow:none;flex:none}
+.pill button.ck.on{background:var(--green);color:#fff;animation:pop .35s}
+.drinkb{border-left:5px solid var(--blue)}
+.drink .big{font-size:44px}
 /* tuiles : toujours le texte du thème */
 .tile{color:var(--ink)!important}.tile small{color:var(--mute)!important}
 /* ===== Petites animations ===== */
@@ -505,12 +532,17 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
  <symbol id="i-scale" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="4"/><path d="M9 9a3 3 0 0 1 6 0M12 9l1.5-1.5"/></symbol>
  <symbol id="i-body" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M6 9h12M12 9v6M12 15l-3 6M12 15l3 6"/></symbol>
  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+ <symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></symbol>
+ <symbol id="i-pill" viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-35 12 12.5)"/><path d="M9.5 8.5l5 7"/></symbol>
+ <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+ <symbol id="i-ruler" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="8" rx="2"/><path d="M6 8v3M10 8v4M14 8v3M18 8v4"/></symbol>
  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
 </svg>
 
 <div id="amb" aria-hidden="true"></div>
 <header class="appbar" id="appbar">
   <a class="logo" href="#accueil"><span><svg class="i"><use href="#i-dumb"/></svg></span><span class="lname">Edilgan<b>Super</b>Coach</span></a>
+  <a class="ib" href="#coach" aria-label="Parler au coach" id="coachBtn"><svg class="i"><use href="#i-chat"/></svg></a>
   <button class="ib" data-act="shareApp" aria-label="Partager l'app"><svg class="i"><use href="#i-share"/></svg></button>
   <a class="ib av" href="#moi" id="avatar" aria-label="Mon profil">M</a>
 </header>
@@ -528,6 +560,8 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
   </div>
   <div id="homeStart"></div>
   <div class="card daily" id="dailyCard"></div>
+  <div class="card" id="homeChk"></div>
+  <div class="card drinkb" id="homeDrink" style="display:none"></div>
   <div class="sect">QUE VEUX-TU FAIRE ?</div>
   <div class="tiles">
     <button class="tile" data-act="goPane" data-v="scan" data-p="produit"><span class="ic c-red"><svg class="i"><use href="#i-bar"/></svg></span><span>Scanner un produit<small>code-barres ou étiquette</small></span></button>
@@ -548,6 +582,55 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
   </div>
   <a class="card lnk" href="#sommeil" id="homeSleep" style="display:flex"></a>
   <div class="card" id="installCard" style="display:none"></div>
+</section>
+
+<!-- ================= SUIVI ================= -->
+<section data-v="suivi">
+  <div class="lt"><h1>Suivi</h1><p>Ton corps, ta santé, tes progrès et tes récompenses.</p></div>
+  <div class="seg"><button data-pane="progres2" class="on">Récompenses</button><button data-pane="corps2">Mon corps</button><button data-pane="sante2">Santé</button><button data-pane="donnees">Mes données</button></div>
+
+  <div class="pane on" data-pane="progres2">
+    <div class="card lvl" id="lvlCard"></div>
+    <div class="card"><h2>Ma régularité</h2><p class="sub">Chaque case est un jour où tu as pris soin de toi (sport, repas notés, check-in…).</p><div id="heat"></div></div>
+    <div class="card"><h2>Mes badges</h2><div class="badges" id="badges"></div></div>
+    <a class="card lnk" href="#sommeil" style="display:flex"><span class="hcard"><span class="ic c-blue"><svg class="i"><use href="#i-moon"/></svg></span><span><b>Mon sommeil</b><div class="mute" style="font-weight:500">nuits, coucher idéal, respiration</div></span></span><svg class="i"><use href="#i-chev"/></svg></a>
+  </div>
+
+  <div class="pane" data-pane="corps2">
+    <div class="card"><h2>Mon poids, la vraie tendance</h2><p class="sub">Le poids bouge chaque jour avec l'eau et le sel. La ligne lissée montre ce qui se passe vraiment.</p><div class="fig" style="min-height:190px"><svg id="trendSvg"></svg></div><div id="trendTxt"></div>
+      <div class="row" style="margin-top:10px"><input id="wIn2" type="number" inputmode="decimal" step="0.1" placeholder="Poids du jour (kg)" style="flex:1;margin:0;min-width:150px"><button class="alt" data-act="logW2">Enregistrer</button></div></div>
+    <div class="card"><h2>Mes mensurations</h2><p class="sub">Quand la balance bloque, le mètre ruban, lui, avance souvent.</p>
+      <div class="grid" id="mesForm"></div><button class="wide" data-act="mesSave" style="margin-top:12px">Enregistrer mes mesures</button><div id="mesHist"></div></div>
+    <div class="card"><h2>Photos avant / après</h2><p class="sub">Elles restent sur ton téléphone. Même pose, même lumière, une fois par mois.</p>
+      <label class="drop" style="min-height:110px"><input type="file" accept="image/*" id="phIn"><svg class="i" style="width:34px;height:34px"><use href="#i-cam"/></svg><b>Ajouter une photo de progrès</b></label>
+      <div id="phCmp"></div><div class="phgrid" id="phList"></div></div>
+    <div class="card"><h2>Mes victoires hors balance</h2><p class="sub">Ceinture serrée d'un cran, escaliers sans souffler, vêtement qui revient… Tout compte.</p>
+      <div class="row"><input id="winIn" placeholder="ex. j'ai monté 3 étages sans m'arrêter" style="flex:1;margin:0;min-width:170px"><button class="alt" data-act="winAdd">Ajouter</button></div>
+      <div class="chips" id="winIdeas"></div><div id="winList"></div></div>
+  </div>
+
+  <div class="pane" data-pane="sante2">
+    <div class="card" id="drinkCard"></div>
+    <div class="card"><h2>Mon pilulier</h2><p class="sub">Coche chaque prise. Les noms et horaires se règlent selon ta prescription.</p><div id="pills"></div>
+      <details style="margin-top:10px"><summary class="mute" style="cursor:pointer;padding:8px 0">Modifier mon pilulier</summary><div id="pillEdit"></div>
+      <div class="row" style="margin-top:8px"><input id="pillN" placeholder="Nom (ex. Vitamine D)" style="flex:1;margin:0;min-width:140px"><input id="pillH" type="time" value="09:00" style="width:auto;margin:0"><button class="sm" data-act="pillAdd">Ajouter</button></div></details>
+      <div class="tip" id="pillTip" style="display:none"></div></div>
+    <div class="card"><h2>Mon check-in</h2><p class="sub">10 secondes chaque matin : le coach adapte ta journée.</p><div id="chkForm"></div><div class="fig" style="min-height:120px;margin-top:10px"><svg id="chkSvg"></svg></div></div>
+  </div>
+
+  <div class="pane" data-pane="donnees">
+    <div class="card"><h2>Sauvegarde</h2><p class="sub" id="bkInfo"></p>
+      <button class="wide" data-act="bkSave">Sauvegarder dans un fichier</button>
+      <label class="vid" style="cursor:pointer;margin-top:10px;justify-content:center;width:100%;min-height:48px"><input type="file" accept=".json,application/json" id="bkIn" style="display:none">Restaurer depuis un fichier</label>
+      <p class="mute">Le fichier va dans « Fichiers » ou iCloud Drive. Pratique avant de changer de téléphone.</p></div>
+    <div class="card"><h2>Transférer depuis une autre version</h2>
+      <ol class="routine" style="margin-top:0"><li>Dans l'<b>ancienne</b> app : Profil › L'app › <b>Sauvegarder mes données</b> (c'est copié).</li><li>Ici, touche <b>Coller</b> puis <b>Restaurer</b>.</li><li>Quand tout est là, supprime l'ancienne icône.</li></ol>
+      <textarea id="impT" placeholder="Colle ici ta sauvegarde (elle commence par {)"></textarea>
+      <div class="row" style="margin-top:10px"><button class="ghost" data-act="pasteImp" style="flex:1">Coller</button><button data-act="doImport" style="flex:1">Restaurer</button></div>
+      <div id="impRes"></div>
+      <h3 style="margin-top:18px">Envoyer mes données vers un autre téléphone</h3>
+      <button class="alt wide" data-act="exportData" style="margin-top:8px">Copier ma sauvegarde</button></div>
+  </div>
 </section>
 
 <!-- ================= SOMMEIL ================= -->
@@ -904,7 +987,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
 
 <!-- ================= COACH ================= -->
 <section data-v="coach">
-  <div class="lt"><h1>Coach</h1><p>Pose-lui toutes tes questions : il connaît ton profil, ta journée et tes séances.</p></div>
+  <div class="lt"><a href="#accueil" class="mute" style="text-decoration:none;font-weight:700">‹ Accueil</a><h1 style="margin-top:6px">Coach</h1><p>Pose-lui toutes tes questions : il connaît ton profil, ta journée et tes séances.</p></div>
   <div class="card">
     <div class="chips" id="quickQ" style="margin-top:0"></div>
     <div class="msgs" id="msgs"></div>
@@ -942,7 +1025,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
   <a href="#sport" data-t="sport"><svg class="i"><use href="#i-dumb"/></svg>Sport</a>
   <a href="#scan" data-t="scan"><svg class="i"><use href="#i-scan"/></svg>Scanner</a>
   <a href="#cuisine" data-t="cuisine"><svg class="i"><use href="#i-fork"/></svg>Cuisine</a>
-  <a href="#coach" data-t="coach"><svg class="i"><use href="#i-chat"/></svg>Coach</a>
+  <a href="#suivi" data-t="suivi"><svg class="i"><use href="#i-trend"/></svg>Suivi</a>
 </nav>
 
 <script>
@@ -1218,6 +1301,7 @@ ${m&&m.kcal?`Besoin visé : environ ${m.kcal} kcal et ${m.prot} g de protéines 
 ${P.regime?'Alimentation : '+P.regime+'.':''} Budget : ${P.budget||'normal'}. ${P.notes?'Blessures ou limites : '+P.notes+'.':''}`;
   s+=equipTxt();s+=santeTxt();
   const fe=LOG.slice(-3).filter(l=>l.ressenti).map(l=>`${l.nom} : ${l.ressenti}`);if(fe.length)s+=`\nRessenti des dernières séances : ${fe.join(' ; ')} (adapte l'intensité en conséquence).`;
+  s+=chkTxt()?'\n'+chkTxt()+' Adapte l\'intensité et le ton.':'';
   if(extra){const t=dayTot();s+=`\nAujourd'hui il a mangé ${Math.round(t.k)} kcal et ${Math.round(t.p)} g de protéines.`;const l=LOG[LOG.length-1];if(l)s+=` Dernière séance : ${l.nom} le ${frd(l.d)}.`}
   return s;
 }
@@ -1573,7 +1657,7 @@ let J=store.get('journal',{}),EAU=store.get('eau',{}),FAV=store.get('favoris',[]
 const dayJ=()=>J[today()]||(J[today()]=[]);
 const dayTot=()=>dayJ().reduce((a,e)=>({k:a.k+num(e.kcal),p:a.p+num(e.p)}),{k:0,p:0});
 const saveJ=()=>{const keep=Object.keys(J).sort().slice(-60);J=Object.fromEntries(keep.map(k=>[k,J[k]]));store.set('journal',J)};
-function addFood(it){dayJ().push({nom:it.nom,kcal:Math.round(num(it.kcal)),p:Math.round(num(it.proteines_g??it.p)),g:Math.round(num(it.glucides_g??it.g)),l:Math.round(num(it.lipides_g??it.l))});saveJ();renderDay()}
+function addFood(it){if(BARIA())store.set('boire',{until:Date.now()+30*6e4});dayJ().push({nom:it.nom,kcal:Math.round(num(it.kcal)),p:Math.round(num(it.proteines_g??it.p)),g:Math.round(num(it.glucides_g??it.g)),l:Math.round(num(it.lipides_g??it.l))});saveJ();renderDay()}
 function renderDay(){
   const m=metrics()||{},t=dayTot(),tk=m.kcal||(BARIA()?1000:2000),tp=m.prot||100,te=m.eau||8,w=EAU[today()]||0;
   $('mDate').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
@@ -1745,12 +1829,12 @@ Propose UN exercice de remplacement pour « ${x.nom} » qui travaille les mêmes
       for(const p of active()){try{const m=await pickModels(p);const t=await callProv(p,[{role:'user',content:'Réponds juste : OK'}],[],false);out.push(`<div class="jl"><span class="n"><b>${esc(PROV[p].nom)}</b><div class="mute">${esc(m.text)}${m.vision?' · photos : oui':' · photos : non'}</div></span><span class="v" style="color:#3dffc5">Marche</span></div>`)}
         catch(e){out.push(`<div class="jl"><span class="n"><b>${esc(PROV[p].nom)}</b><div class="mute">${esc(errMsg(e))}</div></span><span class="v" style="color:var(--red)">Échec</span></div>`)}}
       $('iaRes').innerHTML=out.join('');$('noai').style.display='none'})},
-  exportData(b){const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('coach_')&&k!=='coach_ia')d[k]=localStorage.getItem(k)}}catch(e){}copy(JSON.stringify(d),b);
-    $('iaRes').innerHTML='<p class="mute">Tes données sont copiées : colle-les dans une note pour les garder. (La clé IA n\'est pas incluse.)</p>'},
-  importData(){$('iaRes').innerHTML='<label for="impT">Colle ici ta sauvegarde</label><textarea id="impT"></textarea><div class="row" style="margin-top:8px"><button class="sm" data-act="doImport">Restaurer</button></div>'},
-  doImport(){try{const d=JSON.parse($('impT').value);Object.entries(d).forEach(([k,v])=>{if(k.startsWith('coach_'))localStorage.setItem(k,v)});location.reload()}catch(e){$('iaRes').innerHTML='<div class="err">Sauvegarde illisible.</div>'}},
+  exportData(b){copy(exportCode(),b);store.set('lastbk',today());toast('Sauvegarde copiée. Colle-la dans la nouvelle app : Suivi › Mes données.')},
+  importData(){openPane('suivi','donnees');setTimeout(()=>$('impT').focus(),120)},
+  async pasteImp(){try{const t=await navigator.clipboard.readText();if(t){$('impT').value=t;toast('Collé')}}catch(e){toast('Appuie longuement dans la case puis « Coller »')}},
+  doImport(){restoreFrom($('impT').value)},
   doneSet(){const x=S.ex[S.i],kg=num($('sKg').value),rp=num($('sR').value),prev=bestE1(x.nom),cur=Math.max(0,...x.sets.map(s=>num(s.kg)*(1+num(s.reps)/30)));
-    if(kg&&prev&&kg*(1+rp/30)>Math.max(prev,cur)+0.01){toast('Nouveau record sur '+x.nom+' !');confetti();say('Nouveau record !')}
+    if(kg&&prev&&kg*(1+rp/30)>Math.max(prev,cur)+0.01){toast('Nouveau record sur '+x.nom+' !');confetti();store.set('nbrec',store.get('nbrec',0)+1);say('Nouveau record !')}
     x.sets.push({kg:$('sKg').value,reps:$('sR').value});
     if(x.sets.length>=(+x.series||3)){if(S.i<S.ex.length-1){S.i++;S.rest=Date.now()+(+x.repos_s||90)*1000}else return endS()}else S.rest=Date.now()+(+x.repos_s||90)*1000;renderS()},
   rest(b){S.rest+=(+b.dataset.v)*1000;if(S.rest<Date.now())S.rest=Date.now()+1000},
@@ -1861,6 +1945,21 @@ Ses dernières nuits :\n${nuits}
 Analyse simplement (durée, régularité, qualité) et donne des conseils concrets et personnalisés, en lien avec son sport, son alimentation et sa santé. Pas de diagnostic médical ; si des signes inquiétants apparaissent, conseille d'en parler au médecin.
 Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une seule chose à faire ce soir"}`,{modelTier:'default',cache:false});
     $('slAdv').innerHTML=`<div class="meal"><p style="margin-top:0">${esc(r.bilan)}</p>${list(r.conseils)}${r.ce_soir?`<div class="tip"><b>Ce soir :</b> ${esc(r.ce_soir)}</div>`:''}</div>`})},
+  chk(b){const c=CHK[today()]||{};c[b.dataset.k]=+b.dataset.v;CHK[today()]=c;const k=Object.keys(CHK).sort().slice(-120);CHK=Object.fromEntries(k.map(x=>[x,CHK[x]]));store.set('checkin',CHK);renderChk();if(CHKQ.every(([q])=>c[q]))toast('Check-in noté, merci !')},
+  chkEdit(){const c=CHK[today()];if(c){delete c.s}store.set('checkin',CHK);renderChk()},
+  logW2(){const w=num($('wIn2').value);if(!w){$('wIn2').focus();return}$('wIn').value=w;A.logW();$('wIn2').value='';renderSuivi()},
+  mesSave(){const o={d:today()};let any=0;MESF.forEach(([k])=>{const v=num($('ms-'+k).value);if(v){o[k]=v;any=1}});if(!any){toast('Entre au moins une mesure');return}
+    const prev=MES[MES.length-1]||{};MESF.forEach(([k])=>{if(!o[k]&&prev[k])o[k]=prev[k]});MES=MES.filter(m=>m.d!==today());MES.push(o);store.set('mesures',MES);renderMes();toast('Mesures enregistrées');renderSuivi()},
+  winAdd(){const t=$('winIn').value.trim();if(!t){$('winIn').focus();return}WINS.push({d:today(),t});store.set('victoires',WINS);$('winIn').value='';renderWins();confetti();toast('Belle victoire !')},
+  winQuick(b){$('winIn').value=b.dataset.v;A.winAdd()},
+  winDel(b){WINS.splice(+b.dataset.i,1);store.set('victoires',WINS);renderWins()},
+  pillT(b){const id=b.dataset.id,L=PLOG[today()]||{};if(L[id])delete L[id];else L[id]=Date.now();PLOG[today()]=L;const k=Object.keys(PLOG).sort().slice(-90);PLOG=Object.fromEntries(k.map(x=>[x,PLOG[x]]));store.set('prises',PLOG);renderPills();if(PILLS.every(p=>L[p.id])){toast('Pilulier du jour terminé !');confetti()}},
+  pillAdd(){const n=$('pillN').value.trim(),h=$('pillH').value||'09:00';if(!n){$('pillN').focus();return}PILLS.push({id:'p'+Date.now(),n,h});store.set('pilulier',PILLS);$('pillN').value='';renderPills()},
+  pillDel(b){PILLS=PILLS.filter(p=>p.id!==b.dataset.id);store.set('pilulier',PILLS);renderPills()},
+  drinkAfter(){store.set('boire',{until:Date.now()+30*6e4});renderDrink();toast('Minuteur lancé : 30 minutes')},
+  drinkStop(){try{localStorage.removeItem('coach_boire')}catch(e){}renderDrink()},
+  phDel(b){phOp('readwrite',st=>st.delete(b.dataset.id)).then(renderPhotos)},
+  bkSave(b){bkSave(b)},
   santeT(b){const k=b.dataset.k,L=P.santeL||[];P.santeL=L.includes(k)?L.filter(x=>x!==k):[...L,k];saveP();renderSante();calc()},
   genProgHome(b){openPane('sport','programme');setTimeout(()=>$('genProg').click(),80)},
   genMenuHome(b){openPane('cuisine','menus');setTimeout(()=>$('genMenu').click(),80)},
@@ -1974,14 +2073,14 @@ document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{
 function openPane(v,p){if(location.hash!=='#'+v)location.hash=v;setTimeout(()=>{const b=document.querySelector(`section[data-v="${v}"] .seg [data-pane="${p}"]`);if(b)b.click()},30)}
 
 /* ---------- Navigation ---------- */
-const VIEWS=['accueil','moi','sport','scan','cuisine','coach','sommeil'];
+const VIEWS=['accueil','moi','sport','scan','cuisine','coach','sommeil','suivi'];
 function route(){
   let h=location.hash.slice(1);if(h==='programme')h='sport';if(h==='machine')h='scan';
   const v=VIEWS.includes(h)?h:'accueil';
   document.querySelectorAll('section[data-v]').forEach(s=>s.classList.toggle('on',s.dataset.v===v));
   document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===v));
   $('avatar').classList.toggle('on',v==='moi');
-  if(v!=='sommeil'&&bT)stopBreath();if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='sommeil')renderSleep();window.scrollTo(0,0);
+  if(v!=='sommeil'&&bT)stopBreath();if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='sommeil')renderSleep();if(v==='suivi')renderSuivi();$('coachBtn').classList.toggle('on',v==='coach');window.scrollTo(0,0);
 }
 window.addEventListener('scroll',()=>$('appbar').classList.toggle('sc',scrollY>4),{passive:true});
 /* ---------- Accueil ---------- */
@@ -2149,8 +2248,132 @@ document.addEventListener('pointerdown',e=>{
   if(b&&!b.disabled){const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height)*2.2,s=document.createElement('span');s.className='rip';s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;b.appendChild(s);setTimeout(()=>s.remove(),600)}
   if(document.documentElement.dataset.skin==='pets'){const p=document.createElement('span');p.className='pawtap';p.innerHTML=PAW;p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';p.style.transform=`rotate(${Math.round(Math.random()*40-20)}deg)`;document.body.appendChild(p);setTimeout(()=>p.remove(),950)}
 },{passive:true});
+
+/* ===================== SUIVI ===================== */
+let CHK=store.get('checkin',{}),MES=store.get('mesures',[]),WINS=store.get('victoires',[]),PLOG=store.get('prises',{});
+let PILLS=store.get('pilulier',null);
+const CHKQ=[['h','Humeur'],['e','Énergie'],['c','Courbatures'],['s','Stress']];
+const chkTxt=()=>{const c=CHK[today()];return c?`Check-in du jour (1 à 5) : humeur ${c.h||'?'}, énergie ${c.e||'?'}, courbatures ${c.c||'?'}, stress ${c.s||'?'}.`:''};
+function chkHTML(compact){const c=CHK[today()]||{};return CHKQ.map(([k,n])=>`<div class="chkrow"><b>${n}</b><div class="dots5">${[1,2,3,4,5].map(v=>`<button data-act="chk" data-k="${k}" data-v="${v}" class="${c[k]===v?'on':''}" aria-label="${n} ${v} sur 5">${v}</button>`).join('')}</div></div>`).join('')+`<div class="mute" style="display:flex;justify-content:space-between;padding-left:100px;font-size:12px"><span>faible</span><span>fort</span></div>`}
+function renderChk(){
+  const c=CHK[today()],done=c&&CHKQ.every(([k])=>c[k]);
+  $('homeChk').innerHTML=done?`<div class="row sb"><b>Ton check-in</b><button class="ghost sm" data-act="chkEdit">Modifier</button></div><div class="chips">${CHKQ.map(([k,n])=>`<span class="chip">${n} ${c[k]}/5</span>`).join('')}</div><div class="mute">${esc(chkAdvice(c))}</div>`
+    :`<div class="lab" style="font-size:12px;font-weight:800;letter-spacing:.05em;color:var(--red)">COMMENT TU TE SENS ?</div><p class="mute" style="margin:2px 0 6px">10 secondes, et le coach adapte ta journée.</p>${chkHTML()}`;
+  $('chkForm').innerHTML=chkHTML();
+  const days=[...Array(14)].map((_,i)=>dkey(Date.now()-(13-i)*864e5)),sv=$('chkSvg');
+  if(sv&&sv.clientWidth){const W=sv.clientWidth,H=120,x=i=>10+i*(W-20)/13,y=v=>H-12-(v-1)*(H-24)/4;
+    const line=(k,col)=>{const pts=days.map((d,i)=>CHK[d]&&CHK[d][k]?[x(i),y(CHK[d][k])]:null).filter(Boolean);return pts.length>1?`<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="${col}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`:''+pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${col}"/>`).join('')};
+    sv.setAttribute('viewBox',`0 0 ${W} ${H}`);sv.innerHTML=line('e','var(--red)')+line('h','var(--blue)')+`<text x="${W-8}" y="14" text-anchor="end" font-size="11" fill="var(--mute)">— énergie (couleur du thème) · — humeur (bleu)</text>`}
+}
+function chkAdvice(c){if(c.c>=4)return'Courbatures fortes : aujourd\'hui, séance légère ou mobilité.';if(c.e<=2)return'Peu d\'énergie : vise une séance courte, mange des protéines et couche-toi tôt.';if(c.s>=4)return'Stress élevé : 5 minutes de respiration calme, ça aide vraiment.';if(c.e>=4&&c.h>=4)return'Belle forme : c\'est le jour pour viser un record !';return'Journée normale : suis ton plan, tranquillement.'}
+/* activité, XP, série, badges */
+function activeDays(){const m={},add=(d,n=1)=>{if(d)m[d]=(m[d]||0)+n};
+  LOG.forEach(l=>add(l.d,2));Object.entries(J).forEach(([d,a])=>a&&a.length&&add(d));Object.keys(CHK).forEach(d=>add(d));Object.keys(SL).forEach(d=>add(d));W.forEach(x=>add(x.d));
+  Object.entries(PLOG).forEach(([d,o])=>Object.keys(o||{}).length&&add(d));return m}
+function streak(){const A=activeDays();let st=0,jk=0;for(let i=120;i>=1;i--){const d=dkey(Date.now()-i*864e5);if(A[d]){st++;if(st%7===0)jk=Math.min(2,jk+1)}else if(st>0&&jk>0)jk--;else st=0}if(A[today()])st++;return{st,jk,A}}
+function stats(){const vol=LOG.reduce((s,l)=>s+l.ex.reduce((a,e)=>a+e.sets.reduce((b,x)=>b+num(x.kg)*num(x.reps),0),0),0),w0=W[0]?.w,w1=W[W.length-1]?.w;
+  const m=metrics()||{},eauDays=Object.entries(EAU).filter(([,v])=>v>=(m.eau||8)).length;
+  const pillDays=Object.entries(PLOG).filter(([,o])=>PILLS&&PILLS.length&&PILLS.every(p=>o&&o[p.id])).length;
+  const tt=MES.filter(x=>num(x.taille));const cm=tt.length>1?num(tt[0].taille)-num(tt[tt.length-1].taille):0;
+  return{s:LOG.length,vol,jdays:Object.values(J).filter(a=>a&&a.length).length,chk:Object.keys(CHK).length,nights:Object.keys(SL).length,pes:W.length,lost:w0&&w1?w0-w1:0,eauDays,pillDays,cm,wins:WINS.length,rec:store.get('nbrec',0),scan:PRODS.length,mach:AH.length,fav:FAVR.length}}
+const BADGES=[['s1','Première séance','1 séance',t=>t.s>=1],['s10','Régulier','10 séances',t=>t.s>=10],['s25','Acharné','25 séances',t=>t.s>=25],['s50','Machine','50 séances',t=>t.s>=50],
+ ['t1','Une tonne','1 000 kg soulevés',t=>t.vol>=1000],['t10','Dix tonnes','10 000 kg soulevés',t=>t.vol>=10000],['r1','Record !','1er record battu',t=>t.rec>=1],['r10','Briseur de records','10 records',t=>t.rec>=10],
+ ['st7','Une semaine','7 jours d\'affilée',(t,k)=>k.st>=7],['st30','Inarrêtable','30 jours d\'affilée',(t,k)=>k.st>=30],['j7','Carnet tenu','7 jours de repas notés',t=>t.jdays>=7],['eau5','Bien hydraté','objectif eau 5 jours',t=>t.eauDays>=5],
+ ['k5','-5 kg','depuis la 1re pesée',t=>t.lost>=5],['k10','-10 kg','depuis la 1re pesée',t=>t.lost>=10],['cm5','-5 cm','tour de taille',t=>t.cm>=5],['w5','Victorieux','5 victoires notées',t=>t.wins>=5],
+ ['n7','Dormeur averti','7 nuits notées',t=>t.nights>=7],['c7','À l\'écoute','7 check-ins',t=>t.chk>=7],['p7','Pilulier au top','7 jours complets',t=>t.pillDays>=7],['sc5','Détective','5 produits scannés',t=>t.scan>=5],['m3','Expert machines','3 machines analysées',t=>t.mach>=3],['f3','Gourmet','3 favoris en cuisine',t=>t.fav>=3]];
+const TITLES=['Débutant','Motivé','Régulier','Sportif','Athlète','Guerrier','Machine','Champion','Légende','Super Coach'];
+function xpInfo(){const t=stats(),k=streak(),nb=BADGES.filter(b=>b[3](t,k)).length;
+  const xp=t.s*50+t.jdays*10+t.chk*5+t.nights*5+t.pes*5+t.wins*15+t.eauDays*10+t.pillDays*10+nb*25+t.rec*20;
+  const lvl=Math.floor((Math.sqrt(1+8*xp/100)-1)/2)+1,need=n=>100*n*(n-1)/2,cur=need(lvl),nxt=need(lvl+1);
+  return{t,k,nb,xp,lvl,p:(xp-cur)/(nxt-cur),title:TITLES[Math.min(TITLES.length-1,lvl-1)],toNext:nxt-xp}}
+function renderSuivi(){
+  const X=xpInfo();
+  $('lvlCard').innerHTML=`<div class="lv"><div class="medal" style="--p:${Math.round(X.p*100)}%"><b>${X.lvl}</b></div><div><div class="mute" style="font-weight:700">NIVEAU ${X.lvl}</div><h2 style="margin:2px 0">${esc(X.title)}</h2><div class="mute">${X.xp.toLocaleString('fr-FR')} XP · encore ${X.toNext.toLocaleString('fr-FR')} XP pour le niveau ${X.lvl+1}</div></div></div>
+  <div class="stk"><div><b>${X.k.st}</b><span>jours d'affilée</span></div><div><b>${X.k.jk}</b><span>joker${X.k.jk>1?'s':''} de série</span></div><div><b>${X.nb}/${BADGES.length}</b><span>badges</span></div></div>
+  <p class="mute" style="margin-bottom:0">Un jour raté ? Un joker protège ta série. Tu en gagnes un tous les 7 jours (2 max).</p>`;
+  const A=X.k.A;let h='<div class="heat" style="grid-template-rows:repeat(7,1fr);grid-auto-flow:column;grid-template-columns:none">';
+  const start=new Date();start.setDate(start.getDate()-90-((start.getDay()+6)%7));for(let i=0;i<91+((new Date().getDay()+6)%7);i++){const d=new Date(start);d.setDate(start.getDate()+i);const k=dkey(d),v=A[k]||0;h+=`<i class="${v>=3?'l3':v===2?'l2':v?'l1':''}${k===today()?' td':''}" title="${k}"></i>`}
+  $('heat').innerHTML=h+'</div><div class="legend" style="justify-content:flex-start;margin-top:8px"><span>moins</span><span><i style="background:var(--fill2)"></i><i style="background:color-mix(in srgb,var(--red) 40%,var(--fill))"></i><i style="background:var(--red)"></i></span><span>plus</span></div>';
+  $('badges').innerHTML=BADGES.map(([id,n,d,f])=>{const on=f(X.t,X.k);return `<div class="bdg${on?' on':''}"><div class="bi"><svg class="i"><use href="#i-star"/></svg></div>${esc(n)}<small>${esc(d)}</small></div>`}).join('');
+  renderTrend();renderMes();renderWins();renderPills();renderDrink();renderChk();renderPhotos();
+  const lb=store.get('lastbk','');$('bkInfo').textContent=lb?`Dernière sauvegarde : ${frd(lb)} (il y a ${Math.round((Date.now()-new Date(lb))/864e5)} jour(s)).`:'Aucune sauvegarde pour l\'instant. Fais-en une de temps en temps.';
+}
+/* poids tendance (moyenne lissée) */
+function ema(){let e=null;return W.map(p=>{e=e==null?p.w:e+0.1*(p.w-e);return{d:p.d,w:p.w,e}})}
+function renderTrend(){
+  const sv=$('trendSvg'),E=ema();if(!sv)return;
+  if(E.length<2){sv.innerHTML='';$('trendTxt').innerHTML='<p class="mute">Pèse-toi 2 à 3 fois par semaine, le matin à jeun : la tendance apparaîtra ici.</p>';return}
+  const W2=sv.clientWidth||320,H=190,ws=E.flatMap(p=>[p.w,p.e]),lo=Math.min(...ws)-.5,hi=Math.max(...ws)+.5,t0=new Date(E[0].d),t1=new Date(E[E.length-1].d),sp=Math.max(1,t1-t0);
+  const X=d=>16+(new Date(d)-t0)/sp*(W2-32),Y=v=>12+(hi-v)/(hi-lo)*(H-34);
+  sv.setAttribute('viewBox',`0 0 ${W2} ${H}`);
+  sv.innerHTML=`<text x="4" y="12" font-size="11" fill="var(--mute)">${fr(hi.toFixed(1))} kg</text><text x="4" y="${H-4}" font-size="11" fill="var(--mute)">${fr(lo.toFixed(1))} kg</text>`+E.map(p=>`<circle cx="${X(p.d)}" cy="${Y(p.w)}" r="3" fill="var(--mute)" opacity=".5"/>`).join('')+`<polyline points="${E.map(p=>X(p.d)+','+Y(p.e)).join(' ')}" fill="none" stroke="var(--red)" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" class="drawline"/>`;
+  const last=E[E.length-1],ref=[...E].reverse().find(p=>(new Date(last.d)-new Date(p.d))>=6*864e5);
+  const wk=ref?(last.e-ref.e)/((new Date(last.d)-new Date(ref.d))/864e5)*7:0;
+  $('trendTxt').innerHTML=`<div class="stk"><div><b>${fr(last.e.toFixed(1))}</b><span>kg tendance</span></div><div><b>${wk>0?'+':''}${fr(wk.toFixed(2))}</b><span>kg / semaine</span></div><div><b>${fr((E[0].e-last.e).toFixed(1))}</b><span>kg perdus</span></div></div>`;
+}
+/* mensurations */
+const MESF=[['taille','Tour de taille'],['hanches','Hanches'],['poitrine','Poitrine'],['bras','Bras'],['cuisse','Cuisse'],['cou','Cou']];
+function renderMes(){
+  const last=MES[MES.length-1]||{};$('mesForm').innerHTML=MESF.map(([k,n])=>`<div><label for="ms-${k}">${n} (cm)</label><input id="ms-${k}" type="number" inputmode="decimal" step="0.5" placeholder="${last[k]||''}"></div>`).join('');
+  if(MES.length<1){$('mesHist').innerHTML='';return}const f=MES[0],l=MES[MES.length-1];let tot=0;
+  $('mesHist').innerHTML=`<table class="tbl" style="margin-top:12px">${MESF.map(([k,n])=>{if(!num(l[k]))return'';const d=num(f[k])&&MES.length>1?num(l[k])-num(f[k]):0;tot+=d<0?-d:0;return `<tr><td>${n}</td><td>${fr(l[k])} cm ${d?`<span style="color:${d<0?'var(--green)':'var(--mute)'}">(${d>0?'+':''}${fr(d)})</span>`:''}</td></tr>`}).join('')}</table>${tot?`<p style="font-weight:800;color:var(--green)">${fr(tot)} cm perdus au total, bravo !</p>`:''}<p class="mute">Depuis le ${frd(f.d)} · ${MES.length} relevé(s)</p>`;
+}
+/* victoires */
+const WINIDEAS=['Ceinture serrée d\'un cran','Escaliers sans m\'arrêter','Un vêtement qui revient','Moins essoufflé','Mieux dormi','Plus d\'énergie'];
+function renderWins(){$('winIdeas').innerHTML=WINIDEAS.map(w=>`<button class="chip" data-act="winQuick" data-v="${esc(w)}">${esc(w)}</button>`).join('');
+  $('winList').innerHTML=WINS.slice().reverse().map((w,i)=>`<div class="jl"><span class="ic c-yel" style="width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none"><svg class="i" style="width:18px;height:18px"><use href="#i-star"/></svg></span><span class="n">${esc(w.t)}<div class="mute">${frd(w.d)}</div></span><button class="x" data-act="winDel" data-i="${WINS.length-1-i}" aria-label="Supprimer">×</button></div>`).join('')}
+/* pilulier */
+function defaultPills(){return BARIA()?[{id:'p1',n:'Multivitamine',h:'08:00'},{id:'p2',n:'Vitamine B12',h:'08:00'},{id:'p3',n:'Calcium citrate',h:'12:30'},{id:'p4',n:'Vitamine D',h:'12:30'},{id:'p5',n:'Fer',h:'17:00'},{id:'p6',n:'Calcium citrate',h:'20:00'}]:[{id:'p1',n:'Vitamines',h:'08:00'}]}
+function renderPills(){
+  if(!PILLS){PILLS=defaultPills();store.set('pilulier',PILLS)}const L=PLOG[today()]||{};
+  const ps=[...PILLS].sort((a,b)=>a.h<b.h?-1:1);
+  $('pills').innerHTML=ps.length?ps.map(p=>`<div class="pill"><button class="ck${L[p.id]?' on':''}" data-act="pillT" data-id="${p.id}" aria-label="${esc(p.n)} pris"><svg class="i"><use href="#i-pill"/></svg></button><span style="flex:1"><b>${esc(p.n)}</b><div class="mute">${esc(p.h)}${L[p.id]?' · pris à '+new Date(L[p.id]).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):''}</div></span></div>`).join(''):'<p class="mute">Ajoute tes compléments ci-dessous.</p>';
+  $('pillEdit').innerHTML=ps.map(p=>`<div class="jl"><span class="n">${esc(p.n)} · ${esc(p.h)}</span><button class="x" data-act="pillDel" data-id="${p.id}" aria-label="Retirer">×</button></div>`).join('');
+  const tm=x=>tmin(x.h),fer=ps.filter(p=>/fer/i.test(p.n)),ca=ps.filter(p=>/calcium/i.test(p.n)),clash=fer.some(f=>ca.some(c=>Math.abs(tm(f)-tm(c))<120));
+  $('pillTip').style.display=clash?'block':'none';$('pillTip').textContent='Le fer et le calcium se gênent : espace-les d\'au moins 2 heures.';
+}
+/* minuteur boisson (après une sleeve) */
+function renderDrink(){
+  const d=store.get('boire',null),now=Date.now(),act=d&&d.until>now,mm=act?Math.ceil((d.until-now)/6e4):0,hh=act?new Date(d.until).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'';
+  const body=BARIA()?`<h2>Boire et manger séparément</h2><p class="sub">Après une sleeve : pas de boisson 30 minutes avant et après le repas.</p>${act?`<div class="drink"><div class="big" style="color:var(--blue)">${mm} min</div><p>Tu pourras boire à <b>${hh}</b>.</p></div>`:`<p style="font-weight:700;color:var(--green)">Tu peux boire maintenant, par petites gorgées.</p>`}<div class="row"><button class="sm" data-act="drinkAfter">J'ai fini de manger</button><button class="ghost sm" data-act="drinkStop">Annuler</button></div>`
+    :`<h2>Hydratation</h2><p class="sub">Bois régulièrement dans la journée, un verre à chaque repas et un autour de la séance.</p>`;
+  $('drinkCard').innerHTML=body;
+  const hd=$('homeDrink');if(BARIA()&&act){hd.style.display='block';hd.innerHTML=`<div class="row sb"><span><b>Pas de boisson pour l'instant</b><div class="mute">Tu pourras boire à ${hh} (dans ${mm} min)</div></span><button class="ghost sm" data-act="drinkStop">OK</button></div>`}else hd.style.display='none';
+}
+setInterval(()=>{if(document.visibilityState==='visible'){const d=store.get('boire',null);if(d){if(d.until<=Date.now()&&!d.done){d.done=1;store.set('boire',d);toast('Tu peux boire à nouveau');try{beep(2)}catch(e){}}renderDrink()}}},30000);
+/* photos (IndexedDB) */
+const idb=()=>new Promise((ok,ko)=>{try{const r=indexedDB.open('edilgan',1);r.onupgradeneeded=()=>r.result.createObjectStore('photos',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)}catch(e){ko(e)}});
+const phOp=(mode,fn)=>idb().then(db=>new Promise((ok,ko)=>{const t=db.transaction('photos',mode),st=t.objectStore('photos'),r=fn(st);t.oncomplete=()=>ok(r&&r.result);t.onerror=()=>ko(t.error)}));
+async function renderPhotos(){let L=[];try{L=await phOp('readonly',st=>st.getAll())||[]}catch(e){}L.sort((a,b)=>a.d<b.d?-1:1);
+  $('phList').innerHTML=L.map(p=>`<figure><img src="${p.data}" alt="Photo du ${frd(p.d)}"><figcaption>${frd(p.d)} <button class="x" style="min-height:28px;min-width:28px;font-size:16px" data-act="phDel" data-id="${p.id}" aria-label="Supprimer">×</button></figcaption></figure>`).join('');
+  $('phCmp').innerHTML=L.length>1?`<div class="cmp" id="cmpBox"><img src="${L[0].data}" alt="Avant"><img class="after" src="${L[L.length-1].data}" alt="Après"><div class="bar2"></div><span style="left:8px">${frd(L[0].d)}</span><span style="right:8px">${frd(L[L.length-1].d)}</span></div><input type="range" min="0" max="100" value="50" id="cmpR" aria-label="Comparer avant et après" style="margin-top:8px;padding:0;min-height:30px;background:none;border:0">`:'';
+  const r=$('cmpR');if(r)r.oninput=()=>$('cmpBox').style.setProperty('--cut',r.value+'%')}
+/* sauvegarde fichier */
+async function bkSave(btn){const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('coach_')&&k!=='coach_ia')d[k]=localStorage.getItem(k)}}catch(e){}
+  const json=JSON.stringify({app:'EdilganSuperCoach',date:today(),data:d}),name=`edilgan-sauvegarde-${today()}.json`,file=new File([json],name,{type:'application/json'});
+  store.set('lastbk',today());
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'Sauvegarde EdilganSuperCoach'});toast('Sauvegarde prête');renderSuivi();return}}catch(e){if(e&&e.name==='AbortError')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);toast('Sauvegarde téléchargée');renderSuivi()}
+
+/* ---------- Transfert de données (compatible toutes versions) ---------- */
+function exportCode(){const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('coach_')&&k!=='coach_ia')d[k]=localStorage.getItem(k)}}catch(e){}return JSON.stringify({app:'EdilganSuperCoach',date:today(),data:d})}
+function restoreFrom(txt){
+  const out=$('impRes');let o;txt=String(txt||'').trim();
+  const a=txt.indexOf('{'),b=txt.lastIndexOf('}');
+  try{o=JSON.parse(txt.slice(a,b+1))}catch(e){out.innerHTML='<div class="err">Je n\'arrive pas à lire cette sauvegarde. Vérifie qu\'elle a été copiée en entier (elle commence par { et finit par }).</div>';return}
+  const d=o&&o.data&&typeof o.data==='object'?o.data:o;let n=0;
+  for(const [k0,v] of Object.entries(d||{})){const k=k0.startsWith('coach_')?k0:'coach_'+k0;if(k==='coach_ia')continue;
+    const val=typeof v==='string'?v:JSON.stringify(v);try{JSON.parse(val)}catch(e){continue}
+    if(k==='coach_onb'||k==='coach_skin'||k==='coach_taille'||k==='coach_fx'){localStorage.setItem(k,val);continue}
+    localStorage.setItem(k,val);n++}
+  if(!n){out.innerHTML='<div class="err">Cette sauvegarde est vide.</div>';return}
+  const g=k=>{try{return JSON.parse(localStorage.getItem('coach_'+k))}catch(e){return null}},cnt=v=>Array.isArray(v)?v.length:v&&typeof v==='object'?Object.keys(v).length:0;
+  const pr=g('profil')||{};
+  out.innerHTML=`<div class="tip"><b>Restauré !</b><ul style="margin:6px 0 0">${[['Profil',pr.nom||pr.poids?'oui':'—'],['Favoris (recettes, menus, sauces)',cnt(g('favrec'))],['Séances',cnt(g('seances'))],['Programme',g('programme')?'oui':'—'],['Jours de repas notés',cnt(g('journal'))],['Pesées',cnt(g('pesees'))],['Menus',cnt(g('menus'))],['Produits scannés',cnt(g('produits'))],['Nuits',cnt(g('sommeil'))]].map(([l,v])=>`<li>${l} : <b>${v}</b></li>`).join('')}</ul><p style="margin:8px 0 0">Tu peux maintenant supprimer l'ancienne icône de ton écran d'accueil. L'app redémarre…</p></div>`;
+  store.set('onb',1);confetti();setTimeout(()=>location.reload(),4000);
+}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-20';
+const APP_VERSION='2026.11.26-22';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
@@ -2169,6 +2392,10 @@ $('slWake').value=store.get('reveil','07:00');$('slWake').addEventListener('inpu
 $('slTips').innerHTML=SLTIPS.map(([t,d],i)=>`<div class="tipl"><em>${i+1}</em><div><b>${esc(t)}</b><div class="mute" style="font-size:15px">${esc(d)}</div></div></div>`).join('');
 renderDaily();renderSleep();
 applyFx(store.get('fx',RM?'off':'on'));ambiance(document.documentElement.dataset.skin);
+$('phIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const{canvas}=await shrink(f,900);await phOp('readwrite',st=>st.put({id:'ph'+Date.now(),d:today(),data:canvas.toDataURL('image/jpeg',.82)}));toast('Photo ajoutée');renderPhotos()}catch(err){toast('Photo impossible à enregistrer')}e.target.value=''});
+$('bkIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result),d=o.data||o;let n=0;Object.entries(d).forEach(([k,v])=>{if(k.startsWith('coach_')&&k!=='coach_ia'){localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v));n++}});toast(n+' éléments restaurés');setTimeout(()=>location.reload(),900)}catch(err){toast('Fichier de sauvegarde illisible')}};r.readAsText(f)});
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+renderChk();renderDrink();
 calc();renderEq();renderSante();renderProg();renderAH();renderProdHist();renderMenu();renderWeek();renderFav();renderChat();route();
 }
 </script>
