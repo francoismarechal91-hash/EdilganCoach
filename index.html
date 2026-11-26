@@ -218,7 +218,7 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
 </svg>
 
 <header class="appbar" id="appbar">
-  <a class="logo" href="#accueil"><img src="icon-192.png" alt="" width="32" height="32" style="border-radius:9px;display:block">Mon Coach</a>
+  <a class="logo" href="#accueil"><span><svg class="i"><use href="#i-dumb"/></svg></span>Mon Coach</a>
   <button class="ib" data-act="shareApp" aria-label="Partager l'app"><svg class="i"><use href="#i-share"/></svg></button>
   <a class="ib av" href="#moi" id="avatar" aria-label="Mon profil">M</a>
 </header>
@@ -1376,7 +1376,7 @@ $('ingPh').addEventListener('change',async e=>{
 });
 if('serviceWorker' in navigator&&location.protocol==='https:'&&/github\.io$/.test(location.host)){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-4';
+const APP_VERSION='2026.11.26-5';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
