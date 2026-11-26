@@ -146,6 +146,8 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px var(--fill) inset;-webkit-t
 .start .stp{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--fill);color:var(--ink);border:0;border-radius:14px;padding:10px 12px;margin-top:6px;min-height:56px;font:inherit;text-transform:none;letter-spacing:0;box-shadow:none}html[data-skin] .start .stp{background:var(--fill);background-image:none;color:var(--ink);box-shadow:none}.start .stp i{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--fill2);display:grid;place-items:center;font-style:normal;font-weight:900;font-size:14px}.start .stp.ok{opacity:.6}.start .stp.ok i{background:var(--green);border-color:var(--green);color:#fff}.start .stp small{display:block;font-size:13px;color:var(--mute);font-weight:500}.start .stp:disabled{cursor:default}
 .fold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-2px 0}.fold>summary::-webkit-details-marker{display:none}.fold>summary h2{margin:0}.fold>summary::after{content:"";flex:none;width:10px;height:10px;border-right:2.5px solid var(--mute);border-bottom:2.5px solid var(--mute);transform:rotate(45deg);transition:transform .25s;margin-right:4px}.fold[open]>summary::after{transform:rotate(-135deg)}.fold[open]>summary{margin-bottom:12px}.fsum{display:block;font-size:14px;font-weight:600;margin-top:2px}
 section[data-v=moi].on{display:flex;flex-direction:column}section[data-v=moi]>*{order:13}section[data-v=moi]>.lt{order:0}section[data-v=moi]>:nth-child(3),section[data-v=moi]>:nth-child(4){order:10}section[data-v=moi]>#foldEq,section[data-v=moi]>#foldSante{order:11}section[data-v=moi]>#foldApp{order:12}
+#netB{position:fixed;left:12px;right:12px;top:calc(64px + env(safe-area-inset-top));z-index:55;background:var(--card);color:var(--ink);border-radius:14px;padding:10px 14px;font-size:14px;box-shadow:0 0 0 1px var(--line),0 10px 24px -10px rgba(0,0,0,.5);border-left:4px solid var(--yel);animation:tin .35s}
+.fiche summary{align-items:flex-start}.fl{margin:0;padding-left:20px}.fl li{margin:6px 0;line-height:1.45}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -704,7 +706,7 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
     <button class="tile" data-act="goPane" data-v="sport" data-p="prets"><span class="ic c-red"><svg class="i"><use href="#i-dumb"/></svg></span><span>Séance prête<small>maison, à deux, étirements</small></span></button>
     <button class="tile" data-act="goPane" data-v="cuisine" data-p="monde"><span class="ic c-blue"><svg class="i"><use href="#i-globe"/></svg></span><span>Tour du monde<small>recettes de tous les pays</small></span></button>
   </div>
-  <div class="card" id="homeAsk"><h3 style="margin-top:0">Une question pour le coach ?</h3><textarea id="hAsk" class="grow" rows="1" data-enter="homeAsk" placeholder="ex. Je peux manger quoi ce soir après le sport ?" aria-label="Ta question pour le coach"></textarea><div class="row" style="margin-top:8px"><button class="sm" data-act="homeAsk">Demander</button></div></div>
+  <div class="card" id="homeAsk"><h3 style="margin-top:0">Une question pour le coach ?</h3><textarea id="hAsk" class="grow" rows="1" data-enter="homeAsk" placeholder="ex. Je peux manger quoi ce soir après le sport ?" aria-label="Ta question pour le coach"></textarea><div class="row" style="margin-top:8px"><button class="sm" data-act="homeAsk">Demander</button><button class="ghost sm" data-act="goPane" data-v="coach" data-p="fiches">Conseils pratiques</button></div></div>
   <div class="sect">TON SPORT</div>
   <div class="card" id="homeSeance"></div>
   <div class="sect">TES REPAS</div>
@@ -1205,12 +1207,20 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
 <!-- ================= COACH ================= -->
 <section data-v="coach">
   <div class="lt"><a href="#accueil" class="mute" style="text-decoration:none;font-weight:700">‹ Accueil</a><h1 style="margin-top:6px">Coach</h1><p>Pose-lui toutes tes questions : il connaît ton profil, ta journée et tes séances.</p></div>
+  <div class="seg"><button data-pane="chat" class="on">Discuter</button><button data-pane="fiches">Conseils pratiques</button></div>
+  <div class="pane" data-pane="fiches">
+    <div class="card"><h2>Conseils pratiques</h2><p class="sub">Des fiches courtes et concrètes, vérifiées auprès des sources officielles. Elles marchent sans internet.</p>
+      <input id="fiQ" type="search" placeholder="Chercher : restaurant, sommeil, courbatures…" aria-label="Chercher un conseil" style="margin:0 0 10px">
+      <div class="chips" id="fiCat"></div><div id="fiList"></div></div>
+  </div>
+  <div class="pane on" data-pane="chat">
   <div class="card">
     <div class="chips" id="quickQ" style="margin-top:0"></div>
     <div class="msgs" id="msgs"></div>
     <div id="askImg" class="askimg" hidden></div>
     <div class="send"><label class="ib camb" title="Joindre une photo" aria-label="Joindre une photo"><input type="file" accept="image/*" id="askPh" style="position:absolute;opacity:0;width:1px;height:1px"><svg class="i"><use href="#i-cam"/></svg></label><textarea id="ask" class="grow" rows="1" placeholder="Écris ton message…" aria-label="Message"></textarea><button data-act="send" id="sendBtn">Envoyer</button></div>
     <div class="row" style="margin-top:10px"><button class="ghost sm" data-act="clearChat">Nouvelle conversation</button></div>
+  </div>
   </div>
 </section>
 </main>
@@ -2242,6 +2252,23 @@ function mealEnd(ok){clearInterval(mtick);const min=MEAL?Math.round((Date.now()-
   if(ok){store.set('boire',{until:Date.now()+30*6e4});const ml=store.get('repasLents',[]);ml.push({d:today(),min});store.set('repasLents',ml.slice(-60));
     ov.innerHTML=`<div style="text-align:center;padding-top:40px"><h1>Bien joué</h1><div class="big" style="color:var(--red);margin:16px 0">${min} min</div><p>${min>=20?'Parfait, tu as pris ton temps.':'Un peu rapide : la prochaine fois, essaie d\'atteindre 20 minutes.'}</p><p class="mute">Pas de boisson pendant 30 minutes : je te préviens quand c'est bon.</p><button data-act="mealClose" style="margin-top:16px">Fermer</button></div>`;try{renderDrink()}catch(e){}}
   else A.mealClose()}
+
+
+/* ---- Hors connexion : bandeau discret ---- */
+function netBanner(){let b=$('netB');if(navigator.onLine!==false){if(b)b.remove();return}if(!b){b=document.createElement('div');b.id='netB';b.setAttribute('role','status');b.innerHTML='<b>Hors connexion</b> · tes données, les séances prêtes et la table des aliments marchent. L\'IA revient dès que tu es connecté.';document.body.appendChild(b)}}
+window.addEventListener('online',()=>{netBanner();toast('De retour en ligne')});window.addEventListener('offline',netBanner);
+
+
+/* ===================== CONSEILS PRATIQUES (fiches) ===================== */
+const FICHES=[];
+const FICAT={sleeve:'Après la sleeve',repas:'Repas',courses:'Courses',resto:'Restaurant',sport:'Sport',sommeil:'Sommeil',motivation:'Motivation',couple:'À deux',sante:'Santé'};
+let FIC='';
+function renderFiches(){const el=$('fiList');if(!el)return;document.querySelectorAll('[data-pane=fiches],[data-p=fiches]').forEach(b=>{if(b.tagName==='BUTTON')b.hidden=!FICHES.length});const cats=[...new Set(FICHES.map(f=>f.cat))].filter(c=>c!=='sleeve'||BARIA());
+  $('fiCat').innerHTML=`<button class="chip ${FIC?'':'on'}" data-act="fiCat" data-v="">Tout</button>`+cats.map(c=>`<button class="chip ${FIC===c?'on':''}" data-act="fiCat" data-v="${c}">${esc(FICAT[c]||c)}</button>`).join('');
+  const q=cqNorm($('fiQ').value);const L=FICHES.filter(f=>(f.cat!=='sleeve'||BARIA())&&(!FIC||f.cat===FIC)&&(!q||cqNorm(f.titre+' '+f.resume+' '+f.conseils.join(' ')).includes(q)));
+  el.innerHTML=L.length?L.map(f=>`<details class="ex fiche"><summary><span style="flex:1;min-width:0"><b>${esc(f.titre)}</b><small class="mute" style="display:block">${esc(f.resume)}</small></span></summary><div class="in"><ul class="fl">${f.conseils.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>${f.attention?`<div class="tip" style="border-left-color:var(--yel)"><b>Attention :</b> ${esc(f.attention)}</div>`:''}<p class="mute" style="font-size:13px;margin:8px 0 0">Source : ${esc(f.source)}</p></div></details>`).join(''):'<p class="mute">Aucune fiche ne correspond.</p>'}
+document.addEventListener('input',e=>{if(e.target.id==='fiQ')renderFiches()});
+const FI_ACTS={fiCat(b){FIC=b.dataset.v;renderFiches()}};
 
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
@@ -3423,7 +3450,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-52';
+const APP_VERSION='2026.11.26-53';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
@@ -3446,8 +3473,8 @@ $('phIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)re
 $('bkIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result),d=o.data||o;let n=0;Object.entries(d).forEach(([k,v])=>{if(k.startsWith('coach_')&&k!=='coach_ia'){localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v));n++}});toast(n+' éléments restaurés');setTimeout(()=>location.reload(),900)}catch(err){toast('Fichier de sauvegarde illisible')}};r.readAsText(f)});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 renderChk();renderDrink();
-Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS);try{initWorld()}catch(e){console.error(e)}$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
-[calc,renderEq,renderSante,renderProg,renderAH,renderProdHist,renderMenu,renderWeek,renderFav,renderChat,renderPrets,renderExo,renderRef,renderDuo,renderWeekCard].forEach(f=>{try{f()}catch(e){console.error(f.name,e)}});route();
+Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS);netBanner();try{initWorld()}catch(e){console.error(e)}$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
+[calc,renderEq,renderSante,renderProg,renderAH,renderProdHist,renderMenu,renderWeek,renderFav,renderChat,renderPrets,renderExo,renderRef,renderDuo,renderWeekCard,renderFiches].forEach(f=>{try{f()}catch(e){console.error(f.name,e)}});route();
 }
 </script>
 </body>
