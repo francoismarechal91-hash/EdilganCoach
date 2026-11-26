@@ -139,6 +139,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px var(--fill) inset;-webkit-t
 .dph{position:relative;aspect-ratio:4/3;border-radius:12px;overflow:hidden;background:var(--fill2);display:grid;place-items:center}.dph.wide{aspect-ratio:16/9;margin:12px 0 -4px}.dph img{width:100%;height:100%;object-fit:cover;display:block;animation:fade .4s}.dph .credit{position:absolute;right:6px;bottom:6px;font-size:10px;padding:2px 6px;border-radius:8px;background:rgba(0,0,0,.55);color:#fff;text-decoration:none}
 #scanOv{position:fixed;inset:0;z-index:70;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#fff;padding:20px}#scanOv.on{display:flex}#scanOv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}#scanOv .scanBox{position:relative;width:min(80vw,340px);aspect-ratio:16/9;border:3px solid rgba(255,255,255,.9);border-radius:18px;box-shadow:0 0 0 100vmax rgba(0,0,0,.45)}#scanOv .scanBox i{position:absolute;left:8%;right:8%;top:50%;height:2px;background:#ff3b5c;box-shadow:0 0 10px #ff3b5c;animation:scanl 1.6s ease-in-out infinite}@keyframes scanl{0%,100%{transform:translateY(-38px)}50%{transform:translateY(38px)}}#scanOv p,#scanOv button{position:relative;z-index:1}#scanOv p{font-weight:700;text-align:center;text-shadow:0 1px 4px #000;margin:0}#scanOv button{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.5)}
 .duog{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.duoc{background:var(--fill);border-radius:16px;padding:12px;text-align:center}.duoc.me{box-shadow:inset 0 0 0 2px var(--red)}.duoc b{display:block}.duon{font-size:40px;font-weight:900;line-height:1.1;color:var(--red)}.duoc>span{font-size:13px;color:var(--mute)}.duoc ul{list-style:none;padding:0;margin:8px 0 0;font-size:13px;text-align:left}.duoc li{padding:2px 0}.duoc.empty{display:flex;flex-direction:column;justify-content:center}
+.cqi{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;background:var(--fill);color:var(--ink);border:0;border-radius:14px;padding:10px 12px;margin-top:6px;min-height:52px;font:inherit;text-transform:none;letter-spacing:0;box-shadow:none}.cqi small{display:block;font-size:12px;color:var(--mute);font-weight:500}.cqi>span:last-child{text-align:right;flex:none;font-weight:700}html[data-skin] #cqRes .cqi{background:var(--fill);background-image:none;color:var(--ink);box-shadow:none}.cqp{background:var(--fill);border-radius:16px;padding:12px;margin-top:8px}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -1105,7 +1106,11 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
     <div class="card">
       <h2>Ce que j'ai mangé</h2>
       <div id="journal"></div>
-      <label for="qa" style="margin-top:12px">Ajoute en toutes lettres</label>
+      <label for="cqQ" style="margin-top:12px">Chercher un aliment</label>
+      <input id="cqQ" type="search" autocomplete="off" placeholder="ex. banane, riz cuit, poulet rôti, skyr…" aria-describedby="cqHelp" style="margin:0">
+      <p class="mute" id="cqHelp" style="font-size:13px;margin:4px 0 0">Valeurs officielles de l'ANSES (3 484 aliments), même sans internet.</p>
+      <div id="cqRes"></div>
+      <label for="qa" style="margin-top:14px">Ou écris tout ton repas en toutes lettres</label>
       <textarea id="qa" class="grow" rows="2" data-enter="quickAdd" placeholder="ex. 2 œufs brouillés, une tartine de pain complet beurrée et un café au lait"></textarea><button class="alt wide" data-act="quickAdd" style="margin-top:8px">Ajouter à mon journal</button>
       <div id="qaRes"></div>
       <div class="chips" id="favs"></div>
@@ -1567,11 +1572,15 @@ function equipTxt(){
   if(M.length||S.length||X.some(c=>c.cat==='sport'))t+='\nPour le sport, n\'utilise QUE le matériel listé (ou le poids du corps).';
   return t;
 }
+let DISL=store.get('dislikes',[]);
+const SEEN={sauce:[],frigo:[],monde:[]};
+const moreBar=(act,k)=>`<div class="more card" style="margin-top:12px"><b>Pas convaincu ?</b><label for="dis-${k}" class="mute" style="font-size:14px;margin-top:4px">Dis-moi ce qui ne t'a pas plu (facultatif) : je m'en souviendrai.</label><input id="dis-${k}" placeholder="ex. trop de crème, pas de moutarde, trop épicé" style="margin:4px 0 0" data-enter="${act}"><button class="alt wide" data-act="${act}" data-more="1" style="margin-top:8px">↻ D'autres idées</button>${DISL.length?`<p class="mute" style="font-size:13px;margin:8px 0 0">Je retiens : ${esc(DISL.join(' · '))} <button class="ghost sm" data-act="dislClear" style="min-height:32px">oublier</button></p>`:''}</div>`;
+function dislike(k){const e=$('dis-'+k),v=e&&e.value.trim();if(v){DISL=[...DISL.filter(x=>x!==v),v].slice(-12);store.set('dislikes',DISL)}return v?`\nIl n'a PAS aimé les propositions précédentes : « ${v} ». Propose des idées vraiment différentes qui évitent cela.`:''}
 function profil(extra=false){
   const m=metrics();
   let s=`Profil de l'utilisateur : ${P.sexe==='F'?'femme':'homme'}, ${P.age||'?'} ans, ${P.taille||'?'} cm, ${P.poids||'?'} kg${m?`, IMC ${m.imc.toFixed(1)} (${cat(m.imc)})`:''}.
 Objectif : ${OBJ[P.obj||'muscle']||P.obj}. Niveau : ${P.niv||'débutant'}. ${P.jours||3} séances par semaine, ${/^\d+$/.test(P.duree||'60')?(P.duree||60)+' minutes':P.duree} par séance, ${P.lieu==='maison'?'à la maison':P.lieu==='mixte'?'en salle ou à la maison':P.lieu&&P.lieu!=='salle'?P.lieu:'en salle de sport équipée'}.
-${P.zones.length?'Zones prioritaires à développer : '+P.zones.map(k=>MN[k]).join(', ')+'.':''}
+${P.zones.length?'Zones prioritaires à développer : '+P.zones.map(k=>MN[k]).join(', ')+'.':''}${DISL.length?'\nGoûts : il n\'aime pas '+DISL.join(' ; ')+'.':''}
 ${m&&m.kcal?`Besoin visé : environ ${m.kcal} kcal et ${m.prot} g de protéines par jour.`:''}
 ${P.regime?'Alimentation : '+P.regime+'.':''} Budget : ${P.budget||'normal'}. ${P.notes?'Blessures ou limites : '+P.notes+'.':''}`;
   s+=equipTxt();s+=santeTxt();
@@ -2045,12 +2054,12 @@ function wRecHTML(m){const q=m.wiki||m.nom_local||m.nom;return `<div class="dph 
 const WORLD_ACTS={
   wZone(b){zoomWorld(b.dataset.z)},
   wRand(){const ks=Object.keys(CUIS).filter(k=>!WSEL||k!==WSEL.a),a=ks[Math.floor(Math.random()*ks.length)];zoomWorld(CUIS[a][0]);pickCountry(a)},
-  wIdeas(b){if(!WSEL)return;run(b,$('wRes'),'Le chef voyage jusqu\'en '+WSEL.n,async()=>{
+  wIdeas(b){if(!WSEL)return;const dis=dislike('monde');run(b,$('wRes'),'Le chef voyage jusqu\'en '+WSEL.n,async()=>{
     const r=await askJSON(`Tu es un chef qui connaît parfaitement la cuisine du monde. ${profil()}
 ${MENU_RULES()}
-Propose 4 recettes authentiques et variées de ce pays : ${WSEL.n} (une entrée ou un plat léger, deux plats, un dessert ou un en-cas), avec leur vrai nom local. Adapte-les à son profil (objectif, santé, phase alimentaire, goûts) sans les dénaturer, avec des ingrédients trouvables en France. Évite : ${(CUIS[WSEL.a]?CUIS[WSEL.a][3]:'').replace(/;/g,', ')||'rien'}.
+Propose 4 recettes authentiques et variées de ce pays : ${WSEL.n} (une entrée ou un plat léger, deux plats, un dessert ou un en-cas), avec leur vrai nom local. Adapte-les à son profil (objectif, santé, phase alimentaire, goûts) sans les dénaturer, avec des ingrédients trouvables en France. Évite : ${[(CUIS[WSEL.a]?CUIS[WSEL.a][3]:'').replace(/;/g,', '),...SEEN.monde].filter(Boolean).join(', ')||'rien'}.${dis}
 Format JSON : ${WRECF}`,{modelTier:'default',cache:false});
-    $('wRes').innerHTML='<h3 style="margin-top:16px">Pour toi</h3>'+arr(r.recettes).map(wRecHTML).join('');loadPhotos($('wRes'))})},
+    SEEN.monde=[...SEEN.monde,...arr(r.recettes).map(x=>x.nom)].slice(-30);$('wRes').innerHTML='<h3 style="margin-top:16px">Pour toi</h3>'+arr(r.recettes).map(wRecHTML).join('')+moreBar('wIdeas','monde');loadPhotos($('wRes'))})},
   wMenu(b){if(!WSEL)return;run(b,$('wRes'),'Préparation d\'une soirée '+WSEL.n,async()=>{
     const r=await askJSON(`Tu es un chef qui connaît parfaitement la cuisine du monde. ${profil()}
 ${MENU_RULES()}
@@ -2128,6 +2137,41 @@ const DUO_ACTS={
     try{const Z=await loadZX(),h=new Map();h.set(Z.DecodeHintType.POSSIBLE_FORMATS,[Z.BarcodeFormat.QR_CODE]);SCAN=new Z.BrowserMultiFormatReader(h,300);
       await SCAN.decodeFromConstraints({video:{facingMode:{ideal:'environment'}}},$('scanV'),res=>{if(res&&SCAN){const o=duoParse(res.getText());if(o){A.scanStop();DUO=o;store.set('duo',DUO);renderDuo();beep(1);toast('Résumé de '+o.n+' ajouté !');confetti()}}})}catch(e){A.scanStop();toast('Caméra indisponible : colle le code à la place.')}},
   async duoCheer(){const t=CHEERS[Math.floor(Math.random()*CHEERS.length)]+(DUO?' '+DUO.n+' 💪':'');try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t);toast('Message copié !')}catch(e){toast(t)}}
+};
+
+/* ===================== TABLE CIQUAL (ANSES 2025) : recherche d'aliments hors ligne ===================== */
+let CQ=null,CQP=null;
+const CQG={1:'Plats',2:'Fruits, légumes',3:'Céréales, pain',4:'Viandes, œufs, poissons',5:'Produits laitiers',6:'Boissons',7:'Produits sucrés',8:'Glaces',9:'Matières grasses',10:'Ingrédients',11:'Bébé'};
+const CQPORT={1:[250,'1 assiette'],2:[150,'1 portion'],3:[150,'1 portion cuite'],4:[120,'1 portion'],5:[125,'1 pot'],6:[250,'1 verre'],7:[30,'1 portion'],8:[100,'1 boule ×2'],9:[10,'1 cuillère'],10:[10,'1 cuillère'],11:[100,'1 portion']};
+const cqNorm=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/œ/g,'oe').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+function loadCQ(){if(CQ)return Promise.resolve(CQ);return CQP||(CQP=fetch('ciqual.json').then(r=>{if(!r.ok)throw 0;return r.json()}).then(j=>{const c=j.cols;CQ=j.d.map(r=>{const o={};c.forEach((k,i)=>o[k]=r[i]);o.n=cqNorm(o.nom);o.ws=o.n.split(' ').map(x=>x.replace(/s$/,''));o.fs=cqNorm(o.nom.split(',')[0]).split(' ').map(x=>x.replace(/s$/,'')).join(' ');return o});return CQ}).catch(e=>{CQP=null;throw{code:'net'}}))}
+const CQAL={pain:'pain blanc baguette',baguette:'pain blanc baguette',coca:'cola',soda:'cola',frite:'frites pommes de terre',frites:'frites pommes de terre',oeuf:'oeuf cru',oeufs:'oeuf cru',lait:'lait demi ecreme',the:'the infuse',vin:'vin rouge',eau:'eau du robinet',pates:'pates seches standard cuites',pate:'pates seches standard cuites',riz:'riz blanc cuit',steak:'steak hache cuit',poulet:'poulet filet cuit'};
+function cqSearch(q,max=8){if(!CQ)return[];const qq=cqNorm(q);q=CQAL[qq]||qq;const t=q.split(' ').filter(w=>w.length>1).map(w=>w.replace(/s$/,''));if(!t.length)return[];
+  const res=[];for(const f of CQ){let sc=0,ok=0;for(const w of t){if(f.ws.includes(w)){sc+=3;ok++}else if(f.ws.some(x=>x.startsWith(w))){sc+=2;ok++}else if(f.n.includes(w)){sc+=1;ok++}}
+    if(ok<t.length)continue;if(f.ws[0]===t[0])sc+=2;else if(f.ws[0].startsWith(t[0]))sc+=1;if(f.fs===t.join(' '))sc+=4;if(/\b(cru|crue|nature)\b/.test(f.n))sc+=.6;
+    if(/preemballe|prefrit|surgele|appertise|deshydrate|en poudre/.test(f.n))sc-=1;if(/aliment moyen/.test(f.n))sc+=1;if(/\bseche?\b|\bsechee?\b|fourre|fourrage|farcie|brisee|sablee|feuilletee/.test(f.n))sc-=1.2;if(/\bentier\b|baguette/.test(f.n))sc+=.5;
+    sc-=f.ws.length*.3;res.push([sc,f])}
+  return res.sort((a,b)=>b[0]-a[0]).slice(0,max).map(x=>x[1])}
+const cqVal=(f,g)=>{const k=x=>x==null?0:x*g/100;return{nom:`${f.nom} (${Math.round(g)} g)`,kcal:k(f.k),p:k(f.p),g:k(f.g),l:k(f.l),src:'ANSES'}};
+let CQSEL=null;
+function renderCQ(){const el=$('cqRes');if(!el)return;const q=$('cqQ').value.trim();if(q.length<2){el.innerHTML='';return}
+  if(!CQ){el.innerHTML='<p class="mute">Chargement de la table des aliments…</p>';loadCQ().then(renderCQ).catch(()=>{el.innerHTML='<p class="mute">La table des aliments a besoin d\'internet la première fois.</p>'});return}
+  const L=cqSearch(q);el.innerHTML=L.length?L.map((f,i)=>`<button class="cqi" data-act="cqPick" data-i="${CQ.indexOf(f)}"><span><b>${esc(f.nom)}</b><small>${esc(CQG[f.grp]||'')}</small></span><span class="mute">${f.k!=null?Math.round(f.k)+' kcal':''}<small>pour 100 g</small></span></button>`).join(''):`<p class="mute">Pas dans la table officielle. Essaie un mot plus simple (ex. « yaourt », « poulet »), écris ton repas en toutes lettres plus bas, ou cherche le produit de marque :</p><button class="alt sm" data-act="cqOff" data-q="${esc(q)}">Chercher « ${esc(q)} » dans les produits du commerce</button>`}
+function cqPanel(f){const [pg,pl]=CQPORT[f.grp]||[100,'1 portion'],v=x=>x==null?'–':fr(Math.round(x*10)/10);
+  return `<div class="cqp"><div class="row sb" style="flex-wrap:nowrap"><b>${esc(f.nom)}</b><button class="ghost sm" data-act="cqClose" aria-label="Fermer">✕</button></div>
+  <div class="macro" style="margin:6px 0"><span><b>${v(f.k)}</b> kcal</span><span><b>${v(f.p)}</b> g prot.</span><span><b>${v(f.g)}</b> g gluc.</span><span><b>${v(f.su)}</b> g sucres</span><span><b>${v(f.l)}</b> g lip.</span><span><b>${v(f.f)}</b> g fibres</span></div><p class="mute" style="margin:0 0 8px;font-size:13px">Pour 100 g · ANSES, table Ciqual 2025</p>
+  <label for="cqG">Quantité (g)</label><div class="row" style="flex-wrap:nowrap"><input id="cqG" type="number" inputmode="decimal" value="${pg}" style="flex:1;margin:0"><button data-act="cqAdd">Ajouter</button></div>
+  <div class="chips" style="margin-top:8px">${[[pg,pl],[50,'50 g'],[100,'100 g'],[200,'200 g']].map(([g,l])=>`<button class="chip" data-act="cqQty" data-v="${g}">${esc(l)}${l.endsWith('g')?'':' ('+g+' g)'}</button>`).join('')}</div>
+  <div class="mute" id="cqTot" style="margin-top:8px"></div></div>`}
+function cqTot(){const f=CQSEL,g=num($('cqG')?.value);if(!f||!$('cqTot'))return;const r=cqVal(f,g);$('cqTot').innerHTML=`Pour ${Math.round(g)} g : <b>${Math.round(r.kcal)} kcal</b> · ${fr(Math.round(r.p*10)/10)} g de protéines`}
+document.addEventListener('input',e=>{if(e.target.id==='cqQ'){clearTimeout(window._cqt);window._cqt=setTimeout(renderCQ,120)}if(e.target.id==='cqG')cqTot()});
+document.addEventListener('focusin',e=>{if(e.target.id==='cqQ'||e.target.id==='qa')loadCQ().catch(()=>{})});
+const CQ_ACTS={
+  cqPick(b){CQSEL=CQ[+b.dataset.i];$('cqRes').innerHTML=cqPanel(CQSEL);cqTot();$('cqG').select&&$('cqG').select()},
+  cqQty(b){$('cqG').value=b.dataset.v;cqTot()},
+  cqClose(){CQSEL=null;renderCQ()},
+  cqOff(b){const q=b.dataset.q;openPane('scan','produit');setTimeout(()=>{const d=document.querySelector('section[data-v=scan] details');if(d)d.open=true;$('pq').value=q;A.prodSearch(document.querySelector('[data-act=prodSearch]'))},120)},
+  cqAdd(b){const g=num($('cqG').value);if(!CQSEL||!g){$('cqG').focus();return}addFood(cqVal(CQSEL,g));toast('Ajouté : '+CQSEL.nom.split(',')[0]+' ('+Math.round(g)+' g)');CQSEL=null;$('cqQ').value='';$('cqRes').innerHTML=''}
 };
 
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
@@ -2373,7 +2417,7 @@ function renderMenu(){
   const d=MENUS[today()];if(!d){$('menu').innerHTML='';return}
   $('genMenu').textContent='Un tout autre menu';
   $('menu').innerHTML=`<p style="margin:14px 0 0"><b>${esc(d.calories_total)} kcal</b> · ${esc(d.proteines_total_g)} g de protéines</p>`+arr(d.repas).map((m,i)=>mealHTML(m,`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button><button class="ghost sm" data-act="swapMeal" data-i="${i}">Remplacer</button>`)).join('')+(d.astuce?`<p class="mute">${esc(d.astuce)}</p>`:'')+
-  `<div class="row"><button class="alt sm" data-act="favMenu">${FAVR.some(f=>f.type==='menu'&&f.data===d)?'Menu en favori ★':'Ajouter ce menu aux favoris'}</button><button class="ghost sm" data-act="copyMenu">Copier la liste des ingrédients</button></div>`;
+  `<div class="row"><button class="alt sm" data-act="favMenu">${FAVR.some(f=>f.type==='menu'&&f.data===d)?'Menu en favori ★':'Ajouter ce menu aux favoris'}</button><button class="ghost sm" data-act="copyMenu">Copier la liste des ingrédients</button></div>`+moreBar('genMenu','menu');
 }
 let FR_R=[];
 function renderWeek(){
@@ -2413,6 +2457,7 @@ const A={
   logW(){const w=num($('wIn').value)||num(P.poids);if(!w){$('wIn').focus();return}W=W.filter(p=>p.d!==today());W.push({d:today(),w});W.sort((a,b)=>a.d<b.d?-1:1);store.set('pesees',W);P.poids=String(w);$('p-poids').value=w;saveP();calc();$('wIn').value='';drawW()},
   kadj(b){P.kadj=(+P.kadj||0)+(+b.dataset.v);P.kadjD=today();saveP();calc();bilan()},
   kreset(b,e){e.preventDefault();P.kadj=0;saveP();calc();bilan()},
+  dislClear(b){DISL=[];store.set('dislikes',DISL);b.parentNode.remove();toast('C\'est oublié.')},
   homeAsk(){const v=$('hAsk').value.trim();if(!v){$('hAsk').focus();return}$('hAsk').value='';location.hash='coach';setTimeout(()=>{$('ask').value=v;send()},250)},
   zclear(){const old=P.zones.slice();P.zones=[];saveP();renderZones();if(old.length)undoToast('Priorités effacées',()=>{P.zones=old;saveP();renderZones()})},
   genProg(b){const env=(b&&b.dataset.envie)?$('envie').value.trim():'';run(b,$('prog'),'Préparation de ta semaine',async()=>{
@@ -2499,8 +2544,11 @@ Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 1
   fav(b){const e=dayJ()[+b.dataset.i];if(!FAV.some(f=>f.nom===e.nom)){FAV.push({...e});FAV=FAV.slice(-20);store.set('favoris',FAV)}renderDay()},
   addFav(b){addFood(FAV[+b.dataset.i])},
   quickAdd(b){const t=$('qa').value.trim();if(!t){$('qa').focus();return}run(b,$('qaRes'),'Calcul',async()=>{
-    const r=await askJSON(`Tu es nutritionniste. Estime les valeurs nutritionnelles de ce que l'utilisateur a mangé : « ${t} ». Portions françaises usuelles si non précisées. Format JSON : {"aliments":[{"nom":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0}]}`,{modelTier:'quick'});
-    arr(r.aliments).forEach(addFood);$('qa').value='';$('qaRes').innerHTML=''})},
+    try{await loadCQ()}catch(e){}
+    const r=await askJSON(`Tu es nutritionniste. Découpe ce que l'utilisateur a mangé en aliments simples, avec le poids en grammes (portions françaises usuelles si non précisées) : « ${t} ». Pour chaque aliment, donne aussi un nom générique simple tel qu'on le trouverait dans la table Ciqual de l'ANSES (ex. « oeuf brouillé », « pain complet », « beurre doux », « café au lait ») et ton estimation des valeurs.
+Format JSON : {"aliments":[{"nom":"","ciqual":"","grammes":0,"kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0}]}`,{modelTier:'quick'});
+    const out=[];arr(r.aliments).forEach(a=>{const g=num(a.grammes),f=CQ&&g?cqSearch(a.ciqual||a.nom,1)[0]:null;if(f&&f.k!=null){const v=cqVal(f,g);v.nom=(a.nom||f.nom)+' ('+Math.round(g)+' g)';addFood(v);out.push('✓ '+v.nom+' : '+Math.round(v.kcal)+' kcal (ANSES : '+f.nom+')')}else{addFood(a);out.push('≈ '+(a.nom||'aliment')+' : '+Math.round(num(a.kcal))+' kcal (estimation)')}});
+    $('qa').value='';$('qaRes').innerHTML=out.length?'<div class="tip" style="font-size:14px">'+out.map(esc).join('<br>')+'<div class="mute" style="margin-top:4px">✓ = valeurs officielles ANSES · ≈ = estimation. Touche × dans le journal pour corriger.</div></div>':''})},
   ate(b){addFood(REG[+b.dataset.r]);b.textContent='Ajouté !';b.disabled=true},
   cook(b){openCook(REG[+b.dataset.r])},
   kClose(){clearInterval(ktick);stopVoice();K=null;ov.classList.remove('on');document.body.style.overflow='';try{WL&&WL.release()}catch(e){}refreshFood()},
@@ -2635,13 +2683,13 @@ Format JSON : {"grammes":0,"synthese":"2 à 3 phrases","points_forts":["…"],"p
     ${r.alternative?`<div class="tip"><b>Mieux pour toi :</b> ${esc(r.alternative)}</div>`:''}${r.pour_la_suite?`<div class="tip"><b>Pour la suite :</b> ${esc(r.pour_la_suite)}</div>`:''}
     <div class="row" style="margin-top:12px"><button data-act="addSyn">Ajouter à mon journal</button><label class="mute" for="synG">Corriger les grammes</label><input id="synG" type="number" inputmode="decimal" value="${Math.round(g)}" style="width:100px;margin:0"></div></div>`})},
   addSyn(b){const g2=num($('synG').value),p=PROD,c=p.c100||{},k=x=>Math.round(num(x)*g2/100);addFood({nom:`${p.nom} (${Math.round(g2)} g)`,kcal:k(c.kcal),p:k(c.p),g:k(c.g),l:k(c.l)});b.textContent='Ajouté !';b.disabled=true},
-  genSauce(b){const ing=$('sIng').value.trim(),fr=$('sFrigo').checked?$('frigo').value.trim():'';run(b,$('sauces'),'Création de tes sauces',async()=>{
+  genSauce(b){const ing=$('sIng').value.trim(),fr=$('sFrigo').checked?$('frigo').value.trim():'',dis=dislike('sauce');run(b,$('sauces'),b.dataset.more?'Le chef cherche d\'autres sauces':'Création de tes sauces',async()=>{
     const r=await askJSON(`Tu es un chef saucier créatif. ${profil()}
 Invente 3 sauces maison différentes pour accompagner : ${$('sAvec').value}. Style : ${$('sStyle').value}. Servie : ${$('sTemp').value}. Niveau de piquant : ${$('sPiq').value}.
 ${ing?'Utilise si possible : '+ing+'.':''}${fr?' Il a chez lui : '+fr+' — privilégie ces ingrédients.':''}
-Au moins une des 3 doit être une version allégée compatible avec son objectif. Évite les sauces déjà proposées : ${FAVR.filter(f=>f.type==='sauce').map(f=>f.nom).join(', ')||'aucune'}.
+Au moins une des 3 doit être une version allégée compatible avec son objectif. Évite les sauces déjà proposées : ${[...FAVR.filter(f=>f.type==='sauce').map(f=>f.nom),...SEEN.sauce].join(', ')||'aucune'}.${dis}
 Format JSON : {"sauces":[{"nom":"","description":"1 phrase qui donne envie","kcal":0,"proteines_g":0,"lipides_g":0,"portions":4,"temps_min":10,"ingredients":["quantité + ingrédient"],"accords":["avec quoi la servir"],"conservation":"ex. 3 jours au frigo"}]}`,{modelTier:'default',cache:false});
-    $('sauces').innerHTML=(r.sauces||[]).map(x=>mealHTML(x,'','sauce')).join('')})},
+    const L=arr(r.sauces);SEEN.sauce=[...SEEN.sauce,...L.map(x=>x.nom)].slice(-30);$('sauces').innerHTML=L.map(x=>mealHTML(x,'','sauce')).join('')+moreBar('genSauce','sauce');if(b.dataset.more)$('sauces').scrollIntoView({behavior:'smooth'})})},
   genFrigoMenu(b){const f=$('frigo').value.trim();if(!f){$('frigo').focus();return}run(b,$('frig'),'Composition du menu',async()=>{
     const r=await askJSON(`Tu es coach en nutrition sportive et cuisinier. ${profil()}
 Il a chez lui : ${f}. ${MENU_RULES()}
@@ -2651,12 +2699,12 @@ Format JSON : {"calories_total":0,"proteines_total_g":0,"repas":[{"moment":"","n
     `<div class="row"><button class="sm" data-act="frmToday">En faire mon menu du jour</button><button class="alt sm" data-act="frmFav">Ajouter ce menu aux favoris</button></div>`})},
   frmToday(b){MENUS[today()]=FRM;saveFood();refreshFood();b.textContent='C\'est ton menu du jour !'},
   frmFav(b){FAVR.push({type:'menu',nom:'Avec mon frigo · '+(arr(FRM.repas).map(r=>r&&r.nom).filter(Boolean)[1]||arr(FRM.repas).map(r=>r&&r.nom).filter(Boolean)[0]||today()),data:FRM,d:today()});saveFood();renderFav();b.textContent='En favori ★';b.disabled=true},
-  genMenu(b){const past=Object.entries(MENUS).sort().slice(-10).flatMap(([,m])=>(m.repas||[]).map(r=>r.nom));
+  genMenu(b){const past=Object.entries(MENUS).sort().slice(-10).flatMap(([,m])=>(m.repas||[]).map(r=>r.nom)),dis=dislike('menu');
     run(b,$('menu'),'Composition du menu',async()=>{
     const r=await askJSON(`Tu es coach en nutrition sportive. ${profil()}
 ${MENU_RULES()}
 Propose le menu d'aujourd'hui (${new Date().toLocaleDateString('fr-FR',{weekday:'long',month:'long'})}) : petit-déjeuner, déjeuner, collation, dîner. Plats simples, de saison, faisables en semaine, variés et gourmands, adaptés au budget et à l'équipement.
-${past.length?'Ne répète pas ces plats déjà proposés : '+past.join(' ; ')+'.':''}
+${past.length?'Ne répète pas ces plats déjà proposés : '+past.join(' ; ')+'.':''}${dis}
 Format JSON : {"calories_total":0,"proteines_total_g":0,"repas":[${MEALF}],"astuce":"1 phrase"}`,{modelTier:'default',cache:false});
     MENUS[today()]=r;const keep=Object.keys(MENUS).sort().slice(-14);MENUS=Object.fromEntries(keep.map(k=>[k,MENUS[k]]));store.set('menus',MENUS);renderMenu()})},
   swapMeal(b){const i=+b.dataset.i,m=MENUS[today()].repas[i];run(b,null,'',async()=>{b.textContent='…';
@@ -2665,13 +2713,13 @@ ${MENU_RULES()}
 Remplace le plat « ${m.nom} » (${m.moment}) par un plat différent, à plus ou moins 10 % de ${m.kcal} kcal et ${m.proteines_g} g de protéines. Format JSON : ${MEALF}`,{modelTier:'quick',cache:false});
     r.moment=r.moment||m.moment;const cur=MENUS[today()];MENUS[today()]={...cur,repas:arr(cur.repas).map((x,j)=>j===i?r:x)};store.set('menus',MENUS);renderMenu()})},
   copyMenu(b){const d=MENUS[today()];copy(arr(d.repas).flatMap(r=>r.ingredients||[]).join('\n'),b)},
-  genFrigo(b){const f=$('frigo').value.trim();if(!f){$('frigo').focus();return}run(b,$('frig'),'Recherche de recettes',async()=>{
+  genFrigo(b){const f=$('frigo').value.trim();if(!f){$('frigo').focus();return}const dis=dislike('frigo');run(b,$('frig'),b.dataset.more?'Recherche d\'autres recettes':'Recherche de recettes',async()=>{
     const r=await askJSON(`Tu es coach en nutrition sportive et cuisinier. ${profil()}
 Voici ce que l'utilisateur a chez lui : ${f}.
 ${MENU_RULES()}
-Propose 3 recettes différentes pour le moment « ${$('fMoment').value} », en utilisant surtout ces ingrédients (sel, poivre, huile, épices de base supposés disponibles), adaptées à son objectif. Classe-les de celle qui utilise le plus ce qu'il a à celle qui en utilise le moins.
+Propose 3 recettes différentes pour le moment « ${$('fMoment').value} », en utilisant surtout ces ingrédients (sel, poivre, huile, épices de base supposés disponibles), adaptées à son objectif. Classe-les de celle qui utilise le plus ce qu'il a à celle qui en utilise le moins.${SEEN.frigo.length?' Ne repropose pas : '+SEEN.frigo.join(', ')+'.':''}${dis}
 Format JSON : {"recettes":[{"nom":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"temps_min":15,"utilise":["ingrédient du frigo"],"manque":["ingrédient manquant, vide si aucun"],"ingredients":["quantité + ingrédient"],"preparation":["étape"]}]}`,{modelTier:'default',cache:false});
-    FR_R=r.recettes||[];$('frig').innerHTML=FR_R.map(m=>mealHTML(m,`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button>`)).join('')||'<p class="mute">Aucune idée trouvée, ajoute quelques ingrédients.</p>'})},
+    FR_R=r.recettes||[];SEEN.frigo=[...SEEN.frigo,...arr(FR_R).map(x=>x.nom)].slice(-30);$('frig').innerHTML=(FR_R.map(m=>mealHTML(m,`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button>`)).join('')||'<p class="mute">Aucune idée trouvée, ajoute quelques ingrédients.</p>')+moreBar('genFrigo','frigo')})},
   genWeek(b){run(b,$('week'),'Préparation de ta semaine',async()=>{
     const f=$('frigo').value.trim();
     WEEK=await askJSON(`Tu es coach en nutrition sportive. ${profil()}
@@ -3293,7 +3341,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-45';
+const APP_VERSION='2026.11.26-46';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
@@ -3316,7 +3364,7 @@ $('phIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)re
 $('bkIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result),d=o.data||o;let n=0;Object.entries(d).forEach(([k,v])=>{if(k.startsWith('coach_')&&k!=='coach_ia'){localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v));n++}});toast(n+' éléments restaurés');setTimeout(()=>location.reload(),900)}catch(err){toast('Fichier de sauvegarde illisible')}};r.readAsText(f)});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 renderChk();renderDrink();
-Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS);try{initWorld()}catch(e){console.error(e)}$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
+Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS);try{initWorld()}catch(e){console.error(e)}$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
 [calc,renderEq,renderSante,renderProg,renderAH,renderProdHist,renderMenu,renderWeek,renderFav,renderChat,renderPrets,renderExo,renderRef,renderDuo].forEach(f=>{try{f()}catch(e){console.error(f.name,e)}});route();
 }
 </script>
