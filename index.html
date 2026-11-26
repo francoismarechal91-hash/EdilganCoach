@@ -1019,7 +1019,7 @@ function startSession(day){
   beep(0);try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(w=>WL=w).catch(()=>{})}catch(e){}
   S={nom:day.nom,ex:day.exercices.map(x=>({...x,sets:[]})),i:0,t:Date.now(),rest:0};ov.classList.add('on');document.body.style.overflow='hidden';renderS();
 }
-function closeS(){clearInterval(tick);ov.classList.remove('on');document.body.style.overflow='';try{WL&&WL.release()}catch(e){}S=null}
+function closeS(){clearInterval(tick);stopVoice();ov.classList.remove('on');document.body.style.overflow='';try{WL&&WL.release()}catch(e){}S=null}
 function renderS(){
   if(!S)return;const x=S.ex[S.i];clearInterval(tick);
   const head=`<div class="ovh"><span class="mute">${esc(S.nom)} · exercice ${S.i+1}/${S.ex.length}</span><span class="row" style="gap:6px"><button class="ghost sm" data-act="voice">${VOICE?'Voix : oui':'Voix : non'}</button><button class="ghost sm" data-act="endS">Terminer</button></span></div>`;
@@ -1045,7 +1045,7 @@ function renderS(){
 }
 function plates(kg){let r=(kg-20)/2;if(r<=0)return'barre seule';const out=[];for(const p of[25,20,15,10,5,2.5,1.25])while(r>=p-1e-9){out.push(p);r-=p}return out.map(fr).join(' + ')+' kg'+(r>0.01?' (≈)':'')}
 let VOICE=store.get('voix',false);
-function say(t){if(!VOICE)return;try{const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+function say(t){if(!VOICE)return;speak(t)}
 function bestE1(name){let b=0;LOG.forEach(l=>l.ex.forEach(e=>{if(e.nom===name)e.sets.forEach(s=>{b=Math.max(b,num(s.kg)*(1+num(s.reps)/30))})}));return b}
 function toast(t){const d=document.createElement('div');d.textContent=t;d.style.cssText='position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top));transform:translateX(-50%);background:var(--yel);color:#2b1b3a;font-weight:800;padding:12px 18px;border-radius:14px;z-index:30;box-shadow:0 6px 20px rgba(0,0,0,.25)';document.body.appendChild(d);setTimeout(()=>d.remove(),2600)}
 function endS(){
@@ -1143,7 +1143,11 @@ let K=null,ktick=null;
 function ktimer(){const el=document.querySelectorAll('.ktm');if(!K||!K.tEnd){el.forEach(e=>e.textContent='');return}
   const r=Math.max(0,Math.ceil((K.tEnd-Date.now())/1000));el.forEach(e=>e.textContent='Minuteur '+Math.floor(r/60)+':'+String(r%60).padStart(2,'0'));
   if(r<=0){K.tEnd=0;beep(4);toast('Minuteur terminé : '+K.tName);speak('Minuteur terminé. '+K.tName)}}
-function speak(t){try{const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}}
+/* Lecture à voix haute : toujours arrêtable (bouton, changement d'étape, fermeture, pastille flottante) */
+function readUI(on){document.querySelectorAll('[data-act=kRead]').forEach(b=>{b.textContent=on?'■ Arrêter la lecture':'Lire à voix haute';b.classList.toggle('tint',on);b.classList.toggle('ghost',!on)});
+  let pill=$('stopVoice');if(on&&!pill){document.body.insertAdjacentHTML('beforeend','<button id="stopVoice" data-act="stopVoice" style="position:fixed;left:50%;transform:translateX(-50%);bottom:calc(100px + env(safe-area-inset-bottom));z-index:45;min-height:46px;border-radius:99px;padding:0 20px">■ Arrêter la voix</button>')}else if(!on&&pill)pill.remove()}
+function stopVoice(){try{speechSynthesis.cancel()}catch(e){}readUI(false)}
+function speak(t){try{const u=new SpeechSynthesisUtterance(t);u.lang='fr-FR';u.onend=u.onerror=()=>{if(!speechSynthesis.speaking)readUI(false)};speechSynthesis.cancel();speechSynthesis.speak(u);readUI(true)}catch(e){}}
 async function openCook(o){
   beep(0);try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(w=>WL=w).catch(()=>{})}catch(e){}
   K={o,n:+(store.get('portions',2)),i:-1,tEnd:0,ck:{}};ov.classList.add('on');document.body.style.overflow='hidden';
@@ -1260,7 +1264,7 @@ Crée une séance express de 20 minutes à faire tout de suite${tired.length?', 
 Propose UN exercice de remplacement pour « ${x.nom} » qui travaille les mêmes muscles (${clean(x.muscles).map(k=>MN[k]).join(', ')}), avec un matériel différent. Format JSON : ${EXF}. Clés muscles autorisées : ${KEYS}.`,{modelTier:'quick',cache:false});
     PR.jours[ji].exercices[xi]=r;store.set('programme',PR);renderProg()})},
   start(b){startSession(PR.jours[+b.dataset.j])},
-  voice(b){VOICE=!VOICE;store.set('voix',VOICE);b.textContent=VOICE?'Voix : oui':'Voix : non';say('Voix activée')},
+  voice(b){VOICE=!VOICE;store.set('voix',VOICE);b.textContent=VOICE?'Voix : oui':'Voix : non';if(VOICE)say('Voix activée');else stopVoice()},
   feel(b){const l=LOG[LOG.length-1];if(l){l.ressenti=b.dataset.v;store.set('seances',LOG)}b.parentNode.innerHTML='<p>Noté, le coach en tiendra compte.</p>'},
   async saveKey(b){document.querySelectorAll('[data-key]').forEach(i=>{const v=i.value.trim();if(v!==(AI.keys[i.dataset.key]||''))delete AI.m[i.dataset.key];if(v)AI.keys[i.dataset.key]=v;else delete AI.keys[i.dataset.key]});AI.engine=$('iaEng').value;saveAI();
     if(!active().length){$('iaRes').innerHTML='<p class="mute">Aucune clé enregistrée.</p>';return}
@@ -1325,11 +1329,12 @@ Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 1
     (r.aliments||[]).forEach(addFood);$('qa').value='';$('qaRes').innerHTML=''})},
   ate(b){addFood(REG[+b.dataset.r]);b.textContent='Ajouté !';b.disabled=true},
   cook(b){openCook(REG[+b.dataset.r])},
-  kClose(){clearInterval(ktick);try{speechSynthesis.cancel()}catch(e){}K=null;ov.classList.remove('on');document.body.style.overflow='';try{WL&&WL.release()}catch(e){}refreshFood()},
+  kClose(){clearInterval(ktick);stopVoice();K=null;ov.classList.remove('on');document.body.style.overflow='';try{WL&&WL.release()}catch(e){}refreshFood()},
   kRetry(){loadCook()},
-  kGo(b){K.i=Math.max(-1,+b.dataset.v);renderK();ov.scrollTo(0,0)},
+  kGo(b){stopVoice();K.i=Math.max(-1,+b.dataset.v);renderK();ov.scrollTo(0,0)},
   kTimer(){const e=K.d.etapes[K.i];K.tEnd=Date.now()+num(e.duree_min)*60000;K.tName=e.titre;ktimer();toast('Minuteur lancé : '+e.duree_min+' min')},
-  kRead(){const e=K.d.etapes[K.i];speak(`Étape ${K.i+1}. ${e.titre}. ${e.detail} ${e.repere?'C\'est bon quand : '+e.repere:''}`)},
+  stopVoice(){stopVoice()},
+  kRead(){if(window.speechSynthesis&&speechSynthesis.speaking){stopVoice();return}const e=K.d.etapes[K.i];speak(`Étape ${K.i+1}. ${e.titre}. ${e.detail} ${e.repere?'C\'est bon quand : '+e.repere:''}`)},
   kAte(b){const o=K.o,d=K.d;addFood({nom:d.nom||o.nom,kcal:d.kcal_portion||o.kcal,p:o.proteines_g||0,g:o.glucides_g||0,l:o.lipides_g||0});b.textContent='Ajouté !';b.disabled=true},
   favR(b){const o=REG[+b.dataset.r],i=FAVR.findIndex(f=>f.data===o||(f.type!=='menu'&&f.data.nom===o.nom));if(i>=0)FAVR.splice(i,1);else FAVR.push({type:b.dataset.t||'recette',nom:o.nom,data:o,d:today()});saveFood();refreshFood();b.textContent=i>=0?'Favori ☆':'En favori ★'},
   favMenu(){const d=MENUS[today()],i=FAVR.findIndex(f=>f.data===d);if(i>=0)FAVR.splice(i,1);else FAVR.push({type:'menu',nom:new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long'})+' · '+(d.repas||[]).map(r=>r.nom).slice(1,2).join(''),data:d,d:today()});saveFood();refreshFood()},
@@ -1538,7 +1543,7 @@ $('ingPh').addEventListener('change',async e=>{
 });
 if('serviceWorker' in navigator&&location.protocol==='https:'&&/github\.io$/.test(location.host)){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-10';
+const APP_VERSION='2026.11.26-11';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
