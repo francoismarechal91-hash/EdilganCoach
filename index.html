@@ -2,6 +2,7 @@
 <html lang="fr" data-skin="synth">
 <head>
 <meta charset="utf-8">
+<script>try{var k0=JSON.parse(localStorage.getItem('coach_skin')||'null');document.documentElement.dataset.skin=k0||(localStorage.getItem('coach_profil')||localStorage.getItem('coach_onb')?'synth':'clair')}catch(e){}</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -365,6 +366,211 @@ html .wmap:has(>p.mute:only-child){aspect-ratio:1000/438;position:relative}
 @media(prefers-reduced-motion:reduce){html :is(.dph,.wmap,.bub.agv-typing::after,button.agv-busy::after){animation:none!important}}
 /* === /ag_visual === */
 
+/* === ag_theme === */
+/* === ag_theme === Matière, lumière et mouvement par thème (moteur d'effets : voir FXE dans le script) */
+/* Réglage « Animations » : on = riches (moteur actif), calm = sobres (décor du héros seul), off = aucune */
+/* --gx/--gy (direction de la lumière) et --lx/--ly (point touché) : propriétés enregistrées NON héritées.
+   FXE les écrit dans une seule règle CSS ciblée (pas sur :root) : seules les couches de lumière sont recalculées,
+   au plus 20 fois par seconde et seulement pendant un mouvement (aucune boucle permanente). */
+@property --gx{syntax:'<number>';inherits:false;initial-value:-.35}
+@property --gy{syntax:'<number>';inherits:false;initial-value:-.55}
+@property --lx{syntax:'<length-percentage>';inherits:false;initial-value:50%}
+@property --ly{syntax:'<length-percentage>';inherits:false;initial-value:50%}
+:root{--gx:-.35;--gy:-.55} /* repli Safari < 16.4 (propriétés non enregistrées) */
+html[data-fx=calm] :is(#amb,#sweep,.pt,.pawtap){display:none!important}
+html[data-fx=on] #sweep{display:none}
+/* 1. Calque de matière + reflet sur chaque carte : bord éclairé (suit la lumière --gx/--gy), texture, bande spéculaire */
+.card{position:relative}
+:root :is(.card:not(.lvl),.tile)::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+ box-shadow:inset 0 1px 0 var(--rim,transparent),inset calc(var(--gx)*var(--rimdir,-1)*1.8px) calc(var(--gy)*var(--rimdir,-1)*.9px) 0 var(--rim2,transparent),var(--rimx,0 0 0 transparent),calc(var(--gx)*-5px*var(--castk,0)) calc((5px + var(--gy)*-4px)*var(--castk,0)) 16px -12px var(--castc,transparent);
+ background:var(--tex,linear-gradient(transparent,transparent)),linear-gradient(calc(102deg + var(--gx)*16deg),transparent calc(30% + var(--gx)*24%),var(--shc,transparent) calc(46% + var(--gx)*24%),transparent calc(60% + var(--gx)*24%))}
+/* ombre portée qui glisse à l'opposé de la lumière (thèmes clairs) */
+:root:is([data-skin=foret],[data-skin=pets],[data-skin=clair],[data-skin=ocean]){--castk:1}
+/* 2. Éclat sous le doigt (posé par FXE sur la carte touchée : --lx/--ly + classe fx-lit) */
+:root :is(.card,.tile)::after,.hero .deco::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity 1s cubic-bezier(.2,.8,.2,1);
+ background:radial-gradient(160px circle at var(--lx,50%) var(--ly,50%),var(--glc,rgba(255,255,255,.12)),transparent 70%)}
+:root :is(.card,.tile).fx-lit::after,.hero.fx-lit .deco::after{opacity:1;transition-duration:.18s}
+.hero .deco::after{z-index:3}
+/* 3. Liseré lumineux qui fait une fois le tour de l'élément principal à l'ouverture d'un onglet */
+:root :is(.card,.tile).fx-sweep::before,.hero.fx-sweep .deco::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:var(--swb,2px);box-shadow:none;
+ background:conic-gradient(from var(--ang),transparent 0 58%,color-mix(in srgb,var(--swc,#fff) 40%,transparent) 72%,var(--swc,#fff) 84%,transparent 97%);
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+ animation:fxSweep 1.8s cubic-bezier(.45,.05,.25,1) .3s both}
+.hero.fx-sweep .deco::before{z-index:4}
+@keyframes fxSweep{0%{--ang:-60deg;opacity:0}14%{opacity:1}78%{opacity:1}100%{--ang:330deg;opacity:0}}
+:root[data-skin=synth] .hero.fx-sweep .deco::before{display:none}
+/* 4. Barre d'onglets : reflet spéculaire qui glisse avec la lumière (verre) */
+/* reflet qui traverse le décor du héros (derrière les illustrations) */
+.hero .deco{background:linear-gradient(calc(104deg + var(--gx)*14deg),transparent calc(32% + var(--gx)*26%),var(--hglare,rgba(255,255,255,.12)) calc(46% + var(--gx)*26%),transparent calc(58% + var(--gx)*26%))}
+html[data-fx] .tabs::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+ box-shadow:inset 0 1px 0 var(--tabrim,rgba(255,255,255,.28));
+ background:radial-gradient(110px 34px at calc(50% + var(--gx)*44%) 0,var(--tabspec,rgba(255,255,255,.22)),transparent 72%)}
+/* 5. Feuilles (sheet) : lampe douce en haut, entrée amortie, contenu en cascade */
+html[data-fx][data-skin] #sheet .in{background-image:linear-gradient(90deg,transparent 8%,var(--srim,rgba(255,255,255,.9)) calc(50% + var(--gx)*34%),transparent 92%),radial-gradient(130% 50% at calc(50% + var(--gx)*36%) -12%,var(--lamp,transparent),transparent 62%);background-size:100% 1.5px,100% 100%;background-repeat:no-repeat}
+html[data-fx=on] #sheet.on .in{animation:fxSheet .52s cubic-bezier(.16,1,.3,1)}
+@keyframes fxSheet{from{transform:translateY(105%)}to{transform:none}}
+html[data-fx=on] #sheet.on .in>*{animation:fxIn .5s cubic-bezier(.2,.8,.2,1) backwards}
+html[data-fx=on] #sheet.on .in>:nth-child(2){animation-delay:.1s}html[data-fx=on] #sheet.on .in>:nth-child(3){animation-delay:.14s}html[data-fx=on] #sheet.on .in>:nth-child(4){animation-delay:.18s}html[data-fx=on] #sheet.on .in>:nth-child(5){animation-delay:.22s}html[data-fx=on] #sheet.on .in>:nth-child(n+6){animation-delay:.26s}
+@keyframes fxIn{from{opacity:0;transform:translateY(14px)}}
+/* 6. Plein écran (mode cuisine, séance) : lumière d'ambiance propre au thème, fixe */
+html[data-fx] #ov::before{content:"";position:fixed;inset:-10%;z-index:-1;pointer-events:none;background:var(--ovl,none);opacity:var(--ovo,1)}
+html[data-fx=on] #ov.on{animation:fxOv .46s cubic-bezier(.16,1,.3,1)}
+@keyframes fxOv{from{opacity:0;transform:translateY(26px) scale(.985)}}
+html[data-fx=on] #ov.on::before{animation:fxOvl 16s ease-in-out infinite alternate}
+@keyframes fxOvl{to{transform:translate3d(4%,2%,0) rotate(1.5deg)}}
+html.idle #ov::before{animation-play-state:paused}
+/* 7. Apparition des cartes en cascade, propre à chaque thème (remplissage « backwards » : l'appui reste réactif) */
+html[data-fx=on] :is(section.on>.card,section.on>.hero,section.on>.tiles>.tile,section.on>.grid>.card,section.on>.lt,section.on .pane.on>.card,section.on .pane.on>.tiles>.tile,section.on>#homeStart){animation-name:var(--enter,fxRise);animation-duration:var(--enterd,.6s);animation-timing-function:var(--entere,cubic-bezier(.2,.8,.2,1));animation-fill-mode:backwards}
+html[data-fx=on] :is(section.on,section.on .pane.on)>:nth-child(2){animation-delay:.06s}html[data-fx=on] :is(section.on,section.on .pane.on)>:nth-child(3){animation-delay:.12s}html[data-fx=on] :is(section.on,section.on .pane.on)>:nth-child(4){animation-delay:.18s}html[data-fx=on] :is(section.on,section.on .pane.on)>:nth-child(5){animation-delay:.24s}html[data-fx=on] :is(section.on,section.on .pane.on)>:nth-child(n+6){animation-delay:.3s}
+html[data-fx=on] section.on .tiles>.tile:nth-child(1){animation-delay:0.275s}html[data-fx=on] section.on .tiles>.tile:nth-child(2){animation-delay:0.310s}html[data-fx=on] section.on .tiles>.tile:nth-child(3){animation-delay:0.345s}html[data-fx=on] section.on .tiles>.tile:nth-child(4){animation-delay:0.380s}html[data-fx=on] section.on .tiles>.tile:nth-child(5){animation-delay:0.415s}html[data-fx=on] section.on .tiles>.tile:nth-child(6){animation-delay:0.450s}html[data-fx=on] section.on .tiles>.tile:nth-child(7){animation-delay:0.485s}html[data-fx=on] section.on .tiles>.tile:nth-child(8){animation-delay:0.520s}
+@keyframes fxRise{from{opacity:0;transform:translateY(18px) scale(.985)}}
+/* 8. Transitions d'onglet (View Transitions, Safari 18+) : glissement dans le sens de la navigation */
+::view-transition-group(root){animation-duration:.34s}
+html[data-vt=f]::view-transition-old(root){animation:.24s cubic-bezier(.4,0,1,1) both fxVtOutL}
+html[data-vt=f]::view-transition-new(root){animation:.36s cubic-bezier(.2,.8,.2,1) both fxVtInR}
+html[data-vt=b]::view-transition-old(root){animation:.24s cubic-bezier(.4,0,1,1) both fxVtOutR}
+html[data-vt=b]::view-transition-new(root){animation:.36s cubic-bezier(.2,.8,.2,1) both fxVtInL}
+html[data-vt] .tabs{view-transition-name:fxtabs}html[data-vt] .appbar{view-transition-name:fxbar}
+::view-transition-group(fxtabs),::view-transition-group(fxbar){animation:none}
+::view-transition-old(fxtabs),::view-transition-old(fxbar){animation:none;opacity:0}::view-transition-new(fxtabs),::view-transition-new(fxbar){animation:none}
+@keyframes fxVtOutL{to{opacity:0;transform:translateX(-26px)}}@keyframes fxVtInR{from{opacity:0;transform:translateX(30px)}}
+@keyframes fxVtOutR{to{opacity:0;transform:translateX(26px)}}@keyframes fxVtInL{from{opacity:0;transform:translateX(-30px)}}
+/* 9. Ressort au relâchement des boutons principaux */
+@supports (transition-timing-function:linear(0,1)){html[data-fx=on] :is(button:not([class]),button.wide,.tile):not(:active){transition:transform .6s linear(0,.36 8%,.8 18%,1.05 30%,1.09 36%,1.05 46%,.99 60%,1.002 78%,1),opacity .2s}}
+/* 10. Réglage inclinaison */
+.fxrow{display:flex;align-items:center;gap:12px;margin:12px 0 0;font-size:15px;font-weight:600;color:var(--ink);cursor:pointer;min-height:44px}
+.fxrow small{display:block;font-weight:500;color:var(--mute);font-size:14px}
+html:not([data-fx=on]) .fxrow{opacity:.5}
+.fxrow[hidden]{display:none}
+
+/* ---------- SYNTHWAVE : verre teinté, coins de viseur néon, mise sous tension façon écran cathodique ---------- */
+:root[data-skin=synth]{--rim:rgba(255,124,198,.5);--rim2:rgba(34,228,255,.4);--shc:rgba(255,190,235,.1);--hglare:rgba(255,170,230,.12);--swc:#22e4ff;--enter:fxCrt;--enterd:.55s;
+ --tex:linear-gradient(#22e4ff,#22e4ff) left 10px top 10px/14px 2px no-repeat,linear-gradient(#22e4ff,#22e4ff) left 10px top 10px/2px 14px no-repeat,linear-gradient(#ff2a9d,#ff2a9d) right 10px bottom 10px/14px 2px no-repeat,linear-gradient(#ff2a9d,#ff2a9d) right 10px bottom 10px/2px 14px no-repeat;
+ --tabrim:rgba(255,124,198,.45);--tabspec:rgba(255,124,198,.35);--lamp:rgba(255,42,157,.26);--srim:#ff7cc6;
+ --ovl:radial-gradient(90% 36% at 50% 104%,rgba(255,42,157,.26),transparent 70%),radial-gradient(70% 30% at 20% 0,rgba(34,228,255,.12),transparent 70%)}
+:root[data-skin=synth] :is(.card,.tile){border-radius:14px}
+:root[data-skin=synth] .tile::before{background:linear-gradient(calc(102deg + var(--gx)*16deg),transparent calc(30% + var(--gx)*24%),var(--shc) calc(46% + var(--gx)*24%),transparent calc(60% + var(--gx)*24%))}
+:root[data-skin=synth] :is(.card,.tile)::after,:root[data-skin=synth] .hero .deco::after{background:radial-gradient(180px circle at var(--lx,50%) var(--ly,50%),rgba(255,42,157,.2),rgba(34,228,255,.07) 48%,transparent 70%)}
+:root[data-skin=synth] .rip{background:none;box-shadow:inset 0 0 0 2px #22e4ff,0 0 14px rgba(34,228,255,.7);opacity:.75}
+@keyframes fxCrt{0%{opacity:0;transform:scaleY(.03) scaleX(.94)}35%{opacity:1;transform:scaleY(1.04) scaleX(1)}55%{transform:scaleY(.985)}100%{transform:none}}
+
+/* ---------- FORÊT JOUR : papier grainé, feuilles (coins asymétriques), taches de soleil sous le doigt ---------- */
+:root[data-skin=foret]{--rim:rgba(255,250,225,.95);--rim2:rgba(60,90,40,.07);--rimdir:1;--castc:rgba(50,90,30,.2);--swc:#e0a02a;--hglare:rgba(255,255,235,.3);--enter:fxUnfurl;--enterd:.7s;
+ --tabrim:rgba(255,255,255,.7);--tabspec:rgba(255,246,200,.6);--lamp:rgba(255,226,140,.36);--srim:rgba(224,160,42,.85);
+ --ovl:linear-gradient(118deg,transparent 22%,rgba(255,240,180,.34) 31%,transparent 39%,transparent 47%,rgba(255,240,180,.24) 53%,transparent 60%),radial-gradient(80% 40% at 10% 0,rgba(255,236,160,.35),transparent 70%)}
+:root:is([data-skin=foret],[data-skin=foretnuit]) .card{border-radius:28px 10px 28px 10px}
+:root:is([data-skin=foret],[data-skin=foretnuit],[data-skin=pets]) :is(h1,h2,h3,.logo){font-family:Fredoka,ui-rounded,"SF Pro Rounded",Nunito,system-ui,sans-serif}
+:root[data-skin=foret] :is(.card,.tile){background-image:var(--grain,none);background-size:64px 64px}
+:root:is([data-skin=foret],[data-skin=foretnuit]) .tile{border-radius:24px 9px 24px 9px}
+:root:is([data-skin=foret],[data-skin=foretnuit]) .tiles>.tile:nth-child(even){border-radius:9px 24px 9px 24px}
+:root:is([data-skin=foret],[data-skin=foretnuit]) #sheet .in{border-radius:30px 12px 0 0}
+:root[data-skin=foret] :is(button:not([class]),button.wide):not(.seg *,.glass *,.qual *,.chkrow *,.calg *,.pill *){border-radius:18px 7px 18px 7px}
+:root[data-skin=foret] :is(.card,.tile)::after,:root[data-skin=foret] .hero .deco::after{background:radial-gradient(70px circle at calc(var(--lx,50%) - 34px) calc(var(--ly,50%) - 18px),rgba(255,236,150,.6),transparent 70%),radial-gradient(46px circle at calc(var(--lx,50%) + 44px) calc(var(--ly,50%) + 10px),rgba(255,240,170,.5),transparent 70%),radial-gradient(34px circle at calc(var(--lx,50%) + 6px) calc(var(--ly,50%) + 48px),rgba(255,244,190,.45),transparent 70%),radial-gradient(150px circle at var(--lx,50%) var(--ly,50%),rgba(255,226,140,.2),transparent 70%)}
+@keyframes fxUnfurl{0%{opacity:0;transform:translateY(22px) rotate(-1.8deg) scale(.96);transform-origin:0 100%}60%{opacity:1}100%{transform:none;transform-origin:0 100%}}
+
+/* ---------- FORÊT NUIT : velours de mousse, lueur de lucioles venue du sol, lanterne sous le doigt ---------- */
+:root[data-skin=foretnuit]{--rim:rgba(205,232,255,.2);--rim2:rgba(155,227,111,.16);--rimx:inset 0 -30px 36px -30px rgba(155,227,111,.26);--shc:rgba(220,255,200,.055);--hglare:rgba(200,230,255,.08);--swc:#ffe27a;--enter:fxLantern;--enterd:.8s;
+ --tabrim:rgba(185,242,148,.3);--tabspec:rgba(255,236,140,.25);--lamp:rgba(255,236,140,.15);--srim:rgba(185,242,148,.7);
+ --ovl:radial-gradient(50% 30% at 85% 4%,rgba(255,246,214,.16),transparent 70%),radial-gradient(90% 30% at 50% 104%,rgba(155,227,111,.14),transparent 70%)}
+:root[data-skin=foretnuit] :is(.card,.tile)::after,:root[data-skin=foretnuit] .hero .deco::after{background:radial-gradient(14px circle at var(--lx,50%) var(--ly,50%),rgba(255,250,200,.5),transparent 70%),radial-gradient(150px circle at var(--lx,50%) var(--ly,50%),rgba(255,236,140,.15),rgba(155,227,111,.05) 50%,transparent 72%)}
+:root[data-skin=foretnuit] .rip{background:radial-gradient(circle,rgba(255,236,140,.7),transparent 62%);opacity:.55}
+@keyframes fxLantern{0%{opacity:0;transform:translateY(12px)}50%{opacity:.85}100%{opacity:1;transform:none}}
+
+/* ---------- CHATS & CHIENS : peluche cousue (coutures pointillées), coussin bombé, rebond ---------- */
+:root[data-skin=pets]{--rim:#fff;--rim2:rgba(201,58,96,.06);--rimdir:1;--rimx:inset 0 -5px 0 rgba(212,79,107,.06);--castc:rgba(200,80,100,.22);--swc:#ff7a93;--hglare:rgba(255,255,255,.35);--enter:fxBoing;--enterd:.7s;--entere:linear;
+ --tabrim:rgba(255,255,255,.9);--tabspec:rgba(255,214,224,.7);--lamp:rgba(255,190,205,.36);--srim:rgba(255,122,147,.75);
+ --ovl:radial-gradient(70% 36% at 50% -4%,rgba(255,205,215,.45),transparent 70%),radial-gradient(60% 30% at 100% 100%,rgba(255,226,170,.35),transparent 70%)}
+:root[data-skin=pets] .card{border-radius:30px}
+:root[data-skin=pets] .tile{border-radius:28px}
+:root[data-skin=pets] .card:not(a):not(:focus-visible),:root[data-skin=pets] .tile:not(:focus-visible){outline:2px dashed rgba(201,58,96,.2);outline-offset:-8px}
+:root[data-skin=pets] :is(.card,.tile)::after,:root[data-skin=pets] .hero .deco::after{background:radial-gradient(150px circle at var(--lx,50%) var(--ly,50%),rgba(255,170,190,.3),rgba(255,214,150,.12) 50%,transparent 72%)}
+:root[data-skin=pets] :is(button:not([class]),button.wide,button.kdone):not(.seg *,.glass *,.qual *,.chkrow *,.calg *,.pill *){box-shadow:0 4px 0 rgba(150,40,70,.42),0 10px 18px -10px rgba(201,58,96,.7)}
+:root[data-skin=pets] :is(button:not([class]),button.wide,button.kdone):not(.seg *,.glass *,.qual *,.chkrow *,.calg *,.pill *):active{transform:translateY(3px);box-shadow:0 1px 0 rgba(150,40,70,.42),0 4px 10px -8px rgba(201,58,96,.7)}
+@keyframes fxBoing{0%{opacity:0;transform:translateY(26px) scale(.92,.96)}38%{opacity:1;transform:translateY(-5px) scale(1.02,.98)}58%{transform:translateY(2px) scale(.99,1.01)}76%{transform:translateY(-1px)}100%{transform:none}}
+
+/* ---------- CLAIR : papier net, bord biseauté qui suit la lumière ---------- */
+:root[data-skin=clair]{--rim:#fff;--rim2:rgba(23,18,29,.07);--rimdir:1;--castc:rgba(30,15,40,.16);--swc:#f0412f;--glc:rgba(240,65,47,.08);--hglare:rgba(255,255,255,.13);--lamp:rgba(255,190,160,.3);--srim:rgba(240,65,47,.55);
+ --ovl:radial-gradient(80% 34% at 50% -4%,rgba(255,200,170,.35),transparent 70%)}
+/* ---------- NUIT : velours, clair de lune froid sur les bords ---------- */
+:root[data-skin=nuit]{--rim:rgba(243,230,196,.16);--rim2:rgba(243,230,196,.1);--shc:rgba(255,255,255,.05);--swc:#f3e6c4;--hglare:rgba(243,230,196,.07);--glc:rgba(205,212,255,.1);--enter:fxDusk;--enterd:.7s;
+ --tabrim:rgba(243,230,196,.22);--tabspec:rgba(243,230,196,.16);--lamp:rgba(243,230,196,.1);--srim:rgba(243,230,196,.55);
+ --ovl:radial-gradient(50% 30% at 88% 2%,rgba(243,230,196,.13),transparent 70%)}
+@keyframes fxDusk{from{opacity:0;transform:translateY(10px) scale(.99)}}
+
+/* ---------- OCÉAN (nouveau) : verre de mer translucide, caustiques mouvantes, bulles ---------- */
+html[data-skin=ocean]{color-scheme:light;
+--bg:#e6f5f5;--card:#f8fdfd;--fill:#e2f1f2;--fill2:#cfe6e8;--ink:#0c2f3a;--mute:#456570;--line:#d3e7e9;
+--red:#0b6f84;--redd:#085a6b;--tint:#d6eff1;--tintink:#06606f;--yel:#f3a93a;--blue:#1d82c6;--green:#16a085;
+--hot:#0b6f84;--warm:#ff8a70;--mus:#b9dde0;--sil:#e9f5f6;
+--sh:0 1px 2px rgba(10,60,80,.06),0 12px 28px -14px rgba(10,80,110,.35);
+--r1:#ff7f6b;--r2:#f0a92b;--r3:#1d82c6;--rtrack:rgba(12,47,58,.12);--heroink:#0c2f3a;
+--rim:#fff;--rim2:rgba(8,90,107,.08);--rimdir:1;--castc:rgba(10,90,120,.22);--swc:#2bc4d8;--hglare:rgba(255,255,255,.25);--enter:fxFloat;--enterd:.8s;
+--tabrim:rgba(255,255,255,.85);--tabspec:rgba(200,245,250,.7);--lamp:rgba(120,220,235,.34);--srim:rgba(43,196,216,.85);
+--ovl:var(--caustic,none) 0 0/240px 240px repeat;--ovo:.4}
+html[data-skin=ocean] body{font-family:ui-rounded,"SF Pro Rounded",Nunito,Archivo,system-ui,sans-serif;background:linear-gradient(180deg,#c9eef2 0,#e6f5f5 340px) fixed,#e6f5f5}
+html[data-skin=ocean] :is(h1,h2,h3,.logo){font-family:ui-rounded,"SF Pro Rounded",Fredoka,Nunito,system-ui,sans-serif;font-weight:700;letter-spacing:-.01em}
+html[data-skin=ocean] h1{color:#0a5566}
+html[data-skin=ocean] .card{background-color:rgba(251,254,254,.84);border:1px solid rgba(255,255,255,.7);border-radius:24px 24px 30px 30px}
+html[data-skin=ocean] .tile{background-color:rgba(251,254,254,.84);border-radius:24px 24px 28px 28px}
+html[data-skin=ocean] :is(.card,.tile)::after,html[data-skin=ocean] .hero .deco::after{background:radial-gradient(160px circle at var(--lx,50%) var(--ly,50%),rgba(120,220,235,.34),rgba(255,255,255,.12) 45%,transparent 72%)}
+html[data-skin=ocean] .hero{min-height:250px;padding-bottom:84px;background:linear-gradient(180deg,#c4f1f4 0%,#94e0e8 34%,#55c3d6 70%,#2f9fbd 100%);color:#0c2f3a;box-shadow:0 16px 34px -18px rgba(10,100,130,.6);border-radius:28px 28px 34px 34px}
+html[data-skin=ocean] .hero::after{display:none}
+html[data-skin=ocean] .hero h1{color:#073f4d}html[data-skin=ocean] .hero p{color:#0e4654;text-shadow:none}
+html[data-skin=ocean] .ring :is(b,span){color:#06303b;text-shadow:0 0 6px rgba(220,250,252,.9)}
+html[data-skin=ocean] .ring svg{background:radial-gradient(circle,rgba(240,252,252,.88) 0 58%,transparent 59%);border-radius:50%}
+html[data-skin=ocean] .appbar{background:rgba(214,241,243,.82)}
+html[data-skin=ocean] :is(.logo span,.wlogo){background:linear-gradient(140deg,#5fd3e0,#0b6f84);color:#fff}
+html[data-skin=ocean] .ib.av{background:#0b6f84;color:#fff}
+:where(html[data-skin=ocean]) button{box-shadow:0 8px 18px -8px rgba(11,111,132,.7)}
+html[data-skin=ocean] :is(button:not([class]),button.wide,button.kdone):not(.seg *,.glass *,.qual *,.chkrow *,.calg *,.pill *){border-radius:999px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 18px -8px rgba(11,111,132,.7)}
+html[data-skin=ocean] button.alt{background:#0c2f3a;color:#f2fbfb}
+html[data-skin=ocean] :is(button.ghost,button.tint,.chip,.seg button,.glass button){color:var(--ink)}
+html[data-skin=ocean] .chip.p{color:#fff}html[data-skin=ocean] .chip.s{background:#ffe1d8;color:#8a2f1c}
+html[data-skin=ocean] :is(.seg button.on,.ib.av){background:var(--red);color:#fff}
+html[data-skin=ocean] .tabs a.on{color:#06606f;background:#d6eff1}
+html[data-skin=ocean] .c-red{background:#d6eff1;color:#06606f}html[data-skin=ocean] .c-yel{background:#fdedd0;color:#8a5a08}html[data-skin=ocean] .c-blue{background:#dcebfa;color:#1a5f95}html[data-skin=ocean] .c-ink{background:#ffe6de;color:#9a3b25}
+html[data-skin=ocean] .bar.p i{background:#f0a92b}html[data-skin=ocean] .meal .k{color:#06606f}html[data-skin=ocean] .big{color:#0a5566}
+html[data-skin=ocean] #sweep{background:linear-gradient(180deg,transparent,rgba(43,196,216,.22),transparent)}
+html[data-skin=ocean] #sheet .in{border-radius:30px 30px 0 0}
+html[data-skin=ocean] .rip{background:radial-gradient(circle,transparent 52%,rgba(255,255,255,.85) 56%,transparent 61%);opacity:.9}
+@media (display-mode:standalone){html[data-skin=ocean] body::before{content:"";position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top);background:rgba(23,18,29,.82);z-index:96;pointer-events:none}}
+@keyframes fxFloat{0%{opacity:0;transform:translateY(28px)}55%{opacity:1;transform:translateY(-4px)}80%{transform:translateY(1px)}100%{transform:none}}
+/* décor océan : caustiques (texture générée une fois, glissée en transform), rayons, algues, bulles, poissons */
+.cauw{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.cauw .cau{position:absolute;display:block;top:-220px;left:-220px;right:0;bottom:0;background:var(--caustic,none) 0 0/220px 220px repeat;opacity:.6;animation:fxCau 26s linear infinite}
+.cauw .cau.b{top:-300px;left:-300px;background-size:300px 300px;opacity:.38;animation:fxCau2 40s linear infinite}
+.hero .deco .cauw{-webkit-mask:linear-gradient(180deg,#000 0,#000 25%,transparent 85%);mask:linear-gradient(180deg,#000 0,#000 25%,transparent 85%)}
+#amb .cauw{bottom:auto;height:62vh;-webkit-mask:linear-gradient(180deg,#000 20%,transparent);mask:linear-gradient(180deg,#000 20%,transparent)}
+#amb .cauw .cau{opacity:.42}
+@keyframes fxCau{to{transform:translate3d(220px,220px,0)}}
+@keyframes fxCau2{from{transform:translate3d(300px,0,0)}to{transform:translate3d(0,300px,0)}}
+.fx-kelp{transform-box:fill-box;transform-origin:50% 100%;animation:fxKelp 5s ease-in-out infinite alternate}
+@keyframes fxKelp{from{transform:skewX(-5deg)}to{transform:skewX(6deg)}}
+.fx-bub{animation:fxBub 7s linear infinite}
+@keyframes fxBub{0%{transform:translateY(0);opacity:0}10%{opacity:.9}100%{transform:translateY(-230px);opacity:0}}
+.fx-fish{animation:fxFish 34s linear infinite}
+@keyframes fxFish{from{transform:translateX(60px)}to{transform:translateX(-520px)}}
+#amb .ob{bottom:-20px;width:10px;height:10px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.85),inset 2px -2px 0 1px rgba(255,255,255,.25);opacity:.7;animation:hrise linear infinite}
+.pt.bb{background:none!important;box-shadow:inset 0 0 0 1.5px #fff,0 0 6px rgba(255,255,255,.7)}
+html.idle .cauw .cau,.hero.off .cauw .cau{animation-play-state:paused}
+
+/* Aperçus des thèmes : un petit paysage par thème (pas seulement des pastilles de couleur) */
+.skin .pv::before,.skin .pv::after{content:"";position:absolute;pointer-events:none}
+.skin[data-k=synth] .pv::before{left:-20%;right:-20%;bottom:0;height:44%;background:repeating-linear-gradient(90deg,rgba(34,228,255,.65) 0 1px,transparent 1px 14px),repeating-linear-gradient(0deg,rgba(255,42,157,.65) 0 1px,transparent 1px 7px);transform:perspective(50px) rotateX(42deg);transform-origin:bottom}
+.skin[data-k=synth] .pv::after{right:14px;bottom:42%;width:36px;height:18px;border-radius:36px 36px 0 0;background:linear-gradient(#ffe36e,#ff9b4a 50%,#ff2a9d);-webkit-mask:repeating-linear-gradient(180deg,#000 0 3px,transparent 3px 5px);mask:repeating-linear-gradient(180deg,#000 0 3px,transparent 3px 5px)}
+.skin[data-k=foret] .pv::before{left:-10%;right:-10%;bottom:-36%;height:76%;background:radial-gradient(58% 60% at 28% 100%,#7fc265 97%,transparent),radial-gradient(52% 50% at 82% 100%,#5aa84a 97%,transparent)}
+.skin[data-k=foret] .pv::after{right:16px;bottom:8px;width:26px;height:40px;background:radial-gradient(circle 12px at 50% 13px,#3d8a3a 96%,transparent),radial-gradient(circle 4px at 40% 9px,#8fd36a 96%,transparent),linear-gradient(#5b3b25,#5b3b25) 50% 100%/4px 16px no-repeat}
+.skin[data-k=foretnuit] .pv::before{right:18px;top:9px;width:15px;height:15px;border-radius:50%;background:#fff6d6;box-shadow:0 0 12px 3px rgba(255,246,214,.45)}
+.skin[data-k=foretnuit] .pv::after{inset:0;background:radial-gradient(circle 2px at 70% 64%,#fff6b8 96%,transparent),radial-gradient(circle 6px at 70% 64%,rgba(255,236,140,.35),transparent),radial-gradient(circle 2px at 88% 78%,#fff6b8 96%,transparent),radial-gradient(circle 6px at 88% 78%,rgba(255,236,140,.35),transparent),radial-gradient(circle 1.5px at 56% 40%,#fff6b8 96%,transparent)}
+.skin[data-k=pets] .pv{outline:1.5px dashed rgba(201,58,96,.35);outline-offset:-5px}
+.skin[data-k=pets] .pv::after{right:14px;top:12px;width:30px;height:30px;opacity:.55;transform:rotate(-14deg);background:radial-gradient(7px 6px at 15px 21px,#c93a60 96%,transparent),radial-gradient(circle 3px at 6px 13px,#c93a60 96%,transparent),radial-gradient(circle 3px at 11px 7px,#c93a60 96%,transparent),radial-gradient(circle 3px at 19px 7px,#c93a60 96%,transparent),radial-gradient(circle 3px at 24px 13px,#c93a60 96%,transparent)}
+.skin[data-k=clair] .pv::after{inset:0;background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.4) 52%,transparent 62%)}
+.skin[data-k=nuit] .pv::before{inset:0;background:radial-gradient(circle 1px at 20% 20%,#fff 96%,transparent),radial-gradient(circle 1px at 48% 34%,#fff 96%,transparent),radial-gradient(circle 1.2px at 62% 14%,#fff 96%,transparent),radial-gradient(circle 1px at 38% 12%,#fff 96%,transparent);opacity:.8}
+.skin[data-k=nuit] .pv::after{right:16px;top:10px;width:18px;height:18px;border-radius:50%;box-shadow:inset -6px 4px 0 0 #f3e6c4;filter:drop-shadow(0 0 5px rgba(243,230,196,.5))}
+.skin[data-k=ocean] .pv::before{inset:0;background:var(--caustic,none) 0 0/64px 64px;opacity:.75}
+.skin[data-k=ocean] .pv::after{left:-5%;right:-5%;bottom:-6px;height:18px;border-radius:50%;background:#f2e0ae}
+.skin .pv i{z-index:1}
+/* === /ag_theme === */
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -1270,7 +1476,8 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
     <p class="mute" style="margin:2px 0 8px">Une photo de ton téléphone en fond de l'accueil.</p>
     <div class="row"><label class="vid" style="cursor:pointer;margin:0;color:var(--ink);font-size:14px"><input type="file" accept="image/*" id="heroIn" style="display:none">Choisir une image</label><button class="ghost sm" data-act="heroDel" id="heroDel" hidden>Retirer</button></div>
     <div class="eqh" style="margin-top:16px">Animations et effets</div>
-    <div class="seg" id="fxSeg" style="margin:8px 0 0"><button data-fx="on">Activés</button><button data-fx="off">Désactivés</button></div>
+    <div class="seg" id="fxSeg" style="margin:8px 0 0"><button data-fx="on">Riches</button><button data-fx="calm">Sobres</button><button data-fx="off">Aucune</button></div>
+    <label class="fxrow"><input type="checkbox" id="fxTilt"><span>Les reflets suivent l'inclinaison du téléphone<small>Sinon, ils suivent ton doigt.</small></span></label>
     <div class="eqh" style="margin-top:16px">Taille du texte</div>
     <div class="seg" id="sizeSeg" style="margin:8px 0 0"><button data-size="m">Normal</button><button data-size="l">Grand</button><button data-size="xl">Très grand</button></div>
   </details>
@@ -2991,6 +3198,100 @@ const AGV=(()=>{
 })();
 /* === /ag_visual === */
 
+/* === ag_theme === */
+/* === ag_theme === Moteur d'effets : lumière qui suit le doigt / l'inclinaison, liseré de l'élément principal,
+   transitions d'onglet, décors du thème Océan. Aucune boucle permanente : rAF seulement tant que la lumière bouge. */
+const FXE=(()=>{
+ const R=document.documentElement,RMq=matchMedia('(prefers-reduced-motion: reduce)');
+ const rich=()=>R.dataset.fx==='on'&&!RMq.matches;
+ const LIT='.card,.tile,.hero';
+ /* textures générées une seule fois (aucun fichier) : grain de papier, réseau de caustiques */
+ const rnd=s=>()=>(s=(s*16807)%2147483647)/2147483647;
+ const tex=(n,draw,v)=>{try{const c=document.createElement('canvas');c.width=c.height=n;const x=c.getContext('2d'),im=x.createImageData(n,n);draw(im.data,n);x.putImageData(im,0,0);c.toBlob(b=>{if(b)R.style.setProperty(v,`url("${URL.createObjectURL(b)}")`)})}catch(e){}};
+ const grain=(d)=>{const r=rnd(7);for(let i=0;i<d.length;i+=4){d[i]=70;d[i+1]=60;d[i+2]=30;d[i+3]=Math.round(Math.pow(r(),5)*30)}};
+ const caus=(d,n)=>{const G=5,c=n/G,r=rnd(11),P=[];for(let j=0;j<G;j++)for(let i=0;i<G;i++)P.push([(i+.15+r()*.7)*c,(j+.15+r()*.7)*c]);
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){let f1=1e9,f2=1e9;const ci=Math.floor(x/c),cj=Math.floor(y/c);
+   for(let dj=-1;dj<=1;dj++)for(let di=-1;di<=1;di++){const ii=(ci+di+G)%G,jj=(cj+dj+G)%G,p=P[jj*G+ii],dx=p[0]+(ci+di-ii)*c-x,dy=p[1]+(cj+dj-jj)*c-y,dd=dx*dx+dy*dy;if(dd<f1){f2=f1;f1=dd}else if(dd<f2)f2=dd}
+   let a=1-Math.min(1,(Math.sqrt(f2)-Math.sqrt(f1))/(c*.17));a=a*a*a;const k=(y*n+x)*4;d[k]=d[k+1]=d[k+2]=255;d[k+3]=Math.round(a*235)}};
+ let texDone={};const needTex=k=>{if(!texDone.g&&k==='foret'){texDone.g=1;tex(128,grain,'--grain')}if(!texDone.c&&k==='ocean'){texDone.c=1;tex(200,caus,'--caustic')}};
+ /* direction de la lumière (-1..1) : doigt, défilement, ou inclinaison si autorisée ; revient au repos tout seul.
+    Écrite au plus 20 fois par seconde dans une règle CSS ciblée, et seulement tant qu'elle bouge. */
+ const dyn=document.createElement('style');dyn.id='fxdyn';dyn.textContent=':root :is(.card,.tile)::before,.tabs::before,.hero .deco,#sheet .in{--gx:-.35;--gy:-.55}.fx-lit::after,.hero.fx-lit .deco::after{--lx:50%;--ly:50%}';document.head.appendChild(dyn);
+ const RG=dyn.sheet.cssRules[0].style,RL=dyn.sheet.cssRules[1].style;
+ const REST=[-.35,-.55];let gx=REST[0],gy=REST[1],tx=gx,ty=gy,back=0,tmr=0;
+ const W=()=>{RG.setProperty('--gx',gx.toFixed(3));RG.setProperty('--gy',gy.toFixed(3))};
+ const tick=()=>{tmr=0;const dx=tx-gx,dy=ty-gy;if(Math.abs(dx)<.012&&Math.abs(dy)<.012){if(gx!==tx||gy!==ty){gx=tx;gy=ty;W()}return}gx+=dx*.4;gy+=dy*.4;W();if(!document.hidden)tmr=setTimeout(tick,50)};
+ const go=()=>{if(!tmr&&!document.hidden)tmr=setTimeout(tick,0)};
+ const rest=()=>{tx=REST[0];ty=REST[1];go()};
+ const aim=(x,y,hold)=>{if(!rich())return;tx=Math.max(-1,Math.min(1,x));ty=Math.max(-1,Math.min(1,y));go();clearTimeout(back);if(!hold&&!tilt.on)back=setTimeout(rest,1600)};
+ /* éclat sous le doigt, sur la carte touchée seulement (rectangle mémorisé à l'appui : pas de recalcul de mise en page) */
+ let cur=null,box=null,pe=null,pr=0;
+ const glowAt=(x,y)=>{if(!box){if(!cur)return;box=cur.getBoundingClientRect()}RL.setProperty('--lx',Math.round(x-box.left)+'px');RL.setProperty('--ly',Math.round(y-box.top)+'px')};
+ const light=(el,x,y)=>{if(cur&&cur!==el)cur.classList.remove('fx-lit');cur=el;box=(el.classList.contains('hero')&&el.querySelector('.deco')||el).getBoundingClientRect();glowAt(x,y);el.classList.add('fx-lit')};
+ const release=()=>{if(cur){cur.classList.remove('fx-lit');cur=null;box=null}if(!tilt.on){clearTimeout(back);back=setTimeout(rest,1200)}};
+ const frame=()=>{pr=0;if(!pe)return;const e=pe;pe=null;if(cur&&cur.isConnected)glowAt(e.clientX,e.clientY);if(!tilt.on)aim(e.clientX/innerWidth*2-1,e.clientY/innerHeight*2-1,true)};
+ addEventListener('pointerdown',e=>{if(!rich())return;const el=e.target.closest&&e.target.closest(LIT);if(el&&!el.classList.contains('hasimg'))light(el,e.clientX,e.clientY);else if(cur)release();
+  if(!tilt.on)aim(e.clientX/innerWidth*2-1,e.clientY/innerHeight*2-1,true)},{passive:true});
+ addEventListener('pointermove',e=>{if(!rich())return;if(e.pointerType==='mouse'&&!e.buttons){const el=e.target.closest&&e.target.closest(LIT);if(el!==cur){if(el&&!el.classList.contains('hasimg'))light(el,e.clientX,e.clientY);else if(cur){cur.classList.remove('fx-lit');cur=null}}}
+  else if(!cur)return;pe=e;if(!pr)pr=requestAnimationFrame(frame)},{passive:true});
+ ['pointerup','pointercancel'].forEach(t=>addEventListener(t,e=>{if(e.pointerType!=='mouse')release()},{passive:true}));
+ addEventListener('blur',release);document.addEventListener('mouseout',e=>{if(!e.relatedTarget)release()});
+ /* défilement : la lumière bascule selon la vitesse, le décor du héros fait une légère parallaxe */
+ let ly=scrollY,sr=0;
+ addEventListener('scroll',()=>{if(!rich())return;box=cur?null:box;if(!sr)sr=requestAnimationFrame(()=>{sr=0;const y=scrollY,dy=y-ly;ly=y;if(!tilt.on&&!cur)aim(REST[0]+Math.max(-.4,Math.min(.4,dy*.02)),REST[1]+Math.max(-.6,Math.min(.6,dy*.035)));
+  const d=document.querySelector('section.on .hero:not(.hasimg) .deco');if(d)d.style.transform=y<520?`translate3d(0,${(y*.22).toFixed(1)}px,0)`:''})},{passive:true});
+ /* inclinaison du téléphone (sur iPhone : autorisation demandée par le réglage) */
+ const tilt={on:false,b:null,g:null,
+  h(e){if(e.beta==null||!rich())return;if(tilt.b==null){tilt.b=e.beta;tilt.g=e.gamma}tilt.b+=(e.beta-tilt.b)*.005;tilt.g+=(e.gamma-tilt.g)*.005;
+   const x=REST[0]+(e.gamma-tilt.g)/24,y=REST[1]+(e.beta-tilt.b)/30;if(Math.abs(x-tx)+Math.abs(y-ty)>.012)aim(x,y,true)},
+  start(){if(tilt.on)return;tilt.on=true;tilt.b=null;addEventListener('deviceorientation',tilt.h,{passive:true})},
+  stop(){if(!tilt.on)return;tilt.on=false;removeEventListener('deviceorientation',tilt.h);rest()}};
+ const needPerm=()=>typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function';
+ const tiltUI=()=>{const b=document.getElementById('fxTilt');if(!b)return;b.checked=!!store.get('fxtilt',0);const w=b.closest('.fxrow');if(w)w.hidden=typeof DeviceOrientationEvent==='undefined'||!('ontouchstart' in window||navigator.maxTouchPoints>0)};
+ const ask=()=>DeviceOrientationEvent.requestPermission().then(s=>s==='granted').catch(()=>false);
+ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#fxTilt');if(!b)return;
+  if(!b.checked){store.set('fxtilt',0);tilt.stop();return}
+  if(needPerm())ask().then(ok=>{if(ok){store.set('fxtilt',1);tilt.start();toast('Les reflets suivent maintenant ton téléphone')}else{b.checked=false;store.set('fxtilt',0);toast('Sans autorisation, les reflets suivent ton doigt')}});
+  else{store.set('fxtilt',1);tilt.start()}});
+ const initTilt=()=>{if(!store.get('fxtilt',0)||!rich())return;tilt.start();
+  if(needPerm()){let got=false;const f=()=>{got=true;removeEventListener('deviceorientation',f)};addEventListener('deviceorientation',f);
+   setTimeout(()=>{if(got)return;removeEventListener('deviceorientation',f);const once=()=>{removeEventListener('touchend',once);ask()};addEventListener('touchend',once,{passive:true})},1500)}};
+ /* entrée d'un onglet ou d'un sous-onglet : liseré lumineux autour de l'élément principal */
+ let main=null,swT=0;
+ const enter=()=>{if(!rich())return;const s=document.querySelector('section[data-v].on');if(!s)return;
+  let m=s.dataset.v==='accueil'?s.querySelector('.hero:not(.hasimg)'):null;
+  if(!m)m=[...s.querySelectorAll(':scope>.card,:scope>.pane.on>.card')].find(c=>c.offsetHeight>48&&getComputedStyle(c).display!=='none');
+  if(main&&main!==m)main.classList.remove('fx-sweep');main=m;if(!m)return;m.classList.remove('fx-sweep');void m.offsetWidth;m.classList.add('fx-sweep');clearTimeout(swT);swT=setTimeout(()=>m.classList.remove('fx-sweep'),2400)};
+ const mo=new MutationObserver(ms=>{for(const m of ms){const t=m.target;if(t.classList&&t.classList.contains('on')&&!(m.oldValue||'').split(' ').includes('on')&&(t.matches('section[data-v]')||t.matches('section.on .pane'))){requestAnimationFrame(enter);return}}});
+ const mainEl=document.querySelector('main');if(mainEl)mo.observe(mainEl,{attributes:true,attributeFilter:['class'],attributeOldValue:true,subtree:true});
+ /* transitions d'onglet : View Transitions si disponible (Safari 18+, Chrome), sinon fondu existant */
+ const VI={accueil:0,sommeil:.5,sport:1,scan:2,cuisine:3,suivi:4,coach:5,moi:6};
+ const nav=fn=>{const o=document.querySelector('section[data-v].on'),ov=o&&o.dataset.v,nv=(location.hash.slice(1)||'accueil').split('?')[0];
+  if(!rich()||!document.startViewTransition||document.hidden||!ov||ov===nv||document.querySelector('#ov.on,#sheet.on'))return fn();
+  R.dataset.vt=(VI[nv]??0)>=(VI[ov]??0)?'f':'b';
+  try{const t=document.startViewTransition(()=>{try{fn()}catch(e){console.error(e)}});t.ready.catch(()=>{});t.finished.catch(()=>{}).then(()=>{delete R.dataset.vt})}catch(e){delete R.dataset.vt;fn()}};
+ /* décors du thème Océan */
+ const bubbles=(n,x0,x1,y)=>{let s='';const r=rnd(5);for(let i=0;i<n;i++)s+=`<circle class="fx-bub" style="animation-delay:-${(r()*7).toFixed(1)}s;animation-duration:${(5+r()*4).toFixed(1)}s" cx="${(x0+r()*(x1-x0)).toFixed(0)}" cy="${y}" r="${(2+r()*3).toFixed(1)}" fill="none" stroke="#fff" stroke-width="1.4" opacity=".8"/>`;return s};
+ const kelp=(x,h,c,d)=>`<path class="fx-kelp" style="animation-delay:-${d}s;animation-duration:${4+d}s" d="M${x} 300 C${x-8} ${300-h*.3} ${x+10} ${300-h*.55} ${x} ${300-h*.75} S${x+6} ${300-h*.95} ${x+2} ${300-h}" stroke="${c}" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+ const fish=(y,d,s)=>`<g class="fx-fish" style="animation-delay:-${d}s"><g transform="translate(420 ${y}) scale(${s})" fill="#0b6f84" opacity=".32"><path d="M0 0q12-8 24 0q-12 8-24 0z"/><path d="M23 0l9-6v12z"/><path d="M34 -14q8-5 16 0q-8 5-16 0z M49 -14l6-4v8z"/></g></g>`;
+ const deco={ocean:()=>`<div class="cauw"><i class="cau"></i><i class="cau b"></i></div><svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice">
+  <g class="fx-ray"><polygon points="60,0 110,0 220,300 140,300" fill="#fff" opacity=".22"/><polygon points="170,0 196,0 300,300 262,300" fill="#fff" opacity=".16"/><polygon points="290,0 330,0 400,230 400,300 372,300" fill="#fff" opacity=".14"/></g>
+  <path d="M0 14 Q50 4 100 14 T200 14 T300 14 T400 14 V0 H0Z" fill="#fff" opacity=".35"/>
+  ${fish(120,0,1)}${fish(176,17,.8)}
+  <ellipse cx="330" cy="282" rx="46" ry="20" fill="#2f8fa6" opacity=".45"/><ellipse cx="62" cy="286" rx="34" ry="14" fill="#2f8fa6" opacity=".4"/>
+  ${kelp(22,96,'#1f8a68',0)}${kelp(40,70,'#2fa57a',1.3)}${kelp(372,104,'#1f8a68',.7)}${kelp(354,74,'#38b585',2.1)}${kelp(388,60,'#2fa57a',1.6)}
+  <path d="M300 286V258M300 268L287 252M300 263L314 246M287 252l-4-10M314 246l6-10M300 258l-2-12" stroke="#ff8f7a" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M0 272 Q100 254 200 268 T400 262 V300 H0Z" fill="#f2e0ae"/><path d="M0 287 Q120 276 240 289 T400 283 V300 H0Z" fill="#e7cf92"/>
+  ${bubbles(7,20,60,262)}${bubbles(6,330,390,258)}</svg>`};
+ const amb={ocean:()=>{const r=rnd(3);let h='<div class="cauw"><i class="cau"></i></div>';for(let i=0;i<9;i++){const s=(6+r()*10).toFixed(0);h+=`<i class="ob" style="left:${(r()*100).toFixed(1)}%;width:${s}px;height:${s}px;animation-duration:${(16+r()*14).toFixed(1)}s;animation-delay:-${(r()*30).toFixed(1)}s"></i>`}return h}};
+ /* réglages : changement de thème ou de niveau d'animation */
+ const sync=()=>{const k=R.dataset.skin;needTex(k);if(!rich()){if(cur)release();tilt.stop();const d=document.querySelector('.hero .deco');if(d)d.style.transform=''}else if(store.get('fxtilt',0))tilt.start();tiltUI()};
+ new MutationObserver(sync).observe(R,{attributes:true,attributeFilter:['data-fx','data-skin']});
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(tmr);tmr=0;if(tilt.on)removeEventListener('deviceorientation',tilt.h)}else if(tilt.on){tilt.b=null;addEventListener('deviceorientation',tilt.h,{passive:true})}});
+ setTimeout(()=>{sync();initTilt();enter()},0);setTimeout(()=>{needTex('foret');needTex('ocean')},1500);
+ return {nav,deco,amb:k=>amb[k]?amb[k]():'',rich};
+})();
+/* === /ag_theme === */
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -3850,7 +4151,7 @@ const APP_URL=/github\.io$/.test(location.host)?location.origin+location.pathnam
 let qrp=null;const loadQR=()=>qrp||(qrp=new Promise((ok,ko)=>{if(window.qrcode)return ok(window.qrcode);const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';sc.onload=()=>ok(window.qrcode);sc.onerror=()=>{qrp=null;ko()};document.head.appendChild(sc)}));
 async function openSheet(html){$('sheetIn').innerHTML='<div class="grab"></div>'+html;$('sheet').classList.add('on')}
 $('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')$('sheet').classList.remove('on')});
-window.addEventListener('hashchange',route);
+window.addEventListener('hashchange',()=>FXE.nav(route));
 
 $('provs').innerHTML=AI.order.map((p,i)=>`<div style="margin-top:14px"><div class="row sb"><b>${i+1}. ${esc(PROV[p].nom)}</b><a class="vid" style="min-height:38px;font-size:13px" href="${PROV[p].page}" target="_blank" rel="noopener">Créer ma clé</a></div><div class="mute">${esc(PROV[p].aide)}</div><input data-key="${p}" type="password" autocomplete="off" placeholder="Colle ta clé ${esc(PROV[p].nom)}" aria-label="Clé ${esc(PROV[p].nom)}"></div>`).join('');
 document.querySelectorAll('[data-key]').forEach(i=>i.value=AI.keys[i.dataset.key]||'');$('iaEng').value=AI.engine;
@@ -3871,7 +4172,8 @@ const SKINS=[
  {k:'foretnuit',n:'Forêt · nuit',pv:'linear-gradient(180deg,#0a1630,#1c4a5c)',d:['#9be36f','#ffe27a','#7fc8ff'],tc:'#0c1a24'},
  {k:'pets',n:'Chats & chiens',pv:'linear-gradient(160deg,#ffd9e0,#fff3c9)',d:['#ff7a93','#f0a92b','#4fb4d8'],tc:'#fff5ef'},
  {k:'clair',n:'Clair',pv:'linear-gradient(150deg,#ff6a3d,#c8263f)',d:['#fff','#ffd166','#9fd3ff'],tc:'#f4f2f6'},
- {k:'nuit',n:'Nuit',pv:'linear-gradient(150deg,#2a2233,#0d0a11)',d:['#f0412f','#ffc23d','#2f8cf0'],tc:'#0d0a11'}];
+ {k:'nuit',n:'Nuit',pv:'linear-gradient(150deg,#2a2233,#0d0a11)',d:['#f0412f','#ffc23d','#2f8cf0'],tc:'#0d0a11'},
+ {k:'ocean',n:'Océan',pv:'linear-gradient(180deg,#b5eef2,#3fb3cc 70%,#1d8fb0)',d:['#ff7f6b','#f0a92b','#1d82c6'],tc:'#c9eef2'}];
 const PAW='<svg viewBox="0 0 24 24" width="100%" height="100%" fill="currentColor"><ellipse cx="12" cy="16" rx="5" ry="4.2"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.5" r="2.2"/><circle cx="14" cy="6.5" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>';
 function forestSVG(N){
   const c=N?{h1:'#1d4a4a',h2:'#173d3c',h3:'#11302f',tr:'#0e2523',crown:['#163a33','#1b463c','#12312c'],hl:'#2a5d4d',gr:'#0f2a25',gr2:'#143430',cloud:'#d7e6ff',co:.18}
@@ -3898,7 +4200,7 @@ function forestSVG(N){
     for(let i=0;i<6;i++){const x=(i*67)%380+10,y=170+((i*31)%90);g+=`<g class="fx-fly" style="animation-delay:-${i}s"><circle cx="${x}" cy="${y}" r="5" fill="url(#fg0)" opacity=".8"/></g>`}}
   return g+'</svg>';
 }
-function heroDeco(k){
+function heroDeco(k){if(FXE.deco[k])return FXE.deco[k]();
   if(k==='synth')return '<div class="stars"></div><div class="sun"></div><div class="grid3d"></div>';
   if(k==='foret'||k==='foretnuit')return forestSVG(k==='foretnuit');
   if(k==='pets'){let h='';[[8,10,22,-20],[80,8,18,25],[60,30,14,10],[20,46,16,-35],[88,44,20,15]].forEach(([x,y,s,r])=>h+=`<span class="paw" style="left:${x}%;top:${y}%;width:${s}px;height:${s}px;transform:rotate(${r}deg)">${PAW}</span>`);
@@ -3911,7 +4213,7 @@ function applySkin(k,save){setTimeout(()=>{try{renderFoldSums()}catch(e){}},0);
   const sk=SKINS.find(x=>x.k===k)||SKINS[0];document.documentElement.dataset.skin=sk.k;if(save)store.set('skin',sk.k);
   const d=$('heroDeco');if(d)d.innerHTML=heroDeco(sk.k);if(typeof ambiance==='function')ambiance(sk.k);
   document.querySelector('meta[name=theme-color]').setAttribute('content',sk.tc);
-  document.querySelector('link[rel=apple-touch-icon]').setAttribute('href',{synth:'icon.png',foret:'icon-foret.png',foretnuit:'icon-foretnuit.png',pets:'icon-pets.png',clair:'icon-clair.png',nuit:'icon-clair.png'}[sk.k]);
+  document.querySelector('link[rel=apple-touch-icon]').setAttribute('href',{synth:'icon.png',foret:'icon-foret.png',foretnuit:'icon-foretnuit.png',pets:'icon-pets.png',clair:'icon-clair.png',nuit:'icon-clair.png'}[sk.k]||'icon.png');
   if($('skins'))$('skins').innerHTML=SKINS.map(x=>`<button class="skin${x.k===sk.k?' on':''}" data-act="skin" data-k="${x.k}" aria-pressed="${x.k===sk.k}"><span class="pv" style="background:${x.pv}">${x.d.map((c,i)=>`<i style="left:${10+i*24}px;background:${c};box-shadow:0 0 0 2px rgba(255,255,255,.6)"></i>`).join('')}</span><b>${esc(x.n)}</b></button>`).join('');
 }
 let HEROURL='';
@@ -3921,7 +4223,7 @@ function applyHero(){const h=document.querySelector('.hero'),img=HEROURL;if(!h)r
 $('heroIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const{canvas}=await shrink(f,1000);const url=canvas.toDataURL('image/jpeg',.8);try{await phOp('readwrite',st=>st.put({id:'__hero',data:url,d:today()}))}catch(e2){store.set('heroimg',url);if(store.get('heroimg','')!==url){toast('Mémoire pleine : image non enregistrée');return}}HEROURL=url;applyHero();toast('Image d\'accueil enregistrée')}catch(err){toast('Image illisible')}e.target.value=''});
 function applySize(z,save){setTimeout(()=>{try{renderFoldSums()}catch(e){}},0);document.documentElement.dataset.size=z;if(save)store.set('taille',z);document.querySelectorAll('#sizeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.size===z))}
 $('sizeSeg').addEventListener('click',e=>{const b=e.target.closest('[data-size]');if(b)applySize(b.dataset.size,true)});
-applySkin(store.get('skin','synth'));applySize(store.get('taille','m'));setTimeout(loadHero,0);
+{let k0=store.get('skin','');if(!k0){k0=BOOT_LS.coach_profil||BOOT_LS.coach_onb?'synth':'clair';if(BOOT_LS.coach_profil||BOOT_LS.coach_onb)store.set('skin',k0)}applySkin(k0)}applySize(store.get('taille','m'));setTimeout(loadHero,0);
 const domNoise=ms=>ms.every(m=>{for(const n of m.addedNodes)if(n.nodeType===1&&!(m.target.closest&&m.target.closest('[data-anim]')))return false;return true});
 new MutationObserver(ms=>{if(!domNoise(ms))ANIM.mount()}).observe(document.body,{childList:true,subtree:true});ANIM.mount();
 $('envie').value=store.get('envie','');$('envie').addEventListener('input',()=>store.set('envie',$('envie').value));
@@ -3972,9 +4274,9 @@ function ambiance(k){
   if(k==='pets')for(let i=0;i<6;i++)h+=`<i class="ht" style="left:${r(i+3,100)}%;animation-duration:${16+r(i+2,12)}s;animation-delay:-${r(i+8,24)}s"></i>`;
   if(k==='clair')h='<i class="bl" style="left:-20vw;top:-10vh;background:#ff6a3d"></i><i class="bl" style="right:-25vw;top:40vh;background:#ffc23d;animation-delay:-7s"></i>';
   if(k==='nuit')for(let i=0;i<40;i++)h+=`<i class="st" style="left:${r(i+1,100)}%;top:${r(i+11,100)}%;animation-delay:-${r(i+3,3)}s;opacity:${.2+r(i+5,.6)}"></i>`;
-  a.innerHTML=h;
+  a.innerHTML=h+FXE.amb(k);
 }
-function burst(x,y){const k=document.documentElement.dataset.skin,C={synth:['#ff2a9d','#22e4ff','#ffcf5c'],foret:['#7ccf5c','#e0b13c','#3f8a3a'],foretnuit:['#fff6b8','#ffe27a','#b9f294'],pets:['#ff7a93','#ffc857','#6cc3e0'],clair:['#f0412f','#ffc23d','#2f8cf0'],nuit:['#ffffff','#ffc23d','#f0412f']}[k]||['#fff'],cls={synth:'ln',foret:'lf',foretnuit:'',pets:'hr',clair:'',nuit:'st'}[k]||'';
+function burst(x,y){const k=document.documentElement.dataset.skin,C={synth:['#ff2a9d','#22e4ff','#ffcf5c'],foret:['#7ccf5c','#e0b13c','#3f8a3a'],foretnuit:['#fff6b8','#ffe27a','#b9f294'],pets:['#ff7a93','#ffc857','#6cc3e0'],clair:['#f0412f','#ffc23d','#2f8cf0'],nuit:['#ffffff','#ffc23d','#f0412f'],ocean:['#ffffff','#bdf3f7','#ff9a85']}[k]||['#fff'],cls={synth:'ln',foret:'lf',foretnuit:'',pets:'hr',clair:'',nuit:'st',ocean:'bb'}[k]||'';
   for(let i=0;i<9;i++){const a=i/9*Math.PI*2+Math.random()*.4,r=34+Math.random()*30,d=document.createElement('i');d.className='pt '+cls;d.style.cssText=`left:${x}px;top:${y}px;background:${C[i%C.length]};--dx:${Math.cos(a)*r}px;--dy:${Math.sin(a)*r-(k==='foret'?-10:10)}px;--rt:${Math.round(Math.random()*360)}deg;${k==='foretnuit'||k==='synth'?`box-shadow:0 0 8px ${C[i%C.length]}`:''}`;document.body.appendChild(d);setTimeout(()=>d.remove(),800)}}
 function applyFx(v,save){document.documentElement.dataset.fx=v;if(save)store.set('fx',v);document.querySelectorAll('#fxSeg button').forEach(b=>b.classList.toggle('on',b.dataset.fx===v))}
 $('fxSeg').addEventListener('click',e=>{const b=e.target.closest('[data-fx]');if(b)applyFx(b.dataset.fx,true)});
@@ -4269,10 +4571,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-74';
+const APP_VERSION='2026.11.26-75';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.26-75','Des thèmes vivants','Chaque thème a maintenant sa matière et sa lumière : néon en Synthwave, papier et taches de soleil en Forêt, lucioles la nuit, peluche cousue pour Chats & chiens. Les reflets suivent ton doigt. Nouveau thème Océan ! Réglage « Animations : riches, sobres ou aucune ».','moi',''],
  ['2026.11.26-74','Plus simple à prendre en main','L\'accueil te propose 5 grosses actions : noter un repas, scanner un produit, faire ta séance, quoi cuisiner, te peser. Les rubriques ont des noms plus clairs et les longues explications se cachent derrière un « ? ».','accueil',''],
  ['2026.11.26-74','Un nouveau style, plus soigné','Nouvelle police pour les titres et les chiffres, vraies icônes dessinées, boutons plus sobres, typographie française propre.','accueil',''],
  ['2026.11.26-73','Recettes d\'origine du monde entier','Pour la cuisine du monde, le coach va chercher la vraie recette sur des sites étrangers (TheMealDB, Wikibooks), la traduit entièrement en français avec les mesures converties, et te dit d\'où elle vient.','cuisine','monde'],
