@@ -157,6 +157,30 @@ html.idle #amb *,html.idle #amb::before,html.idle #amb::after,html.idle .hero *,
 .restb{display:block;margin:4px 0 0 auto;font-size:12px;font-weight:700;padding:3px 8px;min-height:28px;border-radius:99px;background:var(--fill)!important;background-image:none!important;color:var(--tintink)!important;border:1px solid var(--line);box-shadow:none!important;animation:none!important;text-transform:none;letter-spacing:0}.mealok{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
 .calg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.calw span{text-align:center;font-size:12px;font-weight:800;color:var(--mute);padding:4px 0}.calh{margin-bottom:6px;flex-wrap:nowrap}.calh b{text-transform:capitalize;font-size:18px}.calh button{min-width:44px;font-size:22px}
 .cday{aspect-ratio:1/1.1;min-height:44px;border:0;border-radius:12px;background:var(--fill)!important;background-image:none!important;color:var(--ink)!important;box-shadow:none!important;animation:none!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:2px;font:inherit;font-weight:700;text-transform:none;letter-spacing:0}.cday em{display:flex;gap:2px;font-style:normal;min-height:6px}.cd{width:6px;height:6px;border-radius:50%;display:block}.cd.r{background:var(--yel)}.cd.s{background:var(--red)}.cd.w{background:var(--blue)}.cd.n{background:#8b7cf6}.cd.t{background:var(--mute)}.cday.tod{box-shadow:inset 0 0 0 2px var(--red)!important}.cday.sel{background:var(--red)!important;color:#fff!important}.cday.sel .cd{box-shadow:0 0 0 1px #fff}.cday.fut{opacity:.35}.cals{margin-top:14px}.cals h3{margin:0 0 6px}
+.dsub{display:block;font-size:12.5px;line-height:1.3;margin-top:2px}
+.start .stp{transition:transform .15s,box-shadow .2s,background .2s}.start .stp:not(.ok):active{transform:scale(.98)}.start .stp i{width:30px!important;height:30px!important;border:0!important;background:color-mix(in srgb,var(--red) 16%,var(--card))!important;color:var(--tintink)!important;font-size:15px!important}.start .stp:not(.ok){box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--red) 30%,transparent)!important}.start .stp span{flex:1;min-width:0}.stpgo{flex:none;width:20px;height:20px;color:var(--red);opacity:.8}.start .stp.ok{opacity:.55;min-height:46px!important;padding-block:6px!important}.start .stp.ok i{background:var(--green)!important;color:#fff!important}.start .stp.ok b{text-decoration:line-through;text-decoration-thickness:1.5px}
+/* ===== validations premium : cases à cocher + bouton "c'est fait" ===== */
+input[type=checkbox]{-webkit-appearance:none!important;appearance:none!important;flex:none;width:28px!important;height:28px!important;min-height:0!important;margin:0;padding:0;border-radius:9px!important;border:2px solid color-mix(in srgb,var(--red) 45%,var(--line))!important;background:var(--card)!important;display:inline-grid;place-content:center;cursor:pointer;transition:background .18s,border-color .18s,transform .12s,box-shadow .18s;box-shadow:inset 0 1px 2px rgba(0,0,0,.08)}
+input[type=checkbox]::before{content:"";width:15px;height:15px;background:#fff;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m4.5 12.5 5 5L20 7' fill='none' stroke='black' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m4.5 12.5 5 5L20 7' fill='none' stroke='black' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;transform:scale(0);transition:transform .22s cubic-bezier(.3,1.6,.5,1)}
+input[type=checkbox]:checked{background:var(--green,#22a06b)!important;border-color:transparent!important;box-shadow:0 2px 8px color-mix(in srgb,var(--green,#22a06b) 40%,transparent)}
+input[type=checkbox]:checked::before{transform:scale(1)}
+input[type=checkbox]:active{transform:scale(.88)}
+input[type=checkbox]:focus-visible{outline:3px solid color-mix(in srgb,var(--red) 50%,transparent);outline-offset:2px}
+.shop label{padding:9px 10px!important;margin:0 -10px!important;border-radius:12px;cursor:pointer;transition:background .2s}
+.shop label:has(input:checked){background:color-mix(in srgb,var(--green,#22a06b) 9%,transparent)}
+.shop input:checked+span{text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--green,#22a06b) 70%,transparent);text-decoration-thickness:2px;color:var(--mute)}
+.kdone{display:flex!important;align-items:center;justify-content:center;gap:12px;font-weight:800}.kbar .kdone{justify-content:flex-start;padding-inline:14px 16px}.kbar .kdone>span:not(.kck){flex:1;text-align:center}
+.kck{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.22);box-shadow:inset 0 0 0 2px rgba(255,255,255,.75);transition:transform .2s,background .2s}
+.kck svg.i{width:18px;height:18px;stroke:#fff;stroke-width:3.2;opacity:.9}
+.kdone:active .kck{transform:scale(.85);background:rgba(255,255,255,.4)}
+.kdone.did .kck{background:var(--green,#22a06b);box-shadow:none;animation:kpop .35s cubic-bezier(.3,1.6,.5,1)}
+@keyframes kpop{0%{transform:scale(.6)}100%{transform:scale(1)}}
+.kbar{flex-wrap:nowrap!important;gap:10px!important}
+.kbar .kprev{flex:0 0 56px;min-height:58px;padding:0;display:grid;place-items:center}
+.kbar .kprev[data-v="-1"]{opacity:.45}
+.kbar .kdone{flex:1;min-height:58px;font-size:18px}
+@media (prefers-reduced-motion:reduce){input[type=checkbox]::before,.kck{transition:none}.kdone.did .kck{animation:none}}
+.bkrem .bkico{font-size:28px;line-height:1}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -626,7 +650,7 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
 .tip.alerte{border-left-color:#e0533d!important}
 .wobj button:last-child:nth-child(odd){grid-column:1/-1}
 .animMini{overflow:hidden}.animMini svg{transform:scale(1.6);transform-origin:50% 75%}
-.chip.p::before,.seg button.on::before{content:"✓ ";font-weight:900}
+button.chip.p::before,.seg button.on::before{content:"✓ ";font-weight:900}
 .seg button.on::before{content:""}
 
 /* ===== Adaptation à tous les écrans ===== */
@@ -827,6 +851,7 @@ html.ovon .hero *,html.ovon .hero::before,.hero.off *,.hero.off::before,.hero.of
  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
  <symbol id="i-add" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></symbol>
  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+ <symbol id="i-tick" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c3 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-7 1 2 2 3 3 3 0-3-1-5 0-7z"/></symbol>
  <symbol id="i-scale" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="4"/><path d="M9 9a3 3 0 0 1 6 0M12 9l1.5-1.5"/></symbol>
  <symbol id="i-body" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.5"/><path d="M6 9h12M12 9v6M12 15l-3 6M12 15l3 6"/></symbol>
@@ -2252,12 +2277,27 @@ function zoomWorld(z){WZ=z;document.querySelectorAll('#wZone button').forEach(b=
   const f=t=>{const k=D?Math.min(1,(t-t0)/D):1,e=1-Math.pow(1-k,3),v=from.map((x,i)=>x+(to[i]-x)*e);sv.setAttribute('viewBox',v.join(' '));WVB=v;if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
 function pickCountry(a,n){const c=CUIS[a];WSEL={a,n:c?c[1]:n,z:c?c[0]:''};document.querySelectorAll('#wMap path').forEach(p=>p.classList.toggle('sel',p.dataset.a===a&&!!a));
   $('wSel').value=CUIS[a]?a:'';renderCountry();setTimeout(()=>$('wCountry').scrollIntoView({behavior:'smooth',block:'start'}),80)}
+function dishCard(o,q){return `<div class="dish"><div class="dph" data-act="cook" data-r="${reg(o)}" role="button" aria-label="Recette : ${esc(o.nom)}" data-q="${esc(q||o.wiki||o.nom_local||o.nom)}" data-pays="${esc(o.pays||'')}"><span class="mute">Photo…</span></div><b>${esc(o.nom)}</b>${o.type||o.desc?`<small class="mute dsub">${esc([o.type,o.desc].filter(Boolean).join(' · '))}</small>`:''}<div class="row" style="gap:6px;margin-top:auto;padding-top:6px;flex-wrap:nowrap"><button class="sm" data-act="cook" data-r="${reg(o)}">La recette</button><button class="ghost sm" data-act="favR" data-short="1" data-r="${reg(o)}" aria-label="Ajouter aux favoris" style="flex:0 0 44px">${FAVR.some(f=>f.data&&f.data.nom===o.nom)?'★':'☆'}</button></div></div>`}
+let WSEEN=store.get('wseen',{});if(!WSEEN||typeof WSEEN!=='object'||Array.isArray(WSEEN))WSEEN={};let WDISC={};
+async function wDiscover(force){if(!WSEL)return;const key=WSEL.a||WSEL.n,box=$('wDisc');if(!box)return;
+  if(!force&&WDISC[key]){box.innerHTML=WDISC[key];loadPhotos(box);return}
+  box.innerHTML='<div class="busy">Le chef cherche d\'autres plats de ce pays<span class="dots3"><i></i><i></i><i></i></span></div>';
+  const c=CUIS[WSEL.a],ex=[...(c?c[3].split(';'):[]),...arr(WSEEN[key])].slice(-40);
+  try{const r=await askJSON(`Tu es un chef qui connaît parfaitement la cuisine du monde. Propose 4 plats traditionnels de ce pays : ${WSEL.n}, vraiment différents les uns des autres (par exemple une entrée ou une soupe, un plat, un dessert ou une pâtisserie, un en-cas de rue), connus et appréciés là-bas, et réalisables en France.
+N'en propose AUCUN de cette liste : ${ex.join(', ')||'aucune'}.
+Format JSON : {"plats":[{"nom":"nom en français","nom_local":"nom dans la langue du pays","wiki":"titre exact de l'article Wikipédia français s'il existe","type":"entrée|plat|dessert|en-cas|soupe|boisson","description":"1 phrase qui donne envie"}]}`,{modelTier:'quick',cache:false});
+    const L=arr(r.plats).filter(x=>x&&x.nom&&!ex.some(e=>cqNorm(e)===cqNorm(x.nom))).slice(0,4);if(!L.length)throw{code:'busy'};
+    WSEEN[key]=[...arr(WSEEN[key]),...L.map(x=>x.nom)].slice(-40);store.set('wseen',WSEEN);
+    const html=`<div class="dgrid">${L.map(x=>dishCard({nom:x.nom,nom_local:x.nom_local,wiki:x.wiki,pays:WSEL.n,description:x.description||('Plat traditionnel ('+WSEL.n+')'),type:x.type,desc:x.description})).join('')}</div>`;
+    if($('wDisc')===box&&WSEL&&(WSEL.a||WSEL.n)===key){WDISC[key]=html;box.innerHTML=html;loadPhotos(box)}}
+  catch(e){if($('wDisc')===box)box.innerHTML=`<p class="mute">${esc(errMsg(e))}</p><button class="ghost sm" data-act="wMore">Réessayer</button>`}}
 function renderCountry(){const el=$('wCountry');if(!WSEL){el.innerHTML='';return}const c=CUIS[WSEL.a],dishes=c?c[3].split(';'):[];
   el.innerHTML=`<div class="card wc"><div class="row" style="gap:12px;align-items:center;flex-wrap:nowrap"><span class="wflag" aria-hidden="true">${flag(WSEL.a)}</span><div style="min-width:0"><h2 style="margin:0">${esc(WSEL.n)}</h2><p class="sub" style="margin:2px 0 0">${esc(c?c[2]:'Laisse-moi te faire découvrir sa cuisine.')}</p></div></div>
-  ${dishes.length?`<h3 style="margin-top:16px">Les grands classiques</h3><div class="dgrid">${dishes.map(d=>{const o={nom:d.replace(/ \(.*\)$/,''),pays:WSEL.n,description:'Plat traditionnel ('+WSEL.n+')'};return `<div class="dish"><div class="dph" data-act="cook" data-r="${reg(o)}" role="button" aria-label="Recette : ${esc(o.nom)}" data-q="${esc(d)}" data-pays="${esc(WSEL.n)}"><span class="mute">Photo…</span></div><b>${esc(o.nom)}</b><div class="row" style="gap:6px;margin-top:auto;padding-top:6px;flex-wrap:nowrap"><button class="sm" data-act="cook" data-r="${reg(o)}">La recette</button><button class="ghost sm" data-act="favR" data-short="1" data-r="${reg(o)}" aria-label="Ajouter aux favoris" style="flex:0 0 44px">${FAVR.some(f=>f.data&&f.data.nom===o.nom)?'★':'☆'}</button></div></div>`}).join('')}</div>`:''}
+  ${dishes.length?`<h3 style="margin-top:16px">Les grands classiques</h3><div class="dgrid">${dishes.map(d=>dishCard({nom:d.replace(/ \(.*\)$/,''),pays:WSEL.n,description:'Plat traditionnel ('+WSEL.n+')'},d)).join('')}</div>`:''}
+  <div class="row sb" style="margin-top:18px;flex-wrap:nowrap;gap:8px"><h3 style="margin:0">${dishes.length?'À découvrir aussi':'Ses spécialités'}</h3><button class="alt sm" data-act="wMore">↻ D'autres plats</button></div><div id="wDisc"></div>
   <div class="row" style="margin-top:14px"><button data-act="wIdeas" style="flex:1">Idées pour moi</button><button class="alt" data-act="wMenu" style="flex:1">Menu du pays</button></div>
   <div id="wRes"></div></div>`;
-  loadPhotos(el)}
+  loadPhotos(el);wDiscover(false)}
 /* photos : Wikipédia (vraies photos, libres) puis illustration IA en secours */
 let PHC=store.get('phc2',{});
 async function wikiPhoto(q,key){key=key||q;if(PHC[q]!==undefined)return PHC[q];
@@ -2275,6 +2315,7 @@ function loadPhotos(root){root.querySelectorAll('.dph:not([data-done])').forEach
 const WRECF=`{"recettes":[{"nom":"nom en français","nom_local":"nom dans la langue du pays","wiki":"titre de l'article Wikipédia français du plat d'origine","description":"1 phrase qui donne envie","moment":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"temps_min":30,"cout":"€","ingredients":["quantité + ingrédient (avec un équivalent facile à trouver en France si besoin)"],"adaptation":"ce qui a été adapté pour lui, en 1 phrase (vide si rien)"}]}`;
 function wRecHTML(m){const q=m.wiki||m.nom_local||m.nom;return `<div class="dph wide" data-q="${esc(q)}" data-pays="${esc(WSEL?WSEL.n:'')}"><span class="mute">Photo…</span></div>`+mealHTML({...m,pays:WSEL?WSEL.n:'',description:[m.description,m.nom_local&&m.nom_local!==m.nom?'('+m.nom_local+')':'',m.adaptation?'Adapté pour toi : '+m.adaptation:''].filter(Boolean).join(' ')},`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button>`)}
 const WORLD_ACTS={
+  wMore(){wDiscover(true)},
   wZone(b){zoomWorld(b.dataset.z)},
   wRand(){const ks=Object.keys(CUIS).filter(k=>!WSEL||k!==WSEL.a),a=ks[Math.floor(Math.random()*ks.length)];zoomWorld(CUIS[a][0]);pickCountry(a)},
   wIdeas(b){if(!WSEL)return;const dis=dislike('monde');run(b,$('wRes'),'Le chef voyage jusqu\'en '+WSEL.n,async()=>{
@@ -2296,7 +2337,8 @@ function initWorld(){const sel=$('wSel');const byZ={};Object.entries(CUIS).forEa
   sel.innerHTML='<option value="">Choisis un pays…</option>'+Object.entries(byZ).map(([z,l])=>`<optgroup label="${ZN[z]}">${l.sort((x,y)=>x[1].localeCompare(y[1],'fr')).map(([a,n])=>`<option value="${a}">${flag(a)} ${esc(n)}</option>`).join('')}</optgroup>`).join('');
   sel.onchange=()=>{const v=sel.value;if(!v)return;if(CUIS[v]){zoomWorld(CUIS[v][0]);pickCountry(v)}else{WSEL={a:'',n:v};renderCountry()}};
   $('wMap').addEventListener('click',e=>{const p=e.target.closest('path[data-n]');if(p)pickCountry(p.dataset.a,p.dataset.n)});
-  const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();renderWorldMap()}});io.observe($('wMap'))}
+  const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();renderWorldMap()}});io.observe($('wMap'));
+  if(!WSEL){const ks=Object.keys(CUIS),a=ks[(dayIndex()*13+5)%ks.length];WSEL={a,n:CUIS[a][1],z:CUIS[a][0]};sel.value=a;renderCountry();const c2=$('wCountry').querySelector('.wc');if(c2)c2.insertAdjacentHTML('afterbegin','<div class="chip p" style="margin-bottom:10px">Le pays du jour</div>')}}
 
 /* ===================== REPÈRES CUISINE (ADEME, ANSES, USDA) ===================== */
 const SAISON=[
@@ -2650,7 +2692,7 @@ function renderS(){
   <div><label for="sR">Répétitions</label><input id="sR" type="number" inputmode="numeric" value="${esc(x.sets.length?x.sets[x.sets.length-1].reps:g.reps)}"></div></div>
   <label style="margin-top:4px">Combien de répétitions tu aurais encore pu faire ?</label>
   <div class="qual" id="rirRow" style="margin-bottom:12px">${['0','1','2','3','4+'].map((v,i)=>`<button data-act="rir" data-v="${i}" class="${(S.rir??2)===i?'on':''}">${v}</button>`).join('')}</div>
-  <button data-act="doneSet" style="width:100%;min-height:60px;font-size:20px">Série ${x.sets.length+1} faite</button>
+  <button class="kdone" data-act="doneSet" style="width:100%;min-height:60px;font-size:19px"><span class="kck" aria-hidden="true"><svg class="i"><use href="#i-tick"/></svg></span><span>Série ${x.sets.length+1} faite</span></button>
   <div class="row" style="margin:12px 0"><button class="ghost sm" data-act="prevEx" ${S.i?'':'disabled'}>Exercice précédent</button><button class="ghost sm" data-act="nextEx">Exercice suivant</button>${x.machine?'':yt(x.nom+' exécution technique','Vidéo')}</div>
   <details><summary style="cursor:pointer;font-weight:700;padding:8px 0">Muscles et technique</summary>${bodyMap(p,s,x.nom)}<p>${esc(x.execution||'')}</p><p class="mute">${esc(x.conseil||'')}</p></details>
   <details id="wu"><summary style="cursor:pointer;font-weight:700;padding:8px 0">Échauffement et disques</summary><div id="wuIn"></div></details>`;
@@ -2828,7 +2870,7 @@ function renderK(){
   ${e.erreur?`<div class="tip alerte"><b>Attention :</b> ${esc(e.erreur)}</div>`:''}
   <div class="row" style="margin:14px 0">${num(e.duree_min)>0?`<button class="alt sm" data-act="kTimer">Lancer ${esc(e.duree_min)} min</button>`:''}<button class="ghost sm" data-act="kRead">Lire à voix haute</button></div>
   <details style="margin-bottom:14px"><summary style="cursor:pointer;font-weight:700;padding:8px 0">Rappel des ingrédients</summary>${list((d.ingredients||[]).map(g=>(g.quantite?g.quantite+' ':'')+g.nom+(g.preparation?' ('+g.preparation+')':'')))}</details>
-  <div class="row"><button class="ghost" data-act="kGo" data-v="${K.i-1}" style="flex:1">Précédente</button><button data-act="kGo" data-v="${K.i+1}" style="flex:2">${K.i===et.length-1?'Terminer':'Étape suivante'}</button></div>`;
+  <div class="row kbar"><button class="ghost kprev" data-act="kGo" data-v="${K.i-1}" aria-label="Étape précédente"><svg class="i" aria-hidden="true" style="transform:scale(-1,1)"><use href="#i-chev"/></svg></button><button class="kdone" data-act="kGo" data-v="${K.i+1}" data-done="1"><span class="kck" aria-hidden="true"><svg class="i"><use href="#i-tick"/></svg></span><span>${K.i===et.length-1?'Terminé !':'C\'est fait'}</span><svg class="i" aria-hidden="true" style="margin-left:auto;opacity:.85"><use href="#i-chev"/></svg></button></div>`;
   ktimer();
 }
 document.addEventListener('change',e=>{if(!K)return;if(e.target.id==='kN'){K.n=+e.target.value;store.set('portions',K.n);loadCook()}const c=e.target.dataset&&e.target.dataset.kck;if(c!=null)K.ck[c]=e.target.checked});
@@ -2929,7 +2971,7 @@ Propose UN exercice de remplacement pour « ${x.nom} » qui travaille les mêmes
   pasSave(){const v=Math.round(num($('pasIn').value));if(!v){$('pasIn').focus();return}PAS[today()]=v;const k=Object.keys(PAS).sort().slice(-60);PAS=Object.fromEntries(k.map(x=>[x,PAS[x]]));store.set('pas',PAS);renderPas();if(v>=stepGoal()){toast('Objectif de pas atteint !');confetti()}},
   deloadDone(){store.set('deloadAt',today());renderHist()},
   rir(b){S.rir=+b.dataset.v;document.querySelectorAll('#rirRow button').forEach(x=>x.classList.toggle('on',x===b))},
-  doneSet(){const x=S.ex[S.i],kg=num($('sKg').value),rp=num($('sR').value),prev=bestE1(x.nom),cur=Math.max(0,...x.sets.map(s=>num(s.kg)*(1+num(s.reps)/30)));
+  doneSet(b){if(b&&b.classList&&b.classList.contains('kdone')&&!b.classList.contains('did')){b.classList.add('did');try{navigator.vibrate&&navigator.vibrate(18)}catch(e){}setTimeout(()=>{if(b.isConnected)A.doneSet()},260);return}const x=S.ex[S.i],kg=num($('sKg').value),rp=num($('sR').value),prev=bestE1(x.nom),cur=Math.max(0,...x.sets.map(s=>num(s.kg)*(1+num(s.reps)/30)));
     if(kg&&prev&&kg*(1+rp/30)>Math.max(prev,cur)+0.01){toast('Nouveau record sur '+x.nom+' !');confetti();store.set('nbrec',store.get('nbrec',0)+1);say('Nouveau record !')}
     x.sets.push({kg:$('sKg').value,reps:$('sR').value,rir:S.rir??2});
     if(x.sets.length>=(+x.series||3)){if(S.i<S.ex.length-1){S.i++;S.rest=Date.now()+(+x.repos_s||90)*1000}else return endS()}else S.rest=Date.now()+(+x.repos_s||90)*1000;renderS()},
@@ -3016,7 +3058,7 @@ Format JSON : {"aliments":[{"nom":"","ciqual":"","grammes":0,"kcal":0,"proteines
   cook(b){openCook(REG[+b.dataset.r])},
   kClose(b){if(K&&K.tEnd>Date.now()&&!(b&&b.dataset.sure)){if(b){b.dataset.sure=1;b.textContent='Arrêter le minuteur ?';setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent='Fermer'}},3500)}return}clearInterval(ktick);stopVoice();K=null;ov.classList.remove('on');document.body.style.overflow='';try{WL&&WL.release()}catch(e){}refreshFood()},
   kRetry(){loadCook()},
-  kGo(b){stopVoice();K.i=Math.max(-1,+b.dataset.v);renderK();ov.scrollTo(0,0)},
+  kGo(b){if(b.dataset.done&&!b.classList.contains('did')){b.classList.add('did');try{navigator.vibrate&&navigator.vibrate(18)}catch(e){}const k=K;setTimeout(()=>{if(K===k&&b.isConnected)A.kGo(b)},280);return}stopVoice();K.i=Math.max(-1,+b.dataset.v);renderK();ov.scrollTo(0,0)},
   kTimer(){const e=K.d.etapes[K.i];K.tEnd=Date.now()+num(e.duree_min)*60000;K.tName=e.titre;ktimer();toast('Minuteur lancé : '+e.duree_min+' min')},
   stopVoice(){stopVoice()},
   kRead(){if(window.speechSynthesis&&speechSynthesis.speaking){stopVoice();return}const e=K.d.etapes[K.i];speak(`Étape ${K.i+1}. ${e.titre}. ${e.detail} ${e.repere?'C\'est bon quand : '+e.repere:''}`)},
@@ -3096,6 +3138,7 @@ Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une
   drinkStop(){try{localStorage.removeItem('coach_boire')}catch(e){}renderDrink()},
   phDel(b){if(!b.dataset.sure){b.dataset.sure=1;const o=b.textContent;b.textContent='Sûr ?';setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent=o}},3000);return}phOp('readwrite',st=>st.delete(b.dataset.id)).then(renderPhotos)},
   bkSave(b){bkSave(b)},
+  bkLater(){store.set('bkSnooze',dkey(Date.now()+14*864e5));renderHome()},
   santeT(b){const k=b.dataset.k,L=P.santeL||[];P.santeL=L.includes(k)?L.filter(x=>x!==k):[...L,k];saveP();renderSante();calc();[renderDrink,renderDaily,()=>{if(lazyPane.L&&!lazyPane.L.fiches)renderFiches()}].forEach(f=>{try{f()}catch(e){}})},
   genProgHome(b){openPane('sport','programme');setTimeout(()=>$('genProg').click(),80)},
   genMenuHome(b){openPane('cuisine','menus');setTimeout(()=>$('genMenu').click(),80)},
@@ -3368,7 +3411,9 @@ function renderHome(){
     [Object.values(J).some(a=>Array.isArray(a)&&a.length),'Noter un repas','photo, aliment ou en toutes lettres','goPane','cuisine','journal'],
     [STANDALONE(),'Installer l\'app','sur l\'écran d\'accueil','installHelp','',''],
     [!!store.get('lastbk',''),'Faire une sauvegarde','pour ne rien perdre','goPane','suivi','donnees']],done=steps.filter(x=>x[0]).length;
-  $('homeStart').innerHTML=store.get('startHide',0)||done===steps.length?'':`<div class="card start"><div class="row sb"><b>Bien démarrer</b><span class="mute">${done}/${steps.length}</span></div><div class="rbar" style="height:8px;margin:8px 0 6px"><i style="width:${Math.round(done/steps.length*100)}%"></i></div>${steps.map(([ok,t,sub,act,v,pn])=>`<button class="stp${ok?' ok':''}" data-act="${act}" data-v="${v}" data-p="${pn}" ${ok?'disabled':''}><i>${ok?'✓':''}</i><span><b>${t}</b><small>${sub}</small></span></button>`).join('')}<button class="ghost sm" data-act="startHide" style="margin-top:8px">Masquer</button></div>`}
+  $('homeStart').innerHTML=store.get('startHide',0)||done===steps.length?'':`<div class="card start"><div class="row sb"><b>Bien démarrer</b><span class="mute">${done}/${steps.length}</span></div><div class="rbar" style="height:8px;margin:8px 0 6px"><i style="width:${Math.round(done/steps.length*100)}%"></i></div>${steps.map(([ok,t,sub,act,v,pn],i)=>`<button class="stp${ok?' ok':''}" data-act="${act}" data-v="${v}" data-p="${pn}" ${ok?'disabled':''}><i>${ok?'✓':i+1}</i><span><b>${t}</b><small>${ok?'Fait':sub}</small></span>${ok?'':'<svg class="i stpgo" aria-hidden="true"><use href="#i-chev"/></svg>'}</button>`).join('')}<button class="ghost sm" data-act="startHide" style="margin-top:8px">Masquer</button></div>`}
+  if(!$('homeStart').innerHTML){const lb=store.get('lastbk',''),sn=store.get('bkSnooze',''),nd=Object.keys(J).length+LOG.length;
+    if(nd>=6&&(!lb||(Date.now()-new Date(lb+'T12:00'))/864e5>30)&&(!sn||sn<=today()))$('homeStart').innerHTML=`<div class="card bkrem"><div class="row" style="gap:12px;flex-wrap:nowrap;align-items:flex-start"><span class="bkico" aria-hidden="true">🛡️</span><div><b>Tes données sont bien gardées</b><p class="mute" style="margin:4px 0 0">Elles restent sur ce téléphone et passent toutes les mises à jour. Pour être tranquille même si tu changes de téléphone, range une copie dans Fichiers (10 secondes).</p></div></div><div class="row" style="margin-top:10px"><button class="sm" data-act="bkSave" style="flex:1">Ranger une copie</button><button class="ghost sm" data-act="bkLater">Plus tard</button></div></div>`}
   /* séance du jour */
   const wk=LOG.filter(l=>l.d>=weekKey()).length,doneToday=LOG.some(l=>l.d===today());
   if(PR&&arr(PR.jours).length){let li=-1;for(let i=LOG.length-1;i>=0&&li<0;i--)li=PR.jours.findIndex(j=>j.nom===LOG[i].nom);const j=PR.jours[(li+1)%PR.jours.length];
@@ -3822,10 +3867,12 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-70';
+const APP_VERSION='2026.11.26-71';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.26-71','Encore plus de plats du monde','Chaque pays propose de nouveaux plats à chaque visite, et le bouton « ↻ D\'autres plats » en montre encore. Un pays du jour t\'attend à l\'ouverture.','cuisine','monde'],
+ ['2026.11.26-71','Tes données sont protégées','Repas, pesées, séances, calendrier : tout est gardé à chaque mise à jour, avec une sauvegarde automatique juste avant.','suivi','donnees'],
  ['2026.11.26-41','Bon produit ?','Photo du paquet, du tableau ou des ingrédients : note sur 100, additifs, avis du coach.','scan','produit'],
  ['2026.11.26-41','Tour du monde','Carte du monde et grands classiques de chaque pays, en photo.','cuisine','monde'],
  ['2026.11.26-41','Séances prêtes et 60 exercices','Maison, express, à deux, étirements : guidées, même sans internet.','sport','prets'],
