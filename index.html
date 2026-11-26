@@ -714,7 +714,9 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
   </div>
 
   <div class="pane" data-pane="sante2">
+    <div class="card" id="phaseCard" style="display:none"></div>
     <div class="card" id="drinkCard"></div>
+    <div class="card tipwarn" id="alertCard" style="display:none"></div>
     <div class="card"><h2>Mon pilulier</h2><p class="sub">Coche chaque prise. Les noms et horaires se règlent selon ta prescription.</p><div id="pills"></div>
       <details style="margin-top:10px"><summary class="mute" style="cursor:pointer;padding:8px 0">Modifier mon pilulier</summary><div id="pillEdit"></div>
       <div class="row" style="margin-top:8px"><input id="pillN" placeholder="Nom (ex. Vitamine D)" style="flex:1;margin:0;min-width:140px"><input id="pillH" type="time" value="09:00" style="width:auto;margin:0"><button class="sm" data-act="pillAdd">Ajouter</button></div></details>
@@ -887,6 +889,7 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
     <p class="sub">Tout s'adapte à ce que tu coches : repas, portions, séances.</p>
     <div class="chips" id="santeChips"></div>
     <div id="opBox" style="display:none;margin-top:8px"><label for="p-opdate">Date de l'opération</label><input id="p-opdate" type="date"></div>
+    <div style="margin-top:10px"><label for="p-equipe">Téléphone de mon équipe médicale (facultatif)</label><input id="p-equipe" type="tel" inputmode="tel" placeholder="ex. 01 23 45 67 89"></div>
     <div style="margin-top:10px"><label for="p-medic">Traitements ou médicaments (facultatif)</label><textarea id="p-medic" class="grow" rows="1" placeholder="ex. metformine, vitamines B12, fer"></textarea></div>
     <div style="margin-top:10px"><label for="p-sante">Autre chose à savoir</label><textarea id="p-sante" class="grow" rows="1" placeholder="ex. anémie, migraines, ne supporte pas la viande rouge"></textarea></div>
     <h3 style="margin-top:18px">Objectifs donnés par ton médecin ou ta diététicienne</h3>
@@ -1166,7 +1169,8 @@ const fr=n=>Number(n).toLocaleString('fr-FR',{maximumFractionDigits:1});
 const frd=k=>k.split('-').reverse().slice(0,2).join('/');
 const num=v=>{const n=parseFloat(v);return isNaN(n)?0:n};
 const YT='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
-const yt=(q,t='Voir la vidéo')=>`<a class="vid" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}" target="_blank" rel="noopener">${YT}${esc(t)}</a>`;
+const ytq=q=>/fran[cç]ais/i.test(q)?q:q+' en français';
+const yt=(q,t='Voir la vidéo')=>`<a class="vid" href="https://www.youtube.com/results?search_query=${encodeURIComponent(ytq(q))}&hl=fr&gl=FR" target="_blank" rel="noopener">${YT}${esc(t)}</a>`;
 
 /* ---------- IA ---------- */
 let sp=null;
@@ -1233,55 +1237,78 @@ async function freeLLM(msgs,{images=[],json=false}={}){
   if(images.length&&last.code==='novision')throw{code:'noimg'};
   throw rl?{code:'rate_limited'}:last;
 }
-/* IA sans clé : Pollinations (anonyme), puis Puter.js, puis clés facultatives, puis Claude */
+/* IA sans clé (vérifié nov. 2026) :
+   - texte : Pollinations ancienne API (sans clé, sans vision), puis LLM7 (sans compte), puis Puter, puis clés facultatives
+   - photos : Puter (vision, compte Puter gratuit demandé une fois), puis clés facultatives (Gemini…) */
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const POLL=['https://text.pollinations.ai/openai','https://gen.pollinations.ai/v1/chat/completions'];
+const tmo=ms=>{try{return AbortSignal.timeout(ms)}catch(e){return undefined}};
 async function oaiMsgs(msgs,images){const imgs=await Promise.all(images.map(async b=>`data:${b.type||'image/jpeg'};base64,${await b64(b)}`));
   return msgs.map((x,i)=>({role:x.role,content:i===msgs.length-1&&imgs.length?[{type:'text',text:x.content},...imgs.map(u=>({type:'image_url',image_url:{url:u}}))]:x.content}))}
-async function pollinations(msgs,images,json){
-  const messages=await oaiMsgs(msgs,images);let last={code:'http'};
-  for(const url of POLL){
+const SYS={role:'system',content:'Tu es EdilganSuperCoach, coach sportif, nutrition et bien-être. Tu réponds toujours en français, en tutoyant, de façon claire et bienveillante.'};
+async function oaiCall(url,model,messages,json,headers={}){
+  let r;try{r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json',...headers},signal:tmo(60000),body:JSON.stringify({model,messages,...(json?{response_format:{type:'json_object'}}:{})})})}catch(e){throw{code:'net'}}
+  if(r.status===429)throw{code:'rate_limited'};if(!r.ok)throw{code:'http',status:r.status};
+  const ct=r.headers.get('content-type')||'';let txt;
+  if(ct.includes('json')){const d=await r.json();txt=d.choices?.[0]?.message?.content||''}else txt=await r.text();
+  if(!txt||!txt.trim())throw{code:'empty'};return txt;
+}
+async function pollinations(msgs,json){
+  const messages=[SYS,...msgs.map(m=>({role:m.role,content:m.content}))];let last={code:'http'};
+  for(const model of ['openai-fast','openai']){
     for(let t=0;t<2;t++){
-      let r;try{r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'openai',messages,private:true,referrer:'mon-coach',...(json?{response_format:{type:'json_object'}}:{})})})}catch(e){last={code:'net'};break}
-      if(r.status===429){last={code:'rate_limited'};await sleep(16000);continue}
-      if(!r.ok){last={code:'http'};break}
-      const ct=r.headers.get('content-type')||'';let txt;
-      if(ct.includes('json')){const d=await r.json();txt=d.choices?.[0]?.message?.content||''}else txt=await r.text();
-      if(txt&&txt.trim()){AI.last='Pollinations';return txt}last={code:'empty'};break;
+      try{const txt=await oaiCall('https://text.pollinations.ai/openai',model,messages,json);AI.last='Pollinations';return txt}
+      catch(e){last=e;if(e.code==='rate_limited'){await sleep(8000);continue}if(e.code==='http'&&json){json=false;continue}break}
     }
+    if(last.code==='net')break;
   }
   throw last;
 }
+let L7M=null;
+async function llm7(msgs,json){
+  if(!L7M){try{const r=await fetch('https://api.llm7.io/v1/models',{headers:{Authorization:'Bearer unused'},signal:tmo(15000)});const d=await r.json();const ids=(d.data||d||[]).map(m=>m.id||m).filter(Boolean);L7M=ids.find(i=>/gpt-4\.1-mini|gpt-4o-mini|mini/i.test(i))||ids.find(i=>/gpt|mistral|llama|qwen/i.test(i))||ids[0]||'gpt-4.1-nano'}catch(e){L7M='gpt-4.1-nano'}}
+  const txt=await oaiCall('https://api.llm7.io/v1/chat/completions',L7M,[SYS,...msgs.map(m=>({role:m.role,content:m.content}))],false,{Authorization:'Bearer unused'});AI.last='LLM7';return txt;
+}
 let puterP=null;
 const loadPuter=()=>puterP||(puterP=new Promise((ok,ko)=>{if(window.puter)return ok(window.puter);const sc=document.createElement('script');sc.src='https://js.puter.com/v2/';sc.onload=()=>ok(window.puter);sc.onerror=()=>{puterP=null;ko({code:'net'})};document.head.appendChild(sc)}));
+const ptxt=r=>{if(typeof r==='string')return r;const c=r?.message?.content;if(Array.isArray(c))return c.map(x=>x.text||'').join('');return c||r?.text||(r&&r.toString&&r.toString()!=='[object Object]'?r.toString():'')};
 async function puterAI(msgs,images){
-  const P=await loadPuter();let r;
-  if(images.length){const u=`data:${images[0].type||'image/jpeg'};base64,${await b64(images[0])}`;r=await P.ai.chat(msgs[msgs.length-1].content,u)}
-  else r=await P.ai.chat(msgs.map(m=>({role:m.role,content:m.content})));
-  const t=typeof r==='string'?r:(r?.message?.content?.[0]?.text||r?.message?.content||r?.text||String(r||''));
-  if(!String(t).trim())throw{code:'empty'};AI.last='Puter';return String(t);
+  const Pz=await loadPuter();let r;
+  try{
+    if(images.length){const u=`data:${images[0].type||'image/jpeg'};base64,${await b64(images[0])}`;
+      try{r=await Pz.ai.chat(msgs[msgs.length-1].content,u)}catch(e){r=await Pz.ai.chat(await oaiMsgs(msgs,images))}}
+    else r=await Pz.ai.chat([SYS,...msgs.map(m=>({role:m.role,content:m.content}))]);
+  }catch(e){throw{code:images.length?'vision':'busy'}}
+  const t=ptxt(r);if(!String(t).trim())throw{code:'empty'};AI.last='Puter';return String(t);
 }
 async function anyAI(msgs,{images=[],json=false}={}){
   if(AI.engine==='claude'){const s=await getSample();if(s)return null;}
-  const tries=[()=>pollinations(msgs,images,json),()=>puterAI(msgs,images)];
+  const tries=images.length?[()=>puterAI(msgs,images)]:[()=>pollinations(msgs,json),()=>llm7(msgs,json),()=>puterAI(msgs,[])];
   if(active().length)tries.push(()=>freeLLM(msgs,{images,json:false}));
   let last={code:'busy'};
   for(const f of tries){try{const t=await f();if(json)return parseJSON(t);return t}catch(e){last=e;console.log('IA échec',e)}}
+  if(images.length)throw{code:'vision'};
   throw last.code==='net'?{code:'net'}:{code:'busy'};
 }
 async function aiAvail(){return true}
 async function preferClaude(){const s=await getSample();return!!s&&(AI.engine==='claude'||!/github\.io$|localhost/.test(location.host))}
 const parseJSON=t=>{const a=t.indexOf('{'),b=t.lastIndexOf('}');return JSON.parse(t.slice(a,b+1))};
+/* Garde-fou langue : toute réponse doit être en français */
+function looksEnglish(t){t=' '+String(t||'').toLowerCase().replace(/[^a-zàâäçéèêëîïôöùûüœ' ]+/g,' ')+' ';const n=w=>(t.match(new RegExp(' '+w+' ','g'))||[]).length;
+  const en=['the','and','with','your','you','of','to','is','for','this','are','minutes','reps'].reduce((a,w)=>a+n(w),0),frc=['le','la','les','et','de','des','du','avec','ton','tu','pour','est','une','un'].reduce((a,w)=>a+n(w),0)+(t.match(/[àâçéèêîôùû]/g)||[]).length*.5;
+  return en>6&&en>frc*1.2}
+const FR='\n\nIMPORTANT : réponds exclusivement en français (tous les textes, noms d\'exercices et de plats inclus).';
 async function askJSON(prompt,opts={}){
-  const full=prompt+'\n\nRéponds uniquement avec un objet JSON valide, en français, sans texte autour.';
-  if(!(await preferClaude())){const r=await anyAI([{role:'user',content:full}],{images:opts.images||[],json:true});if(r!==null)return r}
+  const full=prompt+FR+'\nRéponds uniquement avec un objet JSON valide, sans texte autour.';
+  if(!(await preferClaude())){let r=await anyAI([{role:'user',content:full}],{images:opts.images||[],json:true});
+    if(r!==null&&looksEnglish(JSON.stringify(r))){try{const r2=await anyAI([{role:'user',content:'Tu as répondu en anglais. Recommence ENTIÈREMENT EN FRANÇAIS.\n'+full}],{images:opts.images||[],json:true});if(r2)r=r2}catch(e){}}
+    if(r!==null)return r}
   const s=await getSample();if(!s)throw{code:'unavailable'};
   if(opts.images&&s.limits){try{const l=await s.limits();if(l&&l.images===false)throw{code:'noimg'}}catch(e){if(e.code)throw e}}
   if(typeof s.json==='function'){try{return await s.json(full,opts)}catch(e){if(e&&['not_granted','rate_limited','unavailable'].includes(e.code))throw e}}
   const r=await s(full,opts);return parseJSON(r.text);
 }
 async function askChat(conv,onText){
-  if(!(await preferClaude())){const t=await anyAI(conv);if(t!==null){onText(t);return t}}
+  if(!(await preferClaude())){let t=await anyAI(conv);if(t!==null&&looksEnglish(t)){try{const c2=conv.slice();c2[c2.length-1]={role:'user',content:c2[c2.length-1].content+FR};const t2=await anyAI(c2);if(t2)t=t2}catch(e){}}if(t!==null){onText(t);return t}}
   const s=await getSample();if(!s)throw{code:'unavailable'};
   const r=await s(conv,{cache:false,onText:({text})=>onText(text)});return r.text;
 }
@@ -1289,6 +1316,7 @@ const errMsg=e=>e&&e.code==='not_granted'?"Il faut autoriser la page à utiliser
  :e&&e.code==='rate_limited'?"Limite atteinte (l'offre gratuite autorise un certain nombre de demandes par minute et par jour). Réessaie un peu plus tard."
  :e&&e.code==='unavailable'?"Pas d'IA branchée : ajoute au moins une clé gratuite dans l'onglet Moi, tout en bas."
  :e&&e.code==='badkey'?"Les clés IA sont refusées : vérifie-les dans l'onglet Moi."
+ :e&&e.code==='vision'?"Pour lire les photos, l'app utilise l'IA gratuite Puter : une fenêtre te propose de créer un compte gratuit la première fois. Accepte-la puis réessaie. Sinon, écris ce que tu vois en texte."
  :e&&e.code==='busy'?"L'IA gratuite est très demandée en ce moment. Réessaie dans une minute."
  :e&&e.code==='net'?"Pas de connexion internet. Vérifie ton réseau et réessaie."
  :e&&e.code==='noimg'?"L'analyse de photos n'est pas disponible sur ce compte pour l'instant."
@@ -1321,7 +1349,7 @@ const chips=(p,s=[])=>'<div class="chips">'+p.map(k=>`<span class="chip p">${esc
 const list=(a,tag='ul')=>Array.isArray(a)&&a.length?`<${tag}>${a.map(x=>`<li>${esc(x)}</li>`).join('')}</${tag}>`:'';
 
 /* ---------- Profil & calculs ---------- */
-const PF=['opdate','medic','sante','kcalmed','protmed','eaumed','repas','nom','sexe','age','taille','poids','obj','niv','jours','lieu','duree','regime','budget','notes'];
+const PF=['equipe','opdate','medic','sante','kcalmed','protmed','eaumed','repas','nom','sexe','age','taille','poids','obj','niv','jours','lieu','duree','regime','budget','notes'];
 let P=store.get('profil',{});P.zones=P.zones||[];P.kadj=P.kadj||0;
 const saveP=()=>store.set('profil',P);
 /* Listes avec « Autre… » : on peut toujours écrire sa propre valeur */
@@ -1345,9 +1373,9 @@ function metrics(){
   const j=num(P.jours)||3,act=j<=1?1.2:j<=3?1.375:j<=5?1.55:1.725;
   const adj=({muscle:250,perte:-450,seche:-300,forme:0,endurance:0}[P.obj||'muscle']??(/perd|maigr|sèche|seche|kg/i.test(P.obj||'')?-350:0))+(+P.kadj||0);
   const kcal=bmr?Math.round(Math.max(bmr*act+adj,bmr*1.1,P.sexe==='F'?1300:1500)/10)*10:null;
-  const prot=Math.round(w*(['muscle','perte','seche'].includes(P.obj||'muscle')?1.8:1.4));
+  const wref=imc>=30?25*(t/100)**2:w,prot=Math.round(wref*(['muscle','perte','seche'].includes(P.obj||'muscle')?1.6:1.2));
   let K=kcal,Pr=prot,E=P.sexe==='F'?7:8;
-  if(BARIA())Pr=Math.max(60,Math.round(w*1.0)),K=null,E=6;
+  if(BARIA())Pr=Math.max(60,Math.round(1.2*25*(t/100)**2)),K=null,E=6;
   if(num(P.kcalmed))K=Math.round(num(P.kcalmed));if(num(P.protmed))Pr=Math.round(num(P.protmed));if(num(P.eaumed))E=Math.round(num(P.eaumed)*4);
   return{imc,bmr,kcal:K,prot:Pr,eau:E,min:18.5*(t/100)**2,max:24.9*(t/100)**2};
 }
@@ -1384,7 +1412,7 @@ const RULES={
 function santeTxt(){
   const L=P.santeL||[];if(!L.length&&!P.medic&&!P.sante)return'';
   let t='\nSANTÉ (priorité absolue, à respecter dans chaque réponse) : '+L.map(k=>SANTE[k]).join(', ')+'.';
-  if(BARIA()&&P.opdate){const wk=Math.floor((Date.now()-new Date(P.opdate))/6048e5);if(wk>=0)t+=` Opération il y a ${wk} semaine${wk>1?'s':''} (${wk<2?'phase liquide probable':wk<4?'phase mixée probable':wk<8?'phase texture molle probable':'alimentation solide adaptée'}).`}
+  if(BARIA()&&P.opdate){const ph=sleevePhase();if(ph)t+=` Opération il y a ${ph.days} jours : phase « ${ph.n} » (${ph.ex}). Volume par prise : ${ph.vol}. Respecte strictement cette texture.`}
   const R=[];if(BARIA())R.push(RULES.baria);if(L.includes('diab1')||L.includes('diab2'))R.push(RULES.diab);L.forEach(k=>{if(RULES[k])R.push(RULES[k])});
   if(R.length)t+='\nRègles à appliquer : '+R.join(' ');
   if(P.medic)t+='\nTraitements : '+P.medic+'.';if(P.sante)t+='\nAutre : '+P.sante+'.';
@@ -1448,6 +1476,11 @@ function drawW(){
 }
 function bilan(){
   const el=$('bilan'),now=Date.now(),r=W.filter(p=>now-new Date(p.d)<=21*864e5);
+  if(BARIA()){const E=ema();if(E.length>4){const lo=Math.min(...E.map(p=>p.e)),first=E[0].e,last=E[E.length-1].e;if(first-lo>5&&last>lo+0.1*(first-lo)){el.innerHTML=`<div class="tip" style="border-left-color:var(--yel)"><b>Reprise de poids :</b> ta tendance est remontée de ${fr((last-lo).toFixed(1))} kg depuis ton point le plus bas. C'est fréquent ; parles-en à ton équipe, et misons sur les protéines, la musculation 2 fois par semaine et zéro calorie liquide.</div>`;return}}
+    el.innerHTML='<p class="mute">Pendant la perte de poids après la sleeve, l\'app ne calcule pas de déficit : tes objectifs sont les protéines, l\'eau et les phases de ton équipe.</p>';return}
+  const ad=adaptiveTDEE();
+  if(ad&&ad.est){const m=metrics()||{},def={perte:.2,seche:.15,muscle:-.07,forme:0,endurance:0}[P.obj]??(/perd|kg|maigr/i.test(P.obj||'')?.2:0),floor=P.sexe==='F'?1200:1500,tgt=Math.max(floor,Math.round(ad.est*(1-def)/10)*10),cur=m.kcal||0,diff=Math.max(-150,Math.min(150,tgt-cur));
+    el.innerHTML=`<div class="tip"><b>Ta dépense réelle :</b> environ ${ad.est.toLocaleString('fr-FR')} kcal par jour, calculée sur ${ad.valid} jours de repas notés et tes pesées (tu manges en moyenne ${ad.intake.toLocaleString('fr-FR')} kcal). ${Math.abs(diff)>=50?`Je te propose d'ajuster ton objectif de ${diff>0?'+':''}${diff} kcal.<div class="row" style="margin-top:8px"><button class="sm" data-act="kadj" data-v="${diff}">Appliquer</button></div>`:'Ton objectif est bien réglé.'}${P.kadj?`<div class="mute">Ajustement actuel : ${P.kadj>0?'+':''}${P.kadj} kcal · <a href="#moi" data-act="kreset" style="color:inherit">remettre à zéro</a></div>`:''}</div>`;return}
   if(r.length<3){el.innerHTML='';return}
   const span=(new Date(r[r.length-1].d)-new Date(r[0].d))/864e5;if(span<10){el.innerHTML='<p class="mute">Bilan automatique dès 10 jours de pesées.</p>';return}
   const half=Math.floor(r.length/2),avg=a=>a.reduce((s,p)=>s+p.w,0)/a.length;
@@ -1657,7 +1690,7 @@ function mount(root){(root||document).querySelectorAll('[data-anim]:not([data-on
 return{S,pick,html,mount,frame};
 })();
 
-const IMGQ=q=>`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(q)}`;
+const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
 const exHTML=(x,id)=>{const p=clean(x.muscles),s=clean(x.muscles_secondaires),ak=ANIM.pick(x.nom,x.machine,x.anim);return `<details class="ex"><summary>${ANIM.html(ak,'animMini')}<span class="exn">${esc(x.nom)}<span class="dose">${esc(x.series)} × ${esc(x.reps)}</span>${x.machine?`<small class="mute">${esc(x.machine)}</small>`:''}</span></summary>
@@ -1796,6 +1829,8 @@ function renderDay(){
   $('gW').textContent=`${w} / ${te} verres`;
   $('glass').innerHTML=Array.from({length:Math.max(te,w)},(_,i)=>`<button class="${i<w?'f':''}" data-act="eau" data-v="${i+1}" aria-label="${i+1} verres">💧</button>`).join('').replace(/💧/g,'<svg class="i" style="width:18px;height:18px" viewBox="0 0 24 24"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/></svg>');
   const tip=$('gTip'),h=new Date().getHours();
+  const floor=P.sexe==='F'?1200:1500,low=[1,2,3,4,5,6,7].filter(i=>{const a=J[dkey(Date.now()-i*864e5)];if(!a||!a.length)return false;return a.reduce((x,e)=>x+num(e.kcal),0)<floor*.85}).length;
+  if(!BARIA()&&low>=3){tip.style.display='block';tip.innerHTML='Ces derniers jours, tu as souvent mangé moins que ce dont ton corps a besoin. Manger suffisamment protège tes muscles et ton énergie. Si c\'est difficile en ce moment, tu peux en parler à ton médecin, ou à la ligne Anorexie Boulimie Info Écoute : 09 69 325 900.';return}
   if(dayJ().length&&h>=14&&tp-t.p>25){tip.style.display='block';tip.textContent=`Il te manque ${Math.round(tp-t.p)} g de protéines aujourd'hui : pense à un skyr, du poulet, des œufs ou du thon.`}
   else if(t.k>tk*1.1){tip.style.display='block';tip.textContent='Tu as dépassé ton objectif du jour. Pas de panique : c\'est la moyenne de la semaine qui compte.'}else tip.style.display='none';
   $('journal').innerHTML=dayJ().map((e,i)=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${e.p}&nbsp;g prot · ${e.g}&nbsp;g gluc · ${e.l}&nbsp;g lip</div></span><span class="v">${e.kcal} kcal</span><button class="x" data-act="fav" data-i="${i}" aria-label="Favori">☆</button><button class="x" data-act="delJ" data-i="${i}" aria-label="Supprimer">×</button></div>`).join('');
@@ -1815,7 +1850,7 @@ const mealHTML=(m,act='',type='recette')=>`<div class="meal"><div class="k">${es
  ${m.accords&&m.accords.length?`<div class="mute">Parfaite avec : ${esc(m.accords.join(', '))}</div>`:''}${m.conservation?`<div class="mute">Conservation : ${esc(m.conservation)}</div>`:''}
  <details><summary style="cursor:pointer;font-weight:700;padding:8px 0">Aperçu des ingrédients</summary>${list(m.ingredients)}<div class="row">${yt('recette '+m.nom,'Vidéo de la recette')}</div></details>
  <div class="row" style="margin-top:6px">${cookBtn(m)}${favBtn(m,type)}${act}</div></div>`;
-const DETF=`{"nom":"","portions":2,"temps_total_min":30,"difficulte":"facile|moyen|difficile","kcal_portion":0,"materiel":["ustensile précis (taille de poêle, casserole…)"],"ingredients":[{"quantite":"200 g","nom":"","preparation":"ex. émincé finement, à température ambiante"}],"mise_en_place":["tout ce qu'il faut préparer avant d'allumer le feu, dans l'ordre"],"etapes":[{"titre":"verbe court","detail":"4 à 6 phrases très concrètes : le geste exact, l'ustensile, la puissance du feu (doux/moyen/vif et repère 1 à 9 sur une plaque), la durée, quoi surveiller","duree_min":0,"astuce":"astuce de chef","repere":"comment savoir que c'est bon (couleur, odeur, texture, bruit)","erreur":"erreur fréquente et comment la rattraper"}],"dressage":"comment servir joliment","conservation":"","variantes":["…"]}`;
+const DETF=`{"nom":"","portions":2,"temps_total_min":30,"difficulte":"facile|moyen|difficile","kcal_portion":0,"materiel":["ustensile précis (taille de poêle, casserole…)"],"ingredients":[{"quantite":"200 g (≈ 1 paume)","nom":"","preparation":"ex. émincé finement, à température ambiante"}],"mise_en_place":["tout ce qu'il faut préparer avant d'allumer le feu, dans l'ordre"],"etapes":[{"titre":"verbe court","detail":"4 à 6 phrases très concrètes : le geste exact, l'ustensile, la puissance du feu (doux/moyen/vif et repère 1 à 9 sur une plaque), la durée, quoi surveiller","duree_min":0,"astuce":"astuce de chef","repere":"comment savoir que c'est bon (couleur, odeur, texture, bruit)","erreur":"erreur fréquente et comment la rattraper"}],"dressage":"comment servir joliment","conservation":"","variantes":["…"]}`;
 async function getDetail(o,n){
   o.det=o.det||{};if(o.det[n])return o.det[n];
   const base=`${o.nom}${o.moment?' ('+o.moment+')':''}${o.ingredients?'. Ingrédients prévus : '+(o.ingredients||[]).join(', '):''}${o.description?'. '+o.description:''}`;
@@ -1917,7 +1952,8 @@ function bub(role,t){const d=document.createElement('div');d.className='bub '+(r
 function renderChat(){$('msgs').innerHTML='';if(!CH.length)bub('assistant','Salut ! Dis-moi ce que tu veux travailler, ce qui te bloque ou ce que tu as mangé, je t\'aide.');CH.forEach(m=>bub(m.role,m.content))}
 async function send(){
   const t=$('ask').value.trim();if(!t)return;$('ask').value='';
-  CH.push({role:'user',content:t});bub('user',t);const out=bub('assistant','…');$('sendBtn').disabled=true;
+  CH.push({role:'user',content:t});bub('user',t);
+  if(/vomir|laxatif|me faire vomir|purge|je me d[ée]go[uû]te/i.test(t))bub('assistant','Je suis là pour t\'aider. Si la relation avec la nourriture est difficile en ce moment, tu n\'es pas seul(e) : ton médecin peut t\'aider, et la ligne Anorexie Boulimie Info Écoute répond au 09 69 325 900.');const out=bub('assistant','…');$('sendBtn').disabled=true;
   const sys=`Tu es « EdilganSuperCoach », coach sportif et nutrition bienveillant mais exigeant. Tu tutoies, tu réponds en français, de façon courte, concrète et motivante, sans markdown (pas d'astérisques ni de dièses), avec des listes à tirets si utile. Pour une douleur forte ou un problème médical, conseille de voir un médecin. ${profil(true)}`;
   let conv=CH.slice(-12);if(conv[0].role!=='user')conv=conv.slice(1);
   conv=conv.map((m,i)=>i===0?{role:'user',content:sys+'\n\nMessage : '+m.content}:m);
@@ -2142,7 +2178,8 @@ Format JSON : {"sauces":[{"nom":"","description":"1 phrase qui donne envie","kca
     $('sauces').innerHTML=(r.sauces||[]).map(x=>mealHTML(x,'','sauce')).join('')})},
   genFrigoMenu(b){const f=$('frigo').value.trim();if(!f){$('frigo').focus();return}run(b,$('frig'),'Composition du menu',async()=>{
     const r=await askJSON(`Tu es coach en nutrition sportive et cuisinier. ${profil()}
-Il a chez lui : ${f}. Compose le menu complet d'aujourd'hui (petit-déjeuner, déjeuner, collation, dîner) en utilisant au maximum ces ingrédients (sel, poivre, huile, épices de base supposés disponibles), en visant ses calories et protéines.
+Il a chez lui : ${f}. ${MENU_RULES()}
+Compose le menu complet d'aujourd'hui (petit-déjeuner, déjeuner, collation, dîner) en utilisant au maximum ces ingrédients (sel, poivre, huile, épices de base supposés disponibles), en visant ses calories et protéines.
 Format JSON : {"calories_total":0,"proteines_total_g":0,"repas":[{"moment":"","nom":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"temps_min":15,"utilise":["…"],"manque":["…"],"ingredients":["quantité + ingrédient"]}],"astuce":"1 phrase"}`,{modelTier:'default',cache:false});
     FRM=r;$('frig').innerHTML=`<p style="margin:14px 0 0"><b>${esc(r.calories_total)} kcal</b> · ${esc(r.proteines_total_g)} g de protéines</p>`+(r.repas||[]).map(m=>mealHTML(m,`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button>`)).join('')+
     `<div class="row"><button class="sm" data-act="frmToday">En faire mon menu du jour</button><button class="alt sm" data-act="frmFav">Ajouter ce menu aux favoris</button></div>`})},
@@ -2151,24 +2188,28 @@ Format JSON : {"calories_total":0,"proteines_total_g":0,"repas":[{"moment":"","n
   genMenu(b){const past=Object.entries(MENUS).sort().slice(-10).flatMap(([,m])=>(m.repas||[]).map(r=>r.nom));
     run(b,$('menu'),'Composition du menu',async()=>{
     const r=await askJSON(`Tu es coach en nutrition sportive. ${profil()}
+${MENU_RULES()}
 Propose le menu d'aujourd'hui (${new Date().toLocaleDateString('fr-FR',{weekday:'long',month:'long'})}) : petit-déjeuner, déjeuner, collation, dîner. Plats simples, de saison, faisables en semaine, variés et gourmands, adaptés au budget et à l'équipement.
 ${past.length?'Ne répète pas ces plats déjà proposés : '+past.join(' ; ')+'.':''}
 Format JSON : {"calories_total":0,"proteines_total_g":0,"repas":[${MEALF}],"astuce":"1 phrase"}`,{modelTier:'default',cache:false});
     MENUS[today()]=r;const keep=Object.keys(MENUS).sort().slice(-14);MENUS=Object.fromEntries(keep.map(k=>[k,MENUS[k]]));store.set('menus',MENUS);renderMenu()})},
   swapMeal(b){const i=+b.dataset.i,m=MENUS[today()].repas[i];run(b,null,'',async()=>{b.textContent='…';
     const r=await askJSON(`Tu es coach en nutrition. ${profil()}
+${MENU_RULES()}
 Remplace le plat « ${m.nom} » (${m.moment}) par un plat différent, à plus ou moins 10 % de ${m.kcal} kcal et ${m.proteines_g} g de protéines. Format JSON : ${MEALF}`,{modelTier:'quick',cache:false});
     r.moment=r.moment||m.moment;MENUS[today()].repas[i]=r;store.set('menus',MENUS);renderMenu()})},
   copyMenu(b){const d=MENUS[today()];copy((d.repas||[]).flatMap(r=>r.ingredients||[]).join('\n'),b)},
   genFrigo(b){const f=$('frigo').value.trim();if(!f){$('frigo').focus();return}run(b,$('frig'),'Recherche de recettes',async()=>{
     const r=await askJSON(`Tu es coach en nutrition sportive et cuisinier. ${profil()}
 Voici ce que l'utilisateur a chez lui : ${f}.
+${MENU_RULES()}
 Propose 3 recettes différentes pour le moment « ${$('fMoment').value} », en utilisant surtout ces ingrédients (sel, poivre, huile, épices de base supposés disponibles), adaptées à son objectif. Classe-les de celle qui utilise le plus ce qu'il a à celle qui en utilise le moins.
 Format JSON : {"recettes":[{"nom":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"temps_min":15,"utilise":["ingrédient du frigo"],"manque":["ingrédient manquant, vide si aucun"],"ingredients":["quantité + ingrédient"],"preparation":["étape"]}]}`,{modelTier:'default',cache:false});
     FR_R=r.recettes||[];$('frig').innerHTML=FR_R.map(m=>mealHTML(m,`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button>`)).join('')||'<p class="mute">Aucune idée trouvée, ajoute quelques ingrédients.</p>'})},
   genWeek(b){run(b,$('week'),'Préparation de ta semaine',async()=>{
     const f=$('frigo').value.trim();
     WEEK=await askJSON(`Tu es coach en nutrition sportive. ${profil()}
+${MENU_RULES()}
 Planifie 7 jours de repas (lundi à dimanche : petit-déjeuner, déjeuner, collation, dîner), variés, simples, adaptés au budget, en réutilisant intelligemment les ingrédients pour limiter le gaspillage et permettre du batch cooking.
 ${f?'Il a déjà chez lui : '+f+' — ne les mets pas dans la liste de courses.':''}
 Format JSON : {"jours":[{"jour":"Lundi","repas":[{"moment":"Déjeuner","nom":"","kcal":0}]}],"courses":[{"rayon":"Fruits et légumes","articles":["quantité + article"]}],"batch":["étape du dimanche, dans l'ordre, avec tâches en parallèle"],"batch_duree":"ex. 2 h"}
@@ -2189,7 +2230,7 @@ async function decodeBarcode(blob){
     const rd=new Z.BrowserMultiFormatReader(h),u=URL.createObjectURL(blob);try{return(await rd.decodeFromImageUrl(u)).getText()}finally{URL.revokeObjectURL(u)}}catch(e){return null}
 }
 async function offLookup(ean){
-  try{const r=await fetch(`https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(ean)}.json?fields=product_name,product_name_fr,brands,quantity,serving_size,nutriscore_grade,nova_group,ingredients_text_fr,ingredients_text,allergens_tags,additives_tags,nutriments`);
+  try{const r=await fetch(`https://fr.openfoodfacts.org/api/v2/product/${encodeURIComponent(ean)}.json?lc=fr&fields=product_name,product_name_fr,brands,quantity,serving_size,nutriscore_grade,nova_group,ingredients_text_fr,ingredients_text,allergens_tags,additives_tags,nutriments`);
     if(!r.ok)return null;const d=await r.json();if(d.status!==1||!d.product)return null;const p=d.product,n=p.nutriments||{};
     return{source:'Open Food Facts',ean,nom:p.product_name_fr||p.product_name||'Produit '+ean,marque:p.brands||'',quantite:p.quantity||'',portion:p.serving_size||'',nutriscore:(p.nutriscore_grade||'').replace(/[^a-e]/g,''),nova:p.nova_group||'',
       ingredients:p.ingredients_text_fr||p.ingredients_text||'',allergenes:(p.allergens_tags||[]).map(t=>{t=t.replace(/^..:/,'');return({milk:'lait',nuts:'fruits à coque',gluten:'gluten',eggs:'œufs',soybeans:'soja',peanuts:'arachides',fish:'poisson',crustaceans:'crustacés',celery:'céleri',mustard:'moutarde','sesame-seeds':'sésame','sulphur-dioxide-and-sulphites':'sulfites',lupin:'lupin',molluscs:'mollusques'})[t]||t}).join(', '),additifs:(p.additives_tags||[]).length,
@@ -2451,6 +2492,38 @@ function renderTests(){const el=$('testsBox');if(!el)return;const last=k=>[...TE
 /* pas */
 let PAS=store.get('pas',{});
 function stepGoal(){const v=Object.entries(PAS).sort().slice(-7).map(([,x])=>x);if(!v.length)return 6000;const avg=v.reduce((a,b)=>a+b,0)/v.length;return Math.min(10000,Math.max(5000,Math.round((avg+1000)/500)*500))}
+
+/* ===================== NUTRITION (ASMBS, HAS, ANSES, EFSA, PNNS, ISSN) ===================== */
+const PHASES=[[3,'Liquide clair','eau, bouillon dégraissé, tisane, gelée sans sucre','des gorgées, environ 30 ml toutes les 15 min'],
+ [15,'Liquide complet','lait enrichi en lait en poudre, yaourt à boire, velouté passé, boisson protéinée','60 à 120 ml, environ 6 fois par jour'],
+ [29,'Mixé','poisson ou viande mixés, œuf brouillé, fromage blanc, compote sans sucre, dhal','2-3 puis 4-6 cuillères à soupe, 4 à 6 fois par jour'],
+ [57,'Mou','omelette, poisson poché, thon, hachis parmentier, légumes très cuits sans peau','⅓ à ½ tasse, 3 repas et 1 à 2 collations'],
+ [99999,'Normal','toutes les textures, peu gras et peu sucré','selon le temps : ½-¾ tasse à 3 mois, ¾-1 tasse à 6 mois, 1 à 1¼ tasse (240-300 g) après 1 an']];
+function sleevePhase(){if(!BARIA()||!P.opdate)return null;const days=Math.floor((Date.now()-new Date(P.opdate))/864e5);if(days<0)return null;const ph=PHASES.find(p=>days<p[0]);return{days,n:ph[1],ex:ph[2],vol:ph[3],i:PHASES.indexOf(ph)}}
+const MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+function MENU_RULES(){let r=`RÈGLES NUTRITION (obligatoires) :
+- Cuisine française familiale, produits de saison en France (nous sommes en ${MOIS[new Date().getMonth()]}), 30 min maximum en semaine, restes planifiés.
+- Protéines à chaque repas (au moins 20 g), fibres (légumes, fruits, féculents complets, légumineuses), huiles de colza, noix ou olive. Pas de jeûne, rien sous le plancher calorique, aucun complément alimentaire proposé.
+- Repères PNNS sur la semaine : légumineuses au moins 2 fois, poisson 2 fois dont 1 gras, viande rouge limitée, charcuterie rare, eau comme boisson.
+- Pour chaque ingrédient : quantité en grammes ET équivalent « portion de main » (paume = protéines, poing = légumes, main en coupe = féculents, pouce = matière grasse).
+- Ton neutre et bienveillant, jamais de culpabilité.`;
+  if(BARIA()){const ph=sleevePhase();r+=`\n- SLEEVE : protéines en premier, petites bouchées, 20-30 min par repas ; aucune boisson pendant le repas ni 30 min avant/après ; ni boisson gazeuse ni alcool ; au plus 10 g de sucres ajoutés par prise ; éviter pain frais, riz collant, viandes sèches, peaux, légumes filandreux${ph?` ; phase actuelle « ${ph.n} » : uniquement ${ph.ex}, ${ph.vol}`:''}.`}
+  return r}
+/* signes d'alerte post-op */
+function alertHTML(){return `<h2>Signes d'alerte</h2><p class="sub">Appelle ton équipe ou le 15 si tu as :</p><ul style="margin-top:0"><li>le cœur au repos à plus de 120 battements/min, ou de la fièvre (plus de 38 °C)</li><li>une douleur qui augmente (ventre, poitrine, épaule gauche)</li><li>des vomissements, ou tu ne gardes pas les liquides depuis 24 h</li><li>des selles noires, un mollet douloureux</li><li>des vomissements avec confusion (urgence)</li></ul><div class="row">${P.equipe?`<a class="vid" href="tel:${esc(P.equipe.replace(/[^0-9+]/g,''))}" style="flex:1;justify-content:center">Appeler mon équipe</a>`:''}<a class="vid" href="tel:15" style="flex:1;justify-content:center;color:#fff;background:#d93a26">Appeler le 15</a></div><p class="mute">${P.equipe?'Numéro de ton équipe : '+esc(P.equipe):'Ajoute le numéro de ton équipe dans ton profil, rubrique Ma santé.'}</p>`}
+function phaseHTML(){const ph=sleevePhase();if(!ph)return BARIA()?'<h2>Ma phase alimentaire</h2><p class="mute">Indique la date de ton opération dans ton profil (Ma santé) pour voir ta phase.</p>':'';
+  return `<h2>Ma phase alimentaire</h2><div class="dots">${PHASES.map((p,i)=>`<i class="${i<=ph.i?'f':''}" style="flex:1"></i>`).join('')}</div><div class="kv"><b>${ph.n}</b><span class="mute">jour ${ph.days}</span></div><p><b>Aliments :</b> ${esc(ph.ex)}.</p><p><b>Quantité par prise :</b> ${esc(ph.vol)}.</p><p class="mute" style="margin-bottom:0">Repères généraux : ton équipe médicale peut te donner un calendrier différent, c'est lui qui prime.</p>`}
+/* dépense réelle (TDEE adaptatif, reconstitution façon MacroFactor) */
+function adaptiveTDEE(){const m=metrics();if(!m||!m.bmr)return null;
+  const days=[...Array(28)].map((_,i)=>dkey(Date.now()-(i+1)*864e5)),valid=days.filter(d=>{const a=J[d];if(!a||!a.length)return false;const k=a.reduce((x,e)=>x+num(e.kcal),0);return k>=(m.kcal||1800)*.5});
+  if(valid.length<10)return{need:10-valid.length};
+  const E=ema().filter(p=>Date.now()-new Date(p.d)<=21*864e5);if(E.length<3)return{need:0,weigh:1};
+  const xs=E.map(p=>(new Date(p.d)-new Date(E[0].d))/864e5),ys=E.map(p=>p.e),mx=xs.reduce((a,b)=>a+b,0)/xs.length,my=ys.reduce((a,b)=>a+b,0)/ys.length;
+  const slope=xs.reduce((a,x,i)=>a+(x-mx)*(ys[i]-my),0)/Math.max(1e-6,xs.reduce((a,x)=>a+(x-mx)**2,0));
+  const intake=valid.reduce((a,d)=>a+J[d].reduce((x,e)=>x+num(e.kcal),0),0)/valid.length,obs=intake-7700*slope;
+  const j=num(P.jours)||3,act=j<=1?1.2:j<=3?1.375:j<=5?1.55:1.725,form=m.bmr*act,w=Math.min(1,valid.length/28);
+  let est=w*obs+(1-w)*form;est=Math.min(2.2*m.bmr,Math.max(1.1*m.bmr,est));
+  return{est:Math.round(est/10)*10,intake:Math.round(intake),slope,valid:valid.length}}
 /* ===================== SUIVI ===================== */
 let CHK=store.get('checkin',{}),MES=store.get('mesures',[]),WINS=store.get('victoires',[]),PLOG=store.get('prises',{});
 let PILLS=store.get('pilulier',null);
@@ -2497,6 +2570,7 @@ function renderSuivi(){
   const start=new Date();start.setDate(start.getDate()-90-((start.getDay()+6)%7));for(let i=0;i<91+((new Date().getDay()+6)%7);i++){const d=new Date(start);d.setDate(start.getDate()+i);const k=dkey(d),v=A[k]||0;h+=`<i class="${v>=3?'l3':v===2?'l2':v?'l1':''}${k===today()?' td':''}" title="${k}"></i>`}
   $('heat').innerHTML=h+'</div><div class="legend" style="justify-content:flex-start;margin-top:8px"><span>moins</span><span><i style="background:var(--fill2)"></i><i style="background:color-mix(in srgb,var(--red) 40%,var(--fill))"></i><i style="background:var(--red)"></i></span><span>plus</span></div>';
   $('badges').innerHTML=BADGES.map(([id,n,d,f])=>{const on=f(X.t,X.k);return `<div class="bdg${on?' on':''}"><div class="bi"><svg class="i"><use href="#i-star"/></svg></div>${esc(n)}<small>${esc(d)}</small></div>`}).join('');
+  const pc=$('phaseCard'),ac=$('alertCard');pc.style.display=ac.style.display=BARIA()?'block':'none';if(BARIA()){pc.innerHTML=phaseHTML();ac.innerHTML=alertHTML()}
   renderTrend();renderMes();renderWins();renderPills();renderDrink();renderChk();renderPhotos();renderWho();
   const lb=store.get('lastbk','');$('bkInfo').textContent=lb?`Dernière sauvegarde : ${frd(lb)} (il y a ${Math.round((Date.now()-new Date(lb))/864e5)} jour(s)).`:'Aucune sauvegarde pour l\'instant. Fais-en une de temps en temps.';
 }
@@ -2635,7 +2709,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-28';
+const APP_VERSION='2026.11.26-31';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
