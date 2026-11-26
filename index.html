@@ -64,7 +64,8 @@ section[data-v]{display:none;animation:fade .25s ease}section[data-v].on{display
 label{display:block;font-size:13px;font-weight:600;color:var(--mute);margin-bottom:2px}
 input,select,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--fill);border:1.5px solid transparent;border-radius:13px;padding:11px 13px;margin-top:4px;min-height:48px;-webkit-appearance:none;appearance:none}
 select{background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 18px) 21px,calc(100% - 13px) 21px;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
-textarea{min-height:92px;resize:vertical}
+textarea{min-height:92px;resize:vertical;line-height:1.45}
+textarea.grow{min-height:52px;resize:none;overflow:hidden}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red);background:var(--card)}
 button:focus-visible,a:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
 button{font:inherit;font-weight:700;border:0;border-radius:14px;min-height:50px;padding:0 20px;cursor:pointer;background:var(--red);color:#fff;box-shadow:0 6px 16px -6px rgba(240,65,47,.55);transition:transform .12s,opacity .2s}
@@ -167,7 +168,7 @@ canvas.draw{width:100%;border-radius:16px;touch-action:none;display:block;backgr
 .bub{max-width:86%;padding:10px 14px;border-radius:20px;white-space:pre-wrap;overflow-wrap:anywhere}
 .bub.me{align-self:flex-end;background:var(--red);color:#fff;border-bottom-right-radius:6px}
 .bub.co{align-self:flex-start;background:var(--fill);border-bottom-left-radius:6px}
-.send{display:flex;gap:8px;margin-top:12px;align-items:flex-end}.send textarea{min-height:50px;height:50px;margin:0}
+.send{display:flex;gap:8px;margin-top:12px;align-items:flex-end}.send textarea{margin:0;max-height:180px}
 .busy{display:flex;align-items:center;gap:10px;color:var(--mute);padding:12px 0}
 .skel{padding:4px 0}.skel>i{display:block;height:14px;border-radius:7px;margin:10px 0;background:linear-gradient(90deg,var(--fill) 0%,var(--fill2) 50%,var(--fill) 100%);background-size:200% 100%;animation:sh 1.2s linear infinite}@keyframes sh{to{background-position:-200% 0}}
 .dots3{display:inline-flex;gap:3px;margin-left:4px}.dots3 i{width:4px;height:4px;border-radius:50%;background:currentColor;animation:bl 1s infinite}.dots3 i:nth-child(2){animation-delay:.2s}.dots3 i:nth-child(3){animation-delay:.4s}@keyframes bl{50%{opacity:.2}}
@@ -605,7 +606,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
       <label class="drop" style="min-height:110px"><input type="file" accept="image/*" id="phIn"><svg class="i" style="width:34px;height:34px"><use href="#i-cam"/></svg><b>Ajouter une photo de progrès</b></label>
       <div id="phCmp"></div><div class="phgrid" id="phList"></div></div>
     <div class="card"><h2>Mes victoires hors balance</h2><p class="sub">Ceinture serrée d'un cran, escaliers sans souffler, vêtement qui revient… Tout compte.</p>
-      <div class="row"><input id="winIn" placeholder="ex. j'ai monté 3 étages sans m'arrêter" style="flex:1;margin:0;min-width:170px"><button class="alt" data-act="winAdd">Ajouter</button></div>
+      <textarea id="winIn" class="grow" rows="1" data-enter="winAdd" placeholder="ex. j'ai monté 3 étages sans m'arrêter"></textarea><button class="alt wide" data-act="winAdd" style="margin-top:8px">Ajouter ma victoire</button>
       <div class="chips" id="winIdeas"></div><div id="winList"></div></div>
   </div>
 
@@ -625,7 +626,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
       <p class="mute">Le fichier va dans « Fichiers » ou iCloud Drive. Pratique avant de changer de téléphone.</p></div>
     <div class="card"><h2>Transférer depuis une autre version</h2>
       <ol class="routine" style="margin-top:0"><li>Dans l'<b>ancienne</b> app : Profil › L'app › <b>Sauvegarder mes données</b> (c'est copié).</li><li>Ici, touche <b>Coller</b> puis <b>Restaurer</b>.</li><li>Quand tout est là, supprime l'ancienne icône.</li></ol>
-      <textarea id="impT" placeholder="Colle ici ta sauvegarde (elle commence par {)"></textarea>
+      <textarea id="impT" class="grow" rows="3" placeholder="Colle ici ta sauvegarde (elle commence par {)"></textarea>
       <div class="row" style="margin-top:10px"><button class="ghost" data-act="pasteImp" style="flex:1">Coller</button><button data-act="doImport" style="flex:1">Restaurer</button></div>
       <div id="impRes"></div>
       <h3 style="margin-top:18px">Envoyer mes données vers un autre téléphone</h3>
@@ -739,9 +740,9 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
       <div><label for="p-jours">Séances / semaine</label><select id="p-jours" data-custom="ex. 2 à 3, selon les semaines"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select></div>
       <div><label for="p-lieu">Où je m'entraîne</label><select id="p-lieu" data-custom="ex. au parc, à la piscine, salle d'entreprise"><option value="salle">En salle</option><option value="maison">À la maison</option><option value="mixte">Les deux</option></select></div>
       <div><label for="p-duree">Durée d'une séance</label><select id="p-duree" data-custom="ex. 1 h 15, ou 40 min"><option value="20">20 min</option><option value="30">30 min</option><option value="45">45 min</option><option value="60" selected>1 h</option><option value="75">1 h 15</option><option value="90">1 h 30</option><option value="120">2 h</option></select></div>
-      <div class="full"><label for="p-regime">Alimentation (allergies, je n'aime pas…)</label><input id="p-regime" placeholder="ex. pas de poisson, intolérant au lactose"></div>
+      <div class="full"><label for="p-regime">Alimentation (allergies, je n'aime pas…)</label><textarea id="p-regime" class="grow" rows="1" placeholder="ex. pas de poisson, intolérant au lactose"></textarea></div>
       <div class="full"><label for="p-budget">Budget repas</label><select id="p-budget" data-custom="ex. 60 € par semaine"><option value="normal">Normal</option><option value="serré">Petit budget</option><option value="large">Pas de limite</option></select></div>
-      <div class="full"><label for="p-notes">Blessures ou limites</label><input id="p-notes" placeholder="ex. genou fragile, mal de dos"></div>
+      <div class="full"><label for="p-notes">Blessures ou limites</label><textarea id="p-notes" class="grow" rows="1" placeholder="ex. genou fragile, mal de dos"></textarea></div>
     </form>
   </div>
 
@@ -753,7 +754,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
     <div class="eqh">Cuisine</div><div class="chips" id="eqC"></div>
     <div class="eqh" style="margin-top:18px">Un appareil qui n'est pas dans la liste ?</div>
     <p class="mute" style="margin:2px 0 8px">Écris son nom ou sa marque.</p>
-    <div class="row"><select id="eqCat" style="width:auto;margin:0"><option value="sport">Sport</option><option value="cuisine">Cuisine</option></select><input id="eqIn" placeholder="ex. Ninja Creami, presse à cuisses, Bowflex…" style="flex:1;min-width:160px;margin:0"><button class="alt" data-act="eqAdd">Ajouter</button></div>
+    <select id="eqCat" style="margin:0 0 8px"><option value="sport">Appareil de sport</option><option value="cuisine">Appareil de cuisine</option></select><textarea id="eqIn" class="grow" rows="1" data-enter="eqAdd" placeholder="ex. Ninja Creami, presse à cuisses, Bowflex…"></textarea><button class="alt wide" data-act="eqAdd" style="margin-top:8px">Ajouter cet appareil</button>
     <div id="eqRes"></div>
     <div id="eqCustom"></div>
   </div>
@@ -763,8 +764,8 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
     <p class="sub">Tout s'adapte à ce que tu coches : repas, portions, séances.</p>
     <div class="chips" id="santeChips"></div>
     <div id="opBox" style="display:none;margin-top:8px"><label for="p-opdate">Date de l'opération</label><input id="p-opdate" type="date"></div>
-    <div style="margin-top:10px"><label for="p-medic">Traitements ou médicaments (facultatif)</label><input id="p-medic" placeholder="ex. metformine, vitamines B12, fer"></div>
-    <div style="margin-top:10px"><label for="p-sante">Autre chose à savoir</label><input id="p-sante" placeholder="ex. anémie, migraines, ne supporte pas la viande rouge"></div>
+    <div style="margin-top:10px"><label for="p-medic">Traitements ou médicaments (facultatif)</label><textarea id="p-medic" class="grow" rows="1" placeholder="ex. metformine, vitamines B12, fer"></textarea></div>
+    <div style="margin-top:10px"><label for="p-sante">Autre chose à savoir</label><textarea id="p-sante" class="grow" rows="1" placeholder="ex. anémie, migraines, ne supporte pas la viande rouge"></textarea></div>
     <h3 style="margin-top:18px">Objectifs donnés par ton médecin ou ta diététicienne</h3>
     <p class="sub" style="margin-top:4px">Facultatif, ils remplacent les calculs automatiques.</p>
     <div class="grid">
@@ -816,7 +817,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
     <div class="card">
       <h2>Dis-moi ce que tu as envie de faire</h2>
       <p class="sub">Écris avec tes mots, le coach s'adapte.</p>
-      <textarea id="envie" placeholder="ex. J'ai eu une dure semaine côté muscu, j'aimerais faire plus de cardio. Ou : 30 min max ce soir, plutôt le haut du corps."></textarea>
+      <textarea id="envie" class="grow" rows="3" placeholder="ex. J'ai eu une dure semaine côté muscu, j'aimerais faire plus de cardio. Ou : 30 min max ce soir, plutôt le haut du corps."></textarea>
       <div class="chips" id="envieChips"></div>
       <div class="row" style="margin-top:6px"><button data-act="seanceEnvie" style="flex:1">Une séance maintenant</button><button class="alt" data-act="semaineEnvie" style="flex:1">Toute ma semaine</button></div>
       <div id="envieRes"></div>
@@ -889,7 +890,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
       <label class="drop" data-drop="corps" id="corpsDrop"><input type="file" accept="image/*" data-in="corps"><svg class="i" style="width:40px;height:40px"><use href="#i-body"/></svg><b>Ajoute une photo de toi</b><span class="mute">de face ou de dos, en entier si possible</span></label>
       <canvas class="draw" id="cv" style="display:none"></canvas>
       <div class="row" style="margin-top:12px" id="cvBtns" hidden><button class="ghost sm" data-act="undo">Annuler le trait</button><button class="ghost sm" data-act="clearDraw">Tout effacer</button><button class="ghost sm" data-act="newBody">Autre photo</button></div>
-      <input id="corpsTxt" placeholder="Précise si tu veux (ex. « bras plus épais »)" style="margin-top:12px">
+      <textarea id="corpsTxt" class="grow" rows="1" placeholder="Précise si tu veux (ex. « bras plus épais, ventre plus plat »)" style="margin-top:12px"></textarea>
       <div class="row" style="margin-top:12px"><button data-act="anaCorps" data-need="corps" disabled>Analyser mes zones</button></div>
     </div>
     <div id="corpsRes"></div>
@@ -925,7 +926,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
       <h2>Ce que j'ai mangé</h2>
       <div id="journal"></div>
       <label for="qa" style="margin-top:12px">Ajoute en toutes lettres</label>
-      <div class="row"><input id="qa" placeholder="ex. 2 œufs, une tartine et un café" style="flex:1;min-width:170px"><button class="alt" data-act="quickAdd">Ajouter</button></div>
+      <textarea id="qa" class="grow" rows="2" data-enter="quickAdd" placeholder="ex. 2 œufs brouillés, une tartine de pain complet beurrée et un café au lait"></textarea><button class="alt wide" data-act="quickAdd" style="margin-top:8px">Ajouter à mon journal</button>
       <div id="qaRes"></div>
       <div class="chips" id="favs"></div>
     </div>
@@ -952,7 +953,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
       <label class="drop" style="min-height:120px;margin-bottom:12px"><input type="file" accept="image/*" multiple id="ingPh"><svg class="i" style="width:34px;height:34px"><use href="#i-cam"/></svg><b>Montre-moi tes ingrédients</b><span class="mute">frigo, placard, plan de travail… plusieurs photos possibles</span></label>
       <div id="ingRes"></div>
       <label for="frigo">Frigo, placard, épicerie</label>
-      <textarea id="frigo" placeholder="ex. 4 œufs, riz, thon en boîte, tomates, oignon, fromage râpé, poulet"></textarea>
+      <textarea id="frigo" class="grow" rows="3" placeholder="ex. 4 œufs, riz, thon en boîte, tomates, oignon, fromage râpé, poulet"></textarea>
       <div class="row" style="margin-top:12px"><label for="fMoment" style="margin:0">Pour le</label><select id="fMoment" data-custom="ex. avant la séance, pique-nique" style="width:auto;margin:0;flex:1"><option>Déjeuner</option><option>Dîner</option><option>Petit-déjeuner</option><option>Collation</option></select></div>
       <div class="row" style="margin-top:12px"><button data-act="genFrigo" style="flex:1">Un plat</button><button class="alt" data-act="genFrigoMenu" style="flex:1">Un menu complet</button></div>
       <div id="frig"></div>
@@ -968,7 +969,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
         <div><label for="sStyle">Style</label><select id="sStyle" data-custom="ex. comme au resto indien"><option>Crémeuse</option><option>Piquante</option><option>Légère et protéinée</option><option>Asiatique</option><option>Méditerranéenne</option><option>Barbecue fumée</option><option>Aux herbes fraîches</option><option>Fromagère</option><option>Sucrée-salée</option><option>Classique française</option><option>Surprends-moi</option></select></div>
         <div><label for="sTemp">Servie</label><select id="sTemp" data-custom="ex. tiède"><option>Peu importe</option><option>Chaude</option><option>Froide</option></select></div>
         <div><label for="sPiq">Piquant</label><select id="sPiq" data-custom="ex. juste une pointe de piment d'Espelette"><option>Pas du tout</option><option selected>Un peu</option><option>Bien relevé</option><option>Très fort</option></select></div>
-        <div class="full"><label for="sIng">Ingrédients à utiliser (facultatif)</label><input id="sIng" placeholder="ex. yaourt grec, citron, ail, moutarde"></div>
+        <div class="full"><label for="sIng">Ingrédients à utiliser (facultatif)</label><textarea id="sIng" class="grow" rows="1" placeholder="ex. yaourt grec, citron, ail, moutarde"></textarea></div>
       </div>
       <label style="display:flex;gap:10px;align-items:center;color:var(--ink);font-weight:500;font-size:15px;margin:14px 0"><input type="checkbox" id="sFrigo" style="width:22px;height:22px;margin:0;accent-color:var(--red)">Avec ce que j'ai chez moi</label>
       <button data-act="genSauce" class="wide">Invente-moi des sauces</button>
@@ -991,7 +992,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
   <div class="card">
     <div class="chips" id="quickQ" style="margin-top:0"></div>
     <div class="msgs" id="msgs"></div>
-    <div class="send"><textarea id="ask" placeholder="Écris ton message…" aria-label="Message"></textarea><button data-act="send" id="sendBtn">Envoyer</button></div>
+    <div class="send"><textarea id="ask" class="grow" rows="1" placeholder="Écris ton message…" aria-label="Message"></textarea><button data-act="send" id="sendBtn">Envoyer</button></div>
     <div class="row" style="margin-top:10px"><button class="ghost sm" data-act="clearChat">Nouvelle conversation</button></div>
   </div>
 </section>
@@ -2064,7 +2065,7 @@ function renderProd(p){
   ${p.ingredients?`<details><summary style="cursor:pointer;font-weight:700;padding:8px 0">Ingrédients</summary><p class="mute">${esc(p.ingredients)}</p></details>`:''}</div>
   <div class="card"><h3>Combien tu en as mangé ?</h3>
   <div class="chips">${[p.portion?'1 portion':'', '100 g','la moitié du paquet','tout le paquet','2 unités'].filter(Boolean).map(q=>`<button class="chip" data-act="qtyPick" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div>
-  <input id="qty" placeholder="ex. 3 biscuits, un bol, 150 g, la moitié…"><div class="row" style="margin-top:12px"><button data-act="synth">Faire la synthèse</button></div><div id="synthRes"></div></div>`;
+  <textarea id="qty" class="grow" rows="1" data-enter="synth" placeholder="ex. 3 biscuits, un bol, 150 g, la moitié…"></textarea><div class="row" style="margin-top:12px"><button data-act="synth">Faire la synthèse</button></div><div id="synthRes"></div></div>`;
 }
 function renderProdHist(){$('prodHistC').style.display=PRODS.length?'block':'none';$('prodHist').innerHTML=PRODS.map((p,i)=>`<button class="chip" data-act="showProd" data-i="${i}">${esc(p.nom)}</button>`).join('')}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b&&A[b.dataset.act])A[b.dataset.act](b,e)});
@@ -2299,7 +2300,7 @@ function renderSuivi(){
   const lb=store.get('lastbk','');$('bkInfo').textContent=lb?`Dernière sauvegarde : ${frd(lb)} (il y a ${Math.round((Date.now()-new Date(lb))/864e5)} jour(s)).`:'Aucune sauvegarde pour l\'instant. Fais-en une de temps en temps.';
 }
 /* poids tendance (moyenne lissée) */
-function ema(){let e=null;return W.map(p=>{e=e==null?p.w:e+0.1*(p.w-e);return{d:p.d,w:p.w,e}})}
+function ema(){let e=null,pd=null;return W.map(p=>{const days=pd?Math.max(1,(new Date(p.d)-new Date(pd))/864e5):1,al=1-Math.pow(0.9,days);e=e==null?p.w:e+al*(p.w-e);pd=p.d;return{d:p.d,w:p.w,e}})}
 function renderTrend(){
   const sv=$('trendSvg'),E=ema();if(!sv)return;
   if(E.length<2){sv.innerHTML='';$('trendTxt').innerHTML='<p class="mute">Pèse-toi 2 à 3 fois par semaine, le matin à jeun : la tendance apparaîtra ici.</p>';return}
@@ -2372,8 +2373,15 @@ function restoreFrom(txt){
   out.innerHTML=`<div class="tip"><b>Restauré !</b><ul style="margin:6px 0 0">${[['Profil',pr.nom||pr.poids?'oui':'—'],['Favoris (recettes, menus, sauces)',cnt(g('favrec'))],['Séances',cnt(g('seances'))],['Programme',g('programme')?'oui':'—'],['Jours de repas notés',cnt(g('journal'))],['Pesées',cnt(g('pesees'))],['Menus',cnt(g('menus'))],['Produits scannés',cnt(g('produits'))],['Nuits',cnt(g('sommeil'))]].map(([l,v])=>`<li>${l} : <b>${v}</b></li>`).join('')}</ul><p style="margin:8px 0 0">Tu peux maintenant supprimer l'ancienne icône de ton écran d'accueil. L'app redémarre…</p></div>`;
   store.set('onb',1);confetti();setTimeout(()=>location.reload(),4000);
 }
+/* ---------- Zones de texte qui s'agrandissent ---------- */
+function grow(t){if(!t||t.tagName!=='TEXTAREA')return;t.style.height='auto';t.style.height=Math.min(t.scrollHeight+3,320)+'px';t.style.overflowY=t.scrollHeight>320?'auto':'hidden'}
+document.addEventListener('input',e=>{if(e.target.classList&&e.target.classList.contains('grow'))grow(e.target)});
+document.addEventListener('focusin',e=>{if(e.target.classList&&e.target.classList.contains('grow'))grow(e.target)});
+document.addEventListener('keydown',e=>{const t=e.target;if(e.key==='Enter'&&!e.shiftKey&&t.dataset&&t.dataset.enter&&A[t.dataset.enter]){e.preventDefault();const b=document.querySelector(`[data-act="${t.dataset.enter}"]`);A[t.dataset.enter](b||t,e)}});
+new MutationObserver(()=>document.querySelectorAll('textarea.grow').forEach(t=>{if(t.value&&!t.dataset.g){t.dataset.g=1;grow(t)}})).observe(document.body,{childList:true,subtree:true});
+setTimeout(()=>document.querySelectorAll('textarea.grow').forEach(grow),300);
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-22';
+const APP_VERSION='2026.11.26-23';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
