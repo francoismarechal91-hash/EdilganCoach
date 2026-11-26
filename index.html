@@ -657,6 +657,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
       <details style="margin-top:10px"><summary class="mute" style="cursor:pointer;padding:8px 0">Modifier mon pilulier</summary><div id="pillEdit"></div>
       <div class="row" style="margin-top:8px"><input id="pillN" placeholder="Nom (ex. Vitamine D)" style="flex:1;margin:0;min-width:140px"><input id="pillH" type="time" value="09:00" style="width:auto;margin:0"><button class="sm" data-act="pillAdd">Ajouter</button></div></details>
       <div class="tip" id="pillTip" style="display:none"></div></div>
+    <div class="card"><h2>Mon moral sur 2 semaines</h2><p class="sub">5 questions (questionnaire WHO-5 de l'OMS). À faire toutes les 2 semaines.</p><div id="who5"></div></div>
     <div class="card"><h2>Mon check-in</h2><p class="sub">10 secondes chaque matin : le coach adapte ta journée.</p><div id="chkForm"></div><div class="fig" style="min-height:120px;margin-top:10px"><svg id="chkSvg"></svg></div></div>
   </div>
 
@@ -696,6 +697,7 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
       <div class="slbars" id="slBars"></div>
       <p class="mute" id="slAvg"></p>
     </div>
+    <div class="card"><h2>Mes repères</h2><div class="stk" id="slKpi"></div><p class="mute" id="slKpiTxt" style="margin-bottom:0"></p></div>
     <div class="card">
       <h2>À quelle heure me coucher ?</h2>
       <p class="sub">Le sommeil fonctionne par cycles d'environ 1 h 30. Se réveiller en fin de cycle aide à être moins dans le brouillard.</p>
@@ -712,11 +714,29 @@ section.on>:nth-child(5),section.on>:nth-child(6),section.on>:nth-child(7){anima
 
   <div class="pane" data-pane="detente">
     <div class="card" style="text-align:center">
-      <h2>Respiration calme</h2>
-      <p class="sub">Inspire 5 secondes, expire 5 secondes, pendant 5 minutes. Idéal avant de dormir ou quand ça stresse.</p>
+      <h2>Respiration guidée</h2>
+      <div class="chips" id="bModes" style="justify-content:center"></div>
+      <p class="sub" id="bDesc"></p>
       <div class="breath" id="breath"><div class="bcirc"></div><b id="bTxt">Prêt ?</b></div>
       <div class="mute" id="bTime" style="margin:10px 0">5:00</div>
+      <div class="row" style="justify-content:center;margin-bottom:10px"><button class="ghost sm" data-act="bDur" data-v="2">2 min</button><button class="ghost sm" data-act="bDur" data-v="5">5 min</button><button class="ghost sm" data-act="bDur" data-v="10">10 min</button></div>
       <button class="wide" data-act="breathGo" id="bBtn">Commencer</button>
+      <p class="mute" style="margin-bottom:0">Assis, sans forcer. En cas de vertige, arrête et respire normalement.</p>
+    </div>
+    <div class="card">
+      <h2>Sons pour s'endormir</h2><p class="sub">Un fond sonore doux qui masque les bruits. Il s'arrête tout seul.</p>
+      <div class="chips" id="noiseKind"><button class="chip p" data-act="nKind" data-v="brown">Pluie douce</button><button class="chip" data-act="nKind" data-v="pink">Bruit rose</button><button class="chip" data-act="nKind" data-v="ocean">Vagues</button></div>
+      <div class="row"><label for="nTime" style="margin:0">Arrêt après</label><select id="nTime" style="width:auto;flex:1;margin:0"><option value="15">15 min</option><option value="30" selected>30 min</option><option value="45">45 min</option><option value="60">1 h</option></select></div>
+      <label for="nVol" style="margin-top:12px">Volume</label><input id="nVol" type="range" min="0" max="100" value="40" style="padding:0;min-height:30px;background:none;border:0">
+      <button class="wide" data-act="noiseGo" id="nBtn" style="margin-top:8px">Lancer le son</button><p class="mute" id="nLeft"></p>
+    </div>
+    <div class="card">
+      <h2>Ancrage 5-4-3-2-1</h2><p class="sub">Quand l'esprit s'emballe : on revient au présent par les sens.</p>
+      <div id="grnd"></div><button class="alt wide" data-act="grndGo" id="grndBtn">Commencer</button>
+    </div>
+    <div class="card">
+      <h2>Mes 3 bonnes choses</h2><p class="sub">Le soir, note 3 petites choses positives de ta journée.</p>
+      <div id="good3"></div><button class="wide" data-act="goodSave" style="margin-top:8px">Enregistrer</button><div id="goodHist"></div>
     </div>
     <div class="card">
       <h2>Routine du soir</h2>
@@ -1261,7 +1281,7 @@ function metrics(){
   const adj=({muscle:250,perte:-450,seche:-300,forme:0,endurance:0}[P.obj||'muscle']??(/perd|maigr|sèche|seche|kg/i.test(P.obj||'')?-350:0))+(+P.kadj||0);
   const kcal=bmr?Math.round(Math.max(bmr*act+adj,bmr*1.1,P.sexe==='F'?1300:1500)/10)*10:null;
   const prot=Math.round(w*(['muscle','perte','seche'].includes(P.obj||'muscle')?1.8:1.4));
-  let K=kcal,Pr=prot,E=Math.round(w*35/250);
+  let K=kcal,Pr=prot,E=P.sexe==='F'?7:8;
   if(BARIA())Pr=Math.max(60,Math.round(w*1.0)),K=null,E=6;
   if(num(P.kcalmed))K=Math.round(num(P.kcalmed));if(num(P.protmed))Pr=Math.round(num(P.protmed));if(num(P.eaumed))E=Math.round(num(P.eaumed)*4);
   return{imc,bmr,kcal:K,prot:Pr,eau:E,min:18.5*(t/100)**2,max:24.9*(t/100)**2};
@@ -1977,9 +1997,14 @@ Format JSON : {"nom":"titre court de la séance","pourquoi":"1 phrase qui expliq
     ENV=r;$('envieRes').innerHTML=`<div class="meal"><div class="k">Ta séance</div><h3>${esc(r.nom)}</h3><p class="mute" style="margin:4px 0 8px">${esc(r.pourquoi||'')} · ${esc(r.duree_min||'')} min</p>${(r.exercices||[]).map(x=>exHTML(x)).join('')}<button data-act="startEnvie" class="wide" style="margin-top:10px">Commencer cette séance</button></div>`})},
   startEnvie(){startSession({nom:ENV.nom||'Ma séance',exercices:ENV.exercices||[]})},
   slSave(b){SL[today()]={c:$('slC').value,l:$('slL').value,q:SLQ};const k=Object.keys(SL).sort().slice(-60);SL=Object.fromEntries(k.map(x=>[x,SL[x]]));store.set('sommeil',SL);renderSleep();toast('Nuit enregistrée : '+hm(dur(SL[today()].c,SL[today()].l)))},
-  breathGo(){if(bT){stopBreath();return}let left=300,phase=0;$('bBtn').textContent='Arrêter';
-    const step=()=>{phase=1-phase;$('breath').classList.toggle('in',!!phase);$('bTxt').textContent=phase?'Inspire…':'Expire…'};step();
-    bT=setInterval(()=>{left--;$('bTime').textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');if(left%5===0)step();if(left<=0){stopBreath();toast('Bravo, 5 minutes de calme');}},1000)},
+  breathGo(){if(bT){stopBreath();return}runBreath()},
+  bMode(b){BM=b.dataset.v;store.set('bmode',BM);if(bT)stopBreath();renderBModes()},
+  bDur(b){BDUR=+b.dataset.v;if(bT)stopBreath();renderBModes()},
+  nKind(b){NK=b.dataset.v;document.querySelectorAll('#noiseKind .chip').forEach(x=>x.classList.toggle('p',x===b));if(NZ){noiseStop();noiseStart()}},
+  noiseGo(){if(NZ)noiseStop();else noiseStart()},
+  grndGo(){GI=GI>=GRND.length?0:GI+1;renderGrnd()},
+  goodSave(){GOOD[today()]=[0,1,2].map(i=>$('gd'+i).value.trim());const k=Object.keys(GOOD).sort().slice(-60);GOOD=Object.fromEntries(k.map(x=>[x,GOOD[x]]));store.set('bonnes',GOOD);toast('Trois belles choses, bravo !');renderGood()},
+  whoA(b){WHOtmp.push(+b.dataset.v);renderWho()},
   slCoach(b){run(b,$('slAdv'),'Analyse de tes nuits',async()=>{
     const nuits=Object.entries(SL).sort().slice(-14).map(([d,v])=>`${d} : couché ${v.c}, levé ${v.l}, ${hm(dur(v.c,v.l))}, qualité ${v.q}/5`).join('\n')||'aucune nuit enregistrée';
     const r=await askJSON(`Tu es un coach sommeil bienveillant. ${profil(true)}
@@ -2122,7 +2147,7 @@ function route(){
   document.querySelectorAll('section[data-v]').forEach(s=>s.classList.toggle('on',s.dataset.v===v));
   document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===v));
   $('avatar').classList.toggle('on',v==='moi');
-  if(v!=='sommeil'&&bT)stopBreath();const sw=$('sweep');if(sw&&document.documentElement.dataset.fx!=='off'&&route.last&&route.last!==v){sw.classList.remove('go');void sw.offsetWidth;sw.classList.add('go')}route.last=v;if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='sommeil')renderSleep();if(v==='suivi')renderSuivi();$('coachBtn').classList.toggle('on',v==='coach');window.scrollTo(0,0);
+  if(v!=='sommeil'&&bT)stopBreath();const sw=$('sweep');if(sw&&document.documentElement.dataset.fx!=='off'&&route.last&&route.last!==v){sw.classList.remove('go');void sw.offsetWidth;sw.classList.add('go')}route.last=v;if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='sommeil'){renderSleep();renderBModes();renderGrnd();renderGood();sleepKpi()}if(v==='suivi')renderSuivi();$('coachBtn').classList.toggle('on',v==='coach');window.scrollTo(0,0);
 }
 window.addEventListener('scroll',()=>$('appbar').classList.toggle('sc',scrollY>4),{passive:true});
 /* ---------- Accueil ---------- */
@@ -2245,7 +2270,8 @@ const FACTS=["Les pieuvres ont trois cœurs et un sang bleu.","Une journée sur 
 const dayIndex=()=>{const d=new Date(),s=new Date(d.getFullYear(),0,0);return Math.floor((d-s)/864e5)+d.getFullYear()*366};
 function renderDaily(){
   const i=dayIndex(),m=MOTIV[i%MOTIV.length],f=FACTS[(i*7+3)%FACTS.length];
-  $('dailyCard').innerHTML=`<div class="lab">LE MOT DU JOUR</div><div class="dq">« ${esc(m)} »</div>
+  const cm=typeof coachMsg==='function'?coachMsg():'';
+  $('dailyCard').innerHTML=`${cm?`<div class="tip" style="margin-top:0"><b>Ton coach :</b> ${esc(cm)}</div>`:''}<div class="lab">LE MOT DU JOUR</div><div class="dq">« ${esc(m)} »</div>
   <div class="fact"><span class="ic c-yel"><svg class="i" style="width:20px;height:20px"><use href="#i-bolt"/></svg></span><div><div class="lab" style="color:var(--mute)">LE SAVAIS-TU ?</div><div style="margin-top:2px">${esc(f)}</div></div></div>`;
 }
 (function midnight(){const n=new Date(),t=new Date(n.getFullYear(),n.getMonth(),n.getDate()+1,0,0,5);setTimeout(()=>{renderDaily();renderHome();midnight()},t-n)})();
@@ -2268,7 +2294,6 @@ function renderSleep(){
 }
 const SLTIPS=[["Des horaires réguliers","Couche-toi et lève-toi à peu près à la même heure, même le week-end. C'est le réglage n°1 de ton horloge interne."],["La lumière du matin","Sors ou ouvre grand les volets dans l'heure qui suit le réveil : ça cale ton sommeil du soir."],["Café avant 14 h","La caféine reste plusieurs heures dans le corps. Après le déjeuner, passe au déca ou à la tisane."],["Pas d'écran au lit","La lumière et les notifications réveillent le cerveau. Laisse le téléphone hors de portée."],["Une chambre fraîche et noire","Autour de 18-19 °C, sombre et calme. Un masque ou des bouchons d'oreilles peuvent aider."],["Dîner léger, 2 à 3 h avant","Un repas lourd ou très gras gêne l'endormissement. Après une sleeve, garde des petites portions."],["L'alcool trompe","Il aide à s'endormir mais casse la qualité du sommeil en deuxième partie de nuit."],["Le sport, oui, mais pas trop tard","Bouger améliore le sommeil. Évite seulement les séances très intenses juste avant de dormir."],["Sieste courte","20 minutes maximum, et avant 15 h, sinon elle empiète sur la nuit."],["Le lit, c'est pour dormir","Si tu ne dors pas au bout de 20 minutes, lève-toi, fais quelque chose de calme, puis reviens."]];
 let bT=null;
-function stopBreath(){clearInterval(bT);bT=null;$('breath').classList.remove('in');$('bTxt').textContent='Prêt ?';$('bBtn').textContent='Commencer';$('bTime').textContent='5:00'}
 
 /* ---------- Ambiances par thème ---------- */
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2344,7 +2369,7 @@ function renderSuivi(){
   const start=new Date();start.setDate(start.getDate()-90-((start.getDay()+6)%7));for(let i=0;i<91+((new Date().getDay()+6)%7);i++){const d=new Date(start);d.setDate(start.getDate()+i);const k=dkey(d),v=A[k]||0;h+=`<i class="${v>=3?'l3':v===2?'l2':v?'l1':''}${k===today()?' td':''}" title="${k}"></i>`}
   $('heat').innerHTML=h+'</div><div class="legend" style="justify-content:flex-start;margin-top:8px"><span>moins</span><span><i style="background:var(--fill2)"></i><i style="background:color-mix(in srgb,var(--red) 40%,var(--fill))"></i><i style="background:var(--red)"></i></span><span>plus</span></div>';
   $('badges').innerHTML=BADGES.map(([id,n,d,f])=>{const on=f(X.t,X.k);return `<div class="bdg${on?' on':''}"><div class="bi"><svg class="i"><use href="#i-star"/></svg></div>${esc(n)}<small>${esc(d)}</small></div>`}).join('');
-  renderTrend();renderMes();renderWins();renderPills();renderDrink();renderChk();renderPhotos();
+  renderTrend();renderMes();renderWins();renderPills();renderDrink();renderChk();renderPhotos();renderWho();
   const lb=store.get('lastbk','');$('bkInfo').textContent=lb?`Dernière sauvegarde : ${frd(lb)} (il y a ${Math.round((Date.now()-new Date(lb))/864e5)} jour(s)).`:'Aucune sauvegarde pour l\'instant. Fais-en une de temps en temps.';
 }
 /* poids tendance (moyenne lissée) */
@@ -2428,8 +2453,61 @@ document.addEventListener('focusin',e=>{if(e.target.classList&&e.target.classLis
 document.addEventListener('keydown',e=>{const t=e.target;if(e.key==='Enter'&&!e.shiftKey&&t.dataset&&t.dataset.enter&&A[t.dataset.enter]){e.preventDefault();const b=document.querySelector(`[data-act="${t.dataset.enter}"]`);A[t.dataset.enter](b||t,e)}});
 new MutationObserver(()=>document.querySelectorAll('textarea.grow').forEach(t=>{if(t.value&&!t.dataset.g){t.dataset.g=1;grow(t)}})).observe(document.body,{childList:true,subtree:true});
 setTimeout(()=>document.querySelectorAll('textarea.grow').forEach(grow),300);
+
+/* ===================== BIEN-ÊTRE ===================== */
+const BMODES={coherence:{n:'Cohérence 5-5',d:'Inspire 5 s, expire 5 s. Le classique pour se poser, 3 fois par jour.',ph:[['Inspire',5,1],['Expire',5,0]]},
+ soupir:{n:'Soupir apaisant',d:'Deux inspirations par le nez (la 2e courte), puis une longue expiration par la bouche. Très efficace sur le stress.',ph:[['Inspire',2.5,.8],['Encore un peu',1.2,1],['Longue expiration',6,0]]},
+ carree:{n:'Respiration carrée',d:'Inspire 4 s, garde 4 s, expire 4 s, garde 4 s. Pour se concentrer.',ph:[['Inspire',4,1],['Garde',4,1],['Expire',4,0],['Garde',4,0]]},
+ douce:{n:'Douce 4-6',d:'Inspire 4 s, expire 6 s, sans retenir son souffle. Idéal pour tous, avant de dormir.',ph:[['Inspire',4,1],['Expire',6,0]]}};
+let BM=store.get('bmode','coherence'),BDUR=5;
+function renderBModes(){$('bModes').innerHTML=Object.entries(BMODES).map(([k,m])=>`<button class="chip${k===BM?' p':''}" data-act="bMode" data-v="${k}">${m.n}</button>`).join('');$('bDesc').textContent=BMODES[BM].d;if(!bT)$('bTime').textContent=BDUR+':00';document.querySelectorAll('[data-act=bDur]').forEach(b=>b.classList.toggle('tint',+b.dataset.v===BDUR))}
+let bTO=null;
+function stopBreath(){clearInterval(bT);clearTimeout(bTO);bT=null;const c=document.querySelector('#breath .bcirc');if(c){c.style.transitionDuration='1s';c.style.transform=''}$('bTxt').textContent='Prêt ?';$('bBtn').textContent='Commencer';$('bTime').textContent=BDUR+':00'}
+function runBreath(){const m=BMODES[BM],c=document.querySelector('#breath .bcirc');let i=0,end=Date.now()+BDUR*60e3;
+  const step=()=>{if(!bT)return;if(Date.now()>=end){stopBreath();toast('Bravo, '+BDUR+' minutes de calme');return}const[t,d,sc]=m.ph[i%m.ph.length];$('bTxt').textContent=t+'…';c.style.transitionDuration=d+'s';c.style.transform=`scale(${.55+.45*sc})`;i++;bTO=setTimeout(step,d*1000)};
+  bT=setInterval(()=>{const l=Math.max(0,Math.round((end-Date.now())/1000));$('bTime').textContent=Math.floor(l/60)+':'+String(l%60).padStart(2,'0')},500);$('bBtn').textContent='Arrêter';step()}
+/* sons (Web Audio) */
+let NZ=null,NK='brown',NT=null;
+function noiseStart(){const AC2=new (window.AudioContext||window.webkitAudioContext)(),len=AC2.sampleRate*4,buf=AC2.createBuffer(1,len,AC2.sampleRate),d=buf.getChannelData(0);
+  let last=0,b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+  for(let i=0;i<len;i++){const w=Math.random()*2-1;if(NK==='pink'){b0=.99886*b0+w*.0555179;b1=.99332*b1+w*.0750759;b2=.969*b2+w*.153852;b3=.8665*b3+w*.3104856;b4=.55*b4+w*.5329522;b5=-.7616*b5-w*.016898;d[i]=(b0+b1+b2+b3+b4+b5+b6+w*.5362)*.11;b6=w*.115926}else{last=(last+.02*w)/1.02;d[i]=last*3.5}}
+  const src=AC2.createBufferSource();src.buffer=buf;src.loop=true;const g=AC2.createGain();g.gain.value=0;
+  let out=g;if(NK==='ocean'){const lfo=AC2.createOscillator(),lg=AC2.createGain();lfo.frequency.value=.1;lg.gain.value=.35;lfo.connect(lg);const g2=AC2.createGain();g2.gain.value=.55;lg.connect(g2.gain);src.connect(g2);g2.connect(g);lfo.start()}else src.connect(g);
+  g.connect(AC2.destination);src.start();g.gain.linearRampToValueAtTime(num($('nVol').value)/100*.8,AC2.currentTime+2);NZ={AC2,g};
+  const until=Date.now()+num($('nTime').value)*6e4;clearInterval(NT);NT=setInterval(()=>{const l=until-Date.now();if(l<=0)return noiseStop(true);$('nLeft').textContent='Arrêt dans '+Math.ceil(l/6e4)+' min';if(l<60e3&&NZ)NZ.g.gain.value=num($('nVol').value)/100*.8*(l/60e3)},1000);$('nBtn').textContent='Arrêter le son'}
+function noiseStop(auto){clearInterval(NT);if(NZ){try{NZ.g.gain.linearRampToValueAtTime(0,NZ.AC2.currentTime+1.5);const a=NZ.AC2;setTimeout(()=>a.close(),1700)}catch(e){}}NZ=null;$('nBtn').textContent='Lancer le son';$('nLeft').textContent=auto?'Son arrêté. Bonne nuit !':''}
+/* ancrage */
+const GRND=[['5','choses que tu VOIS autour de toi'],['4','choses que tu peux TOUCHER'],['3','sons que tu ENTENDS'],['2','odeurs que tu SENS'],['1','goût dans ta bouche, ou une chose que tu aimes chez toi']];let GI=-1;
+function renderGrnd(){$('grnd').innerHTML=GI<0?'':GI>=GRND.length?'<p class="big" style="font-size:30px;text-align:center">Bien joué.</p><p class="mute" style="text-align:center">Respire tranquillement. Tu es là, maintenant.</p>':`<div style="text-align:center;padding:10px 0"><div class="big">${GRND[GI][0]}</div><p style="font-size:19px;margin:6px 0">${GRND[GI][1]}</p><p class="mute">Prends ton temps pour les nommer dans ta tête.</p></div>`;$('grndBtn').textContent=GI<0?'Commencer':GI>=GRND.length?'Recommencer':'Suivant'}
+/* 3 bonnes choses */
+let GOOD=store.get('bonnes',{});
+function renderGood(){const g=GOOD[today()]||['','',''];$('good3').innerHTML=[0,1,2].map(i=>`<textarea class="grow" rows="1" id="gd${i}" placeholder="${['ex. un bon repas partagé','ex. une séance réussie','ex. un fou rire'][i]}" style="margin:4px 0">${esc(g[i]||'')}</textarea>`).join('');
+  const days=Object.keys(GOOD).sort().reverse().filter(d=>d!==today()).slice(0,3);$('goodHist').innerHTML=days.map(d=>`<div class="jl"><span class="n"><span class="mute">${frd(d)}</span><br>${esc(GOOD[d].filter(Boolean).join(' · '))}</span></div>`).join('')}
+/* WHO-5 */
+let WHO=store.get('who5',[]);
+const WHOQ=['Je me suis senti(e) bien et de bonne humeur','Je me suis senti(e) calme et tranquille','Je me suis senti(e) plein(e) d\'énergie et vigoureux(se)','Je me suis réveillé(e) frais(che) et dispos','Ma vie quotidienne a été remplie de choses qui m\'intéressent'];
+const WHOA=['Jamais','De temps en temps','Moins de la moitié du temps','Plus de la moitié du temps','La plupart du temps','Tout le temps'];
+let WHOtmp=[];
+function renderWho(){const last=WHO[WHO.length-1],due=!last||(Date.now()-new Date(last.d))/864e5>=13;
+  if(!due&&!WHOtmp.started){const sc=last.s;$('who5').innerHTML=`<div class="kv"><b>${sc}</b><span class="mute">/ 100 le ${frd(last.d)}</span></div><div class="bar"><i style="width:${sc}%"></i></div><p class="mute">${sc>50?'Ton moral va plutôt bien. Continue à prendre soin de toi.':'Ton moral est en baisse. Parles-en à ton médecin ou à un proche : c\'est important. En cas de détresse, le 3114 répond gratuitement 24 h/24.'}</p>${WHO.length>1?`<p class="mute">Précédent : ${WHO[WHO.length-2].s}/100</p>`:''}<p class="mute">Prochain questionnaire dans ${Math.ceil(14-(Date.now()-new Date(last.d))/864e5)} jour(s).</p>`;return}
+  WHOtmp.started=1;const i=WHOtmp.length;
+  if(i>=5){const s=WHOtmp.reduce((a,b)=>a+b,0)*4;WHO.push({d:today(),s});store.set('who5',WHO);WHOtmp=[];renderWho();return}
+  $('who5').innerHTML=`<p class="mute">Question ${i+1} sur 5 · ces 2 dernières semaines</p><p style="font-size:18px;font-weight:700">${WHOQ[i]}</p><div style="display:grid;gap:6px">${WHOA.map((a,v)=>`<button class="ghost" data-act="whoA" data-v="${v}" style="text-align:left">${a}</button>`).join('')}</div>`}
+/* repères sommeil : dette, régularité, caféine */
+function sleepKpi(){const need=450,days=[...Array(14)].map((_,i)=>dkey(Date.now()-i*864e5)),n=days.filter(d=>SL[d]);
+  const debt=n.reduce((a,d)=>a+Math.max(0,need-dur(SL[d].c,SL[d].l)),0);
+  const wk=days.slice(0,7).filter(d=>SL[d]).map(d=>tmin(SL[d].l)),avg=wk.length?wk.reduce((a,b)=>a+b,0)/wk.length:0,dev=wk.length>1?wk.reduce((a,b)=>a+Math.abs(b-avg),0)/wk.length:0;
+  const bed=(tmin($('slWake').value||'07:00')-5*90-15+1440)%1440,caf=(bed-8*60+1440)%1440,f=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+  $('slKpi').innerHTML=`<div><b>${n.length?hm(debt):'–'}</b><span>dette sur 14 nuits</span></div><div><b>${wk.length>1?'±'+Math.round(dev)+' min':'–'}</b><span>régularité du lever</span></div><div><b>${f(caf)}</b><span>dernier café</span></div>`;
+  $('slKpiTxt').textContent=(n.length&&debt>120?'Ta dette de sommeil grimpe : couche-toi 15 à 30 minutes plus tôt quelques soirs. ':'')+(wk.length>1&&dev>30?'Essaie de te lever à la même heure chaque jour, même le week-end : c\'est le réglage n°1. ':'')+'La caféine reste longtemps dans le corps : évite-la dans les 8 heures avant de dormir.'}
+/* messages du coach selon la situation */
+function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.now()-2*864e5),E=ema();
+  if(Object.keys(A).length>3&&!A[d1]&&!A[d2]&&!A[today()])return["Une journée sans, c'est juste une journée. On reprend en version mini ?","Tu n'as rien perdu : tout ce que tu as fait compte encore.","Revenir, c'est déjà réussir. Bon retour !"][dayIndex()%3];
+  if(E.length>4){const l=E[E.length-1],r=[...E].reverse().find(p=>(new Date(l.d)-new Date(p.d))>=14*864e5);if(r&&Math.abs(l.e-r.e)<.3)return"Le poids stagne, mais ton corps consolide : regarde tes mensurations et ta régularité, elles racontent une autre histoire."}
+  const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
+  return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-24';
+const APP_VERSION='2026.11.26-25';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
@@ -2444,7 +2522,7 @@ setInterval(checkUpdate,30*60*1000);setTimeout(checkUpdate,3000);
 $('wObj').addEventListener('click',e=>{const b=e.target.closest('[data-o]');if(!b)return;$('wObj').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))});
 if(!P.taille&&!store.get('onb',0)){$('welcome').classList.add('on');document.body.style.overflow='hidden'}
 $('slQ').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(!b)return;SLQ=+b.dataset.q;document.querySelectorAll('#slQ button').forEach(x=>x.classList.toggle('on',x===b))});
-$('slWake').value=store.get('reveil','07:00');$('slWake').addEventListener('input',()=>{store.set('reveil',$('slWake').value);renderSleep()});
+$('slWake').value=store.get('reveil','07:00');$('slWake').addEventListener('input',()=>{store.set('reveil',$('slWake').value);renderSleep();sleepKpi()});
 $('slTips').innerHTML=SLTIPS.map(([t,d],i)=>`<div class="tipl"><em>${i+1}</em><div><b>${esc(t)}</b><div class="mute" style="font-size:15px">${esc(d)}</div></div></div>`).join('');
 renderDaily();renderSleep();
 applyFx(store.get('fx',RM?'off':'on'));ambiance(document.documentElement.dataset.skin);
