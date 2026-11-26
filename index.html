@@ -149,6 +149,7 @@ section[data-v=moi].on{display:flex;flex-direction:column}section[data-v=moi]>*{
 #netB{position:fixed;left:12px;right:12px;top:calc(64px + env(safe-area-inset-top));z-index:55;background:var(--card);color:var(--ink);border-radius:14px;padding:10px 14px;font-size:14px;box-shadow:0 0 0 1px var(--line),0 10px 24px -10px rgba(0,0,0,.5);border-left:4px solid var(--yel);animation:tin .35s}
 .fiche summary{align-items:flex-start}.fl{margin:0;padding-left:20px}.fl li{margin:6px 0;line-height:1.45}
 .tipd{width:100%;text-align:left;border:0;font:inherit;color:inherit;text-transform:none;letter-spacing:0;cursor:pointer;margin-top:10px}html[data-skin] .tipd{background:var(--fill);background-image:none;color:var(--ink);box-shadow:none}
+.news{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--fill)!important;background-image:none!important;color:var(--ink)!important;border:0;border-radius:14px;padding:10px 12px;margin-top:8px;min-height:60px;font:inherit;text-transform:none;letter-spacing:0;box-shadow:none!important;animation:none!important}.news i{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-style:normal;background:var(--red);color:#fff}.news small{display:block;font-size:14px;color:var(--mute);font-weight:500}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -2685,6 +2686,7 @@ const A={
   mealGo(){mealGo()},mealEnd(b){mealEnd(b.dataset.v==='1')},mealClose(){clearInterval(mtick);MEAL=null;ov.classList.remove('on');document.body.style.overflow=''},
   startHide(){store.set('startHide',1);renderHome()},
   installHelp(){location.hash='accueil';setTimeout(()=>{const c=$('installCard');if(c&&c.style.display!=='none')c.scrollIntoView({behavior:'smooth'});else toast('Sur iPhone : bouton Partager de Safari, puis « Sur l\'écran d\'accueil ».')},100)},
+  newsGo(b){$('sheet').classList.remove('on');openPane(b.dataset.v,b.dataset.p)},
   dislClear(b){DISL=[];store.set('dislikes',DISL);b.parentNode.remove();toast('C\'est oublié.')},
   homeAsk(){const v=$('hAsk').value.trim();if(!v){$('hAsk').focus();return}$('hAsk').value='';location.hash='coach';setTimeout(()=>{$('ask').value=v;send()},250)},
   zclear(){const old=P.zones.slice();P.zones=[];saveP();renderZones();if(old.length)undoToast('Priorités effacées',()=>{P.zones=old;saveP();renderZones()})},
@@ -3580,7 +3582,20 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-56';
+const APP_VERSION='2026.11.26-57';
+
+/* ---- Quoi de neuf (après une mise à jour) ---- */
+const NEWS=[
+ ['2026.11.26-41','Bon produit ?','Photo du paquet, du tableau ou des ingrédients : note sur 100, additifs, avis du coach.','scan','produit'],
+ ['2026.11.26-41','Tour du monde','Carte du monde et grands classiques de chaque pays, en photo.','cuisine','monde'],
+ ['2026.11.26-41','Séances prêtes et 60 exercices','Maison, express, à deux, étirements : guidées, même sans internet.','sport','prets'],
+ ['2026.11.26-46','Aliments officiels ANSES','Journal : cherche un aliment, les vraies valeurs s\'ajoutent.','cuisine','journal'],
+ ['2026.11.26-49','Photo dans le chat','Envoie une photo au coach avec ta question.','coach','chat'],
+ ['2026.11.26-50','Repas en douceur','Minuteur guidé pour manger lentement après la sleeve.','cuisine','journal'],
+ ['2026.11.26-54','Conseils pratiques','40 fiches vérifiées : restaurant, fêtes, sommeil, courses…','coach','fiches'],
+ ['2026.11.26-55','Nouveau look','Plus lisible, et des animations propres à chaque thème.','moi','']];
+function showNews(){let seen=store.get('newsSeen','');if(!seen){if(!P.taille){store.set('newsSeen',APP_VERSION);return}seen='2026.11.26-40'}const L=NEWS.filter(n=>n[0]>seen&&(n[4]!=='journal'||n[1]!=='Repas en douceur'||BARIA()));store.set('newsSeen',APP_VERSION);if(!L.length||$('welcome').classList.contains('on'))return;
+  setTimeout(()=>openSheet(`<div class="row sb"><h2 style="margin:0">Quoi de neuf ?</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Depuis ta dernière visite :</p>${L.map(n=>`<button class="stp news" data-act="newsGo" data-v="${n[3]}" data-p="${n[4]}"><i>★</i><span><b>${esc(n[1])}</b><small>${esc(n[2])}</small></span></button>`).join('')}`),1500)}
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
@@ -3597,7 +3612,7 @@ if(!P.taille&&!store.get('onb',0)){$('welcome').classList.add('on');document.bod
 $('slQ').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(!b)return;SLQ=+b.dataset.q;document.querySelectorAll('#slQ button').forEach(x=>x.classList.toggle('on',x===b))});
 $('slWake').value=store.get('reveil','07:00');$('slWake').addEventListener('input',()=>{store.set('reveil',$('slWake').value);renderSleep();sleepKpi()});
 $('slTips').innerHTML=SLTIPS.map(([t,d],i)=>`<div class="tipl"><em>${i+1}</em><div><b>${esc(t)}</b><div class="mute" style="font-size:15px">${esc(d)}</div></div></div>`).join('');
-renderDaily();renderSleep();
+renderDaily();renderSleep();try{showNews()}catch(e){}
 applyFx(store.get('fx',RM?'off':'on'));ambiance(document.documentElement.dataset.skin);
 $('phIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const{canvas}=await shrink(f,900);await phOp('readwrite',st=>st.put({id:'ph'+Date.now(),d:today(),data:canvas.toDataURL('image/jpeg',.82)}));toast('Photo ajoutée');renderPhotos()}catch(err){toast('Photo impossible à enregistrer')}e.target.value=''});
 $('bkIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result),d=o.data||o;let n=0;Object.entries(d).forEach(([k,v])=>{if(k.startsWith('coach_')&&k!=='coach_ia'){localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v));n++}});toast(n+' éléments restaurés');setTimeout(()=>location.reload(),900)}catch(err){toast('Fichier de sauvegarde illisible')}};r.readAsText(f)});
