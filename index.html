@@ -142,6 +142,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px var(--fill) inset;-webkit-t
 .cqi{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;background:var(--fill);color:var(--ink);border:0;border-radius:14px;padding:10px 12px;margin-top:6px;min-height:52px;font:inherit;text-transform:none;letter-spacing:0;box-shadow:none}.cqi small{display:block;font-size:12px;color:var(--mute);font-weight:500}.cqi>span:last-child{text-align:right;flex:none;font-weight:700}html[data-skin] #cqRes .cqi{background:var(--fill);background-image:none;color:var(--ink);box-shadow:none}.cqp{background:var(--fill);border-radius:16px;padding:12px;margin-top:8px}
 .wkst{grid-template-columns:repeat(2,minmax(0,1fr))!important}.wkst div{display:flex;flex-direction:column}.wkst small{font-size:12px;color:var(--mute);margin-top:2px}
 .askimg{display:flex;align-items:center;gap:10px;margin:0 0 8px}.askimg img{width:64px;height:64px;object-fit:cover;border-radius:12px}.camb{position:relative;flex:none;cursor:pointer;display:grid;place-items:center;width:48px!important;height:48px!important}.bubimg{display:block;max-width:180px;max-height:180px;border-radius:12px;margin-bottom:6px}
+.mplate{width:120px;height:120px;margin:6px auto 4px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--red) 14%,var(--fill));box-shadow:0 0 0 10px color-mix(in srgb,var(--red) 7%,transparent);animation:mpl 6s ease-in-out infinite}.mplate .i{width:56px;height:56px;color:var(--red)}@keyframes mpl{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}@media(prefers-reduced-motion:reduce){.mplate{animation:none}}html[data-fx=off] .mplate{animation:none}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -1111,6 +1112,7 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
       <div class="row sb"><b>Eau</b><span id="gW" class="mute"></span></div><div class="glass" id="glass" style="margin-top:6px"></div>
       <div class="tip" id="gTip" style="display:none"></div>
     </div>
+    <div class="card" id="mealCard" style="display:none"></div>
     <div class="tiles">
       <button class="tile" data-act="goPane" data-v="scan" data-p="produit"><span class="ic c-red"><svg class="i"><use href="#i-bar"/></svg></span><span>Scanner un produit</span></button>
       <button class="tile" data-act="goPane" data-v="scan" data-p="assiette"><span class="ic c-yel"><svg class="i"><use href="#i-plate"/></svg></span><span>Photo de l'assiette</span></button>
@@ -2218,6 +2220,23 @@ Dis ce qui va bien (sois précis), UNE chose à améliorer la semaine prochaine 
   async weekShare(){try{const bl=await weekImage(),f=new File([bl],'ma-semaine.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Ma semaine'});return}const u=URL.createObjectURL(bl);openSheet(`<div class="row sb"><h2 style="margin:0">Ma semaine</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Appuie longuement sur l'image pour l'enregistrer ou la partager.</p><img src="${u}" alt="Bilan de ma semaine" style="width:100%;border-radius:16px">`)}catch(e){if(e&&e.name!=='AbortError')toast('Image impossible à créer ici.')}}
 };
 
+
+/* ---- Repas en douceur (sleeve) : 20-30 min, petites bouchées, écoute de la satiété ---- */
+let MEAL=null,mtick=null;
+const MEALTIPS=['Pose ta fourchette entre deux bouchées.','Petite bouchée, de la taille d\'une cuillère à café.','Mâche longtemps, jusqu\'à une texture de purée.','Les protéines d\'abord : viande, poisson, œuf ou laitage.','Respire. Rien ne presse.','Écoute ton ventre : une légère pression = c\'est le moment d\'arrêter.','Pas de boisson pendant le repas.','Prends le temps de sentir le goût.'];
+function mealGo(){MEAL={t0:Date.now(),i:0};try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(w=>WL=w).catch(()=>{})}catch(e){}ov.classList.add('on');document.body.style.overflow='hidden';mealR()}
+function mealR(){if(!MEAL)return;clearInterval(mtick);
+  ov.innerHTML=`<div class="ovh"><span class="mute">Repas en douceur</span><button class="ghost sm" data-act="mealEnd" data-v="0">Fermer</button></div>
+  <div style="text-align:center;margin-top:16px"><div class="mplate" aria-hidden="true"><svg class="i"><use href="#i-plate"/></svg></div><div class="timer" id="mTm">0:00</div><p class="mute" style="margin-top:0">Vise 20 à 30 minutes pour ton repas.</p>
+  <div class="tip" id="mTip" style="text-align:left;font-size:19px;min-height:64px">${esc(MEALTIPS[0])}</div>
+  <button data-act="mealEnd" data-v="1" style="width:100%;min-height:64px;font-size:20px;margin-top:14px">Je n'ai plus faim</button>
+  <p class="mute" style="font-size:14px">Si tu ressens une douleur, une gêne qui ne passe pas ou des nausées : arrête et préviens ton équipe.</p></div>`;
+  const f=()=>{if(!MEAL)return;const s2=Math.floor((Date.now()-MEAL.t0)/1000),el=$('mTm');if(el)el.textContent=Math.floor(s2/60)+':'+String(s2%60).padStart(2,'0');const k=Math.floor(s2/75)%MEALTIPS.length;if(k!==MEAL.i){MEAL.i=k;const t=$('mTip');if(t){t.textContent=MEALTIPS[k];t.animate&&t.animate([{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:400})}if(VOICE)say(MEALTIPS[k])}if(s2===20*60)beep(1)};f();mtick=setInterval(f,1000)}
+function mealEnd(ok){clearInterval(mtick);const min=MEAL?Math.round((Date.now()-MEAL.t0)/6e4):0;MEAL=null;try{WL&&WL.release()}catch(e){}
+  if(ok){store.set('boire',{until:Date.now()+30*6e4});const ml=store.get('repasLents',[]);ml.push({d:today(),min});store.set('repasLents',ml.slice(-60));
+    ov.innerHTML=`<div style="text-align:center;padding-top:40px"><h1>Bien joué</h1><div class="big" style="color:var(--red);margin:16px 0">${min} min</div><p>${min>=20?'Parfait, tu as pris ton temps.':'Un peu rapide : la prochaine fois, essaie d\'atteindre 20 minutes.'}</p><p class="mute">Pas de boisson pendant 30 minutes : je te préviens quand c'est bon.</p><button data-act="mealClose" style="margin-top:16px">Fermer</button></div>`;try{renderDrink()}catch(e){}}
+  else A.mealClose()}
+
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -2503,6 +2522,7 @@ const A={
   kadj(b){P.kadj=(+P.kadj||0)+(+b.dataset.v);P.kadjD=today();saveP();calc();bilan()},
   kreset(b,e){e.preventDefault();P.kadj=0;saveP();calc();bilan()},
   askImgDel(){ASKIMG=null;$('askImg').hidden=true;$('askImg').innerHTML='';$('askPh').value='';$('ask').placeholder='Écris ton message…'},
+  mealGo(){mealGo()},mealEnd(b){mealEnd(b.dataset.v==='1')},mealClose(){clearInterval(mtick);MEAL=null;ov.classList.remove('on');document.body.style.overflow=''},
   dislClear(b){DISL=[];store.set('dislikes',DISL);b.parentNode.remove();toast('C\'est oublié.')},
   homeAsk(){const v=$('hAsk').value.trim();if(!v){$('hAsk').focus();return}$('hAsk').value='';location.hash='coach';setTimeout(()=>{$('ask').value=v;send()},250)},
   zclear(){const old=P.zones.slice();P.zones=[];saveP();renderZones();if(old.length)undoToast('Priorités effacées',()=>{P.zones=old;saveP();renderZones()})},
@@ -3289,9 +3309,10 @@ function renderPills(){
 /* minuteur boisson (après une sleeve) */
 function renderDrink(){
   const d=store.get('boire',null),now=Date.now(),act=d&&d.until>now,mm=act?Math.ceil((d.until-now)/6e4):0,hh=act?new Date(d.until).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'';
-  const body=BARIA()?`<h2>Boire et manger séparément</h2><p class="sub">Après une sleeve : pas de boisson 30 minutes avant et après le repas.</p>${act?`<div class="drink"><div class="big" style="color:var(--blue)">${mm} min</div><p>Tu pourras boire à <b>${hh}</b>.</p></div>`:`<p style="font-weight:700;color:var(--green)">Tu peux boire maintenant, par petites gorgées.</p>`}<div class="row"><button class="sm" data-act="drinkAfter">J'ai fini de manger</button><button class="ghost sm" data-act="drinkStop">Annuler</button></div>`
+  const body=BARIA()?`<h2>Boire et manger séparément</h2><p class="sub">Après une sleeve : pas de boisson 30 minutes avant et après le repas.</p>${act?`<div class="drink"><div class="big" style="color:var(--blue)">${mm} min</div><p>Tu pourras boire à <b>${hh}</b>.</p></div>`:`<p style="font-weight:700;color:var(--green)">Tu peux boire maintenant, par petites gorgées.</p>`}<div class="row"><button class="sm" data-act="mealGo">Démarrer un repas en douceur</button><button class="ghost sm" data-act="drinkAfter">J'ai fini de manger</button><button class="ghost sm" data-act="drinkStop">Annuler</button></div>`
     :`<h2>Hydratation</h2><p class="sub">Bois régulièrement dans la journée, un verre à chaque repas et un autour de la séance.</p>`;
   $('drinkCard').innerHTML=body;
+  const mc=$('mealCard');if(mc){if(BARIA()){mc.style.display='block';mc.innerHTML=`<div class="row sb" style="flex-wrap:nowrap;gap:10px"><span><b>À table ?</b><div class="mute">${act?'Pas de boisson avant '+hh+'.':'Un repas guidé de 20 à 30 min, en petites bouchées.'}</div></span><button class="sm" data-act="mealGo">Repas en douceur</button></div>`}else mc.style.display='none'}
   const hd=$('homeDrink');if(BARIA()&&act){hd.style.display='block';hd.innerHTML=`<div class="row sb"><span><b>Pas de boisson pour l'instant</b><div class="mute">Tu pourras boire à ${hh} (dans ${mm} min)</div></span><button class="ghost sm" data-act="drinkStop">OK</button></div>`}else hd.style.display='none';
 }
 setInterval(()=>{if(document.visibilityState==='visible'){const d=store.get('boire',null);if(d){if(d.until<=Date.now()&&!d.done){d.done=1;store.set('boire',d);toast('Tu peux boire à nouveau');try{beep(2)}catch(e){}}renderDrink()}}},30000);
@@ -3387,7 +3408,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-49';
+const APP_VERSION='2026.11.26-50';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
