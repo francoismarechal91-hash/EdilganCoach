@@ -1341,7 +1341,7 @@ html:is([data-skin=clair],[data-skin=nuit]) .hero{background:linear-gradient(150
 .ovh>.mute{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ovanim{max-width:170px}
 #ov h1{font-size:clamp(22px,6vw,28px)!important}
-#ov [data-act=doneSet]{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom));z-index:3}
+#ov .logbar{position:sticky;bottom:0;z-index:3;margin:10px -4px 0;padding:10px 4px calc(10px + env(safe-area-inset-bottom));background:var(--bg);box-shadow:0 -16px 20px -12px var(--bg)}#ov .logbar .setin{margin:0 0 10px}#ov .logbar label{margin-top:0}
 #ov>.row:last-child{position:sticky;bottom:calc(6px + env(safe-area-inset-bottom));z-index:3;background:var(--bg);padding:8px 0}
 #journal .jl{display:grid;grid-template-columns:1fr 44px 44px;column-gap:4px}
 #journal .jl .v{grid-row:2;grid-column:1;color:var(--red)}
@@ -1392,7 +1392,8 @@ button.chip.p::before,.seg button.on::before{content:"✓ ";font-weight:900}
  section[data-v=accueil]>.sect{grid-column:1/-1}
 }
 @media(orientation:landscape) and (max-height:500px){.tabs{bottom:4px}.hero{min-height:0!important}#ov .anim{max-width:150px}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){html:not(.fxu) *{animation:none!important;transition:none!important}}
+html[data-fx=off] *:not([data-anim]):not([data-anim] *){animation:none!important}
 @media(max-width:380px){.stats b{font-size:18px}.tile{padding:14px}}
 /* ==== Audit design (testé) ==== */
 /* F1 synth : boutons 1-5 du check-in et pilulier qui paraissent tous cochés */
@@ -1805,6 +1806,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
     <div class="row"><label class="vid" style="cursor:pointer;margin:0;color:var(--ink);font-size:14px"><input type="file" accept="image/*" id="heroIn" style="display:none">Choisir une image</label><button class="ghost sm" data-act="heroDel" id="heroDel" hidden>Retirer</button></div>
     <div class="eqh" style="margin-top:16px">Animations et effets</div>
     <div class="seg" id="fxSeg" style="margin:8px 0 0"><button data-fx="on">Riches</button><button data-fx="calm">Sobres</button><button data-fx="off">Aucune</button></div>
+    <p class="mute" id="fxNote" hidden style="font-size:13.5px;margin:6px 0 0">Ton téléphone demande moins d'animations (Réglages › Accessibilité › Mouvement). Choisis « Riches » pour tout activer quand même. Les démonstrations d'exercices restent animées.</p>
     <label class="fxrow"><input type="checkbox" id="fxTilt"><span>Les reflets suivent l'inclinaison du téléphone<small>Sinon, ils suivent ton doigt.</small></span></label>
     <div class="eqh" style="margin-top:16px">Taille du texte</div>
     <div class="seg" id="sizeSeg" style="margin:8px 0 0"><button data-size="m">Normal</button><button data-size="l">Grand</button><button data-size="xl">Très grand</button></div>
@@ -2674,7 +2676,8 @@ function front(P){
   return{front:1,h,sc,sL,sR,hd,eL,wL,eR,wR,hL,hR,kL,nL,kR,nR};
 }
 const lerp=(a,b,t)=>a+(b-a)*t;
-function mix(A,B,t){const o={};for(const k in{...A,...B}){const a=A[k],b=B[k];o[k]=typeof a==='number'&&typeof b==='number'?lerp(a,b,t):(t<.5?a:b)??a??b}return o}
+const MIXD={lift:0,hd:0,lean:0,sh:0,aL:0,aR:0,eL:0,eR:0,lL:4,lR:4,sx:1,hy:110,t:0,a1:0,f1:0,a2:0,f2:0,l1:0,s1:0,l2:0,s2:0,ft1:90,ft2:90};
+function mix(A,B,t){const o={};for(const k in{...A,...B}){let a=A[k],b=B[k];if(typeof a==='number'&&b===undefined&&typeof MIXD[k]==='number')b=MIXD[k];if(typeof b==='number'&&a===undefined&&typeof MIXD[k]==='number')a=MIXD[k];o[k]=typeof a==='number'&&typeof b==='number'?lerp(a,b,t):(t<.5?a:b)??a??b}return o}
 const ease=t=>(1-Math.cos(Math.PI*t))/2;
 /* ---------- Schémas de mouvement ---------- */
 const S={
@@ -2688,7 +2691,7 @@ const S={
  presse:{n:'Presse à cuisses',k:[{hx:100,hy:150,t:-58,hd:8,a1:20,f1:60,a2:20,f2:60,l1:172,s1:100,l2:172,s2:100,ft1:150,ft2:150},{hx:100,hy:150,t:-58,hd:8,a1:20,f1:60,a2:20,f2:60,l1:138,s1:132,l2:138,s2:132,ft1:150,ft2:150}],p:['presse']},
  legext:{n:'Leg extension',k:[{hx:108,hy:146,t:-4,a1:10,f1:20,a2:10,f2:20,l1:90,s1:4,l2:90,s2:4},{hx:108,hy:146,t:-4,a1:10,f1:20,a2:10,f2:20,l1:90,s1:84,l2:90,s2:84}],p:['seat','pad']},
  legcurl:{n:'Leg curl',k:[{hx:122,hy:164,t:-90,hd:-8,a1:-40,f1:-80,a2:-40,f2:-80,l1:90,s1:90,l2:90,s2:90,ft1:180,ft2:180},{hx:122,hy:164,t:-90,hd:-8,a1:-40,f1:-80,a2:-40,f2:-80,l1:90,s1:200,l2:90,s2:200,ft1:110,ft2:110}],p:['benchLow','padC']},
- mollets:{n:'Mollets',k:[{anchor:'foot',t:0,a1:0,f1:0,a2:0,f2:0,l1:0,s1:0,l2:0,s2:0,ft1:90,ft2:90},{anchor:'foot',t:0,a1:0,f1:0,a2:0,f2:0,l1:0,s1:0,l2:0,s2:0,ft1:90,ft2:90,lift:9}],p:['step']},
+ mollets:{n:'Mollets',k:[{anchor:'foot',t:0,a1:0,f1:0,a2:0,f2:0,l1:0,s1:0,l2:0,s2:0,ft1:100,ft2:100},{anchor:'foot',t:-2,a1:0,f1:0,a2:0,f2:0,l1:0,s1:0,l2:0,s2:0,ft1:28,ft2:28}],p:['step'],d:1.6},
  bench:{n:'Développé couché',k:[{hx:140,hy:144,t:-90,hd:0,a1:14,f1:176,a2:14,f2:176,l1:80,s1:8,l2:80,s2:8},{hx:140,hy:144,t:-90,hd:0,a1:178,f1:178,a2:178,f2:178,l1:80,s1:8,l2:80,s2:8}],p:['bench','plate']},
  incline:{n:'Développé incliné',k:[{hx:136,hy:150,t:-55,hd:6,a1:-8,f1:150,a2:-8,f2:150,l1:70,s1:0,l2:70,s2:0},{hx:136,hy:150,t:-55,hd:6,a1:160,f1:160,a2:160,f2:160,l1:70,s1:0,l2:70,s2:0}],p:['benchInc','plate']},
  pompe:{n:'Pompes',k:[{anchor:'foot',fx:50,t:66,hd:8,a1:2,f1:2,a2:2,f2:2,l1:-66,s1:-66,l2:-66,s2:-66,ft1:160,ft2:160},{anchor:'foot',fx:50,t:84,hd:8,a1:-112,f1:22,a2:-112,f2:22,l1:-84,s1:-84,l2:-84,s2:-84,ft1:170,ft2:170}],p:['mat']},
@@ -2814,7 +2817,7 @@ function loop(ts){raf=0;if(ts-lastTs<30){if(live.size)raf=requestAnimationFrame(
 const io=typeof IntersectionObserver!=='undefined'?new IntersectionObserver(es=>{for(const e of es){if(e.isIntersecting)live.add(e.target);else live.delete(e.target)}if(live.size&&!raf)raf=requestAnimationFrame(loop)}):null;
 const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function html(key,cls='anim'){return `<div class="${cls}" data-anim data-k="${key}" role="img" aria-label="Animation : ${S[key]?.n||'exercice'}"><svg viewBox="0 -24 240 226">${frame(key,.5)}</svg></div>`}
-function mount(root){(root||document).querySelectorAll('[data-anim]:not([data-on])').forEach(el=>{el.dataset.on=1;if(io&&!still)io.observe(el)})}
+function mount(root){(root||document).querySelectorAll('[data-anim]:not([data-on])').forEach(el=>{el.dataset.on=1;if(io&&(document.documentElement.dataset.fx!=='off'||!still))io.observe(el)})}
 return{S,pick,html,mount,frame};
 })();
 
@@ -3548,7 +3551,7 @@ const AGV=(()=>{
    transitions d'onglet, décors du thème Océan. Aucune boucle permanente : rAF seulement tant que la lumière bouge. */
 const FXE=(()=>{
  const R=document.documentElement,RMq=matchMedia('(prefers-reduced-motion: reduce)');
- const rich=()=>R.dataset.fx==='on'&&!RMq.matches;
+ const rich=()=>R.dataset.fx==='on'&&(!RMq.matches||R.classList.contains('fxu'));
  const LIT='.card,.tile,.hero';
  /* textures générées une seule fois (aucun fichier) : grain de papier, réseau de caustiques */
  const rnd=s=>()=>(s=(s*16807)%2147483647)/2147483647;
@@ -3822,7 +3825,7 @@ const FIN=(()=>{
  Promise.resolve().then(()=>{try{Object.assign(A,ACTS)}catch(e){}});
  /* --- feuilles : sortie amortie (au lieu d'une disparition sèche) et glisser vers le bas pour fermer --- */
  const sh=document.getElementById('sheet');let shT=0;
- const calm=()=>R.dataset.fx==='off'||RMq.matches;
+ const calm=()=>R.dataset.fx==='off'||(RMq.matches&&!R.classList.contains('fxu'));
  if(sh){new MutationObserver(ms=>{for(const m of ms){const was=(m.oldValue||'').split(/\s+/).includes('on'),is=sh.classList.contains('on');
    if(was&&!is){if(calm())continue;sh.classList.add('fin-out');clearTimeout(shT);shT=setTimeout(()=>{sh.classList.remove('fin-out');const i=sh.querySelector('.in');if(i){i.style.transform='';i.classList.remove('fin-back','fin-drag')}},320)}
    else if(is&&!was&&sh.classList.contains('fin-out')){clearTimeout(shT);sh.classList.remove('fin-out')}}}).observe(sh,{attributes:true,attributeFilter:['class'],attributeOldValue:true});
@@ -3967,11 +3970,11 @@ function renderS(){
   ${machBox(x)}
   <div class="dots">${Array.from({length:n},(_,i)=>`<i class="${i<x.sets.length?'f':''}"></i>`).join('')}</div>
   ${g.note?`<div class="tip">${esc(g.note)}</div>`:''}${(sleepLow||sore||dl)&&S.i===0&&!x.sets.length?`<div class="tip" style="border-left-color:var(--yel)">${sleepLow?'Nuit courte : fais une série de moins par exercice aujourd\'hui. ':''}${sore?'Grosses courbatures : allège de 25 %. ':''}${dl&&!sleepLow&&!sore?'Ton corps a besoin d\'une semaine plus légère : moitié moins de séries, 4 répétitions en réserve.':''}</div>`:''}${/course|marche|v[ée]lo|rameur|elliptique|tapis|cardio/i.test(x.nom+' '+(x.machine||''))?`<div class="tip">Zone 2 : ${hrZones().z2.join('–')} pulsations/min, tu peux parler en phrases. Fractionné : ${hrZones().hiit.join('–')}.</div>`:''}
-  <div class="setin"><div><label for="sKg">Charge (kg)</label><input id="sKg" type="number" inputmode="decimal" step="0.5" value="${esc(x.sets.length?x.sets[x.sets.length-1].kg:g.kg)}" placeholder="0"></div>
-  <div><label for="sR">Répétitions</label><input id="sR" type="number" inputmode="numeric" value="${esc(x.sets.length?x.sets[x.sets.length-1].reps:g.reps)}"></div></div>
   <label style="margin-top:4px">Combien de répétitions tu aurais encore pu faire ?</label>
-  <div class="qual" id="rirRow" style="margin-bottom:12px">${['0','1','2','3','4+'].map((v,i)=>`<button data-act="rir" data-v="${i}" class="${(S.rir??2)===i?'on':''}">${v}</button>`).join('')}</div>
-  <button class="kdone" data-act="doneSet" style="width:100%;min-height:60px;font-size:19px"><span class="kck" aria-hidden="true"><svg class="i"><use href="#i-tick"/></svg></span><span>Série ${x.sets.length+1} faite</span></button>
+  <div class="qual" id="rirRow" style="margin-bottom:4px">${['0','1','2','3','4+'].map((v,i)=>`<button data-act="rir" data-v="${i}" class="${(S.rir??2)===i?'on':''}">${v}</button>`).join('')}</div>
+  <div class="logbar"><div class="setin"><div><label for="sKg">Charge (kg)</label><input id="sKg" type="number" inputmode="decimal" step="0.5" value="${esc(x.sets.length?x.sets[x.sets.length-1].kg:g.kg)}" placeholder="0"></div>
+  <div><label for="sR">Répétitions</label><input id="sR" type="number" inputmode="numeric" value="${esc(x.sets.length?x.sets[x.sets.length-1].reps:g.reps)}"></div></div>
+  <button class="kdone" data-act="doneSet" style="width:100%;min-height:60px;font-size:19px"><span class="kck" aria-hidden="true"><svg class="i"><use href="#i-tick"/></svg></span><span>Série ${x.sets.length+1} faite</span></button></div>
   <div class="row" style="margin:12px 0"><button class="ghost sm" data-act="prevEx" ${S.i?'':'disabled'}>Exercice précédent</button><button class="ghost sm" data-act="nextEx">Exercice suivant</button>${x.machine?'':yt(x.nom+' exécution technique','Vidéo')}</div>
   <details><summary style="cursor:pointer;font-weight:700;padding:8px 0">Muscles et technique</summary>${bodyMap(p,s,x.nom)}<p>${esc(x.execution||'')}</p><p class="mute">${esc(x.conseil||'')}</p></details>
   <details id="wu"><summary style="cursor:pointer;font-weight:700;padding:8px 0">Échauffement et disques</summary><div id="wuIn"></div></details>`;
@@ -4901,7 +4904,7 @@ function ambiance(k){
 }
 function burst(x,y){const k=document.documentElement.dataset.skin,C={synth:['#ff2a9d','#22e4ff','#ffcf5c'],foret:['#7ccf5c','#e0b13c','#3f8a3a'],foretnuit:['#fff6b8','#ffe27a','#b9f294'],pets:['#ff7a93','#ffc857','#6cc3e0'],clair:['#f0412f','#ffc23d','#2f8cf0'],nuit:['#ffffff','#ffc23d','#f0412f'],ocean:['#ffffff','#bdf3f7','#ff9a85'],aurore:['#ffffff','#a6fbd6','#d6c2ff']}[k]||['#fff'],cls={synth:'ln',foret:'lf',foretnuit:'',pets:'hr',clair:'',nuit:'st',ocean:'bb',aurore:'st'}[k]||'';
   for(let i=0;i<9;i++){const a=i/9*Math.PI*2+Math.random()*.4,r=34+Math.random()*30,d=document.createElement('i');d.className='pt '+cls;d.style.cssText=`left:${x}px;top:${y}px;background:${C[i%C.length]};--dx:${Math.cos(a)*r}px;--dy:${Math.sin(a)*r-(k==='foret'?-10:10)}px;--rt:${Math.round(Math.random()*360)}deg;${k==='foretnuit'||k==='synth'?`box-shadow:0 0 8px ${C[i%C.length]}`:''}`;document.body.appendChild(d);setTimeout(()=>d.remove(),800)}}
-function applyFx(v,save){document.documentElement.dataset.fx=v;if(save)store.set('fx',v);document.querySelectorAll('#fxSeg button').forEach(b=>b.classList.toggle('on',b.dataset.fx===v))}
+function applyFx(v,save){document.documentElement.dataset.fx=v;if(save){store.set('fx',v);store.set('fxu',v==='on'?1:0)}document.documentElement.classList.toggle('fxu',v==='on'&&!!store.get('fxu',0));{const n=$('fxNote');if(n)n.hidden=!(RM&&v!=='on')}document.querySelectorAll('#fxSeg button').forEach(b=>b.classList.toggle('on',b.dataset.fx===v))}
 $('fxSeg').addEventListener('click',e=>{const b=e.target.closest('[data-fx]');if(b)applyFx(b.dataset.fx,true)});
 document.addEventListener('pointerdown',e=>{
   if(document.documentElement.dataset.fx==='off')return;
@@ -5194,10 +5197,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-81';
+const APP_VERSION='2026.11.26-82';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.26-82','Animations d\'exercices réparées','Les mollets, la corde à sauter, le jumping jack… bougent de nouveau. Les démonstrations restent animées même si ton iPhone demande moins d\'animations. En séance, la charge, les répétitions et « Série faite » restent toujours visibles ensemble.','sport','exos'],
  ['2026.11.26-81','Le menu de chaque pays','Pour chaque pays : 3 entrées, 3 plats et 3 desserts. Un plat ne te plaît pas ? « ↻ D\'autres » change juste cette partie, « Tout changer » refait tout le menu, sans jamais remontrer les mêmes.','cuisine','monde'],
  ['2026.11.26-80','Rappels même téléphone en veille','Les rappels (boire, médicaments, repas…) peuvent maintenant arriver en vraie notification, écran verrouillé ou dans une autre appli. Touche la cloche › « Activer les notifications ».','accueil',''],
  ['2026.11.26-79','Nouveau thème Aurore boréale','Aurores qui dansent, ciel étoilé, sapins enneigés et cartes en glace. Synthwave plus élégant, jolies illustrations quand une liste est vide, et les fenêtres se ferment en les glissant vers le bas.','moi',''],
@@ -5240,7 +5244,7 @@ $('slQ').addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(!b
 $('slWake').value=store.get('reveil','07:00');$('slWake').addEventListener('input',()=>{store.set('reveil',$('slWake').value);renderSleep();sleepKpi()});
 $('slTips').innerHTML=SLTIPS.map(([t,d],i)=>`<div class="tipl"><em>${i+1}</em><div><b>${esc(t)}</b><div class="mute" style="font-size:15px">${esc(d)}</div></div></div>`).join('');
 renderDaily();try{showNews()}catch(e){}
-applyFx(store.get('fx',RM?'off':'on'));ambiance(document.documentElement.dataset.skin);
+applyFx(store.get('fx',RM?'calm':'on'));ambiance(document.documentElement.dataset.skin);
 {const hr=document.querySelector('.hero'),ovE=$('ov');if(hr&&'IntersectionObserver' in window)new IntersectionObserver(es=>hr.classList.toggle('off',!es[es.length-1].isIntersecting)).observe(hr);new MutationObserver(()=>document.documentElement.classList.toggle('ovon',ovE.classList.contains('on'))).observe(ovE,{attributes:true,attributeFilter:['class']})}
 $('phIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const{canvas}=await shrink(f,900);await phOp('readwrite',st=>st.put({id:'ph'+Date.now(),d:today(),data:canvas.toDataURL('image/jpeg',.82)}));toast('Photo ajoutée');renderPhotos()}catch(err){toast('Photo impossible à enregistrer')}e.target.value=''});
 $('bkIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{restoreFrom(String(r.result||''));const o=$('impRes');if(o)o.scrollIntoView({behavior:'smooth',block:'center'})};r.onerror=()=>toast('Fichier de sauvegarde illisible');r.readAsText(f);e.target.value=''});
