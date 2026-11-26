@@ -143,6 +143,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px var(--fill) inset;-webkit-t
 .wkst{grid-template-columns:repeat(2,minmax(0,1fr))!important}.wkst div{display:flex;flex-direction:column}.wkst small{font-size:12px;color:var(--mute);margin-top:2px}
 .askimg{display:flex;align-items:center;gap:10px;margin:0 0 8px}.askimg img{width:64px;height:64px;object-fit:cover;border-radius:12px}.camb{position:relative;flex:none;cursor:pointer;display:grid;place-items:center;width:48px!important;height:48px!important}.bubimg{display:block;max-width:180px;max-height:180px;border-radius:12px;margin-bottom:6px}
 .mplate{width:120px;height:120px;margin:6px auto 4px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--red) 14%,var(--fill));box-shadow:0 0 0 10px color-mix(in srgb,var(--red) 7%,transparent);animation:mpl 6s ease-in-out infinite}.mplate .i{width:56px;height:56px;color:var(--red)}@keyframes mpl{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}@media(prefers-reduced-motion:reduce){.mplate{animation:none}}html[data-fx=off] .mplate{animation:none}
+.start .stp{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--fill);color:var(--ink);border:0;border-radius:14px;padding:10px 12px;margin-top:6px;min-height:56px;font:inherit;text-transform:none;letter-spacing:0;box-shadow:none}html[data-skin] .start .stp{background:var(--fill);background-image:none;color:var(--ink);box-shadow:none}.start .stp i{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--fill2);display:grid;place-items:center;font-style:normal;font-weight:900;font-size:14px}.start .stp.ok{opacity:.6}.start .stp.ok i{background:var(--green);border-color:var(--green);color:#fff}.start .stp small{display:block;font-size:13px;color:var(--mute);font-weight:500}.start .stp:disabled{cursor:default}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -2523,6 +2524,8 @@ const A={
   kreset(b,e){e.preventDefault();P.kadj=0;saveP();calc();bilan()},
   askImgDel(){ASKIMG=null;$('askImg').hidden=true;$('askImg').innerHTML='';$('askPh').value='';$('ask').placeholder='Écris ton message…'},
   mealGo(){mealGo()},mealEnd(b){mealEnd(b.dataset.v==='1')},mealClose(){clearInterval(mtick);MEAL=null;ov.classList.remove('on');document.body.style.overflow=''},
+  startHide(){store.set('startHide',1);renderHome()},
+  installHelp(){location.hash='accueil';setTimeout(()=>{const c=$('installCard');if(c&&c.style.display!=='none')c.scrollIntoView({behavior:'smooth'});else toast('Sur iPhone : bouton Partager de Safari, puis « Sur l\'écran d\'accueil ».')},100)},
   dislClear(b){DISL=[];store.set('dislikes',DISL);b.parentNode.remove();toast('C\'est oublié.')},
   homeAsk(){const v=$('hAsk').value.trim();if(!v){$('hAsk').focus();return}$('hAsk').value='';location.hash='coach';setTimeout(()=>{$('ask').value=v;send()},250)},
   zclear(){const old=P.zones.slice();P.zones=[];saveP();renderZones();if(old.length)undoToast('Priorités effacées',()=>{P.zones=old;saveP();renderZones()})},
@@ -2960,14 +2963,21 @@ function renderHome(){
   $('hello').textContent=(h<5||h>=18?'Bonsoir':'Bonjour')+(nom?' '+nom:'')+' !';
   $('sub').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+(P.obj?' · objectif '+({muscle:'muscle',perte:'perte de poids',seche:'sèche',forme:'forme',endurance:'cardio'}[P.obj]||P.obj):'');
   $('rings').innerHTML=ring(t.k,m.kcal||0,'var(--r1)',m.kcal?`${Math.round(t.k)} / ${m.kcal}`:`${Math.round(t.k)}`,'kcal')+ring(t.p,tp,'var(--r2)',`${Math.round(t.p)} / ${tp} g`,'protéines')+ring(w,te,'var(--r3)',`${w} / ${te}`,'verres d\'eau');
-  $('homeStart').innerHTML=!P.poids||!P.taille?`<a class="card lnk" href="#moi" style="display:flex"><span class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-body"/></svg></span><span>Commence par ton profil<div class="mute" style="font-weight:500">taille, poids, objectif : 1 minute</div></span></span><svg class="i"><use href="#i-chev"/></svg></a>`:'';
+  {const steps=[[!!(P.poids&&P.taille&&P.age&&P.obj),'Compléter mon profil','taille, poids, âge, objectif','goPane','moi',''],
+    [!!((P.santeL||[]).length||P.sante||store.get('santeOk',0)),'Ma santé','opération, traitements, allergies','goPane','moi',''],
+    [!!((P.equipM||[]).length||(P.equipS||[]).length||(P.cuisL||[]).length),'Mon matériel','sport et cuisine','goPane','moi',''],
+    [!!(PR||LOG.length),'Ma première séance','programme ou séance prête','goPane','sport','prets'],
+    [Object.values(J).some(a=>Array.isArray(a)&&a.length),'Noter un repas','photo, aliment ou en toutes lettres','goPane','cuisine','journal'],
+    [STANDALONE(),'Installer l\'app','sur l\'écran d\'accueil','installHelp','',''],
+    [!!store.get('lastbk',''),'Faire une sauvegarde','pour ne rien perdre','goPane','suivi','donnees']],done=steps.filter(x=>x[0]).length;
+  $('homeStart').innerHTML=store.get('startHide',0)||done===steps.length?'':`<div class="card start"><div class="row sb"><b>Bien démarrer</b><span class="mute">${done}/${steps.length}</span></div><div class="rbar" style="height:8px;margin:8px 0 6px"><i style="width:${Math.round(done/steps.length*100)}%"></i></div>${steps.map(([ok,t,sub,act,v,pn])=>`<button class="stp${ok?' ok':''}" data-act="${act}" data-v="${v}" data-p="${pn}" ${ok?'disabled':''}><i>${ok?'✓':''}</i><span><b>${t}</b><small>${sub}</small></span></button>`).join('')}<button class="ghost sm" data-act="startHide" style="margin-top:8px">Masquer</button></div>`}
   /* séance du jour */
   const wk=LOG.filter(l=>Date.now()-l.t<7*864e5).length,doneToday=LOG.some(l=>l.d===today());
   if(PR&&arr(PR.jours).length){let li=-1;for(let i=LOG.length-1;i>=0&&li<0;i--)li=PR.jours.findIndex(j=>j.nom===LOG[i].nom);const j=PR.jours[(li+1)%PR.jours.length];
     $('homeSeance').innerHTML=`<div class="row sb"><span class="mute" style="font-weight:700">${doneToday?'Bravo, séance faite aujourd\'hui':'Ta prochaine séance'}</span><span class="mute">${wk} / ${P.jours||3} cette semaine</span></div>
     <h2 style="margin:8px 0 2px">${esc(j.nom)}</h2><div class="mute">${esc(j.focus||'')} · ${arr(j.exercices).length} exercices · ${esc(j.duree_min||'')} min</div>
     <div class="row" style="margin-top:14px"><button data-act="start" data-j="${PR.jours.indexOf(j)}" style="flex:1">Démarrer la séance</button><button class="ghost" data-act="goPane" data-v="sport" data-p="programme">Programme</button></div>`}
-  else $('homeSeance').innerHTML=`<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><h3>Ton programme sur mesure</h3><div class="mute">Le coach te crée une semaine d'entraînement adaptée.</div></div></div><button data-act="genProgHome" class="wide" style="margin-top:14px">Créer mon programme</button>`;
+  else $('homeSeance').innerHTML=`<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><h3>Ton programme sur mesure</h3><div class="mute">Le coach te crée une semaine d'entraînement adaptée.</div></div></div><div class="row" style="margin-top:14px"><button data-act="genProgHome" style="flex:1">Créer mon programme</button><button class="ghost" data-act="goPane" data-v="sport" data-p="prets" style="flex:1">Séance prête</button></div>`;
   /* menu */
   const d=MENUS[today()];
   $('homeMenu').innerHTML=d?`<div class="row sb"><h3>Au menu aujourd'hui</h3><span class="mute">${esc(d.calories_total)} kcal</span></div>${arr(d.repas).map(r=>`<div class="jl"><span class="n"><span class="mute">${esc(r.moment)}</span><br><b>${esc(r.nom)}</b></span><button class="ghost sm" data-act="cook" data-r="${reg(r)}">Recette</button></div>`).join('')}`
@@ -3408,7 +3418,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-50';
+const APP_VERSION='2026.11.26-51';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
