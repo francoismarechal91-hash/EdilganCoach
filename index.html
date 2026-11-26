@@ -836,6 +836,24 @@ summary:focus-visible,[role=button]:focus-visible,label.drop:focus-visible,.lnk:
 html.ovon #amb{display:none}
 html.ovon .hero *,html.ovon .hero::before,.hero.off *,.hero.off::before,.hero.off::after{animation-play-state:paused!important}
 </style>
+<script>
+/* Filet de sécurité : si une mise à jour plante au démarrage, on rassure et on permet d'enregistrer ses données (rien n'est effacé). */
+(function(){var shown=0;
+function dump(){var d={};try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf('coach_')===0&&k!=='coach_ia')d[k]=localStorage.getItem(k)}}catch(e){}return d}
+function save(){var t=new Date().toISOString().slice(0,10),json=JSON.stringify({app:'EdilganSuperCoach',date:t,data:dump(),archives:[]}),name='edilgan-sauvegarde-'+t+'.json';
+  try{var f=new File([json],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'Sauvegarde EdilganSuperCoach'}).catch(function(){});return}}catch(e){}
+  try{var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click()}catch(e){}}
+function retry(){var done=function(){location.replace(location.pathname+'?r='+Date.now())};try{caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.delete(k)}))}).then(done,done)}catch(e){done()}}
+function show(msg){if(shown||window.__edgOK)return;shown=1;var go=function(){var d=document.createElement('div');d.id='rescue';d.setAttribute('role','alertdialog');
+  d.style.cssText='position:fixed;inset:0;z-index:2147483000;background:#15111d;color:#fff;font:17px/1.55 -apple-system,BlinkMacSystemFont,system-ui,sans-serif;padding:calc(36px + env(safe-area-inset-top)) 24px 32px;overflow:auto';
+  var b='display:block;width:100%;min-height:56px;margin-top:12px;border:0;border-radius:16px;font:700 17px/1.2 inherit;';
+  d.innerHTML='<div style="font-size:44px">🐱</div><h1 style="font-size:26px;margin:8px 0 10px">Petit souci au démarrage</h1><p style="margin:0 0 6px">Pas d\'inquiétude : <b>tes données sont intactes</b> sur ce téléphone (repas, pesées, séances, calendrier, photos). Rien n\'a été effacé.</p><p style="margin:0;opacity:.8">Touche « Réessayer ». Si ça recommence, enregistre une copie de tes données, par sécurité.</p>'
+   +'<button id="rsR" style="'+b+'background:#ff5a3c;color:#fff">Réessayer</button><button id="rsS" style="'+b+'background:#2a2433;color:#fff">Enregistrer une copie de mes données</button><p style="opacity:.45;font-size:12px;margin-top:22px">Détail technique : '+String(msg||'').replace(/[<>&]/g,'')+'</p>';
+  document.body.appendChild(d);document.getElementById('rsR').onclick=retry;document.getElementById('rsS').onclick=save};
+  if(document.body)go();else document.addEventListener('DOMContentLoaded',go)}
+window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.message;setTimeout(function(){show(m)},1200)});
+})();
+</script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1461,7 +1479,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const store={get(k,d){try{const v=JSON.parse(localStorage.getItem('coach_'+k));if(v==null)return d;if(d!=null&&(typeof v!==typeof d||Array.isArray(v)!==Array.isArray(d))){try{if(!localStorage.getItem('coach__garde_'+k))localStorage.setItem('coach__garde_'+k,localStorage.getItem('coach_'+k))}catch(e){}return d}return v}catch(e){return d}},set(k,v){const s=JSON.stringify(v);try{localStorage.setItem('coach_'+k,s)}catch(e){if(lsCompact(k)){try{localStorage.setItem('coach_'+k,s);return}catch(e2){}}lsFull(k)}}};
 function lsSize(){let n=0;for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);n+=k.length+(localStorage.getItem(k)||'').length}return n}
 /* purge sûre, du moins précieux au plus précieux ; ne touche jamais profil, journal, séances, pesées, favoris */
-function lsCompact(keep){let freed=0;const W=(k,f)=>{if(k===keep)return;try{const s=localStorage.getItem('coach_'+k);if(s==null)return;const v=f(JSON.parse(s));if(v==null){localStorage.removeItem('coach_'+k);freed+=s.length;return}const n=JSON.stringify(v);if(n.length<s.length){localStorage.setItem('coach_'+k,n);freed+=s.length-n.length}}catch(e){}};
+function lsCompact(keep){let freed=0;try{const all={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('coach_')&&k!=='coach_phc2')all[k]=localStorage.getItem(k)}autoSnap('compactage',all)}catch(e){}const W=(k,f)=>{if(k===keep)return;try{const s=localStorage.getItem('coach_'+k);if(s==null)return;const v=f(JSON.parse(s));if(v==null){localStorage.removeItem('coach_'+k);freed+=s.length;return}const n=JSON.stringify(v);if(n.length<s.length){localStorage.setItem('coach_'+k,n);freed+=s.length-n.length}}catch(e){}};
   W('phc2',()=>null);try{PHC={}}catch(e){}
   const noDet=m=>{for(const d in m)if(d!==today())arr(m[d]&&m[d].repas).forEach(r=>{if(r&&r.det)delete r.det});return m};W('menus',noDet);try{noDet(MENUS)}catch(e){}
   W('chat',c=>arr(c).slice(-20));try{CH=CH.slice(-20)}catch(e){}
@@ -2558,10 +2576,17 @@ const BK_KEEP=12;
 async function bkList(){try{return(await phOp('readonly',st=>st.getAll())||[]).filter(x=>String(x.id).startsWith('__bk_')).sort((a,b)=>b.d-a.d)}catch(e){return[]}}
 async function autoSnap(reason,data){try{data=data||BOOT_LS;if(!data.coach_profil&&!data.coach_journal)return;const day=new Date().toISOString().slice(0,10),id='__bk_'+day+(reason==='maj'?'_maj_'+Date.now():'');
   await phOp('readwrite',st=>st.put({id,data,d:Date.now(),v:APP_VERSION,reason,n:Object.keys(data).length}));
-  const L=await bkList();for(const x of L.slice(BK_KEEP))await phOp('readwrite',st=>st.delete(x.id))}catch(e){}}
+  await bkPrune()}catch(e){}}
+/* garde : 14 derniers jours + 8 dernières mises à jour + 1 par mois pendant 12 mois + 4 avant restauration/compactage */
+async function bkPrune(){const L=await bkList(),keep=new Set(),nb={jour:0,maj:0,autre:0},mois=new Set();
+  for(const x of L){const r=x.reason==='maj'?'maj':x.reason==='jour'?'jour':'autre',m=new Date(x.d).toISOString().slice(0,7);
+    if(r==='jour'&&nb.jour<14||r==='maj'&&nb.maj<8||r==='autre'&&nb.autre<4)keep.add(x.id);nb[r]++}
+  [...L].reverse().forEach(x=>{const m=new Date(x.d).toISOString().slice(0,7);if(!mois.has(m)&&mois.size<12&&Date.now()-x.d<400*864e5){mois.add(m);keep.add(x.id)}});
+  for(const x of L)if(!keep.has(x.id))await phOp('readwrite',st=>st.delete(x.id))}
 function bkStats(data){let jd=0,ses=0;try{jd=Object.values(JSON.parse(data.coach_journal||'{}')).filter(a=>Array.isArray(a)&&a.length).length}catch(e){}try{ses=JSON.parse(data.coach_seances||'[]').length}catch(e){}return{jd,ses}}
 async function renderAutoBk(){const el=$('autoBk');if(!el)return;const L=await bkList();
-  el.innerHTML=L.length?L.map(x=>{const st=bkStats(x.data);return `<div class="jl"><span class="n"><b>${new Date(x.d).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})} ${new Date(x.d).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</b><div class="mute">${x.reason==='maj'?'avant la mise à jour · ':''}${st.jd} jour${st.jd>1?'s':''} de repas · ${st.ses} séance${st.ses>1?'s':''}</div></span><button class="ghost sm" data-act="bkAutoRestore" data-id="${esc(x.id)}">Restaurer</button></div>`}).join(''):'<p class="mute">La première sauvegarde automatique se fera aujourd\'hui.</p>'}
+  const row=x=>{const st=bkStats(x.data);return `<div class="jl"><span class="n"><b>${new Date(x.d).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})} ${new Date(x.d).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</b><div class="mute">${x.reason==='maj'?'avant la mise à jour · ':x.reason==='compactage'?'avant rangement · ':x.reason==='avant-restauration'?'avant restauration · ':''}${st.jd} jour${st.jd>1?'s':''} de repas · ${st.ses} séance${st.ses>1?'s':''}</div></span><button class="ghost sm" data-act="bkAutoRestore" data-id="${esc(x.id)}">Restaurer</button></div>`};
+  el.innerHTML=L.length?L.slice(0,6).map(row).join('')+(L.length>6?`<details><summary style="cursor:pointer;font-weight:700;padding:10px 0">Plus anciennes (${L.length-6})</summary>${L.slice(6).map(row).join('')}</details>`:''):'<p class="mute">La première sauvegarde automatique se fera aujourd\'hui.</p>'}
 async function bkGuard(){try{const last=localStorage.getItem('coach_lastver');
   if(last&&last!==APP_VERSION)await autoSnap('maj');else{const L=await bkList(),day=new Date().toISOString().slice(0,10);if(!L.some(x=>x.id==='__bk_'+day))await autoSnap('jour')}
   localStorage.setItem('coach_lastver',APP_VERSION);
@@ -3867,12 +3892,12 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-71';
+const APP_VERSION='2026.11.26-72';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
  ['2026.11.26-71','Encore plus de plats du monde','Chaque pays propose de nouveaux plats à chaque visite, et le bouton « ↻ D\'autres plats » en montre encore. Un pays du jour t\'attend à l\'ouverture.','cuisine','monde'],
- ['2026.11.26-71','Tes données sont protégées','Repas, pesées, séances, calendrier : tout est gardé à chaque mise à jour, avec une sauvegarde automatique juste avant.','suivi','donnees'],
+ ['2026.11.26-72','Tes données sont protégées','Repas, pesées, séances, calendrier : tout est gardé à chaque mise à jour. Sauvegarde automatique juste avant chaque mise à jour, chaque jour, et une par mois pendant un an. Et si un jour l\'app plante au démarrage, un écran te permet de récupérer une copie.','suivi','donnees'],
  ['2026.11.26-41','Bon produit ?','Photo du paquet, du tableau ou des ingrédients : note sur 100, additifs, avis du coach.','scan','produit'],
  ['2026.11.26-41','Tour du monde','Carte du monde et grands classiques de chaque pays, en photo.','cuisine','monde'],
  ['2026.11.26-41','Séances prêtes et 60 exercices','Maison, express, à deux, étirements : guidées, même sans internet.','sport','prets'],
@@ -3921,6 +3946,7 @@ Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS,BK_ACTS
  fx(document.body);new MutationObserver(ms=>ms.forEach(m=>m.type==='characterData'?fx(m.target):m.addedNodes.forEach(fx))).observe(document.body,{childList:true,subtree:true,characterData:true});
  try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 })();
+window.__edgOK=1;
 </script>
 </body>
 </html>
