@@ -2535,7 +2535,7 @@ function shrink(file,max=1280){return new Promise((ok,ko)=>{const u=URL.createOb
 document.querySelectorAll('[data-in]').forEach(inp=>inp.addEventListener('change',async()=>{
   const id=inp.dataset.in,f=inp.files[0];if(!f)return;let r;
   try{r=await shrink(f)}catch(_){r={blob:f}}
-  if(id==='produit'&&PH._done)resetProdPh();PH[id]=r.blob;document.querySelectorAll(`[data-need="${id}"]`).forEach(b=>{b.disabled=false;const n=b.parentNode.querySelector('.need');if(n)n.remove()});
+  if(id==='produit'&&PH._done)resetProdPh();PH[id]=r.blob;try{inp.value=''}catch(e){}document.querySelectorAll(`[data-need="${id}"]`).forEach(b=>{b.disabled=false;const n=b.parentNode.querySelector('.need');if(n)n.remove()});
   if(id==='corps'&&r.canvas){initDraw(r.canvas);return}
   const d=document.querySelector(`[data-drop="${id}"]`);d.querySelectorAll('img,b,span,svg').forEach(n=>n.remove());
   const im=document.createElement('img');im.src=URL.createObjectURL(r.blob);im.alt='Ta photo';d.appendChild(im);
@@ -2775,7 +2775,7 @@ Propose UN exercice de remplacement pour « ${x.nom} » qui travaille les mêmes
 Explique comment s'en servir correctement et quelles séries faire pour l'objectif de l'utilisateur.
 Format JSON : {"nom":"","nom_recherche":"nom usuel pour chercher une vidéo","description":"1-2 phrases","muscles_principaux":["clé"],"muscles_secondaires":["clé"],"reglages":["…"],"etapes":["…"],"erreurs":["…"],"securite":"","series":3,"repetitions":"8-12","repos_s":90,"charge":"conseil de charge","variantes":["autre exercice possible sur cet appareil"],"anim":"le mouvement le plus proche parmi : ${Object.keys(ANIM.S).join(', ')}"}
 Clés de muscles autorisées : ${KEYS}. Si ce n'est pas un appareil de sport, mets "nom":"Appareil non reconnu" et explique dans description.`,{images:PH.machine?[PH.machine]:[],modelTier:'default'});
-    if(r.nom&&r.nom!=='Appareil non reconnu'){AH=[r,...AH.filter(a=>a.nom!==r.nom)].slice(0,15);store.set('machines',AH);renderAH()}renderAna(r)})},
+    if(r.nom&&r.nom!=='Appareil non reconnu'){AH=[r,...AH.filter(a=>a.nom!==r.nom)].slice(0,15);store.set('machines',AH);renderAH()}renderAna(r);try{resetDrop('machine');$('maTxt').value=''}catch(e){}})},
   showAna(b){renderAna(AH[+b.dataset.i]);$('ana').scrollIntoView({behavior:'smooth'})},
   undo(){STROKES.pop();redraw()},clearDraw(){STROKES=[];redraw()},
   newBody(){BASE=null;cv.style.display='none';$('corpsDrop').style.display='flex';$('cvBtns').hidden=true;document.querySelector('[data-in="corps"]').value='';document.querySelector('[data-in="corps"]').click()},
@@ -2818,7 +2818,7 @@ Format JSON : {"aliments":[{"nom":"","ciqual":"","grammes":0,"kcal":0,"proteines
     $('qa').value='';$('qaRes').innerHTML=out.length?'<div class="tip" style="font-size:14px">'+out.map(esc).join('<br>')+'<div class="mute" style="margin-top:4px">✓ = valeurs officielles ANSES · ≈ = estimation. Touche × dans le journal pour corriger.</div></div>':''})},
   ate(b){addFood(REG[+b.dataset.r]);b.textContent='Ajouté !';b.disabled=true},
   cook(b){openCook(REG[+b.dataset.r])},
-  kClose(){clearInterval(ktick);stopVoice();K=null;ov.classList.remove('on');document.body.style.overflow='';try{WL&&WL.release()}catch(e){}refreshFood()},
+  kClose(b){if(K&&K.tEnd>Date.now()&&!(b&&b.dataset.sure)){if(b){b.dataset.sure=1;b.textContent='Arrêter le minuteur ?';setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent='Fermer'}},3500)}return}clearInterval(ktick);stopVoice();K=null;ov.classList.remove('on');document.body.style.overflow='';try{WL&&WL.release()}catch(e){}refreshFood()},
   kRetry(){loadCook()},
   kGo(b){stopVoice();K.i=Math.max(-1,+b.dataset.v);renderK();ov.scrollTo(0,0)},
   kTimer(){const e=K.d.etapes[K.i];K.tEnd=Date.now()+num(e.duree_min)*60000;K.tName=e.titre;ktimer();toast('Minuteur lancé : '+e.duree_min+' min')},
@@ -2907,7 +2907,7 @@ Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une
   goPane(b){openPane(b.dataset.v,b.dataset.p)},
   qtyPick(b){$('qty').value=b.dataset.v;$('qty').focus()},
   showProd(b){renderProd(PRODS[+b.dataset.i]);$('prodRes').scrollIntoView({behavior:'smooth'})},
-  anaProd(b){PALT=[];run(b,$('prodRes'),'Analyse du produit',async()=>{
+  anaProd(b){PALT=[];$('prodRes').innerHTML='';run(b,$('prodRes'),'Analyse du produit',async()=>{
     const typed=$('ean').value.replace(/\D/g,'');if(typed&&PH._done&&!(b&&b.closest&&b.closest('#prodRes')))resetProdPh();let ean=typed;const st=t=>busy($('prodRes'),t);
     if(!ean)for(const k of ['produit','ping','ptab'])if(PH[k]&&!ean){st('Lecture du code-barres');ean=await decodeBarcode(PH[k])}
     let p=ean?(st('Recherche dans Open Food Facts'),await offLookup(ean)):null;
@@ -2935,7 +2935,7 @@ Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une
   prodSearch(b){const q=$('pq').value.trim();if(q.length<3){$('pq').focus();return}run(b,$('pqRes'),'Recherche',async()=>{
     let hits=[];try{hits=await offSearch(q)}catch(e){throw{code:navigator.onLine===false?'net':'busy'}}
     $('pqRes').innerHTML=hits.length?'<div class="chips" style="margin-top:10px">'+hits.map(h=>`<button class="chip" data-act="pqPick" data-v="${esc(h.code)}">${esc(h.product_name_fr||h.product_name||h.code)}${h.brands?' · '+esc([].concat(h.brands).join(', ')):''}${h.quantity?' · '+esc(h.quantity):''}</button>`).join('')+'</div>':'<p class="mute">Rien trouvé. Essaie avec la marque, ou prends une photo.</p>'})},
-  pqPick(b){$('ean').value=b.dataset.v;A.anaProd(b)},
+  pqPick(b){const box=b.closest('.chips');PKEEP=box?[...box.querySelectorAll('[data-act=pqPick]')].filter(x=>x!==b).map(x=>({code:x.dataset.v,product_name:x.textContent})):null;$('ean').value=b.dataset.v;A.anaProd(b)},
   synth(b){const q=$('qty').value.trim();if(!q){$('qty').focus();return}const p=PROD;if(!p||numN((p.c100||{}).kcal)==null){$('synthRes').innerHTML='<div class="err">Je n\'ai pas encore les calories de ce produit : ajoute une photo du tableau nutritionnel (au dos) puis touche « Analyser le produit ».</div>';return}run(b,$('synthRes'),'Calcul',async()=>{
     const r=await askJSON(`Tu es coach en nutrition. ${profil(true)}
 Produit : ${JSON.stringify({nom:p.nom,marque:p.marque,quantite_paquet:p.quantite,portion:p.portion,pour_100g:p.c100,nutriscore:p.nutriscore,nova:p.nova})}.
@@ -3113,7 +3113,7 @@ async function offFind(a,st){const qs=[...new Set([[a.marque,a.nom,a.variante].f
   const all=[...seen.values()].map(h=>[h,simProd(a,h)]).sort((x,y)=>y[1]-x[1]);return all}
 const normT=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]+/g,' ').split(/\s+/).filter(w=>w.length>2);
 function simProd(a,h){const A=new Set(normT((a.marque||'')+' '+(a.nom||'')+' '+(a.variante||''))),B=normT([].concat(h.brands||[]).join(' ')+' '+(h.product_name_fr||h.product_name||''));if(!A.size||!B.length)return 0;const hit=B.filter(w=>A.has(w)).length;return hit/Math.max(3,A.size)}
-let PALT=[];
+let PALT=[],PKEEP=null;
 async function readLabel(blob,kind){
   if(kind==='ptab'){const r=await askJSON(`Lis ce tableau de valeurs nutritionnelles (photo). Recopie EXACTEMENT les valeurs pour 100 g ou 100 ml. S'il n'y a que des valeurs par portion, recopie-les et indique la taille de la portion en grammes.
 Écris des nombres avec un point décimal (ex. 0.11). Pour « <0,5 g », écris 0.5. Si l'énergie n'est qu'en kJ, divise par 4,184. Si une valeur est illisible, mets null (jamais 0 par défaut).
@@ -3127,7 +3127,7 @@ Format JSON : {"ean":"","nom":"nom du produit tel qu'écrit","marque":"","varian
   return a}
 
 function renderProd(p){
-  PROD=p;const alt=PALT.length?`<div class="card"><b>${p.source==='Open Food Facts'?'Ce n\'est pas le bon produit ?':'C\'est peut-être l\'un de ceux-là :'}</b><div class="chips" style="margin-top:8px">${PALT.map(h=>`<button class="chip" data-act="pqPick" data-v="${esc(h.code)}">${esc(h.product_name_fr||h.product_name||h.code)}${h.brands?' · '+esc([].concat(h.brands).join(', ')):''}${h.quantity?' · '+esc(h.quantity):''}</button>`).join('')}</div></div>`:'';PALT=[];
+  PROD=p;if(!PALT.length&&PKEEP&&PKEEP.length)PALT=PKEEP;PKEEP=null;const alt=PALT.length?`<div class="card"><b>${p.source==='Open Food Facts'?'Ce n\'est pas le bon produit ?':'C\'est peut-être l\'un de ceux-là :'}</b><div class="chips" style="margin-top:8px">${PALT.map(h=>`<button class="chip" data-act="pqPick" data-v="${esc(h.code)}">${esc(h.product_name_fr||h.product_name||h.code)}${h.brands?' · '+esc([].concat(h.brands).join(', ')):''}${h.quantity?' · '+esc(h.quantity):''}</button>`).join('')}</div></div>`:'';PALT=[];
   $('prodRes').innerHTML=verdictHTML(p)+alt+`
   <div class="card"><h3>Combien tu en as mangé ?</h3>
   <div class="chips">${[p.portion?'1 portion':'', '100 g','la moitié du paquet','tout le paquet','2 unités'].filter(Boolean).map(q=>`<button class="chip" data-act="qtyPick" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div>
@@ -3366,7 +3366,7 @@ function incr(x,kg){const t=(x.nom||'')+' '+(x.machine||'');if(/halt[èe]re|dumb
 function lastSessions(name,n){const out=[];for(let i=LOG.length-1;i>=0&&out.length<n;i--){const e=LOG[i].ex.find(x=>x.nom===name);if(e&&e.sets.length)out.push(e.sets)}return out}
 function suggest(x){
   const rr=(String(x.reps).match(/\d+/g)||[]).map(Number),lo=rr[0]||0,hi=rr[1]||rr[0]||0,ss=lastSessions(x.nom,2),ls=ss[0];
-  if(!ls)return{kg:'',reps:String(hi||''),note:'Première fois : prends une charge avec laquelle il te reste 2 à 3 répétitions en réserve à la fin de la série.'};
+  if(!ls)return{kg:'',reps:String(hi||''),note:/poids du corps|aucun|tapis|chaise|élastique|elastique/i.test(String(x.machine||''))||/^(pompe|gainage|crunch|jambes|climber|superman|burpee|jj|course|marche|etirement|chaise|pont|corde)$/.test(String(x.anim||''))?'Première fois : fais les répétitions prévues en gardant 2 à 3 répétitions en réserve. Trop facile ? Passe à la version plus difficile.':'Première fois : prends une charge avec laquelle il te reste 2 à 3 répétitions en réserve à la fin de la série.'};
   const kg=Math.max(...ls.map(s=>num(s.kg))),minR=Math.min(...ls.map(s=>num(s.reps))),rir=ls.map(s=>s.rir).filter(v=>v!=null);
   if(!kg)return{kg:'',reps:String(Math.max(...ls.map(s=>num(s.reps)))+1),note:`La dernière fois : ${ls.map(s=>s.reps).join(', ')} répétitions. Essaie d'en faire une de plus.`};
   const inc=incr(x,kg),allTop=hi&&ls.every(s=>num(s.reps)>=hi)&&(!rir.length||Math.min(...rir)>=1);
@@ -3619,7 +3619,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-59';
+const APP_VERSION='2026.11.26-60';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
