@@ -163,6 +163,7 @@ details.ex summary .dose{display:block;white-space:normal;font-size:14px;margin-
 .drop>svg{color:var(--red)}
 .drop img{max-width:100%;max-height:300px;border-radius:14px}
 .drop{position:relative}.drop3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.drop.mini{min-height:112px;padding:10px 6px;border-radius:16px;gap:3px}.drop.mini .i{width:28px;height:28px}.drop.mini b{font-size:14px}.drop.mini .mute{font-size:12px}.drop.mini img{max-height:80px;border-radius:10px}
+.forme{display:inline-block;margin-top:8px;padding:6px 12px;border-radius:14px;color:#fff;font-weight:800;font-size:15px;line-height:1.3;white-space:normal}
 .verdict{display:flex;gap:14px;align-items:center}.vscore{flex:none;width:88px;height:88px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;font-size:30px;line-height:1;text-align:center;box-shadow:0 6px 20px -6px var(--vc);background:var(--vc)}.vscore small{display:block;font-size:11px;font-weight:700;opacity:.9}.vlab{font-size:24px;font-weight:900;color:var(--vc);margin:0}
 .flags{list-style:none;padding:0;margin:8px 0}.flags li{display:flex;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--line)}.flags li:last-child{border:0}.flags i{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:13px;color:#fff;margin-top:1px}.flags .ok i{background:#2e9d4f}.flags .ko i{background:#e0482e}.flags .mid i{background:#e39b00}.flags .inf i{background:var(--blue)}
 .lvb{display:inline-block;min-width:56px;text-align:center;border-radius:999px;padding:2px 8px;font-size:12px;font-weight:800;color:#fff}.lvb.lo{background:#2e9d4f}.lvb.md{background:#e39b00}.lvb.hi{background:#e0482e}
@@ -1332,8 +1333,16 @@ async function pollinations(msgs,json){
   throw last;
 }
 let L7M=null;
+let L7RAW=null;
+async function llm7Vision(msgs,images){
+  if(!L7RAW){try{const r=await fetch('https://api.llm7.io/v1/models',{headers:{Authorization:'Bearer unused'},signal:tmo(15000)});const d=await r.json();L7RAW=arr(d.data||d)}catch(e){L7RAW=[]}}
+  const io=m=>m&&m.modalities||{},vis=L7RAW.filter(m=>m&&m.id&&arr(io(m).input).includes('image')&&!arr(io(m).output).includes('image')).map(m=>m.id);
+  const pref=['llama-4-maverick','gpt-5.6-luna','minimax-m3.1-flash','gemini-3.8-flash-high'],models=[...pref.filter(x=>vis.includes(x)),...vis.filter(x=>/flash|mini|luna|maverick/i.test(x)&&!pref.includes(x))].slice(0,2);
+  if(!models.length)throw{code:'vision'};const messages=[SYS,...(await oaiMsgs(msgs,images))];let last={code:'vision'};
+  for(const mo of models){try{const t=await oaiCall('https://api.llm7.io/v1/chat/completions',mo,messages,false,{Authorization:'Bearer unused'});AI.last='LLM7 '+mo;return t}catch(e){last=e}}
+  throw{code:'vision'}}
 async function llm7(msgs,json){
-  if(!L7M){try{const r=await fetch('https://api.llm7.io/v1/models',{headers:{Authorization:'Bearer unused'},signal:tmo(15000)});const d=await r.json();const ids=(d.data||d||[]).map(m=>m.id||m).filter(Boolean);L7M=ids.find(i=>/gpt-4\.1-mini|gpt-4o-mini|mini/i.test(i))||ids.find(i=>/gpt|mistral|llama|qwen/i.test(i))||ids[0]||'gpt-4.1-nano'}catch(e){L7M='gpt-4.1-nano'}}
+  if(!L7M){try{const r=await fetch('https://api.llm7.io/v1/models',{headers:{Authorization:'Bearer unused'},signal:tmo(15000)});const d=await r.json();L7RAW=L7RAW||arr(d.data||d);const ids=(d.data||d||[]).map(m=>m.id||m).filter(Boolean);L7M=ids.find(i=>/gpt-4\.1-mini|gpt-4o-mini|mini/i.test(i))||ids.find(i=>/gpt|mistral|llama|qwen/i.test(i))||ids[0]||'gpt-4.1-nano'}catch(e){L7M='gpt-4.1-nano'}}
   const txt=await oaiCall('https://api.llm7.io/v1/chat/completions',L7M,[SYS,...msgs.map(m=>({role:m.role,content:m.content}))],false,{Authorization:'Bearer unused'});AI.last='LLM7';return txt;
 }
 let puterP=null;
@@ -1350,7 +1359,7 @@ async function puterAI(msgs,images){
 }
 async function anyAI(msgs,{images=[],json=false}={}){
   if(AI.engine==='claude'){const s=await getSample();if(s)return null;}
-  const tries=images.length?[()=>puterAI(msgs,images)]:[()=>pollinations(msgs,json),()=>llm7(msgs,json),()=>puterAI(msgs,[])];
+  const tries=images.length?[()=>llm7Vision(msgs,images),()=>puterAI(msgs,images)]:[()=>pollinations(msgs,json),()=>llm7(msgs,json),()=>puterAI(msgs,[])];
   if(active().length)tries.push(()=>freeLLM(msgs,{images,json:false}));
   let net=navigator.onLine===false;
   for(const f of tries){try{const t=await f();if(json)return parseJSON(t);return t}catch(e){if(e&&e.code==='net'&&tries.length===1)net=true;console.log('IA échec',e)}}
@@ -2589,7 +2598,7 @@ Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une
     const hasPh=PH.produit||PH.ptab||PH.ping;
     if(!p&&!hasPh){$('prodRes').innerHTML='<div class="err">Ajoute au moins une photo (code-barres, tableau ou ingrédients), ou tape le code-barres.</div>';return}
     p=p||{source:'Lu sur tes photos',ean:ean||'',nom:'',c100:{}};
-    const miss=o=>!o||Object.values(o).every(v=>v==null||v==='');
+    const miss=o=>!o||Object.values(o).every(v=>v==null||v===''||!num(v));
     if(PH.ptab&&(miss(p.c100)||p.source!=='Open Food Facts')){st('Lecture du tableau nutritionnel');try{const t=await readLabel(PH.ptab,'ptab');if(!miss(t.c100)){p.c100={...(p.c100||{}),...Object.fromEntries(Object.entries(t.c100).filter(([,v])=>v!=null&&v!==''))};if(p.source==='Open Food Facts')p.source='Open Food Facts + ta photo du tableau'}if(!p.nom&&t.nom)p.nom=t.nom;if(!p.portion&&t.portion)p.portion=t.portion}catch(e){if(!ean)throw e}}
     if(PH.ping&&!p.ingredients){st('Lecture des ingrédients');try{const t=await readLabel(PH.ping,'ping');p.ingredients=t.ingredients;p.allergenes=p.allergenes||t.allergenes;if(!p.nom&&t.nom)p.nom=t.nom}catch(e){if(!ean&&!PH.ptab)throw e}}
     if(PH.produit&&p.source!=='Open Food Facts'&&(!p.nom||miss(p.c100))){st('Lecture de l\'emballage');try{const a=await readLabel(PH.produit,'front');const e2=String(a.ean||'').replace(/\D/g,'');let q=null;if(e2&&e2.length>=8&&e2!==ean)q=await offLookup(e2);
@@ -2703,7 +2712,8 @@ const SWEET={e950:'acésulfame K',e951:'aspartame',e952:'cyclamate',e954:'saccha
 const POLY={e420:'sorbitol',e421:'mannitol',e953:'isomalt',e965:'maltitol',e966:'lactitol',e967:'xylitol',e968:'érythritol'};
 const SUGW=/\b(sucre|sucres|saccharose|sirop de glucose(?:-fructose)?|sirop de fructose|glucose|dextrose|fructose|maltodextrine|miel|sirop d'agave|sirop d'érable|sucre inverti|sirop de riz|mélasse|lactose)\b/gi;
 function prodAnalyse(p){
-  const c=p.c100||{},drink=isDrink(p),ing=String(p.ingredients||''),il=ing.toLowerCase().replace(/e\s?(\d{3}[a-d]?)/g,'e$1');
+  let c=p.c100||{};const vals=['kcal','p','g','sucres','l','ags','fibres','sel'].map(k=>c[k]),noVal=vals.every(v=>v==null||v===''||!num(v))&&!/\beau\b/i.test(String(p.nom||''));if(noVal)c={};
+  const drink=isDrink(p),ing=String(p.ingredients||''),il=ing.toLowerCase().replace(/e\s?(\d{3}[a-d]?)/g,'e$1');
   const ens=[...new Set((il.match(/\be\d{3}[a-d]?\b/g)||[]))];
   const risky=ens.filter(e=>ADD[e]).map(e=>e.toUpperCase()+' '+ADD[e]),sw=[...ens.filter(e=>SWEET[e]).map(e=>SWEET[e]),...(['aspartame','sucralose','acésulfame','stévia','saccharine'].filter(w=>il.includes(w)))],pol=[...ens.filter(e=>POLY[e]).map(e=>POLY[e]),...(['maltitol','sorbitol','xylitol','érythritol','erythritol','isomalt'].filter(w=>il.includes(w)))];
   const sugars=[...new Set((ing.match(SUGW)||[]).map(x=>x.toLowerCase()))],first=(il.split(/[,(]/)[0]||'').trim(),sugFirst=/sucre|sirop|glucose|dextrose|fructose/.test(first);
@@ -2716,7 +2726,7 @@ function prodAnalyse(p){
   if(nova===4)sc-=10;else if(nova&&nova<=2)sc+=4;
   sc-=Math.min(24,risky.length*6);if(sw.length)sc-=4;if(palm)sc-=4;if(hydro)sc-=10;if(compl)sc+=3;if(sugFirst)sc-=6;
   sc=Math.max(3,Math.min(98,Math.round(sc)));
-  const known=ns||ing||c.kcal!=null;
+  const known=!!(ns||ing||(c.kcal!=null&&c.kcal!==''));
   const lab=sc>=75?'Excellent':sc>=55?'Bon':sc>=35?'Moyen':'À limiter',col=sc>=75?'#1e9e4a':sc>=55?'#7fb72e':sc>=35?'#e39b00':'#e0482e';
   /* pour toi */
   const me=[],k=num(c.kcal),pr=num(c.p),pd=k?pr/k*100:0,S=P.santeL||[],o=P.obj||'';
@@ -2752,17 +2762,17 @@ function prodAnalyse(p){
   if(hydro)pt.push(['ko','Graisses hydrogénées']);if(palm)pt.push(['mid','Huile de palme']);if(compl)pt.push(['ok','Céréales complètes']);
   if(ens.length&&!risky.length)pt.push(['inf',ens.length+' additif'+(ens.length>1?'s':'')+' (sans risque connu à dose normale)']);
   const mark=ing?esc(ing).replace(new RegExp('('+[SUGW.source,'\\bhuile de palme\\b|\\bpalmiste\\b','\\bhydrog[ée]n[ée]e?s?\\b','\\bE\\s?(?:249|25[0-2]|171|407|45[0-2]|621|102|110|122|124|129|32[01]|466|433|95[0-5]|96[0-2])\\b','aspartame|sucralose|acésulfame'].join('|')+')','gi'),'<mark>$1</mark>'):'';
-  return{sc,lab,col,ns,nsEst,nova,L,pt,me,forMe,mark,drink,known}}
-function verdictHTML(p){const a=prodAnalyse(p),c=p.c100||{},u=a.drink?'100 ml':'100 g';
-  if(!a.known)return '<div class="card"><p>Je n\'ai pas assez d\'informations sur ce produit. Ajoute une photo du tableau nutritionnel ou des ingrédients et relance l\'analyse.</p></div>';
+  return{sc,lab,col,ns,nsEst,nova,L,pt,me,forMe,mark,drink,known,c,noVal}}
+function verdictHTML(p){const a=prodAnalyse(p),c=a.c,u=a.drink?'100 ml':'100 g';
+  if(!a.known)return `<div class="card"><h2 style="margin-top:0">${esc(p.nom||'Produit')}${p.marque?' · '+esc(p.marque):''}</h2><p>Je reconnais le produit, mais je n'ai pas ses valeurs nutritionnelles : je ne peux pas encore le noter honnêtement.</p><div class="tip" style="margin:0"><b>Pour une note fiable :</b> ajoute une photo du <b>tableau nutritionnel</b> (au dos) ou du <b>code-barres</b>, puis touche « Analyser le produit ».</div></div>`;
   const lvl=(k,lab,v,unit)=>`<tr><td>${lab}</td><td>${v==null||v===''?'–':fr(Math.round(num(v)*10)/10)+' '+unit}</td><td>${a.L[k]?`<span class="lvb ${a.L[k]}">${{lo:'faible',md:'moyen',hi:'élevé'}[a.L[k]]}</span>`:''}</td></tr>`;
   return `<div class="card" style="--vc:${a.col}"><div class="verdict"><div class="vscore" aria-label="Note ${a.sc} sur 100">${a.sc}<small>/100</small></div><div><p class="vlab">${a.lab}</p><div class="mute">${esc(p.nom||'Produit')}${p.marque?' · '+esc(p.marque):''}</div>
-  ${a.forMe?`<div style="margin-top:6px"><span class="chip ${a.forMe[0]==='oui'?'p':''}" style="border-color:${a.forMe[0]==='non'?'#e0482e':a.forMe[0]==='oui'?'#1e9e4a':'#e39b00'}"><b>Pour toi :</b>&nbsp;${a.forMe[1]}</span></div>`:''}</div></div>
+  ${a.forMe?`<div class="forme" style="background:${a.forMe[0]==='non'?'#e0482e':a.forMe[0]==='oui'?'#1e9e4a':'#d68a00'}">${a.forMe[0]==='oui'?'✓':a.forMe[0]==='non'?'✗':'~'} Pour toi : ${a.forMe[1]}</div>`:''}</div></div>
   <div id="pAvis" style="margin-top:12px"></div>
   ${a.me.length?`<h3 style="margin-top:14px">Pour toi</h3><ul class="flags">${a.me.map(([k,t])=>`<li class="${k}"><i>${k==='ok'?'✓':k==='ko'?'!':'~'}</i><span>${esc(t)}</span></li>`).join('')}</ul>`:''}
   ${a.pt.length?`<h3 style="margin-top:14px">Le produit</h3><ul class="flags">${a.pt.map(([k,t])=>`<li class="${k}"><i>${k==='ok'?'✓':k==='ko'?'!':k==='inf'?'i':'~'}</i><span>${esc(t)}</span></li>`).join('')}</ul>`:''}
-  <div class="row" style="margin:12px 0 4px">${a.ns?`<span class="ns" style="background:${NSC[a.ns]||'#888'}">${esc(a.ns)}</span><span class="mute">Nutri-Score${a.nsEst?' (estimé d\'après le tableau)':''}</span>`:''}${a.nova?`<span class="chip">NOVA ${esc(a.nova)}</span>`:''}</div>
-  <table class="tbl"><tr><td><b>Pour ${u}</b></td><td></td><td></td></tr><tr><td>Énergie</td><td>${c.kcal==null||c.kcal===''?'–':Math.round(num(c.kcal))+' kcal'}</td><td></td></tr>${lvl('l','Matières grasses',c.l,'g')}${lvl('sa','dont saturées',c.ags,'g')}<tr><td>Glucides</td><td>${c.g==null||c.g===''?'–':fr(Math.round(num(c.g)*10)/10)+' g'}</td><td></td></tr>${lvl('su','dont sucres',c.sucres,'g')}<tr><td>Fibres</td><td>${c.fibres==null||c.fibres===''?'–':fr(num(c.fibres))+' g'}</td><td></td></tr><tr><td>Protéines</td><td>${c.p==null||c.p===''?'–':fr(Math.round(num(c.p)*10)/10)+' g'}</td><td></td></tr>${lvl('se','Sel',c.sel,'g')}</table>
+  <div class="row" style="margin:12px 0 4px">${a.ns?`<span class="ns" style="background:${NSC[a.ns]||'#888'}">${esc(a.ns)}</span><span class="mute">Nutri-Score${a.nsEst?(/estim/i.test(p.source||'')?' (estimation, à confirmer avec l\'étiquette)':' (calculé d\'après le tableau)'):''}</span>`:''}${a.nova?`<span class="chip">NOVA ${esc(a.nova)}</span>`:''}</div>
+  ${a.noVal?`<div class="tip" style="border-left-color:var(--yel)">Valeurs nutritionnelles manquantes : ajoute une photo du tableau pour une note plus précise.</div>`:''}<table class="tbl"${a.noVal?' hidden':''}><tr><td><b>Pour ${u}</b></td><td></td><td></td></tr><tr><td>Énergie</td><td>${c.kcal==null||c.kcal===''?'–':Math.round(num(c.kcal))+' kcal'}</td><td></td></tr>${lvl('l','Matières grasses',c.l,'g')}${lvl('sa','dont saturées',c.ags,'g')}<tr><td>Glucides</td><td>${c.g==null||c.g===''?'–':fr(Math.round(num(c.g)*10)/10)+' g'}</td><td></td></tr>${lvl('su','dont sucres',c.sucres,'g')}<tr><td>Fibres</td><td>${c.fibres==null||c.fibres===''?'–':fr(num(c.fibres))+' g'}</td><td></td></tr><tr><td>Protéines</td><td>${c.p==null||c.p===''?'–':fr(Math.round(num(c.p)*10)/10)+' g'}</td><td></td></tr>${lvl('se','Sel',c.sel,'g')}</table>
   ${p.portion?`<p class="mute">Portion indiquée : ${esc(p.portion)}</p>`:''}${p.allergenes?`<p class="mute"><b>Allergènes :</b> ${esc(p.allergenes)}</p>`:''}
   ${a.mark?`<details><summary style="cursor:pointer;font-weight:700;padding:8px 0">Ingrédients (sucres et additifs surlignés)</summary><p class="mute ingtxt">${a.mark}</p></details>`:''}
   <p class="mute" style="font-size:13px;margin-bottom:0">${esc(p.source||'')}${p.ean?' · '+esc(p.ean):''}. Note indicative calculée par l'app (Nutri-Score, transformation, additifs). Ce n'est pas un avis médical.</p></div>`}
@@ -2782,12 +2792,13 @@ function simProd(a,h){const A=new Set(normT((a.marque||'')+' '+(a.nom||''))),B=n
 let PALT=[];
 async function readLabel(blob,kind){
   if(kind==='ptab'){const r=await askJSON(`Lis ce tableau de valeurs nutritionnelles (photo). Recopie EXACTEMENT les valeurs pour 100 g ou 100 ml. S'il n'y a que des valeurs par portion, recopie-les et indique la taille de la portion en grammes.
-Format JSON : {"pour":"100|portion","portion_g":0,"c100":{"kcal":0,"p":0,"g":0,"sucres":0,"l":0,"ags":0,"fibres":0,"sel":0},"nom":""}`,{images:[blob],modelTier:'default',cache:false});
+Si une valeur est illisible, mets null (jamais 0 par défaut).
+Format JSON : {"pour":"100|portion","portion_g":null,"c100":{"kcal":null,"p":null,"g":null,"sucres":null,"l":null,"ags":null,"fibres":null,"sel":null},"nom":""}`,{images:[blob],modelTier:'default',cache:false});
     const c=r.c100||{};if(r.pour==='portion'&&num(r.portion_g)>0){const f=100/num(r.portion_g);for(const k in c)c[k]=Math.round(num(c[k])*f*10)/10;r.portion=r.portion_g+' g'}return{c100:c,nom:r.nom,portion:r.portion}}
   if(kind==='ping'){const r=await askJSON(`Recopie exactement et en entier la liste des ingrédients visible sur cette photo d'emballage, ainsi que les allergènes (souvent en gras).
 Format JSON : {"ingredients":"texte complet","allergenes":"liste séparée par des virgules","nom":""}`,{images:[blob],modelTier:'default',cache:false});return{ingredients:String(r.ingredients||''),allergenes:String(r.allergenes||''),nom:r.nom}}
-  const a=await askJSON(`Identifie ce produit alimentaire à partir de la photo (emballage, code-barres ou tableau nutritionnel). Si un code-barres est lisible, recopie exactement ses chiffres. Si le tableau nutritionnel est visible, recopie les valeurs pour 100 g ; sinon donne les valeurs moyennes connues pour ce type de produit.
-Format JSON : {"ean":"","nom":"","marque":"","quantite":"poids ou volume du paquet","portion":"","nutriscore":"a à e si visible sinon vide","nova":"","c100":{"kcal":0,"p":0,"g":0,"sucres":0,"l":0,"ags":0,"fibres":0,"sel":0},"ingredients":"","valeurs":"etiquette|estimation"}`,{images:[blob],modelTier:'default',cache:false});
+  const a=await askJSON(`Identifie ce produit alimentaire à partir de la photo (emballage, code-barres ou tableau nutritionnel) : nom exact et marque tels qu'écrits sur le paquet. Si un code-barres est lisible, recopie exactement ses chiffres. Si le tableau nutritionnel est visible, recopie les valeurs pour 100 g et mets "valeurs":"etiquette". Sinon, donne les valeurs moyennes réalistes pour ce type de produit (par exemple un skyr nature ≈ 60 kcal, 10 g de protéines, 4 g de glucides pour 100 g) et mets "valeurs":"estimation". N'écris jamais 0 par défaut : null si tu ne sais vraiment pas.
+Format JSON : {"ean":"","nom":"","marque":"","quantite":"poids ou volume du paquet","portion":"","nutriscore":"a à e si visible sinon vide","nova":"","c100":{"kcal":null,"p":null,"g":null,"sucres":null,"l":null,"ags":null,"fibres":null,"sel":null},"ingredients":"","valeurs":"etiquette|estimation"}`,{images:[blob],modelTier:'default',cache:false});
   return a}
 
 function renderProd(p){
@@ -3273,7 +3284,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-42';
+const APP_VERSION='2026.11.26-43';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
