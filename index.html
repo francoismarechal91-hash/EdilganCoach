@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mon Coach">
-<meta name="theme-color" content="#f4f2f6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0d0a11" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#130a2a">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="description" content="Ton coach sport et nutrition personnel">
 <link rel="manifest" href="manifest.json">
@@ -16,7 +15,7 @@
 <link rel="icon" href="icon-192.png">
 <title>Mon Coach</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
 <style>
 /* VOICE: un coach franc, chaleureux et motivant ; phrases courtes, chiffres utiles
    IDEA: une app iPhone native de coaching — grands titres, cartes aérées, anneaux du jour
@@ -114,7 +113,10 @@ button:disabled{opacity:.45}
 .ticks{display:flex;justify-content:space-between;font-size:12px;color:var(--mute)}
 .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
 .stats div{background:var(--fill);border-radius:14px;padding:10px 12px}
-.stats b{display:block;font-size:21px;font-weight:800;white-space:nowrap}
+.stats b{display:block;font-size:21px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stats b.sm{font-size:15px;white-space:normal;line-height:1.2;padding-top:3px}
+input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px var(--fill) inset;-webkit-text-fill-color:var(--ink)}
+.eqh{font-size:14px;font-weight:800;margin:14px 0 2px}
 .stats span{font-size:12px;color:var(--mute)}
 .tabs{position:fixed;left:10px;right:10px;bottom:calc(8px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto;background:color-mix(in srgb,var(--card) 84%,transparent);-webkit-backdrop-filter:saturate(180%) blur(22px);backdrop-filter:saturate(180%) blur(22px);display:grid;grid-template-columns:repeat(5,1fr);padding:6px;border-radius:26px;z-index:9;box-shadow:0 10px 30px -10px rgba(20,10,30,.35),0 0 0 .5px var(--line)}
 .tabs a{color:var(--mute);text-decoration:none;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px;border-radius:20px;transition:color .2s,background .2s}
@@ -165,6 +167,8 @@ canvas.draw{width:100%;border-radius:16px;touch-action:none;display:block;backgr
 .bub.co{align-self:flex-start;background:var(--fill);border-bottom-left-radius:6px}
 .send{display:flex;gap:8px;margin-top:12px;align-items:flex-end}.send textarea{min-height:50px;height:50px;margin:0}
 .busy{display:flex;align-items:center;gap:10px;color:var(--mute);padding:12px 0}
+.skel{padding:4px 0}.skel>i{display:block;height:14px;border-radius:7px;margin:10px 0;background:linear-gradient(90deg,var(--fill) 0%,var(--fill2) 50%,var(--fill) 100%);background-size:200% 100%;animation:sh 1.2s linear infinite}@keyframes sh{to{background-position:-200% 0}}
+.dots3{display:inline-flex;gap:3px;margin-left:4px}.dots3 i{width:4px;height:4px;border-radius:50%;background:currentColor;animation:bl 1s infinite}.dots3 i:nth-child(2){animation-delay:.2s}.dots3 i:nth-child(3){animation-delay:.4s}@keyframes bl{50%{opacity:.2}}
 .busy::before{content:"";width:18px;height:18px;border-radius:50%;border:3px solid var(--fill2);border-top-color:var(--red);animation:sp .8s linear infinite;flex:none}
 @keyframes sp{to{transform:rotate(360deg)}}
 .err{background:var(--tint);color:var(--tintink);border-radius:14px;padding:12px 14px;margin:10px 0;font-weight:600}
@@ -184,6 +188,16 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
 .dots{display:flex;gap:6px;margin:10px 0}.dots i{width:28px;height:7px;border-radius:4px;background:var(--fill2)}.dots i.f{background:var(--red)}
 .tbl{width:100%;border-collapse:collapse;font-size:15px}.tbl td{padding:8px 0;border-top:1px solid var(--line)}.tbl tr:first-child td{border-top:0}.tbl td:last-child{text-align:right;white-space:nowrap;font-weight:700}
 .ns{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;color:#fff;font-weight:900;font-size:20px;text-transform:uppercase}
+/* bienvenue */
+#welcome{position:fixed;inset:0;z-index:40;background:var(--bg);display:none;overflow:auto;padding:calc(30px + env(safe-area-inset-top)) max(6vw,20px) calc(30px + env(safe-area-inset-bottom))}
+#welcome.on{display:block;animation:fade .3s}
+.wbox{max-width:460px;margin:0 auto}
+.wlogo{width:64px;height:64px;border-radius:19px;background:linear-gradient(140deg,#ff6a3d,#f0412f 55%,#c8263f);display:grid;place-items:center;color:#fff;margin-bottom:22px;box-shadow:0 12px 26px -12px rgba(200,38,63,.8)}
+.wlogo .i{width:32px;height:32px;stroke-width:2.4}
+#welcome h1{font-size:40px}
+.wobj{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:6px}
+.wobj button{background:var(--card);color:var(--ink);box-shadow:var(--sh);min-height:56px;font-size:15px;padding:0 10px;border:2px solid transparent}
+.wobj button.on{border-color:var(--red);color:var(--red);background:var(--tint)}
 /* feuille de partage */
 #sheet{position:fixed;inset:0;z-index:30;display:none;background:rgba(10,5,15,.45);align-items:flex-end;justify-content:center}
 #sheet.on{display:flex;animation:fade .2s}
@@ -193,6 +207,79 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
 #qr svg,#qr img{width:100%;height:100%}
 .url{background:var(--fill);border-radius:12px;padding:10px 12px;font-size:14px;overflow-wrap:anywhere;text-align:center}
 @keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+
+/* ===== IDENTITÉ SYNTHWAVE 80/90 — nuit violette, néons rose et cyan, soleil rayé, grille ===== */
+:root,:root[data-theme=light],:root[data-theme=dark]{color-scheme:dark;
+--bg:#130a2a;--card:#1e1140;--fill:#2a1956;--fill2:#3a2672;--ink:#f6efff;--mute:#b6a6d9;--line:#3b2870;
+--red:#ff2a9d;--redd:#d81b80;--tint:rgba(255,42,157,.16);--tintink:#ff7cc6;--yel:#ffcf5c;--blue:#22e4ff;--green:#3dffc5;--cyan:#22e4ff;--violet:#9b5cff;
+--hot:#ff2a9d;--warm:#22e4ff;--mus:#3a2a62;--sil:#26174a;
+--sh:0 0 0 1px rgba(155,92,255,.22),0 10px 30px -14px rgba(0,0,0,.7);--glow:0 0 18px rgba(255,42,157,.55)}
+body{background:radial-gradient(120% 60% at 50% -10%,#2b0f5c 0%,#130a2a 55%) fixed,#130a2a}
+h1,.lt h1,#welcome h1,.hero h1{font-family:Orbitron,Archivo,sans-serif;font-weight:900;letter-spacing:.01em;text-transform:none}
+h1{background:linear-gradient(180deg,#fff 0%,#ffd6f1 45%,#ff7cc6 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 0 10px rgba(255,42,157,.45))}
+.lt h1{font-size:clamp(28px,8vw,36px)}
+h2{font-family:Orbitron,Archivo,sans-serif;font-weight:800;font-size:18px;letter-spacing:.02em}
+.appbar{background:rgba(19,10,42,.78);border-bottom:1px solid transparent}
+.appbar.sc{border-bottom-color:rgba(155,92,255,.35)}
+.logo{font-family:Orbitron,Archivo,sans-serif;font-weight:900;letter-spacing:.03em;font-size:16px;background:linear-gradient(90deg,#ff7cc6,#22e4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo span,.wlogo{background:linear-gradient(140deg,#ff2a9d,#9b5cff 60%,#22e4ff);box-shadow:var(--glow);color:#fff}
+.ib{background:var(--fill);color:var(--ink);box-shadow:0 0 0 1px rgba(155,92,255,.35)}
+.ib.av{background:linear-gradient(140deg,#ff2a9d,#9b5cff);color:#fff;box-shadow:var(--glow)}
+.card{background:linear-gradient(180deg,rgba(42,25,86,.92),rgba(30,17,64,.92));border:1px solid rgba(155,92,255,.28);box-shadow:0 10px 30px -14px rgba(0,0,0,.7)}
+button{background:linear-gradient(135deg,#ff2a9d,#c03bff);box-shadow:0 0 0 1px rgba(255,124,198,.5),0 8px 22px -8px rgba(255,42,157,.8)}
+button.alt{background:transparent;color:var(--cyan);box-shadow:inset 0 0 0 2px var(--cyan),0 0 16px -4px rgba(34,228,255,.6)}
+button.ghost{background:var(--fill);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(155,92,255,.35)}
+button.tint{background:var(--tint);color:var(--tintink);box-shadow:inset 0 0 0 1px rgba(255,42,157,.4)}
+input,select,textarea{background:rgba(19,10,42,.6);border:1.5px solid rgba(155,92,255,.35);color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:var(--cyan);background:rgba(19,10,42,.85);box-shadow:0 0 0 3px rgba(34,228,255,.18)}
+input::placeholder,textarea::placeholder{color:#8a79b5}
+.seg button{background:var(--card);color:var(--mute);box-shadow:inset 0 0 0 1px rgba(155,92,255,.35)}
+.seg button.on{background:linear-gradient(135deg,#ff2a9d,#9b5cff);color:#fff;box-shadow:var(--glow)}
+.chip{background:var(--fill);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(155,92,255,.3)}
+.chip.p{background:linear-gradient(135deg,#ff2a9d,#c03bff);color:#fff;box-shadow:0 0 12px -2px rgba(255,42,157,.7)}
+.chip.s{background:rgba(34,228,255,.16);color:var(--cyan);box-shadow:inset 0 0 0 1px var(--cyan)}
+.tabs{background:rgba(24,12,52,.86);box-shadow:0 0 0 1px rgba(155,92,255,.45),0 0 30px -6px rgba(155,92,255,.55),0 14px 34px -10px rgba(0,0,0,.8)}
+.tabs a{color:#9d8cc8}
+.tabs a.on{color:#fff;background:linear-gradient(135deg,rgba(255,42,157,.35),rgba(155,92,255,.35));text-shadow:0 0 10px rgba(255,42,157,.9)}
+.tabs a.on .i{filter:drop-shadow(0 0 6px rgba(255,42,157,.9))}
+/* héro : coucher de soleil rayé + grille */
+.hero{background:linear-gradient(180deg,#1b0b3d 0%,#3a0f6b 52%,#7a1a8c 100%);box-shadow:0 0 0 1px rgba(255,42,157,.45),0 0 40px -10px rgba(255,42,157,.6);padding-bottom:22px}
+.hero::after{display:none}
+.hero .sun{position:absolute;left:50%;top:auto;bottom:22%;width:190px;height:190px;transform:translate(-50%,50%)!important;transform:translate(-50%,-50%);border-radius:50%;background:linear-gradient(180deg,#ffe36e 0%,#ff9b4a 38%,#ff2a9d 75%);-webkit-mask:repeating-linear-gradient(180deg,#000 0 14px,transparent 14px 18px);mask:linear-gradient(180deg,#000 0 52%,transparent 52%),repeating-linear-gradient(180deg,#000 0 13px,transparent 13px 18px);mask-composite:add;-webkit-mask-composite:source-over;opacity:.42;filter:drop-shadow(0 0 20px rgba(255,42,157,.8))}
+.ring svg{background:radial-gradient(circle,rgba(19,10,42,.72) 0 58%,transparent 59%);border-radius:50%}
+.hero .grid3d{position:absolute;left:-20%;right:-20%;bottom:-2px;height:34%;opacity:.8;background:linear-gradient(transparent 0 0),repeating-linear-gradient(90deg,rgba(34,228,255,.55) 0 2px,transparent 2px 46px),repeating-linear-gradient(0deg,rgba(255,42,157,.55) 0 2px,transparent 2px 26px);transform:perspective(240px) rotateX(58deg);transform-origin:bottom;-webkit-mask:linear-gradient(0deg,#000 20%,transparent);mask:linear-gradient(0deg,#000 20%,transparent)}
+.hero>*:not(.sun):not(.grid3d){position:relative;z-index:1}
+.hero h1{color:transparent}
+.hero p{color:#ffd6f1;opacity:1}
+.ring b{color:#fff}.ring span{color:#e4d4ff;opacity:1}
+.tile{background:linear-gradient(180deg,rgba(42,25,86,.92),rgba(30,17,64,.92));color:var(--ink);box-shadow:0 0 0 1px rgba(155,92,255,.3)}
+.tile small{color:var(--mute)}
+.c-red{background:rgba(255,42,157,.16);color:#ff7cc6;box-shadow:0 0 14px -4px rgba(255,42,157,.8)}
+.c-yel{background:rgba(255,207,92,.14);color:#ffcf5c;box-shadow:0 0 14px -4px rgba(255,207,92,.7)}
+.c-blue{background:rgba(34,228,255,.14);color:#22e4ff;box-shadow:0 0 14px -4px rgba(34,228,255,.8)}
+.c-ink{background:rgba(155,92,255,.18);color:#c9a8ff;box-shadow:0 0 14px -4px rgba(155,92,255,.8)}
+.c-green{background:rgba(61,255,197,.14);color:#3dffc5}
+.meal,details.ex,.stats div,.steps div,.url,.drop{background:rgba(19,10,42,.55);box-shadow:inset 0 0 0 1px rgba(155,92,255,.22)}
+.drop{border:2px dashed rgba(34,228,255,.45)}.drop>svg{color:var(--cyan);filter:drop-shadow(0 0 8px rgba(34,228,255,.7))}
+.meal .k{color:var(--cyan);letter-spacing:.06em;text-transform:uppercase;font-size:11px}
+.dose{color:#ff7cc6}
+.big{background:linear-gradient(180deg,#fff,#ff9fd4);-webkit-background-clip:text;background-clip:text;color:transparent}
+.timer{color:#ff2a9d;text-shadow:0 0 24px rgba(255,42,157,.8);font-family:Orbitron,Archivo,sans-serif}
+.bar{background:rgba(19,10,42,.7)}.bar i{background:linear-gradient(90deg,#ff2a9d,#c03bff);box-shadow:0 0 10px rgba(255,42,157,.8)}.bar.p i{background:linear-gradient(90deg,#ffcf5c,#ff9b4a);box-shadow:0 0 10px rgba(255,207,92,.7)}
+.glass button{background:rgba(19,10,42,.6);color:var(--cyan);box-shadow:inset 0 0 0 1px rgba(34,228,255,.4)}.glass button.f{background:var(--cyan);color:#130a2a;box-shadow:0 0 12px rgba(34,228,255,.8)}
+.tip{background:rgba(19,10,42,.55);border-left-color:var(--cyan)}
+.err{background:rgba(255,42,157,.14);color:#ff9fd4}
+.warn{background:rgba(255,207,92,.12);color:#ffcf5c;box-shadow:inset 0 0 0 1px rgba(255,207,92,.4)}
+.vid{background:rgba(19,10,42,.6);color:var(--ink);box-shadow:inset 0 0 0 1px rgba(255,42,157,.4)}.vid svg{fill:#ff2a9d}
+.bub.me{background:linear-gradient(135deg,#ff2a9d,#c03bff)}.bub.co{background:rgba(19,10,42,.6);box-shadow:inset 0 0 0 1px rgba(155,92,255,.3)}
+.dots i.f{background:#ff2a9d;box-shadow:0 0 8px #ff2a9d}
+.gauge i{border-color:var(--card);background:#fff;box-shadow:0 0 10px #fff}
+#ov,#welcome{background:radial-gradient(120% 50% at 50% 0%,#2b0f5c 0%,#130a2a 60%)}
+#sheet .in{background:#1e1140;box-shadow:0 0 0 1px rgba(155,92,255,.4)}
+.wobj button{background:rgba(19,10,42,.6);box-shadow:inset 0 0 0 1px rgba(155,92,255,.35)}.wobj button.on{background:var(--tint);color:#ff7cc6;border-color:#ff2a9d;box-shadow:0 0 14px -2px rgba(255,42,157,.7)}
+.skel>i{background:linear-gradient(90deg,#2a1956 0%,#4a2f8a 50%,#2a1956 100%);background-size:200% 100%}
+.shop input,input[type=checkbox]{accent-color:#ff2a9d}
+a{color:#22e4ff}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:380px){.stats b{font-size:18px}.tile{padding:14px}}
 </style>
@@ -224,11 +311,12 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
 </header>
 
 <main>
-<div class="warn" id="noai">Le coach a besoin d'une IA : ajoute une clé gratuite dans <a href="#moi" style="color:inherit">ton profil</a>, carte « Moteurs IA gratuits » (2 minutes).</div>
+<div class="warn" id="noai">Le coach a besoin d'une connexion : ajoute une clé gratuite dans <a href="#moi" style="color:inherit">ton profil</a>, carte « Moteurs IA gratuits » (2 minutes).</div>
 
 <!-- ================= ACCUEIL ================= -->
 <section data-v="accueil">
   <div class="hero">
+    <div class="sun"></div><div class="grid3d"></div>
     <h1 id="hello">Bonjour</h1>
     <p id="sub">Ton coach sport et nutrition.</p>
     <div class="rings" id="rings"></div>
@@ -254,10 +342,8 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
   <div class="lt"><h1>Mon profil</h1><p>Tes infos servent à calculer tes besoins et à personnaliser le coach.</p></div>
   <div class="card">
     <div class="mute">Ton IMC</div>
-    <div class="row sb" style="align-items:flex-end">
-      <div class="big" id="imc">–</div>
-      <div style="text-align:right"><b id="imcCat" style="font-size:18px">Remplis ton profil</b><div class="mute" id="imcRange"></div></div>
-    </div>
+    <div class="big" id="imc">–</div>
+    <b id="imcCat" style="font-size:18px;display:block;margin-top:6px">Remplis ton profil</b><div class="mute" id="imcRange"></div>
     <div class="gauge"><i id="imcPin" style="left:0;display:none"></i></div>
     <div class="ticks"><span>15</span><span>18,5</span><span>25</span><span>30</span><span>35</span><span>40</span></div>
     <div class="stats">
@@ -265,7 +351,7 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
       <div><b id="stKcal">–</b><span>kcal / jour</span></div>
       <div><b id="stProt">–</b><span>protéines / jour</span></div>
     </div>
-    <p class="mute" style="margin:12px 0 0">L'IMC ne distingue pas muscle et graisse : en prenant du muscle, il peut monter alors que tu t'affines. Regarde aussi ton tour de taille et le miroir.</p>
+    <p class="mute" style="margin:12px 0 0">Repère indicatif : il ne fait pas la différence entre muscle et graisse.</p>
   </div>
 
   <div class="card">
@@ -276,41 +362,52 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
       <div><label for="p-age">Âge</label><input id="p-age" type="number" inputmode="numeric" min="14" max="99" placeholder="30"></div>
       <div><label for="p-taille">Taille (cm)</label><input id="p-taille" type="number" inputmode="decimal" min="120" max="230" placeholder="178"></div>
       <div><label for="p-poids">Poids (kg)</label><input id="p-poids" type="number" inputmode="decimal" step="0.1" min="30" max="300" placeholder="80"></div>
-      <div class="full"><label for="p-obj">Mon objectif</label><select id="p-obj">
+      <div class="full"><label for="p-obj">Mon objectif</label><select id="p-obj" data-custom="ex. préparer un trail, perdre 10 kg, avoir des bras plus épais">
         <option value="muscle">Me muscler / prendre du volume</option>
         <option value="perte">Perdre du poids</option>
         <option value="seche">Perdre du gras et me dessiner</option>
         <option value="forme">Garder la forme / tonifier</option>
         <option value="endurance">Améliorer mon cardio</option></select></div>
-      <div><label for="p-niv">Niveau</label><select id="p-niv"><option value="débutant">Débutant</option><option value="intermédiaire">Intermédiaire</option><option value="avancé">Avancé</option></select></div>
-      <div><label for="p-jours">Séances / semaine</label><select id="p-jours"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></div>
-      <div><label for="p-lieu">Où je m'entraîne</label><select id="p-lieu"><option value="salle">En salle</option><option value="maison">À la maison</option><option value="mixte">Les deux</option></select></div>
-      <div><label for="p-duree">Durée d'une séance</label><select id="p-duree"><option value="30">30 min</option><option value="45">45 min</option><option value="60" selected>1 h</option><option value="90">1 h 30</option></select></div>
-      <div class="full"><label for="p-mat">Matériel à la maison</label><input id="p-mat" placeholder="ex. haltères 2×10 kg, élastiques, banc"></div>
+      <div><label for="p-niv">Niveau</label><select id="p-niv" data-custom="ex. reprise après 5 ans d'arrêt"><option value="débutant">Débutant</option><option value="intermédiaire">Intermédiaire</option><option value="avancé">Avancé</option></select></div>
+      <div><label for="p-jours">Séances / semaine</label><select id="p-jours" data-custom="ex. 2 à 3, selon les semaines"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select></div>
+      <div><label for="p-lieu">Où je m'entraîne</label><select id="p-lieu" data-custom="ex. au parc, à la piscine, salle d'entreprise"><option value="salle">En salle</option><option value="maison">À la maison</option><option value="mixte">Les deux</option></select></div>
+      <div><label for="p-duree">Durée d'une séance</label><select id="p-duree" data-custom="ex. 1 h 15, ou 40 min"><option value="20">20 min</option><option value="30">30 min</option><option value="45">45 min</option><option value="60" selected>1 h</option><option value="75">1 h 15</option><option value="90">1 h 30</option><option value="120">2 h</option></select></div>
       <div class="full"><label for="p-regime">Alimentation (allergies, je n'aime pas…)</label><input id="p-regime" placeholder="ex. pas de poisson, intolérant au lactose"></div>
-      <div><label for="p-cuis">Équipement cuisine</label><input id="p-cuis" placeholder="ex. airfryer"></div>
-      <div><label for="p-budget">Budget repas</label><select id="p-budget"><option value="normal">Normal</option><option value="serré">Petit budget</option><option value="large">Pas de limite</option></select></div>
+      <div class="full"><label for="p-budget">Budget repas</label><select id="p-budget" data-custom="ex. 60 € par semaine"><option value="normal">Normal</option><option value="serré">Petit budget</option><option value="large">Pas de limite</option></select></div>
       <div class="full"><label for="p-notes">Blessures ou limites</label><input id="p-notes" placeholder="ex. genou fragile, mal de dos"></div>
     </form>
   </div>
 
   <div class="card">
+    <h2>Mon matériel</h2>
+    <p class="sub">Touche ce que tu as.</p>
+    <div class="eqh">Sport à la maison</div><div class="chips" id="eqM"></div>
+    <div class="eqh">À ma salle</div><div class="chips" id="eqS"></div>
+    <div class="eqh">Cuisine</div><div class="chips" id="eqC"></div>
+    <div class="eqh" style="margin-top:18px">Un appareil qui n'est pas dans la liste ?</div>
+    <p class="mute" style="margin:2px 0 8px">Écris son nom ou sa marque.</p>
+    <div class="row"><select id="eqCat" style="width:auto;margin:0"><option value="sport">Sport</option><option value="cuisine">Cuisine</option></select><input id="eqIn" placeholder="ex. Ninja Creami, presse à cuisses, Bowflex…" style="flex:1;min-width:160px;margin:0"><button class="alt" data-act="eqAdd">Ajouter</button></div>
+    <div id="eqRes"></div>
+    <div id="eqCustom"></div>
+  </div>
+
+  <div class="card">
     <h2>Ma santé</h2>
-    <p class="sub">Coche ce qui te concerne : menus, recettes, portions, séances et conseils s'adaptent automatiquement.</p>
+    <p class="sub">Tout s'adapte à ce que tu coches : repas, portions, séances.</p>
     <div class="chips" id="santeChips"></div>
     <div id="opBox" style="display:none;margin-top:8px"><label for="p-opdate">Date de l'opération</label><input id="p-opdate" type="date"></div>
     <div style="margin-top:10px"><label for="p-medic">Traitements ou médicaments (facultatif)</label><input id="p-medic" placeholder="ex. metformine, vitamines B12, fer"></div>
     <div style="margin-top:10px"><label for="p-sante">Autre chose à savoir</label><input id="p-sante" placeholder="ex. anémie, migraines, ne supporte pas la viande rouge"></div>
     <h3 style="margin-top:18px">Objectifs donnés par ton médecin ou ta diététicienne</h3>
-    <p class="sub" style="margin-top:4px">Facultatif. S'ils sont remplis, ils remplacent les calculs de l'app.</p>
+    <p class="sub" style="margin-top:4px">Facultatif, ils remplacent les calculs automatiques.</p>
     <div class="grid">
       <div><label for="p-kcalmed">Calories / jour</label><input id="p-kcalmed" type="number" inputmode="numeric" placeholder="ex. 1200"></div>
       <div><label for="p-protmed">Protéines / jour (g)</label><input id="p-protmed" type="number" inputmode="numeric" placeholder="ex. 70"></div>
       <div><label for="p-eaumed">Eau / jour (litres)</label><input id="p-eaumed" type="number" inputmode="decimal" step="0.1" placeholder="ex. 1,5"></div>
-      <div><label for="p-repas">Repas / jour</label><select id="p-repas"><option value="">Normal</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
+      <div><label for="p-repas">Repas / jour</label><select id="p-repas" data-custom="ex. 2 repas + 3 collations"><option value="">Normal</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
     </div>
     <div class="tip" id="santeTip" style="display:none"></div>
-    <p class="mute" style="margin-bottom:0">Ces infos restent sur ton téléphone. L'app ne remplace pas l'avis de ton équipe médicale.</p>
+    <p class="mute" style="margin-bottom:0">Reste sur ton téléphone. Ne remplace pas l'avis de ton médecin.</p>
   </div>
 
   <div class="card">
@@ -334,7 +431,7 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
     <h2>L'app</h2>
     <div class="row"><button data-act="shareApp"><span class="row" style="gap:8px"><svg class="i" style="width:20px;height:20px"><use href="#i-share"/></svg>Partager l'app</span></button><button class="ghost" data-act="installHelp">L'installer sur l'iPhone</button></div>
     <div class="row" style="margin-top:10px"><button class="ghost sm" data-act="exportData">Sauvegarder mes données</button><button class="ghost sm" data-act="importData">Restaurer</button></div>
-    <p class="mute">Tes données restent sur ce téléphone. Sauvegarde-les avant de changer de téléphone ou d'effacer Safari.</p>
+    <p class="mute">Tout reste sur ce téléphone. Pense à sauvegarder avant d'en changer.</p>
   </div>
 </section>
 
@@ -346,7 +443,7 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
   <div class="pane on" data-pane="programme">
     <div class="card">
       <h2>Mon programme</h2>
-      <p class="sub" id="progIntro">Le coach construit ta semaine selon ton objectif, ton niveau, ton matériel et tes zones prioritaires. En séance guidée, il te donne les charges, compte tes séries et ton repos.</p>
+      <p class="sub" id="progIntro">Une semaine faite pour toi. En séance, on te guide série par série.</p>
       <div class="row"><button data-act="genProg" id="genProg">Créer mon programme</button><button class="ghost" data-act="quick">Séance express 20 min</button></div>
     </div>
     <div id="prog"></div>
@@ -365,7 +462,7 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
   <div class="pane" data-pane="zones">
     <div class="card">
       <h2>Zones à travailler</h2>
-      <p class="sub">Touche les muscles à développer en priorité : le coach les mettra en avant. Tu peux aussi les entourer sur une photo de toi (Scan › Mon corps).</p>
+      <p class="sub">Touche les muscles à travailler en priorité.</p>
       <div id="zonesMap"></div>
       <div class="chips" id="zonesChips"></div>
     </div>
@@ -382,7 +479,7 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
   <div class="pane on" data-pane="produit">
     <div class="card">
       <h2>Scanner un produit</h2>
-      <p class="sub">Photo du code-barres (le plus fiable), de l'emballage ou du tableau nutritionnel. Recherche dans Open Food Facts, sinon l'IA lit l'étiquette.</p>
+      <p class="sub">Le code-barres, l'emballage ou l'étiquette.</p>
       <label class="drop" data-drop="produit"><input type="file" accept="image/*" data-in="produit"><svg class="i" style="width:40px;height:40px"><use href="#i-bar"/></svg><b>Photo du code-barres ou du produit</b><span class="mute">bien à plat, net et éclairé</span></label>
       <div class="row" style="margin-top:12px"><input id="ean" inputmode="numeric" placeholder="ou tape les chiffres du code-barres" style="flex:1;min-width:170px;margin:0"><button data-act="anaProd">Identifier</button></div>
     </div>
@@ -395,7 +492,7 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
       <h2>Scanne ton assiette</h2>
       <label class="drop" data-drop="assiette"><input type="file" accept="image/*" data-in="assiette"><svg class="i" style="width:40px;height:40px"><use href="#i-plate"/></svg><b>Photo de ton repas</b><span class="mute">vue de dessus, toute l'assiette</span></label>
       <div class="row" style="margin-top:12px"><button data-act="anaPlate" data-need="assiette" disabled>Estimer les calories</button></div>
-      <p class="mute">Estimation : l'huile et les sauces se voient mal. Ajuste la portion avant d'ajouter.</p>
+      <p class="mute">C'est une estimation : ajuste la portion si besoin.</p>
     </div>
     <div id="plateRes"></div>
   </div>
@@ -413,7 +510,7 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
   <div class="pane" data-pane="corps">
     <div class="card">
       <h2>Entoure tes zones</h2>
-      <p class="sub">Ajoute une photo de toi, puis entoure au doigt les zones à travailler. Seule la version entourée est envoyée au coach pour l'analyse, elle n'est pas gardée.</p>
+      <p class="sub">Entoure au doigt les zones à travailler. La photo n'est pas gardée.</p>
       <label class="drop" data-drop="corps" id="corpsDrop"><input type="file" accept="image/*" data-in="corps"><svg class="i" style="width:40px;height:40px"><use href="#i-body"/></svg><b>Ajoute une photo de toi</b><span class="mute">de face ou de dos, en entier si possible</span></label>
       <canvas class="draw" id="cv" style="display:none"></canvas>
       <div class="row" style="margin-top:12px" id="cvBtns" hidden><button class="ghost sm" data-act="undo">Annuler le trait</button><button class="ghost sm" data-act="clearDraw">Tout effacer</button><button class="ghost sm" data-act="newBody">Autre photo</button></div>
@@ -462,13 +559,13 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
   <div class="pane" data-pane="menus">
     <div class="card">
       <h2>Menu du jour</h2>
-      <p class="sub">Un menu différent chaque jour, calé sur tes calories. Remplace un plat s'il ne te plaît pas.</p>
+      <p class="sub">Nouveau chaque jour, à ta mesure.</p>
       <button data-act="genMenu" id="genMenu" class="wide">Mon menu d'aujourd'hui</button>
       <div id="menu"></div>
     </div>
     <div class="card">
       <h2>Ma semaine et mes courses</h2>
-      <p class="sub">7 jours de repas, la liste de courses par rayon et le batch cooking du dimanche.</p>
+      <p class="sub">Les repas de la semaine et la liste de courses.</p>
       <button class="alt wide" data-act="genWeek" id="genWeek">Préparer ma semaine</button>
       <div id="week"></div>
     </div>
@@ -481,7 +578,7 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
       <div id="ingRes"></div>
       <label for="frigo">Frigo, placard, épicerie</label>
       <textarea id="frigo" placeholder="ex. 4 œufs, riz, thon en boîte, tomates, oignon, fromage râpé, poulet"></textarea>
-      <div class="row" style="margin-top:12px"><label for="fMoment" style="margin:0">Pour le</label><select id="fMoment" style="width:auto;margin:0;flex:1"><option>Déjeuner</option><option>Dîner</option><option>Petit-déjeuner</option><option>Collation</option></select></div>
+      <div class="row" style="margin-top:12px"><label for="fMoment" style="margin:0">Pour le</label><select id="fMoment" data-custom="ex. avant la séance, pique-nique" style="width:auto;margin:0;flex:1"><option>Déjeuner</option><option>Dîner</option><option>Petit-déjeuner</option><option>Collation</option></select></div>
       <div class="row" style="margin-top:12px"><button data-act="genFrigo" style="flex:1">Un plat</button><button class="alt" data-act="genFrigoMenu" style="flex:1">Un menu complet</button></div>
       <div id="frig"></div>
     </div>
@@ -490,12 +587,12 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
   <div class="pane" data-pane="sauces">
     <div class="card">
       <h2>Créateur de sauces</h2>
-      <p class="sub">Dis-moi avec quoi et dans quel style, je t'invente 3 sauces maison, expliquées pas à pas.</p>
+      <p class="sub">Trois sauces maison, rien que pour toi.</p>
       <div class="grid">
-        <div><label for="sAvec">Pour accompagner</label><select id="sAvec"><option>Viande grillée</option><option>Poulet</option><option>Poisson</option><option>Pâtes</option><option>Salade</option><option>Légumes</option><option>Burger ou sandwich</option><option>Riz ou bowl</option><option>Apéro (dip)</option><option>Frites ou potatoes</option><option>Dessert</option></select></div>
-        <div><label for="sStyle">Style</label><select id="sStyle"><option>Crémeuse</option><option>Piquante</option><option>Légère et protéinée</option><option>Asiatique</option><option>Méditerranéenne</option><option>Barbecue fumée</option><option>Aux herbes fraîches</option><option>Fromagère</option><option>Sucrée-salée</option><option>Classique française</option><option>Surprends-moi</option></select></div>
-        <div><label for="sTemp">Servie</label><select id="sTemp"><option>Peu importe</option><option>Chaude</option><option>Froide</option></select></div>
-        <div><label for="sPiq">Piquant</label><select id="sPiq"><option>Pas du tout</option><option selected>Un peu</option><option>Bien relevé</option><option>Très fort</option></select></div>
+        <div><label for="sAvec">Pour accompagner</label><select id="sAvec" data-custom="ex. tacos, raclette, œufs"><option>Viande grillée</option><option>Poulet</option><option>Poisson</option><option>Pâtes</option><option>Salade</option><option>Légumes</option><option>Burger ou sandwich</option><option>Riz ou bowl</option><option>Apéro (dip)</option><option>Frites ou potatoes</option><option>Dessert</option></select></div>
+        <div><label for="sStyle">Style</label><select id="sStyle" data-custom="ex. comme au resto indien"><option>Crémeuse</option><option>Piquante</option><option>Légère et protéinée</option><option>Asiatique</option><option>Méditerranéenne</option><option>Barbecue fumée</option><option>Aux herbes fraîches</option><option>Fromagère</option><option>Sucrée-salée</option><option>Classique française</option><option>Surprends-moi</option></select></div>
+        <div><label for="sTemp">Servie</label><select id="sTemp" data-custom="ex. tiède"><option>Peu importe</option><option>Chaude</option><option>Froide</option></select></div>
+        <div><label for="sPiq">Piquant</label><select id="sPiq" data-custom="ex. juste une pointe de piment d'Espelette"><option>Pas du tout</option><option selected>Un peu</option><option>Bien relevé</option><option>Très fort</option></select></div>
         <div class="full"><label for="sIng">Ingrédients à utiliser (facultatif)</label><input id="sIng" placeholder="ex. yaourt grec, citron, ail, moutarde"></div>
       </div>
       <label style="display:flex;gap:10px;align-items:center;color:var(--ink);font-weight:500;font-size:15px;margin:14px 0"><input type="checkbox" id="sFrigo" style="width:22px;height:22px;margin:0;accent-color:var(--red)">Avec ce que j'ai chez moi</label>
@@ -526,6 +623,26 @@ input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;min-height:0}
 </main>
 
 <div id="ov" role="dialog" aria-modal="true"></div>
+<div id="welcome" role="dialog" aria-modal="true" aria-labelledby="wT">
+  <div class="wbox">
+    <div class="wlogo"><svg class="i"><use href="#i-dumb"/></svg></div>
+    <h1 id="wT">Bienvenue</h1>
+    <p class="mute" style="font-size:16px;margin:6px 0 20px">Quelques infos et c'est parti.</p>
+    <div class="grid">
+      <div class="full"><label for="w-nom">Ton prénom</label><input id="w-nom" autocomplete="given-name" placeholder="Prénom"></div>
+      <div><label for="w-age">Âge</label><input id="w-age" type="number" inputmode="numeric" placeholder="ans"></div>
+      <div><label for="w-sexe">Tu es</label><select id="w-sexe"><option value="H">Un homme</option><option value="F">Une femme</option></select></div>
+      <div><label for="w-taille">Taille</label><input id="w-taille" type="number" inputmode="decimal" placeholder="cm"></div>
+      <div><label for="w-poids">Poids</label><input id="w-poids" type="number" inputmode="decimal" step="0.1" placeholder="kg"></div>
+    </div>
+    <label style="margin-top:18px">Ton objectif</label>
+    <div class="wobj" id="wObj">
+      <button type="button" data-o="perte">Perdre du poids</button><button type="button" data-o="muscle">Me muscler</button><button type="button" data-o="seche">Me dessiner</button><button type="button" data-o="forme">Garder la forme</button><button type="button" data-o="endurance">Plus de cardio</button>
+    </div>
+    <button class="wide" data-act="wGo" style="margin-top:22px;min-height:56px;font-size:18px">C'est parti</button>
+    <button class="ghost wide" data-act="wLater" style="margin-top:10px">Plus tard</button>
+  </div>
+</div>
 <div id="sheet" role="dialog" aria-modal="true" aria-label="Partager"><div class="in" id="sheetIn"></div></div>
 
 <nav class="tabs">
@@ -674,7 +791,7 @@ const errMsg=e=>e&&e.code==='not_granted'?"Il faut autoriser la page à utiliser
  :e&&e.code==='net'?"Pas de connexion internet. Vérifie ton réseau et réessaie."
  :e&&e.code==='noimg'?"L'analyse de photos n'est pas disponible sur ce compte pour l'instant."
  :e&&e.code==='noimg'?"Aucune de tes IA branchées ne lit les photos : ajoute une clé Gemini (gratuite).":"Le coach n'a pas réussi à répondre. Réessaie.";
-const busy=(el,txt)=>{el.innerHTML='<div class="busy">'+esc(txt)+'</div>'};
+const busy=(el,txt)=>{el.innerHTML='<div class="skel" role="status"><div class="busy">'+esc(txt)+'<span class="dots3"><i></i><i></i><i></i></span></div><i></i><i></i><i style="width:60%"></i></div>'};
 const fail=(el,e)=>{el.innerHTML='<div class="err">'+esc(errMsg(e))+'</div>'};
 async function run(btn,el,txt,fn){if(btn)btn.disabled=true;if(el)busy(el,txt);try{await fn()}catch(e){console.log(e);if(el)fail(el,e)}finally{if(btn)btn.disabled=false}}
 
@@ -702,17 +819,29 @@ const chips=(p,s=[])=>'<div class="chips">'+p.map(k=>`<span class="chip p">${esc
 const list=(a,tag='ul')=>Array.isArray(a)&&a.length?`<${tag}>${a.map(x=>`<li>${esc(x)}</li>`).join('')}</${tag}>`:'';
 
 /* ---------- Profil & calculs ---------- */
-const PF=['opdate','medic','sante','kcalmed','protmed','eaumed','repas','nom','sexe','age','taille','poids','obj','niv','jours','lieu','duree','mat','regime','cuis','budget','notes'];
+const PF=['opdate','medic','sante','kcalmed','protmed','eaumed','repas','nom','sexe','age','taille','poids','obj','niv','jours','lieu','duree','regime','budget','notes'];
 let P=store.get('profil',{});P.zones=P.zones||[];P.kadj=P.kadj||0;
 const saveP=()=>store.set('profil',P);
-PF.forEach(k=>{const el=$('p-'+k);if(P[k]!=null&&P[k]!=='')el.value=P[k];el.addEventListener('input',()=>{P[k]=el.value;saveP();calc()})});
+/* Listes avec « Autre… » : on peut toujours écrire sa propre valeur */
+function ensureOpt(sel,v){if(v==null||v==='')return;if(![...sel.options].some(o=>o.value===String(v))){const o=new Option(String(v),String(v));o.dataset.c='1';sel.insertBefore(o,sel.querySelector('option[value="__autre"]'))}sel.value=String(v)}
+document.querySelectorAll('select[data-custom]').forEach(sel=>{
+  sel.appendChild(new Option('Autre… (j\'écris)','__autre'));
+  const box=document.createElement('div');box.className='row';box.style.cssText='margin-top:8px;display:none;flex-wrap:nowrap';
+  box.innerHTML=`<input placeholder="${esc(sel.dataset.custom)}" style="margin:0;flex:1"><button class="sm" type="button">OK</button>`;sel.after(box);
+  const inp=box.querySelector('input'),ok=box.querySelector('button');let prev=sel.value;
+  sel.addEventListener('focus',()=>{if(sel.value!=='__autre')prev=sel.value});
+  sel.addEventListener('change',()=>{if(sel.value==='__autre'){box.style.display='flex';inp.value='';inp.focus()}else{box.style.display='none';prev=sel.value}},true);
+  const commit=()=>{const v=inp.value.trim();if(!v){sel.value=prev;box.style.display='none';return}sel.querySelectorAll('option[data-c]').forEach(o=>{if(o.value!==v)o.remove()});ensureOpt(sel,v);box.style.display='none';prev=v;sel.dispatchEvent(new Event('input',{bubbles:true}))};
+  ok.addEventListener('click',commit);inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();commit()}});inp.addEventListener('blur',()=>setTimeout(()=>{if(box.style.display!=='none'&&inp.value.trim())commit()},150));
+});
+PF.forEach(k=>{const el=$('p-'+k);if(P[k]!=null&&P[k]!==''){if(el.tagName==='SELECT')ensureOpt(el,P[k]);else el.value=P[k]}el.addEventListener('input',()=>{if(el.value==='__autre')return;P[k]=el.value;saveP();calc()})});
 const OBJ={muscle:'se muscler et prendre du volume',perte:'perdre du poids',seche:'perdre du gras en gardant le muscle',forme:'garder la forme et se tonifier',endurance:'améliorer le cardio et l\'endurance'};
 function metrics(){
   const t=+P.taille,w=+P.poids,a=+P.age;if(!t||!w)return null;
   const imc=w/((t/100)**2);
   const bmr=a?Math.round(10*w+6.25*t-5*a+(P.sexe==='F'?-161:5)):null;
-  const j=+P.jours||3,act=j<=1?1.2:j<=3?1.375:j<=5?1.55:1.725;
-  const adj={muscle:250,perte:-450,seche:-300,forme:0,endurance:0}[P.obj||'muscle']+(+P.kadj||0);
+  const j=num(P.jours)||3,act=j<=1?1.2:j<=3?1.375:j<=5?1.55:1.725;
+  const adj=({muscle:250,perte:-450,seche:-300,forme:0,endurance:0}[P.obj||'muscle']??(/perd|maigr|sèche|seche|kg/i.test(P.obj||'')?-350:0))+(+P.kadj||0);
   const kcal=bmr?Math.round(Math.max(bmr*act+adj,bmr*1.1,P.sexe==='F'?1300:1500)/10)*10:null;
   const prot=Math.round(w*(['muscle','perte','seche'].includes(P.obj||'muscle')?1.8:1.4));
   let K=kcal,Pr=prot,E=Math.round(w*35/250);
@@ -722,13 +851,13 @@ function metrics(){
 }
 const cat=i=>i<18.5?'Maigreur':i<25?'Poids normal':i<30?'Surpoids':i<35?'Obésité modérée':i<40?'Obésité sévère':'Obésité massive';
 function calc(){
-  const m=metrics();
-  $('hello').textContent=P.obj?'Objectif '+({muscle:'muscle',perte:'perte de poids',seche:'sèche',forme:'forme',endurance:'cardio'}[P.obj]):'Mon Coach';
+  const m=metrics();$('avatar').textContent=((P.nom||'').trim()[0]||'M').toUpperCase();
+  $('hello').textContent=P.obj?'Objectif '+({muscle:'muscle',perte:'perte de poids',seche:'sèche',forme:'forme',endurance:'cardio'}[P.obj]||P.obj):'Mon Coach';
   if(!m){$('imcPin').style.display='none';renderDay();return}
   $('imc').textContent=fr(m.imc.toFixed(1));$('imcCat').textContent=cat(m.imc);
   $('imcRange').textContent='Poids « normal » pour ta taille : '+Math.round(m.min)+' à '+Math.round(m.max)+' kg';
   const pin=$('imcPin');pin.style.display='block';pin.style.left=Math.min(100,Math.max(0,(m.imc-15)/25*100))+'%';
-  $('stBmr').textContent=m.bmr?m.bmr.toLocaleString('fr-FR'):'–';$('stKcal').textContent=m.kcal?m.kcal.toLocaleString('fr-FR'):(BARIA()?'avec ton équipe':'–');$('stProt').textContent=m.prot+' g';
+  $('stBmr').textContent=m.bmr?m.bmr.toLocaleString('fr-FR'):'–';$('stKcal').textContent=m.kcal?m.kcal.toLocaleString('fr-FR'):(BARIA()?'À fixer avec ton équipe':'–');$('stKcal').classList.toggle('sm',!m.kcal&&BARIA());$('stProt').textContent=m.prot+' g';
   $('sub').textContent=m.kcal?`${m.kcal.toLocaleString('fr-FR')} kcal et ${m.prot} g de protéines par jour pour ton objectif.`:'Ajoute ton âge pour calculer tes calories.';
   renderDay();
 }
@@ -768,14 +897,34 @@ function renderSante(){
   const tip=$('santeTip');
   if(BARIA()&&!num(P.kcalmed)){tip.style.display='block';tip.innerHTML='<b>Après une chirurgie bariatrique</b>, l\'app ne calcule pas de calories toute seule : entre l\'objectif donné par ton équipe (calories et protéines). En attendant, elle vise au moins 60 g de protéines par jour et des petites portions.'}else tip.style.display='none';
 }
+const EQ={
+ M:['Haltères','Haltères réglables','Kettlebell','Barre et disques','Banc de musculation','Barre de traction','Élastiques','Sangles TRX','Tapis de sol','Corde à sauter','Swiss ball','Roue abdominale','Step','Vélo d\'appartement','Tapis de course','Rameur','Vélo elliptique','Rack à squat','Poulie murale','Gilet lesté'],
+ S:['Salle complète','Presse à cuisses','Leg extension','Leg curl','Smith machine','Rack à squat','Poulie vis-à-vis','Tirage vertical','Tirage horizontal','Développé couché','Butterfly / pec deck','Machine épaules','Chaise romaine','Abducteurs / adducteurs','Hip thrust machine','Mollets machine','Haltères','Kettlebells','Tapis de course','Vélo','Rameur','Elliptique','Stairmaster'],
+ C:['Plaques','Four','Micro-ondes','Airfryer','Multicuiseur (Cookeo)','Robot cuiseur (Thermomix)','Mixeur / blender','Mixeur plongeant','Cuiseur vapeur','Cuiseur à riz','Poêle anti-adhésive','Wok','Cocotte','Plancha / grill','Barbecue','Gaufrier','Appareil à croque','Yaourtière','Extracteur de jus','Balance de cuisine']};
+const EQK={M:'equipM',S:'equipS',C:'cuisL'};
+function renderEq(){
+  for(const g of ['M','S','C']){const L=P[EQK[g]]||[];$('eq'+g).innerHTML=EQ[g].map(n=>`<button class="chip${L.includes(n)?' p':''}" data-act="eqT" data-g="${g}" data-n="${esc(n)}" aria-pressed="${L.includes(n)}">${esc(n)}</button>`).join('')}
+  const C=P.custom||[];
+  $('eqCustom').innerHTML=C.length?'<div class="eqh" style="margin-top:16px">Mes appareils</div>'+C.map((c,i)=>`<div class="jl"><span class="n"><b>${esc(c.nom)}</b> <span class="mute">· ${c.cat==='cuisine'?'cuisine':'sport'}</span><div class="mute">${esc(c.description||'')}</div></span><button class="x" data-act="eqDel" data-i="${i}" aria-label="Retirer">×</button></div>`).join(''):'';
+}
+function equipTxt(){
+  const M=P.equipM||[],S=P.equipS||[],C=P.cuisL||[],X=P.custom||[];let t='';
+  if(M.length)t+='\nMatériel de sport à la maison : '+M.join(', ')+'.';
+  if(S.length)t+='\nÀ sa salle : '+(S.includes('Salle complète')?'salle complète (toutes machines usuelles)':S.join(', '))+'.';
+  if(C.length)t+='\nÉquipement de cuisine : '+C.join(', ')+'. Ne propose que des recettes réalisables avec cet équipement.';
+  X.forEach(c=>{t+=`\nAppareil perso (${c.cat}) : ${c.nom} — ${c.description||''}${c.usages&&c.usages.length?' Utilisations : '+c.usages.join(', ')+'.':''}`});
+  if(P.mat)t+='\nMatériel (ancien champ) : '+P.mat+'.';if(P.cuis)t+='\nCuisine (ancien champ) : '+P.cuis+'.';
+  if(M.length||S.length||X.some(c=>c.cat==='sport'))t+='\nPour le sport, n\'utilise QUE le matériel listé (ou le poids du corps).';
+  return t;
+}
 function profil(extra=false){
   const m=metrics();
   let s=`Profil de l'utilisateur : ${P.sexe==='F'?'femme':'homme'}, ${P.age||'?'} ans, ${P.taille||'?'} cm, ${P.poids||'?'} kg${m?`, IMC ${m.imc.toFixed(1)} (${cat(m.imc)})`:''}.
-Objectif : ${OBJ[P.obj||'muscle']}. Niveau : ${P.niv||'débutant'}. ${P.jours||3} séances par semaine de ${P.duree||60} minutes, ${P.lieu==='maison'?'à la maison':P.lieu==='mixte'?'en salle ou à la maison':'en salle de sport équipée'}.${P.mat?' Matériel à la maison : '+P.mat+'.':''}
+Objectif : ${OBJ[P.obj||'muscle']||P.obj}. Niveau : ${P.niv||'débutant'}. ${P.jours||3} séances par semaine, ${/^\d+$/.test(P.duree||'60')?(P.duree||60)+' minutes':P.duree} par séance, ${P.lieu==='maison'?'à la maison':P.lieu==='mixte'?'en salle ou à la maison':P.lieu&&P.lieu!=='salle'?P.lieu:'en salle de sport équipée'}.
 ${P.zones.length?'Zones prioritaires à développer : '+P.zones.map(k=>MN[k]).join(', ')+'.':''}
 ${m&&m.kcal?`Besoin visé : environ ${m.kcal} kcal et ${m.prot} g de protéines par jour.`:''}
-${P.regime?'Alimentation : '+P.regime+'.':''}${P.cuis?' Équipement cuisine : '+P.cuis+'.':''} Budget : ${P.budget||'normal'}. ${P.notes?'Blessures ou limites : '+P.notes+'.':''}`;
-  s+=santeTxt();
+${P.regime?'Alimentation : '+P.regime+'.':''} Budget : ${P.budget||'normal'}. ${P.notes?'Blessures ou limites : '+P.notes+'.':''}`;
+  s+=equipTxt();s+=santeTxt();
   const fe=LOG.slice(-3).filter(l=>l.ressenti).map(l=>`${l.nom} : ${l.ressenti}`);if(fe.length)s+=`\nRessenti des dernières séances : ${fe.join(' ; ')} (adapte l'intensité en conséquence).`;
   if(extra){const t=dayTot();s+=`\nAujourd'hui il a mangé ${Math.round(t.k)} kcal et ${Math.round(t.p)} g de protéines.`;const l=LOG[LOG.length-1];if(l)s+=` Dernière séance : ${l.nom} le ${frd(l.d)}.`}
   return s;
@@ -820,16 +969,16 @@ function suggest(x){
 function recovery(){
   const last={};LOG.forEach(l=>l.ex.forEach(e=>{if(e.sets.length)clean(e.muscles).forEach(k=>{last[k]=Math.max(last[k]||0,l.t)})}));
   const h=k=>last[k]?(Date.now()-last[k])/36e5:999;
-  const col=k=>h(k)<24?'var(--hot)':h(k)<60?'var(--warm)':last[k]?'#3fb27f':'var(--mus)';
+  const col=k=>h(k)<24?'var(--hot)':h(k)<60?'var(--warm)':last[k]?'#3dffc5':'var(--mus)';
   const wk=LOG.filter(l=>Date.now()-l.t<7*864e5).length;
   $('weekCount').textContent=`${wk} / ${P.jours||3} séances cette semaine`;
   const fresh=Object.keys(MN).filter(k=>h(k)>=60&&last[k]).map(k=>MN[k]);
-  $('recov').innerHTML=(LOG.length?mapSVG(col):'<p class="mute">Fais ta première séance guidée : la carte montrera quels muscles récupèrent et lesquels sont prêts.</p>')+
-   (LOG.length?`<div class="legend"><span><i style="background:var(--hot)"></i>Moins de 24 h</span><span><i style="background:var(--warm)"></i>En récupération</span><span><i style="background:#3fb27f"></i>Prêt</span></div>${fresh.length?`<p class="mute">Prêts à bosser : ${esc(fresh.join(', '))}</p>`:''}`:'');
+  $('recov').innerHTML=(LOG.length?mapSVG(col):'<p class="mute">Après ta première séance, tu verras ici quels muscles se reposent.</p>')+
+   (LOG.length?`<div class="legend"><span><i style="background:var(--hot)"></i>Moins de 24 h</span><span><i style="background:var(--warm)"></i>En récupération</span><span><i style="background:#3dffc5"></i>Prêt</span></div>${fresh.length?`<p class="mute">Prêts à bosser : ${esc(fresh.join(', '))}</p>`:''}`:'');
   /* volume hebdo : séries par muscle (principal = 1, secondaire = 0,5), cible 10-20 */
   const v={};LOG.filter(l=>Date.now()-l.t<7*864e5).forEach(l=>l.ex.forEach(e=>{clean(e.muscles).forEach(k=>v[k]=(v[k]||0)+e.sets.length);clean(e.muscles_secondaires).forEach(k=>v[k]=(v[k]||0)+e.sets.length/2)}));
   const rows=Object.entries(v).sort((a,b)=>b[1]-a[1]);
-  $('vol').innerHTML=rows.length?`<h3 style="margin-top:16px">Séries par muscle cette semaine</h3><p class="mute" style="margin:2px 0 8px">Repère : 10 à 20 séries par semaine pour faire grossir un muscle.</p>`+rows.map(([k,n])=>`<div class="row sb"><span>${esc(MN[k])}</span><b>${fr(n)}</b></div><div class="bar${n>=10?'':' p'}"><i style="width:${Math.min(100,n/20*100)}%"></i></div>`).join(''):'';
+  $('vol').innerHTML=rows.length?`<h3 style="margin-top:16px">Séries par muscle cette semaine</h3><p class="mute" style="margin:2px 0 8px">Idéal : 10 à 20 séries par muscle.</p>`+rows.map(([k,n])=>`<div class="row sb"><span>${esc(MN[k])}</span><b>${fr(n)}</b></div><div class="bar${n>=10?'':' p'}"><i style="width:${Math.min(100,n/20*100)}%"></i></div>`).join(''):'';
 }
 function renderZones(){
   $('zonesMap').innerHTML=mapSVG(k=>P.zones.includes(k)?'var(--hot)':'var(--mus)',true);
@@ -937,7 +1086,7 @@ const drawnBlob=()=>new Promise(ok=>cv.toBlob(ok,'image/jpeg',.85));
 
 function renderAna(r){
   const p=clean(r.muscles_principaux),s=clean(r.muscles_secondaires);
-  $('ana').innerHTML=`<div class="card"><h2>${esc(r.nom)}</h2><p style="margin-top:0">${esc(r.description)}</p>${bodyMap(p,s)}${chips(p,s)}<div class="row">${yt((r.nom_recherche||r.nom)+' utilisation tutoriel','Voir une vidéo de démonstration')}</div></div>
+  $('ana').innerHTML=`<div class="card"><h2>${esc(r.nom)}</h2><p style="margin-top:0">${esc(r.description)}</p>${bodyMap(p,s)}${chips(p,s)}<div class="row">${yt((r.nom_recherche||r.nom)+' utilisation tutoriel','Voir une vidéo de démonstration')}${AH.indexOf(r)>=0&&!(P.custom||[]).some(c=>c.nom===r.nom)?`<button class="tint sm" data-act="addMachineEq" data-i="${AH.indexOf(r)}">J'ai cet appareil</button>`:''}</div></div>
   <div class="card"><h3>Pour ton objectif</h3><div class="big" style="font-size:40px;margin:8px 0;color:var(--red)">${esc(r.series)} × ${esc(r.repetitions)}</div><div class="mute">Repos ${esc(r.repos_s)} s · ${esc(r.charge)}</div></div>
   <div class="card"><h3>Réglages</h3>${list(r.reglages)}<h3 style="margin-top:14px">Comment l'utiliser</h3>${list(r.etapes,'ol')}
   <h3 style="margin-top:14px">Erreurs à éviter</h3>${list(r.erreurs)}${r.securite?`<p class="mute"><b>Sécurité :</b> ${esc(r.securite)}</p>`:''}
@@ -958,7 +1107,7 @@ function renderDay(){
   $('gK').textContent=`${Math.round(t.k).toLocaleString('fr-FR')} / ${tk.toLocaleString('fr-FR')} kcal`;$('bK').style.width=Math.min(100,t.k/tk*100)+'%';
   $('gP').textContent=`${Math.round(t.p)} / ${tp} g`;$('bP').style.width=Math.min(100,t.p/tp*100)+'%';
   $('gW').textContent=`${w} / ${te} verres`;
-  $('glass').innerHTML=Array.from({length:Math.max(te,w)},(_,i)=>`<button class="${i<w?'f':''}" data-act="eau" data-v="${i+1}" aria-label="${i+1} verres">💧</button>`).join('').replace(/💧/g,'<svg class="ic" style="width:18px;height:18px" viewBox="0 0 24 24"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/></svg>');
+  $('glass').innerHTML=Array.from({length:Math.max(te,w)},(_,i)=>`<button class="${i<w?'f':''}" data-act="eau" data-v="${i+1}" aria-label="${i+1} verres">💧</button>`).join('').replace(/💧/g,'<svg class="i" style="width:18px;height:18px" viewBox="0 0 24 24"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/></svg>');
   const tip=$('gTip'),h=new Date().getHours();
   if(dayJ().length&&h>=14&&tp-t.p>25){tip.style.display='block';tip.textContent=`Il te manque ${Math.round(tp-t.p)} g de protéines aujourd'hui : pense à un skyr, du poulet, des œufs ou du thon.`}
   else if(t.k>tk*1.1){tip.style.display='block';tip.textContent='Tu as dépassé ton objectif du jour. Pas de panique : c\'est la moyenne de la semaine qui compte.'}else tip.style.display='none';
@@ -1001,7 +1150,7 @@ async function openCook(o){
   clearInterval(ktick);ktick=setInterval(ktimer,500);await loadCook();
 }
 async function loadCook(){
-  ov.innerHTML=`<div class="ovh"><b>${esc(K.o.nom)}</b><button class="ghost sm" data-act="kClose">Fermer</button></div><div class="busy">Le chef écrit ta recette détaillée pour ${K.n} portion${K.n>1?'s':''}…</div>`;
+  ov.innerHTML=`<div class="ovh"><b>${esc(K.o.nom)}</b><button class="ghost sm" data-act="kClose">Fermer</button></div><div class="busy">Préparation de ta recette pour ${K.n} portion${K.n>1?'s':''}…</div>`;
   try{K.d=await getDetail(K.o,K.n);renderK()}catch(e){ov.innerHTML=`<div class="ovh"><b>${esc(K.o.nom)}</b><button class="ghost sm" data-act="kClose">Fermer</button></div><div class="err">${esc(errMsg(e))}</div><button data-act="kRetry">Réessayer</button>`}
 }
 function renderK(){
@@ -1048,7 +1197,7 @@ function renderFav(){
   const l=FAVR.map((f,i)=>[f,i]).filter(([f])=>FT==='tout'||f.type===FT).reverse();
   $('favList').innerHTML=l.length?l.map(([f,i])=>f.type==='menu'?`<details class="ex"><summary><span class="exn">Menu · ${esc(f.nom)}</span><span class="mute">${esc(f.data.calories_total||'')} kcal</span></summary><div class="in">${(f.data.repas||[]).map(m=>mealHTML(m)).join('')}<div class="row"><button class="sm" data-act="useMenu" data-i="${i}">En faire mon menu du jour</button><button class="ghost sm" data-act="unfav" data-i="${i}">Retirer</button></div></div></details>`
     :`<details class="ex"><summary><span class="exn">${f.type==='sauce'?'Sauce · ':''}${esc(f.nom)}</span><span class="mute">${esc(f.data.kcal??'')}${f.data.kcal!=null?' kcal':''}</span></summary><div class="in">${mealHTML(f.data,`<button class="ghost sm" data-act="unfav" data-i="${i}">Retirer</button>`,f.type)}</div></details>`).join('')
-    :'<p class="mute">Touche « Favori » sur une recette, une sauce ou un menu pour le retrouver ici.</p>';
+    :'<p class="mute">Tes recettes, menus et sauces préférés arriveront ici.</p>';
 }
 function refreshFood(){renderMenu();renderFav();document.querySelectorAll('[data-act=favR]').forEach(b=>{const o=REG[+b.dataset.r];if(o)b.textContent=isFav(o)?'En favori ★':'Favori ☆'})}
 function renderMenu(){
@@ -1094,13 +1243,13 @@ const A={
   kadj(b){P.kadj=(+P.kadj||0)+(+b.dataset.v);saveP();calc();bilan()},
   kreset(b,e){e.preventDefault();P.kadj=0;saveP();calc();bilan()},
   zclear(){P.zones=[];saveP();renderZones()},
-  genProg(b){run(b,$('prog'),'Le coach prépare ta semaine…',async()=>{
+  genProg(b){run(b,$('prog'),'Préparation de ta semaine',async()=>{
     PR=await askJSON(`Tu es un coach sportif diplômé. ${profil()}
 Crée un programme d'entraînement hebdomadaire adapté, réaliste et sûr, avec exactement ${P.jours||3} séances. Équilibre les groupes musculaires pour laisser 48 h de récupération, insiste sur les zones prioritaires sans négliger le reste, et respecte les blessures.
 Format JSON : {"titre":"","resume":"2 phrases","echauffement":"","progression":"comment progresser semaine après semaine","jours":[{"nom":"Jour 1 – …","focus":"","duree_min":60,"exercices":[${EXF}]}]}
 5 à 7 exercices par séance. Noms d'exercices usuels en français. Pour muscles et muscles_secondaires, utilise seulement ces clés : ${KEYS}.`,{modelTier:'default'});
     store.set('programme',PR);renderProg()})},
-  quick(b){run(b,$('prog'),'Le coach prépare ta séance express…',async()=>{
+  quick(b){run(b,$('prog'),'Préparation de ta séance',async()=>{
     const last={};LOG.forEach(l=>l.ex.forEach(e=>clean(e.muscles).forEach(k=>last[k]=l.t)));
     const tired=Object.keys(last).filter(k=>Date.now()-last[k]<48*36e5).map(k=>MN[k]);
     const r=await askJSON(`Tu es un coach sportif. ${profil()}
@@ -1116,7 +1265,7 @@ Propose UN exercice de remplacement pour « ${x.nom} » qui travaille les mêmes
   async saveKey(b){document.querySelectorAll('[data-key]').forEach(i=>{const v=i.value.trim();if(v!==(AI.keys[i.dataset.key]||''))delete AI.m[i.dataset.key];if(v)AI.keys[i.dataset.key]=v;else delete AI.keys[i.dataset.key]});AI.engine=$('iaEng').value;saveAI();
     if(!active().length){$('iaRes').innerHTML='<p class="mute">Aucune clé enregistrée.</p>';return}
     run(b,$('iaRes'),'Test de chaque IA…',async()=>{const out=[];
-      for(const p of active()){try{const m=await pickModels(p);const t=await callProv(p,[{role:'user',content:'Réponds juste : OK'}],[],false);out.push(`<div class="jl"><span class="n"><b>${esc(PROV[p].nom)}</b><div class="mute">${esc(m.text)}${m.vision?' · photos : oui':' · photos : non'}</div></span><span class="v" style="color:#3fb27f">Marche</span></div>`)}
+      for(const p of active()){try{const m=await pickModels(p);const t=await callProv(p,[{role:'user',content:'Réponds juste : OK'}],[],false);out.push(`<div class="jl"><span class="n"><b>${esc(PROV[p].nom)}</b><div class="mute">${esc(m.text)}${m.vision?' · photos : oui':' · photos : non'}</div></span><span class="v" style="color:#3dffc5">Marche</span></div>`)}
         catch(e){out.push(`<div class="jl"><span class="n"><b>${esc(PROV[p].nom)}</b><div class="mute">${esc(errMsg(e))}</div></span><span class="v" style="color:var(--red)">Échec</span></div>`)}}
       $('iaRes').innerHTML=out.join('');$('noai').style.display='none'})},
   exportData(b){const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('coach_')&&k!=='coach_ia')d[k]=localStorage.getItem(k)}}catch(e){}copy(JSON.stringify(d),b);
@@ -1132,16 +1281,16 @@ Propose UN exercice de remplacement pour « ${x.nom} » qui travaille les mêmes
   nextEx(){if(S.i<S.ex.length-1){S.i++;S.rest=0;renderS()}else endS()},
   prevEx(){if(S.i>0){S.i--;S.rest=0;renderS()}},
   endS(){endS()},closeS(){closeS()},
-  anaMachine(b){run(b,$('ana'),'Le coach examine l\'appareil…',async()=>{
+  anaMachine(b){run(b,$('ana'),'Analyse de l\'appareil',async()=>{
     const r=await askJSON(`Tu es un coach sportif expert du matériel de musculation. Identifie l'appareil ou l'accessoire de sport sur la photo (marque si visible). ${profil()}
 Explique comment s'en servir correctement et quelles séries faire pour l'objectif de l'utilisateur.
 Format JSON : {"nom":"","nom_recherche":"nom usuel pour chercher une vidéo","description":"1-2 phrases","muscles_principaux":["clé"],"muscles_secondaires":["clé"],"reglages":["…"],"etapes":["…"],"erreurs":["…"],"securite":"","series":3,"repetitions":"8-12","repos_s":90,"charge":"conseil de charge","variantes":["autre exercice possible sur cet appareil"]}
 Clés de muscles autorisées : ${KEYS}. Si la photo ne montre pas d'appareil de sport, mets "nom":"Appareil non reconnu" et explique dans description.`,{images:[PH.machine],modelTier:'default'});
-    renderAna(r);if(r.nom&&r.nom!=='Appareil non reconnu'){AH=[r,...AH.filter(a=>a.nom!==r.nom)].slice(0,15);store.set('machines',AH);renderAH()}})},
+    if(r.nom&&r.nom!=='Appareil non reconnu'){AH=[r,...AH.filter(a=>a.nom!==r.nom)].slice(0,15);store.set('machines',AH);renderAH()}renderAna(r)})},
   showAna(b){renderAna(AH[+b.dataset.i]);$('ana').scrollIntoView({behavior:'smooth'})},
   undo(){STROKES.pop();redraw()},clearDraw(){STROKES=[];redraw()},
   newBody(){BASE=null;cv.style.display='none';$('corpsDrop').style.display='flex';$('cvBtns').hidden=true;document.querySelector('[data-in="corps"]').value='';document.querySelector('[data-in="corps"]').click()},
-  anaCorps(b){run(b,$('corpsRes'),'Le coach regarde tes zones…',async()=>{
+  anaCorps(b){run(b,$('corpsRes'),'Analyse de la photo',async()=>{
     const blob=STROKES.length?await drawnBlob():PH.corps,txt=$('corpsTxt').value.trim();
     const r=await askJSON(`Tu es un coach sportif bienveillant. Sur cette photo, l'utilisateur a entouré en rouge les zones de son corps qu'il veut travailler${txt?' et il précise : « '+txt+' »':''}. ${profil()}
 Identifie les groupes musculaires correspondant aux zones entourées (ou mentionnées). Ne commente pas le physique de façon négative, reste factuel, positif et motivant. Rappelle si besoin qu'on ne perd pas de gras localement, que ça passe par l'alimentation.
@@ -1152,7 +1301,7 @@ Format JSON : {"zones":["clé"],"explication":"2-3 phrases","exercices":[${EXF}]
     <div class="card"><h3>Exercices ciblés</h3>${(r.exercices||[]).map(x=>exHTML(x)).join('')}<div class="row" style="margin-top:10px"><button class="alt" data-act="startCorps">Faire cette séance maintenant</button></div></div>`})},
   useZones(b){P.zones=[...new Set([...P.zones,...clean(CORPS.zones)])];saveP();renderZones();b.textContent='Ajouté ! Refais ton programme dans Sport.'},
   startCorps(){startSession({nom:'Séance ciblée',exercices:CORPS.exercices||[]})},
-  anaPlate(b){run(b,$('plateRes'),'Le coach analyse ton assiette…',async()=>{
+  anaPlate(b){run(b,$('plateRes'),'Analyse de l\'assiette',async()=>{
     const r=await askJSON(`Tu es nutritionniste. Identifie les aliments sur la photo du repas et estime les portions et valeurs nutritionnelles (pense à l'huile et aux sauces probables). ${profil()}
 Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 150 g","kcal":0}],"kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"confiance":"faible|moyenne|bonne","avis":"1-2 phrases sur ce repas par rapport à son objectif"}`,{images:[PH.assiette],modelTier:'default',cache:false});
     PLATE=r;
@@ -1162,7 +1311,7 @@ Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 1
     <p>${esc(r.avis)}</p><label for="plQ">Ta portion réelle</label><select id="plQ"><option value=".5">La moitié</option><option value=".75">Un peu moins</option><option value="1" selected>Comme estimé</option><option value="1.25">Un peu plus</option><option value="1.5">Une fois et demie</option></select>
     <div class="row" style="margin-top:12px"><button data-act="addPlate">Ajouter à mon journal</button></div></div>`})},
   addPlate(b){const q=+$('plQ').value;addFood({nom:PLATE.nom,kcal:PLATE.kcal*q,p:PLATE.proteines_g*q,g:PLATE.glucides_g*q,l:PLATE.lipides_g*q});b.textContent='Ajouté !';b.disabled=true},
-  anaFridge(b){run(b,$('fridgeRes'),'Le coach inventorie ton frigo…',async()=>{
+  anaFridge(b){run(b,$('fridgeRes'),'Lecture de la photo',async()=>{
     const r=await askJSON(`Liste les aliments et ingrédients visibles sur cette photo de frigo ou de placard, avec la quantité approximative. Format JSON : {"ingredients":["ex. 6 œufs"]}`,{images:[PH.fpic],modelTier:'default',cache:false});
     const ing=(r.ingredients||[]).join(', ');
     $('fridgeRes').innerHTML=`<div class="card"><h3>J'ai repéré</h3><p>${esc(ing)}</p><div class="row"><button data-act="useFridge">Mettre dans « Ce que j'ai chez moi »</button></div></div>`;FRIDGE=ing})},
@@ -1171,7 +1320,7 @@ Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 1
   delJ(b){dayJ().splice(+b.dataset.i,1);saveJ();renderDay()},
   fav(b){const e=dayJ()[+b.dataset.i];if(!FAV.some(f=>f.nom===e.nom)){FAV.push({...e});FAV=FAV.slice(-20);store.set('favoris',FAV)}renderDay()},
   addFav(b){addFood(FAV[+b.dataset.i])},
-  quickAdd(b){const t=$('qa').value.trim();if(!t){$('qa').focus();return}run(b,$('qaRes'),'Calcul en cours…',async()=>{
+  quickAdd(b){const t=$('qa').value.trim();if(!t){$('qa').focus();return}run(b,$('qaRes'),'Calcul',async()=>{
     const r=await askJSON(`Tu es nutritionniste. Estime les valeurs nutritionnelles de ce que l'utilisateur a mangé : « ${t} ». Portions françaises usuelles si non précisées. Format JSON : {"aliments":[{"nom":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0}]}`,{modelTier:'quick'});
     (r.aliments||[]).forEach(addFood);$('qa').value='';$('qaRes').innerHTML=''})},
   ate(b){addFood(REG[+b.dataset.r]);b.textContent='Ajouté !';b.disabled=true},
@@ -1189,15 +1338,28 @@ Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 1
   useMenu(b){MENUS[today()]=FAVR[+b.dataset.i].data;saveFood();refreshFood();openPane('cuisine','menus')},
   goScan(b){openPane('scan',b.dataset.v)},
   async shareApp(){
-    openSheet(`<h2 style="text-align:center">Partager Mon Coach</h2><p class="mute" style="text-align:center;margin-top:-4px">Fais scanner ce code avec l'appareil photo, ou envoie le lien.</p><div id="qr"><div class="busy"></div></div><div class="url">${esc(APP_URL)}</div>
+    openSheet(`<h2 style="text-align:center">Partager Mon Coach</h2><p class="mute" style="text-align:center;margin-top:-4px">À scanner avec l'appareil photo.</p><div id="qr"><div class="busy"></div></div><div class="url">${esc(APP_URL)}</div>
     <div class="row" style="margin-top:14px"><button data-act="nativeShare" style="flex:1">Envoyer le lien</button><button class="ghost" data-act="copyLink" style="flex:1">Copier</button></div>
-    <p class="mute" style="text-align:center">Chacun a son propre profil et ses données sur son téléphone.</p><button class="ghost wide" data-act="closeSheet">Fermer</button>`);
+    <p class="mute" style="text-align:center">Chacun garde son profil sur son téléphone.</p><button class="ghost wide" data-act="closeSheet">Fermer</button>`);
     try{const Q=await loadQR(),q=Q(0,'M');q.addData(APP_URL);q.make();$('qr').innerHTML=q.createSvgTag({cellSize:6,margin:0,scalable:true})}catch(e){$('qr').innerHTML='<span class="mute">QR indisponible hors ligne</span>'}},
   async nativeShare(b){if(navigator.share){try{await navigator.share({title:'Mon Coach',text:'Mon coach sport et nutrition, essaie-le :',url:APP_URL})}catch(e){}}else copy(APP_URL,b)},
   copyLink(b){copy(APP_URL,b)},
   closeSheet(){$('sheet').classList.remove('on')},
   installHelp(){openSheet(installHTML()+'<button class="wide" data-act="closeSheet" style="margin-top:10px">J\'ai compris</button>')},
   doUpdate(){location.reload()},
+  eqT(b){const k=EQK[b.dataset.g],n=b.dataset.n,L=P[k]||[];P[k]=L.includes(n)?L.filter(x=>x!==n):[...L,n];saveP();renderEq()},
+  eqDel(b){P.custom.splice(+b.dataset.i,1);saveP();renderEq()},
+  eqAdd(b){const n=$('eqIn').value.trim(),cat=$('eqCat').value;if(!n){$('eqIn').focus();return}run(b,$('eqRes'),'Recherche de l\'appareil',async()=>{
+    const r=await askJSON(`L'utilisateur possède cet appareil (${cat==='cuisine'?'de cuisine':'de sport'}) : « ${n} ». Identifie précisément ce que c'est (nom usuel en français, marque ou modèle probable), explique simplement à quoi il sert et liste ce qu'on peut faire avec ${cat==='cuisine'?'(types de préparations et recettes)':'(exercices possibles et muscles travaillés)'}. Si tu ne reconnais pas, donne l'interprétation la plus probable et dis-le.
+Format JSON : {"nom":"","description":"1 phrase simple","usages":["…"],"certitude":"sûr|probable|incertain"}`,{modelTier:'quick',cache:false});
+    P.custom=[...(P.custom||[]),{cat,nom:r.nom||n,saisi:n,description:r.description||'',usages:(r.usages||[]).slice(0,12)}];saveP();renderEq();$('eqIn').value='';
+    $('eqRes').innerHTML=`<div class="tip"><b>${esc(r.nom||n)}</b> ajouté${r.certitude&&r.certitude!=='sûr'?' (identification '+esc(r.certitude)+', corrige le nom si besoin)':''}. ${esc(r.description||'')}${r.usages&&r.usages.length?`<div class="mute" style="margin-top:6px">Le coach pourra t'en proposer : ${esc(r.usages.slice(0,6).join(', '))}…</div>`:''}</div>`})},
+  addMachineEq(b){const r=AH[+b.dataset.i];P.custom=[...(P.custom||[]),{cat:'sport',nom:r.nom,description:r.description||'',usages:r.variantes||[]}];saveP();renderEq();b.textContent='Ajouté à mon matériel';b.disabled=true},
+  wGo(){const g=id=>$(id).value.trim();
+    [['nom','#w-nom'],['age','#w-age'],['taille','#w-taille'],['poids','#w-poids'],['sexe','#w-sexe']].forEach(([k,id])=>{const v=g(id.slice(1));if(v){P[k]=v;const el=$('p-'+k);if(el.tagName==='SELECT')ensureOpt(el,v);else el.value=v}});
+    const o=document.querySelector('#wObj .on');if(o){P.obj=o.dataset.o;$('p-obj').value=P.obj}
+    saveP();store.set('onb',1);calc();$('welcome').classList.remove('on');document.body.style.overflow='';renderHome()},
+  wLater(){store.set('onb',1);$('welcome').classList.remove('on');document.body.style.overflow=''},
   santeT(b){const k=b.dataset.k,L=P.santeL||[];P.santeL=L.includes(k)?L.filter(x=>x!==k):[...L,k];saveP();renderSante();calc()},
   genProgHome(b){openPane('sport','programme');setTimeout(()=>$('genProg').click(),80)},
   genMenuHome(b){openPane('cuisine','menus');setTimeout(()=>$('genMenu').click(),80)},
@@ -1205,18 +1367,18 @@ Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 1
   goPane(b){openPane(b.dataset.v,b.dataset.p)},
   qtyPick(b){$('qty').value=b.dataset.v;$('qty').focus()},
   showProd(b){renderProd(PRODS[+b.dataset.i]);$('prodRes').scrollIntoView({behavior:'smooth'})},
-  anaProd(b){run(b,$('prodRes'),'Recherche du produit…',async()=>{
-    let ean=$('ean').value.replace(/\D/g,'');if(!ean&&PH.produit){busy($('prodRes'),'Lecture du code-barres…');ean=await decodeBarcode(PH.produit)}
-    let p=ean?(busy($('prodRes'),'Recherche dans Open Food Facts…'),await offLookup(ean)):null;
-    if(!p&&PH.produit){busy($('prodRes'),'L\'IA lit l\'emballage…');
+  anaProd(b){run(b,$('prodRes'),'Recherche du produit',async()=>{
+    let ean=$('ean').value.replace(/\D/g,'');if(!ean&&PH.produit){busy($('prodRes'),'Lecture du code-barres');ean=await decodeBarcode(PH.produit)}
+    let p=ean?(busy($('prodRes'),'Recherche du produit'),await offLookup(ean)):null;
+    if(!p&&PH.produit){busy($('prodRes'),'Lecture de l\'étiquette');
       const a=await askJSON(`Identifie ce produit alimentaire à partir de la photo (emballage, code-barres ou tableau nutritionnel). Si un code-barres est lisible, recopie exactement ses chiffres. Si le tableau nutritionnel est visible, recopie les valeurs pour 100 g ; sinon donne les valeurs moyennes connues pour ce type de produit.
 Format JSON : {"ean":"","nom":"","marque":"","quantite":"poids ou volume du paquet","portion":"","nutriscore":"a à e si visible sinon vide","c100":{"kcal":0,"p":0,"g":0,"sucres":0,"l":0,"ags":0,"fibres":0,"sel":0},"ingredients":"","valeurs":"etiquette|estimation"}`,{images:[PH.produit],modelTier:'default',cache:false});
       const e2=String(a.ean||'').replace(/\D/g,'');if(e2&&e2!==ean&&e2.length>=8)p=await offLookup(e2);
-      if(!p)p={...a,nutriscore:String(a.nutriscore||'').toLowerCase().replace(/[^a-e]/g,''),source:a.valeurs==='etiquette'?'Lu sur l\'étiquette par l\'IA':'Estimation de l\'IA (vérifie l\'étiquette)'};
+      if(!p)p={...a,nutriscore:String(a.nutriscore||'').toLowerCase().replace(/[^a-e]/g,''),source:a.valeurs==='etiquette'?'Lu sur l\'étiquette':'Valeurs estimées (vérifie l\'étiquette)'};
     }
     if(!p){$('prodRes').innerHTML='<div class="err">Produit introuvable. Prends en photo l\'emballage ou le tableau nutritionnel.</div>';return}
     PRODS=[p,...PRODS.filter(x=>(x.ean&&x.ean===p.ean)?false:x.nom!==p.nom)].slice(0,30);store.set('produits',PRODS);renderProdHist();renderProd(p);$('ean').value=''})},
-  synth(b){const q=$('qty').value.trim();if(!q){$('qty').focus();return}const p=PROD;run(b,$('synthRes'),'Le coach fait le point…',async()=>{
+  synth(b){const q=$('qty').value.trim();if(!q){$('qty').focus();return}const p=PROD;run(b,$('synthRes'),'Calcul',async()=>{
     const r=await askJSON(`Tu es coach en nutrition. ${profil(true)}
 Produit : ${JSON.stringify({nom:p.nom,marque:p.marque,quantite_paquet:p.quantite,portion:p.portion,pour_100g:p.c100,nutriscore:p.nutriscore,nova:p.nova})}.
 L'utilisateur dit en avoir mangé : « ${q} ».
@@ -1230,14 +1392,14 @@ Format JSON : {"grammes":0,"synthese":"2 à 3 phrases","points_forts":["…"],"p
     ${r.alternative?`<div class="tip"><b>Mieux pour toi :</b> ${esc(r.alternative)}</div>`:''}${r.pour_la_suite?`<div class="tip"><b>Pour la suite :</b> ${esc(r.pour_la_suite)}</div>`:''}
     <div class="row" style="margin-top:12px"><button data-act="addSyn">Ajouter à mon journal</button><label class="mute" for="synG">Corriger les grammes</label><input id="synG" type="number" inputmode="decimal" value="${Math.round(g)}" style="width:100px;margin:0"></div></div>`})},
   addSyn(b){const g2=num($('synG').value),p=PROD,c=p.c100||{},k=x=>Math.round(num(x)*g2/100);addFood({nom:`${p.nom} (${Math.round(g2)} g)`,kcal:k(c.kcal),p:k(c.p),g:k(c.g),l:k(c.l)});b.textContent='Ajouté !';b.disabled=true},
-  genSauce(b){const ing=$('sIng').value.trim(),fr=$('sFrigo').checked?$('frigo').value.trim():'';run(b,$('sauces'),'Le saucier invente…',async()=>{
+  genSauce(b){const ing=$('sIng').value.trim(),fr=$('sFrigo').checked?$('frigo').value.trim():'';run(b,$('sauces'),'Création de tes sauces',async()=>{
     const r=await askJSON(`Tu es un chef saucier créatif. ${profil()}
 Invente 3 sauces maison différentes pour accompagner : ${$('sAvec').value}. Style : ${$('sStyle').value}. Servie : ${$('sTemp').value}. Niveau de piquant : ${$('sPiq').value}.
 ${ing?'Utilise si possible : '+ing+'.':''}${fr?' Il a chez lui : '+fr+' — privilégie ces ingrédients.':''}
 Au moins une des 3 doit être une version allégée compatible avec son objectif. Évite les sauces déjà proposées : ${FAVR.filter(f=>f.type==='sauce').map(f=>f.nom).join(', ')||'aucune'}.
 Format JSON : {"sauces":[{"nom":"","description":"1 phrase qui donne envie","kcal":0,"proteines_g":0,"lipides_g":0,"portions":4,"temps_min":10,"ingredients":["quantité + ingrédient"],"accords":["avec quoi la servir"],"conservation":"ex. 3 jours au frigo"}]}`,{modelTier:'default',cache:false});
     $('sauces').innerHTML=(r.sauces||[]).map(x=>mealHTML(x,'','sauce')).join('')})},
-  genFrigoMenu(b){const f=$('frigo').value.trim();if(!f){$('frigo').focus();return}run(b,$('frig'),'Le coach compose un menu avec ce que tu as…',async()=>{
+  genFrigoMenu(b){const f=$('frigo').value.trim();if(!f){$('frigo').focus();return}run(b,$('frig'),'Composition du menu',async()=>{
     const r=await askJSON(`Tu es coach en nutrition sportive et cuisinier. ${profil()}
 Il a chez lui : ${f}. Compose le menu complet d'aujourd'hui (petit-déjeuner, déjeuner, collation, dîner) en utilisant au maximum ces ingrédients (sel, poivre, huile, épices de base supposés disponibles), en visant ses calories et protéines.
 Format JSON : {"calories_total":0,"proteines_total_g":0,"repas":[{"moment":"","nom":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"temps_min":15,"utilise":["…"],"manque":["…"],"ingredients":["quantité + ingrédient"]}],"astuce":"1 phrase"}`,{modelTier:'default',cache:false});
@@ -1246,7 +1408,7 @@ Format JSON : {"calories_total":0,"proteines_total_g":0,"repas":[{"moment":"","n
   frmToday(b){MENUS[today()]=FRM;saveFood();refreshFood();b.textContent='C\'est ton menu du jour !'},
   frmFav(b){FAVR.push({type:'menu',nom:'Avec mon frigo · '+(FRM.repas||[]).map(r=>r.nom)[1],data:FRM,d:today()});saveFood();renderFav();b.textContent='En favori ★';b.disabled=true},
   genMenu(b){const past=Object.entries(MENUS).sort().slice(-10).flatMap(([,m])=>(m.repas||[]).map(r=>r.nom));
-    run(b,$('menu'),'Le coach compose ton menu…',async()=>{
+    run(b,$('menu'),'Composition du menu',async()=>{
     const r=await askJSON(`Tu es coach en nutrition sportive. ${profil()}
 Propose le menu d'aujourd'hui (${new Date().toLocaleDateString('fr-FR',{weekday:'long',month:'long'})}) : petit-déjeuner, déjeuner, collation, dîner. Plats simples, de saison, faisables en semaine, variés et gourmands, adaptés au budget et à l'équipement.
 ${past.length?'Ne répète pas ces plats déjà proposés : '+past.join(' ; ')+'.':''}
@@ -1257,13 +1419,13 @@ Format JSON : {"calories_total":0,"proteines_total_g":0,"repas":[${MEALF}],"astu
 Remplace le plat « ${m.nom} » (${m.moment}) par un plat différent, à plus ou moins 10 % de ${m.kcal} kcal et ${m.proteines_g} g de protéines. Format JSON : ${MEALF}`,{modelTier:'quick',cache:false});
     r.moment=r.moment||m.moment;MENUS[today()].repas[i]=r;store.set('menus',MENUS);renderMenu()})},
   copyMenu(b){const d=MENUS[today()];copy((d.repas||[]).flatMap(r=>r.ingredients||[]).join('\n'),b)},
-  genFrigo(b){const f=$('frigo').value.trim();if(!f){$('frigo').focus();return}run(b,$('frig'),'Le coach fouille ton frigo…',async()=>{
+  genFrigo(b){const f=$('frigo').value.trim();if(!f){$('frigo').focus();return}run(b,$('frig'),'Recherche de recettes',async()=>{
     const r=await askJSON(`Tu es coach en nutrition sportive et cuisinier. ${profil()}
 Voici ce que l'utilisateur a chez lui : ${f}.
 Propose 3 recettes différentes pour le moment « ${$('fMoment').value} », en utilisant surtout ces ingrédients (sel, poivre, huile, épices de base supposés disponibles), adaptées à son objectif. Classe-les de celle qui utilise le plus ce qu'il a à celle qui en utilise le moins.
 Format JSON : {"recettes":[{"nom":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"temps_min":15,"utilise":["ingrédient du frigo"],"manque":["ingrédient manquant, vide si aucun"],"ingredients":["quantité + ingrédient"],"preparation":["étape"]}]}`,{modelTier:'default',cache:false});
     FR_R=r.recettes||[];$('frig').innerHTML=FR_R.map(m=>mealHTML(m,`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button>`)).join('')||'<p class="mute">Aucune idée trouvée, ajoute quelques ingrédients.</p>'})},
-  genWeek(b){run(b,$('week'),'Le coach planifie ta semaine (ça prend un moment)…',async()=>{
+  genWeek(b){run(b,$('week'),'Préparation de ta semaine',async()=>{
     const f=$('frigo').value.trim();
     WEEK=await askJSON(`Tu es coach en nutrition sportive. ${profil()}
 Planifie 7 jours de repas (lundi à dimanche : petit-déjeuner, déjeuner, collation, dîner), variés, simples, adaptés au budget, en réutilisant intelligemment les ingrédients pour limiter le gaspillage et permettre du batch cooking.
@@ -1323,15 +1485,15 @@ function route(){
 window.addEventListener('scroll',()=>$('appbar').classList.toggle('sc',scrollY>4),{passive:true});
 /* ---------- Accueil ---------- */
 function ring(v,max,col,val,lab){const r=40,c=2*Math.PI*r,f=Math.min(1,max?v/max:0);
-  return `<div class="ring"><svg viewBox="0 0 100 100" role="img" aria-label="${esc(lab)} ${esc(val)}"><circle cx="50" cy="50" r="${r}" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="10"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${col}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-f)}" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">${max?Math.round(f*100)+'%':'•'}</text></svg><b>${esc(val)}</b><span>${esc(lab)}</span></div>`}
+  return `<div class="ring"><svg viewBox="0 0 100 100" role="img" aria-label="${esc(lab)} ${esc(val)}"><circle cx="50" cy="50" r="${r}" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="10"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="${col}" stroke-width="10" stroke-linecap="round" style="filter:drop-shadow(0 0 5px ${col})" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-f)}" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">${max?Math.round(f*100)+'%':'•'}</text></svg><b>${esc(val)}</b><span>${esc(lab)}</span></div>`}
 const STANDALONE=()=>!!(navigator.standalone||matchMedia('(display-mode: standalone)').matches);
 const IOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 function renderHome(){
   const m=metrics()||{},t=dayTot(),tk=m.kcal||2000,tp=m.prot||100,te=m.eau||8,w=EAU[today()]||0,h=new Date().getHours();
   const nom=(P.nom||'').trim();$('avatar').textContent=(nom[0]||'M').toUpperCase();
   $('hello').textContent=(h<5||h>=18?'Bonsoir':'Bonjour')+(nom?' '+nom:'')+' !';
-  $('sub').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+(P.obj?' · objectif '+({muscle:'muscle',perte:'perte de poids',seche:'sèche',forme:'forme',endurance:'cardio'}[P.obj]):'');
-  $('rings').innerHTML=ring(t.k,m.kcal||0,'#fff',m.kcal?`${Math.round(t.k)} / ${m.kcal}`:`${Math.round(t.k)}`,'kcal')+ring(t.p,tp,'#ffd166',`${Math.round(t.p)} / ${tp} g`,'protéines')+ring(w,te,'#9fd3ff',`${w} / ${te}`,'verres d\'eau');
+  $('sub').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+(P.obj?' · objectif '+({muscle:'muscle',perte:'perte de poids',seche:'sèche',forme:'forme',endurance:'cardio'}[P.obj]||P.obj):'');
+  $('rings').innerHTML=ring(t.k,m.kcal||0,'#ff4fb0',m.kcal?`${Math.round(t.k)} / ${m.kcal}`:`${Math.round(t.k)}`,'kcal')+ring(t.p,tp,'#22e4ff',`${Math.round(t.p)} / ${tp} g`,'protéines')+ring(w,te,'#ffcf5c',`${w} / ${te}`,'verres d\'eau');
   $('homeStart').innerHTML=!P.poids||!P.taille?`<a class="card lnk" href="#moi" style="display:flex"><span class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-body"/></svg></span><span>Commence par ton profil<div class="mute" style="font-weight:500">taille, poids, objectif : 1 minute</div></span></span><svg class="i"><use href="#i-chev"/></svg></a>`:'';
   /* séance du jour */
   const wk=LOG.filter(l=>Date.now()-l.t<7*864e5).length,doneToday=LOG.some(l=>l.d===today());
@@ -1347,7 +1509,7 @@ function renderHome(){
   /* récup + poids */
   const last={};LOG.forEach(l=>l.ex.forEach(e=>{if(e.sets.length)clean(e.muscles).forEach(k=>{last[k]=Math.max(last[k]||0,l.t)})}));
   const hh=k=>last[k]?(Date.now()-last[k])/36e5:999;
-  $('homeRecov').innerHTML=`<a class="lnk" href="#sport" data-act="goPane" data-v="sport" data-p="progres"><b>Récupération</b><svg class="i"><use href="#i-chev"/></svg></a>${mapSVG(k=>hh(k)<24?'var(--hot)':hh(k)<60?'var(--warm)':last[k]?'#1fae79':'var(--mus)')}`;
+  $('homeRecov').innerHTML=`<a class="lnk" href="#sport" data-act="goPane" data-v="sport" data-p="progres"><b>Récupération</b><svg class="i"><use href="#i-chev"/></svg></a>${mapSVG(k=>hh(k)<24?'var(--hot)':hh(k)<60?'var(--warm)':last[k]?'#3dffc5':'var(--mus)')}`;
   const ws=W.slice(-10),lw=ws[ws.length-1],dw=ws.length>1?lw.w-ws[0].w:0;
   $('homeWeight').innerHTML=`<a class="lnk" href="#moi"><b>Poids</b><svg class="i"><use href="#i-chev"/></svg></a><div class="kv" style="margin-top:10px"><b>${lw?fr(lw.w):(P.poids?fr(P.poids):'–')}</b><span class="mute">kg</span></div><div class="mute">${ws.length>1?(dw>0?'+':'')+fr(dw.toFixed(1))+' kg depuis le '+frd(ws[0].d):'Pèse-toi pour suivre ta courbe'}</div>${m.imc?`<div class="mute" style="margin-top:8px">IMC ${fr(m.imc.toFixed(1))} · ${esc(cat(m.imc))}</div>`:''}<button class="ghost sm" data-act="goMoiW" style="margin-top:12px;width:100%">Me peser</button>`;
   /* installation */
@@ -1356,7 +1518,7 @@ function renderHome(){
 }
 function installHTML(){return `<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-add"/></svg></span><div><h3>Installe Mon Coach sur ton iPhone</h3><div class="mute">Une icône sur l'écran d'accueil, en plein écran, comme une vraie app.</div></div></div>
   <div class="steps"><div><em>1</em><span>En bas de Safari, touche <b>Partager</b> <svg class="i" style="width:18px;height:18px;vertical-align:-3px;color:var(--blue)"><use href="#i-share"/></svg></span></div><div><em>2</em><span>Fais défiler et choisis <b>« Sur l'écran d'accueil »</b></span></div><div><em>3</em><span>Touche <b>Ajouter</b> en haut à droite</span></div></div>
-  <p class="mute" style="margin:0">Astuce : installe l'app avant de remplir ton profil, l'app installée garde ses propres données.</p>`}
+  <p class="mute" style="margin:0">Ensuite, ouvre Mon Coach depuis son icône.</p>`}
 /* ---------- Partage ---------- */
 const APP_URL=/github\.io$/.test(location.host)?location.origin+location.pathname.replace(/index\.html$/,''):'https://francoismarechal91-hash.github.io/EdilganCoach/';
 let qrp=null;const loadQR=()=>qrp||(qrp=new Promise((ok,ko)=>{if(window.qrcode)return ok(window.qrcode);const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';sc.onload=()=>ok(window.qrcode);sc.onerror=()=>{qrp=null;ko()};document.head.appendChild(sc)}));
@@ -1368,7 +1530,7 @@ $('provs').innerHTML=AI.order.map((p,i)=>`<div style="margin-top:14px"><div clas
 document.querySelectorAll('[data-key]').forEach(i=>i.value=AI.keys[i.dataset.key]||'');$('iaEng').value=AI.engine;
 $('ingPh').addEventListener('change',async e=>{
   const fs=[...e.target.files];if(!fs.length)return;const el=$('ingRes');
-  run(null,el,'Le coach regarde tes ingrédients…',async()=>{
+  run(null,el,'Lecture des photos',async()=>{
     const imgs=[];for(const f of fs.slice(0,4)){try{imgs.push((await shrink(f,1024)).blob)}catch(_){imgs.push(f)}}
     let all=[];for(const im of imgs){const r=await askJSON(`Liste tous les aliments et ingrédients visibles sur cette photo (frigo, placard ou plan de travail), avec la quantité approximative. Format JSON : {"ingredients":["ex. 6 œufs"]}`,{images:[im],modelTier:'default',cache:false});all=all.concat(r.ingredients||[])}
     const t=$('frigo').value.trim();$('frigo').value=(t?t+', ':'')+all.join(', ');store.set('frigo',$('frigo').value);
@@ -1376,7 +1538,7 @@ $('ingPh').addEventListener('change',async e=>{
 });
 if('serviceWorker' in navigator&&location.protocol==='https:'&&/github\.io$/.test(location.host)){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-5';
+const APP_VERSION='2026.11.26-10';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
@@ -1388,7 +1550,9 @@ async function checkUpdate(){
 }
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 setInterval(checkUpdate,30*60*1000);setTimeout(checkUpdate,3000);
-calc();renderSante();renderProg();renderAH();renderProdHist();renderMenu();renderWeek();renderFav();renderChat();route();
+$('wObj').addEventListener('click',e=>{const b=e.target.closest('[data-o]');if(!b)return;$('wObj').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b))});
+if(!P.taille&&!store.get('onb',0)){$('welcome').classList.add('on');document.body.style.overflow='hidden'}
+calc();renderEq();renderSante();renderProg();renderAH();renderProdHist();renderMenu();renderWeek();renderFav();renderChat();route();
 }
 </script>
 </body>
