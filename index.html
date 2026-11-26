@@ -138,6 +138,7 @@ input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px var(--fill) inset;-webkit-t
 .wflag{font-size:44px;line-height:1;flex:none}.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dish{background:var(--fill);border-radius:16px;padding:8px;display:flex;flex-direction:column}.dish b{margin-top:6px;line-height:1.25}.dish .row button{flex:1;min-width:0;padding-left:6px;padding-right:6px}
 .dph{position:relative;aspect-ratio:4/3;border-radius:12px;overflow:hidden;background:var(--fill2);display:grid;place-items:center}.dph.wide{aspect-ratio:16/9;margin:12px 0 -4px}.dph img{width:100%;height:100%;object-fit:cover;display:block;animation:fade .4s}.dph .credit{position:absolute;right:6px;bottom:6px;font-size:10px;padding:2px 6px;border-radius:8px;background:rgba(0,0,0,.55);color:#fff;text-decoration:none}
 #scanOv{position:fixed;inset:0;z-index:70;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:#fff;padding:20px}#scanOv.on{display:flex}#scanOv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}#scanOv .scanBox{position:relative;width:min(80vw,340px);aspect-ratio:16/9;border:3px solid rgba(255,255,255,.9);border-radius:18px;box-shadow:0 0 0 100vmax rgba(0,0,0,.45)}#scanOv .scanBox i{position:absolute;left:8%;right:8%;top:50%;height:2px;background:#ff3b5c;box-shadow:0 0 10px #ff3b5c;animation:scanl 1.6s ease-in-out infinite}@keyframes scanl{0%,100%{transform:translateY(-38px)}50%{transform:translateY(38px)}}#scanOv p,#scanOv button{position:relative;z-index:1}#scanOv p{font-weight:700;text-align:center;text-shadow:0 1px 4px #000;margin:0}#scanOv button{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.5)}
+.duog{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}.duoc{background:var(--fill);border-radius:16px;padding:12px;text-align:center}.duoc.me{box-shadow:inset 0 0 0 2px var(--red)}.duoc b{display:block}.duon{font-size:40px;font-weight:900;line-height:1.1;color:var(--red)}.duoc>span{font-size:13px;color:var(--mute)}.duoc ul{list-style:none;padding:0;margin:8px 0 0;font-size:13px;text-align:left}.duoc li{padding:2px 0}.duoc.empty{display:flex;flex-direction:column;justify-content:center}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -687,7 +688,7 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
   <div class="sect">QUE VEUX-TU FAIRE ?</div>
   <div class="tiles">
     <button class="tile" data-act="goPane" data-v="scan" data-p="produit"><span class="ic c-red"><svg class="i"><use href="#i-bar"/></svg></span><span>Bon produit ?<small>code-barres, tableau, ingrédients</small></span></button>
-    <button class="tile" data-act="goPane" data-v="scan" data-p="assiette"><span class="ic c-yel"><svg class="i"><use href="#i-plate"/></svg></span><span>Mon assiette<small>calories en photo</small></span></button>
+    <button class="tile" data-act="goPane" data-v="scan" data-p="assiette"><span class="ic c-yel"><svg class="i"><use href="#i-plate"/></svg></span><span>Mon assiette<small>en photo ou en mots</small></span></button>
     <button class="tile" data-act="goPane" data-v="scan" data-p="machine"><span class="ic c-blue"><svg class="i"><use href="#i-cam"/></svg></span><span>Une machine<small>comment l'utiliser</small></span></button>
     <button class="tile" data-act="quick"><span class="ic c-ink"><svg class="i"><use href="#i-bolt"/></svg></span><span>Séance express<small>20 minutes, maintenant</small></span></button>
     <button class="tile" onclick="location.hash='sommeil'"><span class="ic c-blue"><svg class="i"><use href="#i-moon"/></svg></span><span>Bien dormir<small>sommeil, conseils, détente</small></span></button>
@@ -716,6 +717,7 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
 
   <div class="pane on" data-pane="progres2">
     <div class="card lvl" id="lvlCard"></div>
+    <div class="card" id="duoCard"><h2>À deux</h2><div id="duoBox"></div></div>
     <div class="card"><h2>Ma régularité</h2><p class="sub">Chaque case est un jour où tu as pris soin de toi (sport, repas notés, check-in…).</p><div id="heat"></div></div>
     <div class="card"><h2>Mes badges</h2><div class="badges" id="badges"></div></div>
     <a class="card lnk" href="#sommeil" style="display:flex"><span class="hcard"><span class="ic c-blue"><svg class="i"><use href="#i-moon"/></svg></span><span><b>Mon sommeil</b><div class="mute" style="font-weight:500">nuits, coucher idéal, respiration</div></span></span><svg class="i"><use href="#i-chev"/></svg></a>
@@ -1036,10 +1038,14 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
 
   <div class="pane" data-pane="assiette">
     <div class="card">
-      <h2>Scanne ton assiette</h2>
-      <label class="drop" data-drop="assiette"><input type="file" accept="image/*" data-in="assiette"><svg class="i" style="width:40px;height:40px"><use href="#i-plate"/></svg><b>Photo de ton repas</b><span class="mute">vue de dessus, toute l'assiette</span></label>
-      <div class="row" style="margin-top:12px"><button data-act="anaPlate" data-need="assiette" disabled>Estimer les calories</button><span class="mute need">Ajoute d'abord une photo</span></div>
-      <p class="mute">C'est une estimation : ajuste la portion si besoin.</p>
+      <h2>Mon assiette</h2>
+      <p class="sub">Une photo, une explication, ou les deux : plus tu en dis, plus l'estimation est juste.</p>
+      <label class="drop" data-drop="assiette"><input type="file" accept="image/*" data-in="assiette"><svg class="i" style="width:40px;height:40px"><use href="#i-plate"/></svg><b>Photo de ton repas</b><span class="mute">vue de dessus, toute l'assiette (facultatif)</span></label>
+      <label for="plTxt" style="margin-top:12px">Ce qu'il y a dedans (facultatif)</label>
+      <textarea id="plTxt" class="grow" rows="2" placeholder="ex. pâtes bolognaise maison, environ 200 g de pâtes cuites, sauce avec bœuf 5 %, un peu de parmesan, cuit avec 1 cuillère d'huile d'olive"></textarea>
+      <div class="chips" id="plChips"><button class="chip" data-act="plAdd" data-v="fait maison">fait maison</button><button class="chip" data-act="plAdd" data-v="au restaurant">au restaurant</button><button class="chip" data-act="plAdd" data-v="cuit avec 1 cuillère d'huile">1 c. d'huile</button><button class="chip" data-act="plAdd" data-v="sans matière grasse ajoutée">sans matière grasse</button><button class="chip" data-act="plAdd" data-v="avec une sauce">avec une sauce</button><button class="chip" data-act="plAdd" data-v="petite portion">petite portion</button><button class="chip" data-act="plAdd" data-v="grosse portion">grosse portion</button></div>
+      <div class="row" style="margin-top:12px"><button data-act="anaPlate" style="flex:1">Estimer les calories</button></div>
+      <p class="mute">C'est une estimation : tu peux ajuster la portion ensuite. Sans photo, ça marche aussi : décris juste ton repas.</p>
     </div>
     <div id="plateRes"></div>
   </div>
@@ -1048,7 +1054,9 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
     <div class="card">
       <h2>C'est quoi cette machine ?</h2>
       <label class="drop" data-drop="machine"><input type="file" accept="image/*" data-in="machine"><svg class="i" style="width:40px;height:40px"><use href="#i-cam"/></svg><b>Prends en photo un appareil</b><span class="mute">ou choisis une image dans ta galerie</span></label>
-      <div class="row" style="margin-top:12px"><button data-act="anaMachine" data-need="machine" disabled>Analyser la machine</button><span class="mute need">Ajoute d'abord une photo</span></div>
+      <label for="maTxt" style="margin-top:12px">Ou décris-la / précise (facultatif)</label>
+      <textarea id="maTxt" class="grow" rows="1" placeholder="ex. la machine où on pousse avec les jambes en étant allongé, marque Technogym"></textarea>
+      <div class="row" style="margin-top:12px"><button data-act="anaMachine" style="flex:1">Analyser la machine</button></div>
     </div>
     <div id="ana"></div>
     <div class="card" id="anaHistC" style="display:none"><h3>Déjà analysées</h3><div class="chips" id="anaHist"></div></div>
@@ -1188,7 +1196,8 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
   <div class="wbox">
     <div class="wlogo"><svg class="i"><use href="#i-dumb"/></svg></div>
     <h1 id="wT">Bienvenue</h1>
-    <p class="mute" style="font-size:16px;margin:6px 0 20px">Quelques infos et c'est parti.</p>
+    <p class="mute" style="font-size:16px;margin:6px 0 12px">Quelques infos et c'est parti.</p>
+    <div class="row sb" style="margin-bottom:14px;flex-wrap:nowrap;gap:8px"><span class="mute" style="font-weight:700;font-size:14px">Taille du texte</span><div class="seg" id="wSize" style="margin:0;-webkit-mask:none;mask:none;padding:0"><button data-act="wSize" data-v="m" style="font-size:14px">A</button><button data-act="wSize" data-v="l" style="font-size:17px">A</button><button data-act="wSize" data-v="xl" style="font-size:20px">A</button></div></div>
     <div class="grid">
       <div class="full"><label for="w-nom">Ton prénom</label><input id="w-nom" autocomplete="given-name" placeholder="Prénom"></div>
       <div><label for="w-age">Âge</label><input id="w-age" type="number" inputmode="numeric" placeholder="ans"></div>
@@ -1202,6 +1211,7 @@ html[data-skin=synth] :is(a.lnk,a.card){color:var(--ink)}
     </div>
     <button class="wide" data-act="wGo" style="margin-top:22px;min-height:56px;font-size:18px">C'est parti</button>
     <button class="ghost wide" data-act="wLater" style="margin-top:10px">Plus tard</button>
+    <button class="ghost wide" data-act="wRestore" style="margin-top:10px;border:0;background:none;box-shadow:none;text-decoration:underline">J'ai déjà une sauvegarde à récupérer</button>
   </div>
 </div>
 <div id="scanOv" role="dialog" aria-modal="true" aria-label="Scanner un code-barres"><video id="scanV" playsinline muted autoplay></video><div class="scanBox"><i></i></div><p id="scanMsg">Vise le code-barres, bien éclairé, à 15-20 cm.</p><button class="ghost" data-act="scanStop">Annuler</button></div>
@@ -2077,6 +2087,38 @@ function renderRef(){const el=$('refBox');if(!el)return;const m=new Date().getMo
   <div class="card"><h2>Batch cooking en 2 heures</h2><p class="sub">Pour 2 personnes, 4 à 5 repas prêts pour la semaine.</p>${tb(BATCH)}<div class="row" style="margin-top:10px"><button class="alt" data-act="genWeek" onclick="openPane('cuisine','menus')">Préparer ma semaine avec le coach</button></div></div>
   ${BARIA()?`<div class="card"><h2>Idées après la sleeve</h2><p class="sub">Riches en protéines, selon la texture permise par ton équipe.</p>${tb(BARIREC,['Recette','Texture'])}<p class="mute">Pour le couple : une même base, la portion de la personne opérée est mixée et plus petite.</p></div>`:''}`}
 
+/* ===================== À DEUX : résumé de la semaine échangé par code ou QR ===================== */
+let DUO=store.get('duo',null);
+function weekKey(t=Date.now()){const d=new Date(t);const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return dkey(d.getTime())}
+function myWeek(){const wk=weekKey(),A=streak(),inW=d=>d>=wk;const ses=LOG.filter(l=>inW(l.d)),days=Object.keys(A.A).filter(inW).length;
+  return{v:1,n:(P.nom||'Moi').trim().slice(0,20),wk,s:ses.length,m:ses.reduce((a,l)=>a+num(l.min),0),j:Object.entries(J).filter(([d,a])=>inW(d)&&a&&a.length).length,a:days,st:A.st,e:Object.entries(EAU).filter(([d,v])=>inW(d)&&v>=((metrics()||{}).eau||8)).length,t:Date.now()}}
+const b64e=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d=s=>JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/')))));
+const duoCode=()=>'EDG1.'+b64e(myWeek());
+function duoParse(t){const m=String(t||'').match(/EDG1\.([A-Za-z0-9_-]+)/);if(!m)return null;try{const o=b64d(m[1]);return o&&o.v===1&&typeof o.n==='string'?o:null}catch(e){return null}}
+const DUOGOAL=()=>Math.max(4,(num(P.jours)||3)*2);
+function renderDuo(){const el=$('duoBox');if(!el)return;const me=myWeek(),o=DUO&&DUO.wk===me.wk?DUO:null,old=DUO&&!o;
+  const col=(x,me2)=>`<div class="duoc${me2?' me':''}"><b>${esc(x.n)}</b><div class="duon">${x.s}</div><span>séance${x.s>1?'s':''}</span><ul><li>${x.m} min de sport</li><li>${x.a} jour${x.a>1?'s':''} actif${x.a>1?'s':''}</li><li>${x.j} jour${x.j>1?'s':''} de repas notés</li><li>série : ${x.st} j</li></ul></div>`;
+  const tot=me.s+(o?o.s:0),g=DUOGOAL(),pc=Math.min(100,Math.round(tot/g*100));
+  el.innerHTML=`<p class="sub">Chaque semaine, échangez vos résumés : un code à envoyer par message ou un QR à scanner. Rien ne passe par un serveur.</p>
+  <div class="duog">${col(me,1)}${o?col(o):`<div class="duoc empty"><b>Ta moitié</b><p class="mute">${old?'Son résumé date de la semaine dernière : demande-lui le nouveau.':'Ajoute son code pour vous comparer.'}</p></div>`}</div>
+  <h3>Défi de la semaine : ${g} séances à deux</h3><div class="rbar" style="height:12px"><i style="width:${pc}%"></i></div><p class="mute" style="margin-top:6px">${tot} / ${g}${pc>=100?' : défi réussi, bravo à vous deux !':o?'':' (avec ton résumé seulement)'}</p>
+  <div class="row" style="margin-top:10px"><button class="sm" data-act="duoSend">Envoyer mon résumé</button><button class="ghost sm" data-act="duoQR">Montrer mon QR</button></div>
+  <div class="row" style="margin-top:8px"><input id="duoIn" placeholder="Colle ici le code de ta moitié (EDG1…)" aria-label="Code de ta moitié" style="flex:1;min-width:170px;margin:0" data-enter="duoAdd"><button class="alt sm" data-act="duoAdd">Ajouter</button><button class="ghost sm" data-act="duoScan">Scanner son QR</button></div>
+  ${o?`<div class="row" style="margin-top:10px"><button class="ghost sm" data-act="duoCheer">Envoyer un encouragement</button></div>`:''}`}
+const CHEERS=['Allez, on lâche rien cette semaine !','Fier(e) de toi, continue comme ça !','Ce soir, séance à deux ? Je suis chaud(e) !','Un verre d\'eau, une marche, et on assure. On est une équipe !','Tu gères. On se motive ensemble jusqu\'à dimanche !'];
+const DUO_ACTS={
+  async duoSend(){const me=myWeek(),c=duoCode(),t=`${me.n} cette semaine : ${me.s} séance${me.s>1?'s':''}, ${me.m} min de sport, ${me.a} jours actifs, série de ${me.st} jours.\nColle ce code dans EdilganSuperCoach (Suivi › À deux) :\n${c}`;
+    try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t);toast('Résumé copié : colle-le dans un message.')}catch(e){openSheet(`<h2>Mon résumé</h2><textarea class="grow" rows="4" readonly>${esc(t)}</textarea><button data-act="closeSheet" style="margin-top:10px">Fermer</button>`)}},
+  async duoQR(){openSheet(`<div class="row sb"><h2 style="margin:0">Mon QR de la semaine</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Ta moitié le scanne depuis Suivi › À deux › Scanner son QR.</p><div id="duoQRc" style="display:grid;place-items:center;background:#fff;border-radius:16px;padding:16px;margin-top:10px"><span class="mute">…</span></div>`);
+    try{const q=await loadQR(),qr=q(0,'M');qr.addData(duoCode());qr.make();$('duoQRc').innerHTML=qr.createSvgTag({cellSize:6,margin:2,scalable:true});const sv=$('duoQRc').querySelector('svg');if(sv){sv.style.width='min(70vw,280px)';sv.style.height='auto'}}catch(e){$('duoQRc').innerHTML='<p class="mute" style="color:#333">QR indisponible hors ligne : utilise « Envoyer mon résumé ».</p>'}},
+  duoAdd(){const o=duoParse($('duoIn').value);if(!o){toast('Code non reconnu : il commence par EDG1.');return}DUO=o;store.set('duo',DUO);$('duoIn').value='';renderDuo();toast('Résumé de '+o.n+' ajouté !');confetti()},
+  async duoScan(){const ov2=$('scanOv');if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast('Scan impossible ici : colle le code à la place.');return}ov2.classList.add('on');$('scanMsg').textContent='Vise le QR de ta moitié.';
+    try{const Z=await loadZX(),h=new Map();h.set(Z.DecodeHintType.POSSIBLE_FORMATS,[Z.BarcodeFormat.QR_CODE]);SCAN=new Z.BrowserMultiFormatReader(h,300);
+      await SCAN.decodeFromConstraints({video:{facingMode:{ideal:'environment'}}},$('scanV'),res=>{if(res&&SCAN){const o=duoParse(res.getText());if(o){A.scanStop();DUO=o;store.set('duo',DUO);renderDuo();beep(1);toast('Résumé de '+o.n+' ajouté !');confetti()}}})}catch(e){A.scanStop();toast('Caméra indisponible : colle le code à la place.')}},
+  async duoCheer(){const t=CHEERS[Math.floor(Math.random()*CHEERS.length)]+(DUO?' '+DUO.n+' 💪':'');try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e&&e.name==='AbortError')return}try{await navigator.clipboard.writeText(t);toast('Message copié !')}catch(e){toast(t)}}
+};
+
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -2405,11 +2447,11 @@ Propose UN exercice de remplacement pour « ${x.nom} » qui travaille les mêmes
   nextEx(){if(S.i<S.ex.length-1){S.i++;S.rest=0;renderS()}else endS()},
   prevEx(){if(S.i>0){S.i--;S.rest=0;renderS()}},
   endS(){endS()},closeS(){closeS()},
-  anaMachine(b){run(b,$('ana'),'Analyse de l\'appareil',async()=>{
-    const r=await askJSON(`Tu es un coach sportif expert du matériel de musculation. Identifie l'appareil ou l'accessoire de sport sur la photo (marque si visible). ${profil()}
+  anaMachine(b){const tx=$('maTxt').value.trim();if(!PH.machine&&!tx){toast('Ajoute une photo ou décris la machine.');$('maTxt').focus();return}run(b,$('ana'),'Analyse de l\'appareil',async()=>{
+    const r=await askJSON(`Tu es un coach sportif expert du matériel de musculation. ${PH.machine?'Identifie l\'appareil ou l\'accessoire de sport sur la photo (marque si visible).':'Identifie l\'appareil ou l\'accessoire de sport décrit.'}${tx?` Précisions de l'utilisateur (prioritaires) : « ${tx} ».`:''} ${profil()}
 Explique comment s'en servir correctement et quelles séries faire pour l'objectif de l'utilisateur.
 Format JSON : {"nom":"","nom_recherche":"nom usuel pour chercher une vidéo","description":"1-2 phrases","muscles_principaux":["clé"],"muscles_secondaires":["clé"],"reglages":["…"],"etapes":["…"],"erreurs":["…"],"securite":"","series":3,"repetitions":"8-12","repos_s":90,"charge":"conseil de charge","variantes":["autre exercice possible sur cet appareil"],"anim":"le mouvement le plus proche parmi : ${Object.keys(ANIM.S).join(', ')}"}
-Clés de muscles autorisées : ${KEYS}. Si la photo ne montre pas d'appareil de sport, mets "nom":"Appareil non reconnu" et explique dans description.`,{images:[PH.machine],modelTier:'default'});
+Clés de muscles autorisées : ${KEYS}. Si ce n'est pas un appareil de sport, mets "nom":"Appareil non reconnu" et explique dans description.`,{images:PH.machine?[PH.machine]:[],modelTier:'default'});
     if(r.nom&&r.nom!=='Appareil non reconnu'){AH=[r,...AH.filter(a=>a.nom!==r.nom)].slice(0,15);store.set('machines',AH);renderAH()}renderAna(r)})},
   showAna(b){renderAna(AH[+b.dataset.i]);$('ana').scrollIntoView({behavior:'smooth'})},
   undo(){STROKES.pop();redraw()},clearDraw(){STROKES=[];redraw()},
@@ -2425,9 +2467,10 @@ Format JSON : {"zones":["clé"],"explication":"2-3 phrases","exercices":[${EXF}]
     <div class="card"><h3>Exercices ciblés</h3>${(r.exercices||[]).map(x=>exHTML(x)).join('')}<div class="row" style="margin-top:10px"><button class="alt" data-act="startCorps">Faire cette séance maintenant</button></div></div>`})},
   useZones(b){P.zones=[...new Set([...P.zones,...clean(CORPS.zones)])];saveP();renderZones();b.textContent='Ajouté ! Refais ton programme dans Sport.'},
   startCorps(){startSession({nom:'Séance ciblée',exercices:CORPS.exercices||[]})},
-  anaPlate(b){run(b,$('plateRes'),'Analyse de l\'assiette',async()=>{
-    const r=await askJSON(`Tu es nutritionniste. Identifie les aliments sur la photo du repas et estime les portions et valeurs nutritionnelles (pense à l'huile et aux sauces probables). ${profil()}
-Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 150 g","kcal":0}],"kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"confiance":"faible|moyenne|bonne","avis":"1-2 phrases sur ce repas par rapport à son objectif"}`,{images:[PH.assiette],modelTier:'default',cache:false});
+  plAdd(b){const t=$('plTxt');t.value=(t.value.trim()?t.value.trim()+', ':'')+b.dataset.v;grow&&grow(t);t.focus()},
+  anaPlate(b){const tx=$('plTxt').value.trim();if(!PH.assiette&&!tx){toast('Ajoute une photo ou décris ton repas.');$('plTxt').focus();return}run(b,$('plateRes'),PH.assiette?'Analyse de l\'assiette':'Calcul de ton repas',async()=>{
+    const r=await askJSON(`Tu es nutritionniste. ${PH.assiette?'Identifie les aliments sur la photo du repas':'Voici la description d\'un repas'} et estime les portions et valeurs nutritionnelles (pense à l'huile et aux sauces probables).${tx?`\nCe que la personne précise sur son assiette (PRIORITAIRE sur ce que tu crois voir : ingrédients, quantités, cuisson, matières grasses) : « ${tx} ».`:''} ${profil()}
+Format JSON : {"nom":"nom court du plat","aliments":[{"nom":"","quantite":"ex. 150 g","kcal":0}],"kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"confiance":"faible|moyenne|bonne","avis":"1-2 phrases sur ce repas par rapport à son objectif"}`,{images:PH.assiette?[PH.assiette]:[],modelTier:'default',cache:false});
     PLATE=r;
     $('plateRes').innerHTML=`<div class="card"><h2>${esc(r.nom)}</h2><div class="big" style="color:var(--red)" id="plK">${esc(r.kcal)}<span style="font-size:20px"> kcal</span></div>
     <div class="macro"><span><b>${esc(r.proteines_g)}</b> g prot.</span><span><b>${esc(r.glucides_g)}</b> g gluc.</span><span><b>${esc(r.lipides_g)}</b> g lip.</span><span>Confiance ${esc(r.confiance)}</span></div>
@@ -2485,6 +2528,8 @@ Format JSON : {"nom":"","description":"1 phrase simple","usages":["…"],"certit
     [['nom','#w-nom'],['age','#w-age'],['taille','#w-taille'],['poids','#w-poids'],['sexe','#w-sexe']].forEach(([k,id])=>{const v=g(id.slice(1));if(v){P[k]=v;const el=$('p-'+k);if(el.tagName==='SELECT')ensureOpt(el,v);else el.value=v}});
     const o=document.querySelector('#wObj .on');if(o){P.obj=o.dataset.o;$('p-obj').value=P.obj}
     saveP();store.set('onb',1);calc();$('welcome').classList.remove('on');document.body.style.overflow='';renderHome()},
+  wSize(b){applySize(b.dataset.v,true);document.querySelectorAll('#wSize button').forEach(x=>x.classList.toggle('on',x===b))},
+  wRestore(){store.set('onb',1);$('welcome').classList.remove('on');document.body.style.overflow='';openPane('suivi','donnees')},
   wLater(){store.set('onb',1);$('welcome').classList.remove('on');document.body.style.overflow=''},
   heroDel(){try{localStorage.removeItem('coach_heroimg')}catch(e){}applyHero()},
   skin(b){applySkin(b.dataset.k,true);toast('Thème « '+SKINS.find(x=>x.k===b.dataset.k).n+' » appliqué');renderHome()},
@@ -3223,7 +3268,7 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-40';
+const APP_VERSION='2026.11.26-41';
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
@@ -3246,8 +3291,8 @@ $('phIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)re
 $('bkIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result),d=o.data||o;let n=0;Object.entries(d).forEach(([k,v])=>{if(k.startsWith('coach_')&&k!=='coach_ia'){localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v));n++}});toast(n+' éléments restaurés');setTimeout(()=>location.reload(),900)}catch(err){toast('Fichier de sauvegarde illisible')}};r.readAsText(f)});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 renderChk();renderDrink();
-Object.assign(A,SPORT_ACTS,WORLD_ACTS);try{initWorld()}catch(e){console.error(e)}$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
-[calc,renderEq,renderSante,renderProg,renderAH,renderProdHist,renderMenu,renderWeek,renderFav,renderChat,renderPrets,renderExo,renderRef].forEach(f=>{try{f()}catch(e){console.error(f.name,e)}});route();
+Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS);try{initWorld()}catch(e){console.error(e)}$('exoM').innerHTML+=Object.entries(MN).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');$('exoM').onchange=()=>{EXFL.m=$('exoM').value;renderExo()};$('exoQ').oninput=()=>{EXFL.q=$('exoQ').value.trim();renderExo()};
+[calc,renderEq,renderSante,renderProg,renderAH,renderProdHist,renderMenu,renderWeek,renderFav,renderChat,renderPrets,renderExo,renderRef,renderDuo].forEach(f=>{try{f()}catch(e){console.error(f.name,e)}});route();
 }
 </script>
 </body>
