@@ -1298,6 +1298,33 @@ section[data-v=sommeil] #slAvg{margin-bottom:0}
 .dph .phimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s}.dph .phimg.in{opacity:1}.dph .credit{z-index:2}
 .dish>b{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.dish .dsub{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 html:is([data-size=l],[data-size=xl]) .drow{grid-auto-columns:minmax(170px,64%)}
+/* === ag_research === sleeve au quotidien : rendez-vous de suivi, avant le repas, feu vert sport, palier */
+.agrx button.sm{min-height:44px}
+.agrrdv{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+.agrrdv li,.agrrdv li.pill{display:flex;align-items:center;gap:12px;background:var(--fill);border-radius:14px;padding:8px 12px 8px 8px;border-top:0}
+.agrrdv li.soon{box-shadow:inset 4px 0 0 var(--blue)}
+.agrrdv li.late{box-shadow:inset 4px 0 0 var(--yel)}
+.agrrdv li button.ck{width:44px;height:44px;min-height:0;padding:0;border-radius:50%;background:var(--fill2);color:var(--mute);box-shadow:none;flex:none;display:grid;place-items:center}
+.agrrdv li button.ck.on{background:var(--green);color:#fff}
+html[data-skin=synth] .agrrdv li button.ck:not(.on){color:var(--mute)!important}
+.agrrdv .ck .i{width:20px;height:20px}
+.agrrt{flex:1;min-width:0;line-height:1.35}.agrrt b{display:block}.agrrt .mute{display:block;font-size:15px}
+.agrdone{margin-top:10px}.agrdone>summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
+.agrlab{display:block;margin:16px 0 6px;font-weight:700}
+.agrsm{font-size:15px;line-height:1.45}
+.agrloss{margin:12px 0;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--green) 12%,var(--card));line-height:1.45}
+.agrloss>b{font-size:20px}.agrloss .mute{display:block;font-size:15px;margin-top:4px}
+.agrpre{margin:14px 0 10px;padding-top:12px;border-top:1px solid var(--line)}
+.agrpill{flex:none;font-size:14px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--fill);color:var(--ink)}
+.agrsport .dots{margin:12px 0 8px}
+.agrwhy,.agrsig{margin-top:10px}
+.agrwhy>summary,.agrsig>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:700}
+.agrwhy .fl,.agrsig .fl{margin:4px 0 10px}
+.agrpal{margin-top:14px;padding:14px;border-radius:16px;background:color-mix(in srgb,var(--blue) 10%,var(--card));border:1px solid color-mix(in srgb,var(--blue) 30%,transparent);line-height:1.45}
+.agrpal .fl{margin:6px 0}
+.agrhome .mute{line-height:1.45}
+/* === /ag_research === */
+
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -4858,6 +4885,154 @@ document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.targ
   const nv=Math.max(0,Math.round((v+(+b.dataset.v)*st)*100)/100);i.value=String(nv);i.dispatchEvent(new Event('input',{bubbles:true}));
   try{navigator.vibrate&&navigator.vibrate(8)}catch(_){}b.classList.remove('bump');void b.offsetWidth;b.classList.add('bump')});
 /* === /ag_sport === */
+/* === ag_research === Sleeve au quotidien (recherche web : HAS 2024, SOFFCO-MM, CHU, apps Baritastic/BariBuddy/Hevy) :
+   1. protéines par étape après l'opération   2. rendez-vous de suivi + résumé pour la consultation   3. boire AVANT le repas aussi
+   4. feu vert sport par semaine post-op      5. palier de poids détecté + perte depuis l'opération   6. signes d'alerte complétés
+   Nouvelles clés seulement : coach_suiviRdv, coach_rdvQuestions, coach_preRepas, coach_palierVu. Aucune clé existante modifiée. */
+const AGR={};
+AGR.days=()=>{if(!BARIA()||!P.opdate)return null;const d=Math.floor((Date.now()-new Date(P.opdate))/864e5);return isFinite(d)&&d>=0?d:null};
+AGR.addM=m=>{const d=new Date(String(P.opdate)+'T12:00');if(isNaN(d))return null;const day=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+m);d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()));return d};
+AGR.fdate=(d,y)=>d.toLocaleDateString('fr-FR',y?{day:'numeric',month:'long',year:'numeric'}:{day:'numeric',month:'long'}).replace(/^1 /,'1er ');
+AGR.st=()=>{const o=store.get('suiviRdv',{});return o&&typeof o==='object'&&!Array.isArray(o)?o:{}};
+AGR.rm=k=>{try{localStorage.removeItem('coach_'+k)}catch(e){}};
+
+/* 1. Protéines par étape : HAS 2024 = au moins 60 g/j, si possible 1,1 g/kg de poids idéal. Jusqu'à 3 mois (textures et volumes limités), l'objectif affiché est le minimum de 60 g. */
+AGR.metrics=metrics;
+metrics=function(){const m=AGR.metrics.apply(this,arguments);try{const d=AGR.days();if(m&&d!=null&&d<91&&!num(P.protmed)&&m.prot>60){m.protFull=m.prot;m.prot=60}}catch(e){}return m};
+
+/* perte depuis l'opération (pesée la plus proche du jour J) */
+AGR.loss=()=>{if(!P.opdate||!arr(W).length)return null;const t=d=>new Date(d+'T12:00').getTime(),o=t(P.opdate),L=[...W].sort((a,b)=>a.d<b.d?-1:1);if(!isFinite(o))return null;
+  let ref=null;for(const p of L){const dt=(t(p.d)-o)/864e5;if(dt<=0&&dt>=-30)ref=p}
+  if(!ref)ref=L.find(p=>{const dt=(t(p.d)-o)/864e5;return dt>0&&dt<=14})||null;
+  const cur=L[L.length-1];if(!ref||!cur||cur.d<=ref.d||!num(ref.w))return null;const kg=num(ref.w)-num(cur.w);return{kg,pct:kg/num(ref.w)*100,ref,cur}};
+
+AGR.phaseHTML=phaseHTML;
+phaseHTML=function(){let h=AGR.phaseHTML.apply(this,arguments);try{const ph=sleevePhase();if(!ph)return h;const m=metrics()||{},L=AGR.loss();
+  let x=m.prot?`<p><b>Protéines :</b> ${m.protFull?`au moins <b>${m.prot} g</b> par jour pour l'instant (le minimum conseillé), puis environ ${m.protFull} g à partir du 4<sup>e</sup> mois`:`environ <b>${m.prot} g</b> par jour`}. Mange-les en premier à chaque prise.</p>`:'';
+  x+=`<p><b>Eau :</b> au moins 1,5 litre par jour, par petites gorgées, en dehors des repas.</p>`;
+  if(L&&L.kg>=.5)x+=`<div class="agrloss"><b>−${fr(Math.round(L.kg*10)/10)} kg</b> depuis l'opération, soit ${fr(Math.round(L.pct*10)/10)} % de ton poids de départ.<span class="mute">En moyenne, la perte atteint 20 à 30 % vers 18 mois. Chaque étape compte.</span></div>`;
+  const k='<p class="mute" style="margin-bottom:0">Repères';h=h.includes(k)?h.replace(k,x+k):h+x}catch(e){console.error(e)}return h};
+
+/* 2. Rendez-vous de suivi (HAS 2024 : 1, 3, 6, 12, 18 mois, 2 ans puis chaque année ; prises de sang à 3, 6, 12 mois puis 1 à 2 fois par an) */
+AGR.RDV=()=>{const L=[[1,'Consultation du 1er mois',0],[3,'Consultation des 3 mois',1],[6,'Consultation des 6 mois',1],[12,'Bilan de la 1re année',1],[18,'Consultation des 18 mois',0],[24,'Bilan des 2 ans',1]];
+  const d=AGR.days()||0,yrs=Math.min(40,Math.max(3,Math.ceil((d+400)/365)));for(let y=3;y<=yrs;y++)L.push([12*y,`Bilan annuel des ${y} ans`,1]);
+  return L.map(([m,t,b])=>({k:'m'+m,m,t,b,d:AGR.addM(m)})).filter(x=>x.d&&!isNaN(x.d))};
+AGR.row=(x,dn)=>{const now=Date.now(),isD=!!dn[x.k],past=!isD&&x.d.getTime()<now,late=!isD&&x.d.getTime()<now-7*864e5,soon=!isD&&!late&&x.d.getTime()<now+30*864e5;let fd='';try{fd=isD?AGR.fdate(new Date(dn[x.k]+'T12:00'),1):''}catch(e){}
+  return `<li class="pill${late?' late':soon?' soon':''}"><button class="ck${isD?' on':''}" data-act="agrRdvT" data-k="${x.k}" aria-pressed="${isD}" aria-label="${esc(x.t)} : ${isD?'fait':'à cocher quand c\'est fait'}"><svg class="i"><use href="#i-tick"/></svg></button><span class="agrrt"><b>${esc(x.t)}</b><span class="mute">${isD?'fait le '+fd:(past?'prévu vers le ':soon?'bientôt : vers le ':'vers le ')+AGR.fdate(x.d,1)}${x.b?' · avec prise de sang':''}</span></span></li>`};
+AGR.rdv=()=>{const pane=document.querySelector('section[data-v=suivi] .pane[data-pane=sante2]');if(!pane)return;let c=$('agrRdv');
+  if(!BARIA()||AGR.days()==null){if(c)c.remove();return}
+  if(!c){c=document.createElement('div');c.className='card agrx';c.id='agrRdv';const pc=$('pills')&&$('pills').closest('.card');const ref=pc&&pc.parentNode===pane?pc:$('alertCard');if(ref&&ref.parentNode===pane)ref.after(c);else pane.appendChild(c)}
+  const dn=AGR.st().done||{},now=Date.now(),R=AGR.RDV(),todo=R.filter(x=>!dn[x.k]).filter(x=>x.d.getTime()<=now+400*864e5&&x.d.getTime()>=now-75*864e5).slice(0,4),done=R.filter(x=>dn[x.k]);
+  c.innerHTML=`<h2>Mes rendez-vous de suivi</h2><p class="sub">Après une sleeve, le suivi dure toute la vie : il évite les carences et aide à garder le poids perdu. Ces dates sont des repères : ton équipe peut en fixer d'autres.</p>
+  <ul class="agrrdv">${todo.map(x=>AGR.row(x,dn)).join('')}</ul>${done.length?`<details class="agrdone"><summary class="mute">${done.length} rendez-vous déjà fait${done.length>1?'s':''}</summary><ul class="agrrdv">${done.map(x=>AGR.row(x,dn)).join('')}</ul></details>`:''}
+  <label for="agrQ" class="agrlab">Mes questions pour le prochain rendez-vous</label><textarea id="agrQ" class="grow" rows="2" placeholder="ex. Je peux reprendre les abdos ? Je perds un peu mes cheveux, c'est normal ?">${esc(String(store.get('rdvQuestions','')||''))}</textarea>
+  <button class="alt wide" data-act="agrPrep" style="margin-top:10px">Préparer mon rendez-vous</button><p class="mute agrsm">Un résumé de tes dernières semaines (poids, protéines, eau, compléments, sport) à montrer ou à envoyer à ton équipe.</p>`;
+  const q=$('agrQ');if(q){q.addEventListener('input',()=>store.set('rdvQuestions',q.value.slice(0,2000)));setTimeout(()=>{try{grow(q)}catch(e){}},0)}};
+AGR.home=()=>{let c=$('agrHome');const R=BARIA()&&AGR.days()!=null?AGR.RDV():[],o=AGR.st(),dn=o.done||{},now=Date.now();
+  const x=o.later&&o.later>today()?null:R.find(r=>!dn[r.k]&&r.d.getTime()<=now+21*864e5&&r.d.getTime()>=now-75*864e5);
+  if(!x){if(c)c.remove();return}
+  if(!c){const hn=$('homeNow');if(!hn)return;c=document.createElement('div');c.id='agrHome';c.className='card agrx agrhome';hn.after(c)}
+  const late=x.d.getTime()<now-3*864e5;
+  c.innerHTML=`<div class="hcard"><span class="ic c-blue"><svg class="i"><use href="#i-list"/></svg></span><div style="flex:1;min-width:0"><h3 style="margin:0">${esc(x.t)}</h3><div class="mute">${late?'C\'était prévu vers le ':'Prévu vers le '}${AGR.fdate(x.d)}${x.b?', avec une prise de sang':''}. ${late?'Si c\'est fait, coche-le. Sinon, appelle ton équipe pour le caler.':'Pense à prendre rendez-vous.'}</div></div></div><div class="row" style="margin-top:12px"><button class="sm" data-act="agrRdvT" data-k="${x.k}">C'est fait</button><button class="ghost sm" data-act="agrRdvGo">Voir mon suivi</button><button class="ghost sm" data-act="agrRdvLater">Plus tard</button></div>`};
+AGR.sum=()=>{const ph=sleevePhase(),d=AGR.days(),m=metrics()||{},L=AGR.loss(),out=[],D7=[...Array(7)].map((_,i)=>dkey(Date.now()-(i+1)*864e5));
+  out.push('Mon suivi après sleeve, le '+AGR.fdate(new Date(),1));
+  if(P.opdate){let od='';try{od=new Date(String(P.opdate)+'T12:00').toLocaleDateString('fr-FR')}catch(e){}out.push(`Opération le ${od}${d!=null?` (il y a ${d} jours${ph?', phase « '+ph.n+' »':''})`:''}`)}
+  const Ws=[...arr(W)].sort((a,b)=>a.d<b.d?-1:1),cw=Ws[Ws.length-1];
+  if(cw)out.push(`Poids : ${fr(cw.w)} kg le ${frd(cw.d)}`+(L?` · ${fr(L.ref.w)} kg au moment de l'opération · ${L.kg>=0?'−':'+'}${fr(Math.round(Math.abs(L.kg)*10)/10)} kg (${fr(Math.round(Math.abs(L.pct)*10)/10)} %)`:''));
+  const pd=D7.filter(k=>Array.isArray(J[k])&&J[k].length);
+  out.push(pd.length?`Protéines : ${Math.round(pd.reduce((a,k)=>a+J[k].reduce((x,e)=>x+num(e.p),0),0)/pd.length)} g par jour en moyenne (${pd.length} jour${pd.length>1?'s':''} noté${pd.length>1?'s':''} sur 7)${m.prot?' · objectif '+m.prot+' g':''}`:'Protéines : pas de repas notés ces 7 derniers jours');
+  const ed=D7.filter(k=>num(EAU[k]));if(ed.length)out.push(`Eau : ${fr(Math.round(ed.reduce((a,k)=>a+num(EAU[k]),0)/ed.length*10)/10)} verres par jour en moyenne (${ed.length} jour${ed.length>1?'s':''} noté${ed.length>1?'s':''})${m.eau?' · objectif '+m.eau+' verres':''}`);
+  try{const ps=arr(PILLS);if(ps.length){let tot=0,ok=0;D7.forEach(k=>{const l=PLOG[k]||{};ps.forEach(p=>{tot++;if(l[p.id])ok++})});out.push(`Compléments : ${Math.round(ok/Math.max(1,tot)*100)} % des prises cochées sur 7 jours (${ps.map(p=>p.n).join(', ')})`)}}catch(e){}
+  try{const ml=arr(store.get('repasLents',[])).slice(-10);if(ml.length)out.push(`Durée des repas : ${Math.round(ml.reduce((a,x)=>a+num(x.min),0)/ml.length)} min en moyenne (${ml.length} repas guidés)`)}catch(e){}
+  try{const lim=dkey(Date.now()-28*864e5),n=arr(LOG).filter(l=>l&&l.d>=lim).length;out.push(`Sport : ${n} séance${n>1?'s':''} sur les 4 dernières semaines`)}catch(e){}
+  const q=String(store.get('rdvQuestions','')||'').trim();if(q)out.push('','Mes questions :',...q.split(/\n+/).map(x=>x.trim()).filter(Boolean).map(x=>'- '+x));
+  return out.join('\n')};
+AGR.prep=()=>{openSheet(`<div class="row sb"><h2 style="margin:0">Préparer mon rendez-vous</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Montre ce résumé à ton équipe, ou envoie-le avant la consultation.</p><textarea id="agrSum" class="grow" rows="12" readonly aria-label="Résumé pour mon rendez-vous">${esc(AGR.sum())}</textarea><button class="wide" data-act="agrShare" style="margin-top:10px">Envoyer ou copier</button><p class="mute agrsm">Ces chiffres viennent de ce que tu as noté dans l'app. Ils aident la discussion, ils ne remplacent pas l'avis de ton équipe médicale.</p>`);setTimeout(()=>{try{grow($('agrSum'))}catch(e){}},60)};
+AGR.share=async()=>{const t=AGR.sum();try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e&&e.name==='AbortError')return}
+  try{await navigator.clipboard.writeText(t);toast('Résumé copié : colle-le dans un message.')}catch(e){const a=$('agrSum');if(a){a.focus();a.select()}toast('Sélectionne le texte puis copie-le.')}};
+
+/* 3. Boire et manger séparément : le côté « avant le repas » (le minuteur « après » existait déjà) */
+AGR.pre=()=>{const dc=$('drinkCard'),hd=$('homeDrink');if(!dc)return;const old=$('agrPre');if(old)old.remove();if(!BARIA())return;
+  const now=Date.now(),b=store.get('boire',null),after=!!(b&&b.until>now);let pr=store.get('preRepas',null);
+  if(pr&&(!pr.at||now>pr.at+45*6e4||after)){AGR.rm('preRepas');pr=null}
+  const hm=t=>new Date(t).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),mn=t=>Math.max(1,Math.ceil((t-now)/6e4));let msg='',btn='';
+  if(pr){const stop=pr.at-30*6e4;msg=now<stop?`Repas prévu à <b>${hm(pr.at)}</b> : tu peux encore boire jusqu'à <b>${hm(stop)}</b> (dans ${mn(stop)} min).`:now<pr.at?`<b>Plus de boisson maintenant</b> : ton repas est à ${hm(pr.at)} (dans ${mn(pr.at)} min).`:`<b>C'est l'heure de manger !</b> Protéines d'abord, petites bouchées.`;
+    btn=`<div class="row" style="margin-top:8px">${now>=pr.at-10*6e4?'<button class="sm" data-act="mealGo">Repas en douceur</button>':''}<button class="ghost sm" data-act="agrPreStop">Annuler</button></div>`}
+  const box=document.createElement('div');box.id='agrPre';box.className='agrpre agrx';
+  box.innerHTML=pr?`<b>Avant le repas</b><p style="margin:6px 0 0">${msg}</p>${btn}`:after?'':`<b>Avant le repas aussi</b><p class="mute" style="margin:6px 0 8px">Dis-moi quand tu manges : je te préviens quand arrêter de boire, 30 minutes avant.</p><div class="row"><button class="ghost sm" data-act="agrPre" data-v="30">Je mange dans 30 min</button><button class="ghost sm" data-act="agrPre" data-v="60">dans 1 h</button><button class="ghost sm" data-act="agrPre" data-v="90">dans 1 h 30</button></div>`;
+  if(box.innerHTML){const r=dc.querySelector('.rapcta');if(r&&r.parentNode===dc)r.before(box);else dc.appendChild(box)}
+  if(pr&&hd&&!after){hd.style.display='block';hd.innerHTML=`<div class="agrx"><div>${msg}</div>${btn}</div>`}};
+AGR.renderDrink=renderDrink;
+renderDrink=function(){const r=AGR.renderDrink.apply(this,arguments);try{AGR.pre()}catch(e){console.error(e)}return r};
+AGR.mealGo=mealGo;
+mealGo=function(){AGR.rm('preRepas');return AGR.mealGo.apply(this,arguments)};
+setInterval(()=>{if(document.visibilityState!=='visible')return;const pr=store.get('preRepas',null);if(!pr||!pr.at)return;const now=Date.now();let ch=0;
+  if(!pr.s1&&now>=pr.at-30*6e4){pr.s1=1;ch=1;toast('Dernières gorgées : ton repas est dans 30 minutes.');try{beep(1)}catch(e){}}
+  if(!pr.s2&&now>=pr.at){pr.s2=1;ch=1;toast('À table ! Protéines d\'abord, petites bouchées.');try{beep(2)}catch(e){}}
+  if(ch)store.set('preRepas',pr);try{renderDrink()}catch(e){}},30000);
+
+/* 4. Feu vert sport : mêmes repères que ceux donnés à l'IA pour le programme (semaines depuis l'opération) ; affiché jusqu'à 18 mois */
+AGR.SP=[[3,'semaines 1 à 3','Marche douce chaque jour, un peu plus longtemps chaque semaine. Pas de charges lourdes ni d\'abdominaux.'],
+ [4,'semaine 4','Cardio léger (marche rapide, vélo doux) 3 fois 30 minutes, et renforcement très léger 2 fois par semaine : poids du corps, élastiques. Ne bloque jamais ta respiration pendant l\'effort.'],
+ [9,'semaines 5 à 8','Cardio modéré 3 à 4 fois 40 minutes, musculation modérée 3 fois par semaine. Abdominaux intenses et charges lourdes : seulement avec l\'accord de ton chirurgien (souvent pas avant 6 semaines).'],
+ [26,'mois 3 à 6','Ton programme normal, en progressant petit à petit. Le fractionné (HIIT) attend 3 à 6 mois.'],
+ [1e9,'après 6 mois','Programme normal. Garde 2 à 3 séances de musculation par semaine : c\'est ce qui protège tes muscles.']];
+AGR.sport=()=>{const pane=document.querySelector('section[data-v=sport] .pane[data-pane=programme]');if(!pane)return;let c=$('agrSport');const d=AGR.days();
+  if(d==null||d>548){if(c)c.remove();return}
+  const wk=Math.floor(d/7),k=AGR.SP.findIndex(s=>wk<s[0]),S=AGR.SP[k],N=AGR.SP[k+1];
+  if(!c){c=document.createElement('div');c.className='card agrx agrsport';c.id='agrSport';pane.prepend(c)}
+  let nx='';if(N){try{nx=AGR.fdate(new Date(new Date(String(P.opdate)+'T12:00').getTime()+S[0]*6048e5))}catch(e){}}
+  c.innerHTML=`<div class="row sb" style="flex-wrap:nowrap;gap:10px"><h2 style="margin:0">Mon feu vert sport</h2><span class="agrpill">${d<182?'semaine '+(wk+1):Math.floor(d/30.44)+1+'<sup>e</sup> mois'}</span></div><div class="dots" aria-hidden="true">${AGR.SP.map((s,i)=>`<i class="${i<=k?'f':''}" style="flex:1"></i>`).join('')}</div>
+  <p style="margin:6px 0 0"><b>Maintenant (${S[1]}) :</b> ${S[2]}</p>${N&&nx?`<p class="mute" style="margin:8px 0 0"><b>Ensuite, vers le ${nx} :</b> ${N[2]}</p>`:''}
+  <details class="agrwhy"><summary>Pourquoi la musculation compte après la sleeve</summary><ul class="fl"><li>Pendant la perte de poids rapide, on perd aussi du muscle, surtout la première année.</li><li>2 à 3 séances de renforcement par semaine avec assez de protéines aident à garder ta force (essai AP-HP et Inserm après chirurgie de l'obésité).</li><li>Bois par petites gorgées pendant l'effort, en respectant les 30 minutes autour des repas.</li><li>Arrête-toi en cas de vertige, de sueurs, de douleur ou d'essoufflement inhabituel.</li></ul><button class="ghost sm" data-act="fiOpen" data-id="sleeve-reprise-sport">Lire la fiche complète</button></details>
+  <p class="mute agrsm" style="margin-bottom:0">Repères généraux : c'est ton chirurgien qui donne le feu vert. Demande-lui avant de changer d'étape.</p>`};
+AGR.renderProg=renderProg;
+renderProg=function(){const r=AGR.renderProg.apply(this,arguments);try{AGR.sport()}catch(e){console.error(e)}return r};
+
+/* 5. Palier de poids : moyenne des pesées de la dernière semaine à moins de 0,5 kg de celle d'il y a 2 à 3 semaines */
+AGR.palier=()=>{const tt=$('trendTxt');if(!tt)return;const old=$('agrPal');if(old)old.remove();
+  const o=String(P.obj||''),ba=BARIA();if(!ba&&!/perte|seche/.test(o))return;
+  const vu=store.get('palierVu','');if(vu&&Date.now()-new Date(vu+'T12:00')<7*864e5)return;
+  const t=d=>new Date(d+'T12:00').getTime(),R=arr(W).filter(p=>p&&p.d&&num(p.w)>0).sort((a,b)=>a.d<b.d?-1:1);if(R.length<4)return;
+  const last=R[R.length-1],tl=t(last.d);if(Date.now()-tl>10*864e5)return;
+  const mean=a=>a.reduce((x,p)=>x+num(p.w),0)/a.length,A1=R.filter(p=>tl-t(p.d)<=7*864e5),A0=R.filter(p=>{const g=tl-t(p.d);return g>=14*864e5&&g<=24*864e5});
+  if(A1.length<2||!A0.length)return;const m1=mean(A1),m0=mean(A0),delta=m1-m0;
+  if(ba){const dd=AGR.days();if(dd!=null&&dd<21)return}else if(num(R[0].w)-m0<1)return;
+  if(delta<=-.5||delta>=1)return;
+  let i=R.length-1;while(i>0&&Math.abs(num(R[i-1].w)-m1)<=.8)i--;const n=Math.max(14,Math.round((tl-t(R[i].d))/864e5));
+  let good='';try{const E=ema(),eL=E[E.length-1],eR=[...E].reverse().find(p=>t(eL.d)-t(p.d)>=7*864e5);if(eR&&(eL.e-eR.e)/((t(eL.d)-t(eR.d))/864e5)*7<-.1)good=' Ta courbe lissée, elle, baisse encore doucement : bon signe.'}catch(e){}
+  const box=document.createElement('div');box.id='agrPal';box.className='agrpal agrx';box.setAttribute('role','note');
+  box.innerHTML=`<b>Palier : la balance bouge peu depuis ${n} jours</b><p style="margin:6px 0 4px">C'est normal : ${ba?'après une sleeve, la perte se fait par paliers, jusqu\'à 12 à 18 mois.':'la perte de poids se fait toujours par paliers.'} ${good} Pas besoin de manger moins : regarde plutôt ces points.</p>
+  <ul class="fl">${ba?'<li>Protéines en premier à chaque prise.</li><li>Au moins 1,5 litre d\'eau par jour, par petites gorgées, entre les repas.</li>':'<li>Des protéines à chaque repas, et des légumes.</li><li>Une bonne nuit de sommeil compte aussi.</li>'}<li>2 séances de renforcement par semaine, et de la marche tous les jours.</li><li>Mesure ton tour de taille : il baisse souvent même quand la balance bloque.</li><li>Note tout pendant 3 jours, boissons et grignotages compris.</li></ul>
+  <p class="mute agrsm">Si ça dure plus de 4 semaines, parles-en à ${ba?'ton équipe médicale':'ton médecin'}.</p>
+  <div class="row"><button class="ghost sm" data-act="goPane" data-v="suivi" data-p="corps2">Prendre mes mesures</button>${ba?'<button class="ghost sm" data-act="fiOpen" data-id="sleeve-plateau">Lire la fiche</button>':''}<button class="ghost sm" data-act="agrPalOk">Compris</button></div>`;
+  tt.appendChild(box)};
+AGR.renderTrend=renderTrend;
+renderTrend=function(){const r=AGR.renderTrend.apply(this,arguments);try{AGR.palier()}catch(e){console.error(e)}return r};
+
+/* 6. Signes d'alerte complétés (vomissements répétés → vitamine B1 ; manque d'eau ; dumping ; blocages ; carences) */
+AGR.alertHTML=alertHTML;
+alertHTML=function(){let h=AGR.alertHTML.apply(this,arguments);try{
+  h=h.replace('<li>des vomissements avec confusion (urgence)</li></ul>','<li>des vomissements avec confusion (urgence)</li><li>des vomissements qui reviennent plusieurs jours de suite, même sans autre signe (risque de manque de vitamine B1)</li></ul>');
+  h+=`<details class="agrsig"><summary>Autres signes à signaler à ton équipe sans attendre</summary><ul class="fl"><li><b>Manque d'eau</b> : tu n'arrives pas à boire 1 litre par jour, urines foncées, vertiges, maux de tête, crampes.</li><li><b>Malaise après manger</b> : sueurs, cœur qui bat vite, nausées ou diarrhée pendant ou juste après le repas, ou 1 à 3 heures après (souvent après du sucré). On appelle ça un « dumping » : ton équipe peut t'aider à l'éviter.</li><li><b>Ça bloque</b> : aliments qui bloquent ou remontent souvent, brûlures ou toux la nuit.</li><li><b>Manque de vitamines possible</b> : fourmillements, grande fatigue, essoufflement, chute de cheveux, ongles cassants.</li><li><b>Moral</b> : tristesse qui dure, ou impression de perdre le contrôle face à la nourriture. C'est fréquent, et ça se soigne.</li></ul><p class="mute agrsm" style="margin-bottom:0">Ce ne sont pas des diagnostics : seule ton équipe médicale peut dire ce qu'il en est.</p></details>`}catch(e){}return h};
+
+/* Accueil et Suivi : brancher les nouveaux blocs */
+AGR.renderHome=renderHome;
+renderHome=function(){const r=AGR.renderHome.apply(this,arguments);try{AGR.home()}catch(e){console.error(e)}return r};
+AGR.renderSuivi=renderSuivi;
+renderSuivi=function(){const r=AGR.renderSuivi.apply(this,arguments);try{AGR.rdv()}catch(e){console.error(e)}return r};
+const AGR_ACTS={
+  agrRdvT(b){const o=AGR.st(),k=b.dataset.k;o.done=o.done&&typeof o.done==='object'?o.done:{};if(o.done[k])delete o.done[k];else{o.done[k]=today();toast('Bravo ! Un rendez-vous de suivi de plus.')}store.set('suiviRdv',o);AGR.rdv();AGR.home()},
+  agrRdvLater(){const o=AGR.st();o.later=dkey(Date.now()+7*864e5);store.set('suiviRdv',o);AGR.home();toast('D\'accord, je te le rappelle dans une semaine.')},
+  agrRdvGo(){openPane('suivi','sante2');setTimeout(()=>{const c=$('agrRdv');if(c)c.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})},500)},
+  agrPrep(){AGR.prep()},
+  agrShare(){AGR.share()},
+  agrPre(b){const v=+b.dataset.v||30;store.set('preRepas',{at:Date.now()+v*6e4,s1:v<=30?1:0});renderDrink();toast(v<=30?'Plus de boisson maintenant : à table dans 30 minutes.':'Noté ! Je te préviens 30 minutes avant ton repas.')},
+  agrPreStop(){AGR.rm('preRepas');renderDrink()},
+  agrPalOk(){store.set('palierVu',today());renderTrend()}};
+Promise.resolve().then(()=>{try{Object.assign(A,AGR_ACTS)}catch(e){console.error(e)}});
+/* === /ag_research === */
+
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -6146,10 +6321,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.27-86';
+const APP_VERSION='2026.11.27-87';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.27-87','Un suivi sleeve encore plus juste','Objectif protéines adapté à ton étape après l\'opération, calendrier de tes rendez-vous de suivi avec un résumé à montrer au médecin, rappel pour boire AVANT le repas, ton feu vert sport selon les semaines, et un message rassurant si ton poids fait un palier.','suivi','sante2'],
  ['2026.11.27-86','Toujours une image','Chaque plat a maintenant une image : une jolie illustration tout de suite, puis la vraie photo (Wikipédia en français ou en anglais, TheMealDB, Wikimedia Commons) dès qu\'elle est trouvée. Les textes des cartes sont plus courts.','cuisine','monde'],
  ['2026.11.26-85','Nouvelles animations d\'exercices','Une vraie silhouette, des mouvements justes et fluides, le matériel bien dessiné (barre, haltères, poulie, machines, banc) et les muscles qui travaillent mis en lumière. 91 démonstrations au lieu de 41.','sport','exos'],
  ['2026.11.26-84','Séance guidée refaite','Gros boutons − et + pour la charge et les répétitions, tes chiffres de la dernière fois, repos en anneau avec « Corriger », exercice suivant toujours visible, et un vrai récap de fin avec tes records. Courbe de poids lissée, pilulier et sommeil plus clairs.','sport','programme'],
