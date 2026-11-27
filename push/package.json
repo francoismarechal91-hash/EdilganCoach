@@ -1,0 +1,9 @@
+{
+  "name": "edilgan-rappels",
+  "private": true,
+  "description": "Serveur de rappels EdilganSuperCoach (GitHub Actions). Dépendances figées par package-lock.json (npm ci).",
+  "type": "module",
+  "dependencies": {
+    "web-push": "3.6.7"
+  }
+}

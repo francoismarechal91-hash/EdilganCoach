@@ -1,6 +1,12 @@
 # EdilganSuperCoach : envoie les rappels (boire, médicaments, repas…) en notification,
 # même téléphone en veille. Gratuit : tourne sur GitHub Actions toutes les 10 minutes.
 # Le secret EDG_PUSH (créé une seule fois depuis l'app) permet de signer et de déchiffrer.
+# ag_sec (sécurité) :
+#  - seules les issues ouvertes par le propriétaire du dépôt (ou un collaborateur) déclenchent l'enregistrement :
+#    le dépôt est public, n'importe qui peut ouvrir une issue. Si ta moitié utilise SON compte GitHub,
+#    ajoute-la comme collaboratrice (Settings › Collaborators) ;
+#  - actions figées par empreinte (commit) et dépendances figées par push/package-lock.json (npm ci, sans scripts) ;
+#  - le corps de l'issue n'est JAMAIS mis dans une commande : il passe par une variable d'environnement.
 name: Rappels
 on:
   schedule:
@@ -12,20 +18,26 @@ permissions:
   contents: write
   issues: write
   actions: read
-concurrency:
-  group: rappels
-  cancel-in-progress: false
 jobs:
   rappels:
-    if: github.event_name != 'issues' || startsWith(github.event.issue.title, 'Rappels EdilganSuperCoach')
+    if: >-
+      github.event_name != 'issues' ||
+      (startsWith(github.event.issue.title, 'Rappels EdilganSuperCoach') &&
+       contains(fromJSON('["OWNER","COLLABORATOR","MEMBER"]'), github.event.issue.author_association))
+    # file d'attente au niveau du travail : une issue ignorée (if faux) n'entre pas dans la file
+    # et ne peut donc pas annuler une tournée de rappels en attente
+    concurrency:
+      group: rappels
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 20
-      - run: npm install --no-save --no-audit --no-fund web-push@3.6.7
+      # installe à la racine du poste de travail (jamais dans push/, qui est commité par le script)
+      - run: cp push/package.json push/package-lock.json ./ && npm ci --no-audit --no-fund --ignore-scripts
       - run: node push/server.mjs
         env:
           EDG_PUSH: ${{ secrets.EDG_PUSH }}

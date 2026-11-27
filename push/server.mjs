@@ -34,11 +34,27 @@ function open(token) {
   const d = crypto.createDecipheriv('aes-256-gcm', key, iv); d.setAuthTag(tag);
   return JSON.parse(Buffer.concat([d.update(ct), d.final()]).toString('utf8'));
 }
+// ag_sec : validation stricte. La clé publique « box » est publique (push/public.json) : n'importe qui peut chiffrer
+// un enregistrement. On vérifie donc tout ce qui est ensuite utilisé (fuseau horaire, types, tailles, adresse d'envoi).
+const okTz = tz => { if (tz == null) return true; if (typeof tz !== 'string' || tz.length > 64) return false; try { new Intl.DateTimeFormat('en-GB', { timeZone: tz }); return true; } catch { return false; } };
+const okStr = (v, max) => v == null || (typeof v === 'string' && v.length <= max);
+function okEndpoint(u) {
+  if (typeof u !== 'string' || u.length > 1024) return false;
+  let x; try { x = new URL(u); } catch { return false; }
+  if (x.protocol !== 'https:' || x.username || x.password) return false;
+  const h = x.hostname.toLowerCase();
+  // jamais d'adresse locale / IP brute : les services de notification des navigateurs ont un nom de domaine public
+  return !(h === 'localhost' || h.endsWith('.local') || h.endsWith('.internal') || /^[\d.]+$/.test(h) || h.includes(':') || h.startsWith('['));
+}
 function valid(r) {
   if (!r || typeof r !== 'object' || typeof r.id !== 'string' || r.id.length < 10 || r.id.length > 80) return false;
-  const s = r.sub; if (!s || typeof s.endpoint !== 'string' || !/^https:\/\//.test(s.endpoint) || !s.keys || !s.keys.p256dh || !s.keys.auth) return false;
+  const s = r.sub; if (!s || typeof s !== 'object' || !okEndpoint(s.endpoint) || !s.keys || typeof s.keys !== 'object') return false;
+  if (typeof s.keys.p256dh !== 'string' || !/^[A-Za-z0-9_=+/-]{80,100}$/.test(s.keys.p256dh) || typeof s.keys.auth !== 'string' || !/^[A-Za-z0-9_=+/-]{16,32}$/.test(s.keys.auth)) return false;
+  if (!okTz(r.tz)) return false;
   if (!Array.isArray(r.items) || r.items.length > 80) return false;
-  return r.items.every(x => x && /^\d\d:\d\d$/.test(x.h) && typeof x.t === 'string' && x.t.length <= 120 && (!x.days || (Array.isArray(x.days) && x.days.every(n => n >= 0 && n <= 6))));
+  return r.items.every(x => x && typeof x === 'object' && typeof x.h === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(x.h) && typeof x.t === 'string' && x.t.length <= 120
+    && okStr(x.d, 200) && okStr(x.k, 24) && (x.u == null || (typeof x.u === 'string' && /^#?[A-Za-z0-9_-]{0,30}$/.test(x.u)))
+    && (x.days == null || (Array.isArray(x.days) && x.days.length <= 7 && x.days.every(n => Number.isInteger(n) && n >= 0 && n <= 6))));
 }
 const regFile = id => 'push/reg/' + crypto.createHash('sha256').update(id).digest('hex').slice(0, 24) + '.enc';
 let dirty = false;
@@ -54,7 +70,8 @@ async function gh(path, method = 'GET', body) {
 }
 async function send(reg, p) {
   try { await webpush.sendNotification(reg.sub, JSON.stringify(p), { TTL: 1800, urgency: 'high', topic: (p.tag || 'edg').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 32) || 'edg' }); return true; }
-  catch (e) { console.log('envoi échoué', e.statusCode || '', String(e.body || e.message).slice(0, 120)); return e.statusCode === 404 || e.statusCode === 410 ? 'gone' : false; }
+  // journaux publics (dépôt public) : seulement le code d'erreur, jamais le corps de la réponse ni l'adresse
+  catch (e) { console.log('envoi échoué', e.statusCode || 'réseau'); return e.statusCode === 404 || e.statusCode === 410 ? 'gone' : false; }
 }
 
 // clés publiques pour l'app
@@ -63,7 +80,7 @@ const pub = JSON.stringify({ v: 1, vapid: b64u(V.pub), box: b64u(B.pub) }) + '\n
 if (!fs.existsSync('push/public.json') || fs.readFileSync('push/public.json', 'utf8') !== pub) { fs.writeFileSync('push/public.json', pub); dirty = true; console.log('Clés publiques écrites.'); }
 
 if (env.EVENT === 'issues') {
-  const m = String(env.ISSUE_BODY || '').match(/EDGP1:([A-Za-z0-9_-]{60,})/);
+  const m = String(env.ISSUE_BODY || '').slice(0, 65536).match(/EDGP1:([A-Za-z0-9_-]{60,60000})(?![A-Za-z0-9_-])/);
   let reg = null, msg = '';
   try { reg = m ? open(m[1]) : null; } catch (e) { reg = null; }
   if (!reg || !valid(reg)) msg = '❌ Enregistrement illisible. Réessaie depuis l\'app (Mes rappels).';
@@ -95,23 +112,28 @@ from = Math.max(from, now - 45 * 60e3);
 const A = from + LEAD, Z = now + LEAD;
 const wdN = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
 let sent = 0;
+let bad = 0;
 for (const f of fs.readdirSync('push/reg').filter(x => x.endsWith('.enc'))) {
-  let reg; try { reg = open(fs.readFileSync('push/reg/' + f, 'utf8').trim()); } catch { continue; }
-  if (!valid(reg)) continue;
-  const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: reg.tz || 'Europe/Paris', hour: '2-digit', minute: '2-digit', weekday: 'short', hourCycle: 'h23' });
-  const due = new Map();
-  for (let t = Math.floor(A / 60e3) * 60e3 + 60e3; t <= Z; t += 60e3) {
-    const p = Object.fromEntries(fmt.formatToParts(new Date(t)).map(x => [x.type, x.value]));
-    const hm = p.hour + ':' + p.minute, wd = wdN[p.weekday];
-    for (const it of reg.items) if (it.h === hm && (!it.days || it.days.includes(wd))) due.set(it.k + it.h + it.t, it);
-  }
-  for (const it of due.values()) {
-    const r = await send(reg, { title: it.t, body: it.d || '', tag: (it.k || 'edg') + it.h.replace(':', ''), url: './' + (it.u || '#accueil') });
-    if (r === 'gone') { fs.unlinkSync('push/reg/' + f); dirty = true; break; }
-    if (r === true) sent++;
-  }
+  // ag_sec : un enregistrement défectueux ne doit jamais bloquer les rappels des autres téléphones
+  try {
+    let reg; try { reg = open(fs.readFileSync('push/reg/' + f, 'utf8').trim()); } catch { bad++; continue; }
+    if (!valid(reg)) { bad++; continue; }
+    const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: reg.tz || 'Europe/Paris', hour: '2-digit', minute: '2-digit', weekday: 'short', hourCycle: 'h23' });
+    const due = new Map();
+    for (let t = Math.floor(A / 60e3) * 60e3 + 60e3; t <= Z; t += 60e3) {
+      const p = Object.fromEntries(fmt.formatToParts(new Date(t)).map(x => [x.type, x.value]));
+      const hm = p.hour + ':' + p.minute, wd = wdN[p.weekday];
+      for (const it of reg.items) if (it.h === hm && (!it.days || it.days.includes(wd))) due.set(it.k + it.h + it.t, it);
+    }
+    for (const it of due.values()) {
+      const r = await send(reg, { title: it.t, body: it.d || '', tag: (it.k || 'edg') + it.h.replace(':', ''), url: './' + (it.u || '#accueil') });
+      if (r === 'gone') { fs.unlinkSync('push/reg/' + f); dirty = true; break; }
+      if (r === true) sent++;
+    }
+  } catch { bad++; }
 }
-console.log('Fenêtre', new Date(A).toISOString(), '→', new Date(Z).toISOString(), ':', sent, 'notification(s).');
+// journaux publics : ni heure ni nombre de rappels envoyés (ce serait l'emploi du temps santé du foyer, lisible par tous)
+console.log('Tournée terminée.' + (bad ? ' ' + bad + ' enregistrement(s) ignoré(s).' : ''));
 // garde le dépôt « actif » (GitHub met en pause les tâches planifiées après 60 jours sans activité)
 try { const last = +sh('git log -1 --format=%ct') * 1000; if (now - last > 40 * 864e5) { fs.writeFileSync('push/keepalive.txt', new Date(now).toISOString() + '\n'); dirty = true; } } catch {}
 commit('Rappels : entretien');

@@ -2,6 +2,7 @@
 <html lang="fr" data-skin="synth">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'">
 <script>try{var k0=JSON.parse(localStorage.getItem('coach_skin')||'null');document.documentElement.dataset.skin=k0||(localStorage.getItem('coach_profil')||localStorage.getItem('coach_onb')?'synth':'clair')}catch(e){}</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1984,7 +1985,7 @@ html.ovon .hero *,html.ovon .hero::before,.hero.off *,.hero.off::before,.hero.of
 <script>
 /* Filet de sécurité : si une mise à jour plante au démarrage, on rassure et on permet d'enregistrer ses données (rien n'est effacé). */
 (function(){var shown=0;
-function dump(){var d={};try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf('coach_')===0&&k!=='coach_ia')d[k]=localStorage.getItem(k)}}catch(e){}return d}
+function dump(){var d={};try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k.indexOf('coach_')===0&&k!=='coach_ia'&&k!=='coach_pushSeed')d[k]=localStorage.getItem(k)}}catch(e){}return d}
 function save(){var t=new Date().toISOString().slice(0,10),json=JSON.stringify({app:'EdilganSuperCoach',date:t,data:dump(),archives:[]}),name='edilgan-sauvegarde-'+t+'.json';
   try{var f=new File([json],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'Sauvegarde EdilganSuperCoach'}).catch(function(){});return}}catch(e){}
   try{var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click()}catch(e){}}
@@ -2292,7 +2293,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
 
   <details class="card fold" id="foldSante">
     <summary><span><h2>Ma santé</h2><span class="mute fsum" id="sumSante">opération, traitements, objectifs médicaux</span></span></summary>
-    <p class="sub">Tout s'adapte à ce que tu coches : repas, portions, séances.</p>
+    <p class="sub">Tout s'adapte à ce que tu coches : repas, portions, séances. Ces infos restent sur ton téléphone ; quand tu demandes quelque chose au coach, elles sont envoyées à l'IA gratuite (sans ton prénom) pour adapter sa réponse.</p>
     <div class="chips" id="santeChips"></div><button class="ghost sm" data-act="santeNone" style="margin-top:8px">Rien de particulier pour moi</button>
     <div id="opBox" style="display:none;margin-top:8px"><label for="p-opdate">Date de l'opération</label><input id="p-opdate" type="date"></div>
     <div style="margin-top:10px"><label for="p-equipe">Téléphone de mon équipe médicale (facultatif)</label><input id="p-equipe" type="tel" inputmode="tel" placeholder="ex. 01 23 45 67 89"></div>
@@ -2657,7 +2658,7 @@ const numN=v=>v==null||v===''||!/\d/.test(String(v))?null:num(v);
 const fixC=c=>{const o={};for(const k of ['kcal','p','g','sucres','l','ags','fibres','sel'])o[k]=numN(c&&c[k]);if(o.kcal==null&&c&&c.kj!=null)o.kcal=Math.round(num(c.kj)/4.184);return o};
 const YT='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
 const ytq=q=>/fran[cç]ais/i.test(q)?q:q+' en français';
-const yt=(q,t='Voir la vidéo')=>`<a class="vid" href="https://www.youtube.com/results?search_query=${encodeURIComponent(ytq(q))}&hl=fr&gl=FR" target="_blank" rel="noopener">${YT}${esc(t)}</a>`;
+const yt=(q,t='Voir la vidéo')=>`<a class="vid" href="https://www.youtube.com/results?search_query=${encodeURIComponent(ytq(q))}&hl=fr&gl=FR" target="_blank" rel="noopener noreferrer">${YT}${esc(t)}</a>`;
 
 /* ---------- IA ---------- */
 let sp=null;
@@ -3867,7 +3868,7 @@ function duoParse(t){const m=String(t||'').match(/EDG1\.([A-Za-z0-9_-]+)/);if(!m
 const DUOGOAL=()=>Math.max(4,(num(P.jours)||3)*2);
 function renderDuo(){const el=$('duoBox');if(!el)return;const me=myWeek(),o=DUO&&DUO.wk===me.wk?DUO:null,old=DUO&&!o;
   const col=(x0,me2,x={...x0,s:Math.round(num(x0.s)),m:Math.round(num(x0.m)),a:Math.round(num(x0.a)),j:Math.round(num(x0.j)),st:Math.round(num(x0.st))})=>`<div class="duoc${me2?' me':''}"><b>${esc(x.n)}</b><div class="duon">${x.s}</div><span>séance${x.s>1?'s':''}</span><ul><li>${x.m} min de sport</li><li>${x.a} jour${x.a>1?'s':''} actif${x.a>1?'s':''}</li><li>${x.j} jour${x.j>1?'s':''} de repas notés</li><li>série : ${x.st} j</li></ul></div>`;
-  const tot=me.s+(o?o.s:0),g=DUOGOAL(),pc=Math.min(100,Math.round(tot/g*100));
+  const tot=me.s+(o?Math.round(num(o.s))||0:0),g=DUOGOAL(),pc=Math.min(100,Math.round(tot/g*100));
   el.innerHTML=`<p class="sub">Chaque semaine, échangez vos résumés : un code à envoyer par message ou un QR à scanner. Rien ne passe par un serveur.</p>
   <div class="duog">${col(me,1)}${o?col(o):`<div class="duoc empty"><b>Ta moitié</b><p class="mute">${old?'Son résumé date de la semaine dernière : demande-lui le nouveau.':'Ajoute son code pour vous comparer.'}</p></div>`}</div>
   <h3>Défi de la semaine : ${g} séances à deux</h3><div class="rbar" style="height:12px"><i style="width:${pc}%"></i></div><p class="mute" style="margin-top:6px">${tot} / ${g}${pc>=100?' : défi réussi, bravo à vous deux !':o?'':' (avec ton résumé seulement)'}</p>
@@ -4102,7 +4103,7 @@ function calDetail(k){const x=CALDATA[k]||{d:k},el=$('calDet');if(!el)return;CAL
   const sl=x.sommeil?`<p style="margin:0">Couché à ${esc(x.sommeil.c||'?')}, levé à ${esc(x.sommeil.l||'?')}${x.sommeil.c&&x.sommeil.l?' · '+hm(dur(x.sommeil.c,x.sommeil.l)):''}${x.sommeil.q?' · nuit '+(['','très mauvaise','mauvaise','moyenne','bonne','excellente'][x.sommeil.q]||''):''}</p>`:'';
   el.innerHTML=`<div class="card" style="margin:14px 0 0"><h2 style="margin-top:0">${new Date(k+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</h2>
   ${sec('Repas',R.length?`${R.map(e=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${Math.round(num(e.p))} g prot · ${Math.round(num(e.g))} g gluc · ${Math.round(num(e.l))} g lip</div></span><span class="v">${Math.round(num(e.kcal)).toLocaleString('fr-FR')} kcal</span></div>`).join('')}<p style="margin:6px 0 0"><b>Total : ${Math.round(tk).toLocaleString('fr-FR')} kcal · ${Math.round(tp)} g de protéines</b></p>`:'')}
-  ${sec('Sport',arr(x.seances).map(s=>`<div class="meal"><b>${esc(s.nom)}</b> <span class="mute">${esc(s.min)} min${s.ressenti?' · '+esc(s.ressenti):''}</span>${arr(s.ex).length?`<ul style="margin:6px 0 0;padding-left:18px">${s.ex.map(e=>`<li>${esc(e.nom)}${arr(e.sets).length?' : '+e.sets.map(z=>z.s?Math.round(num(z.s))+' s':(num(z.kg)?fr(num(z.kg))+' kg × ':'')+(z.reps||'')).filter(Boolean).join(', '):''}</li>`).join('')}</ul>`:''}</div>`).join(''))}
+  ${sec('Sport',arr(x.seances).map(s=>`<div class="meal"><b>${esc(s.nom)}</b> <span class="mute">${esc(s.min)} min${s.ressenti?' · '+esc(s.ressenti):''}</span>${arr(s.ex).length?`<ul style="margin:6px 0 0;padding-left:18px">${s.ex.map(e=>`<li>${esc(e.nom)}${arr(e.sets).length?' : '+e.sets.map(z=>z.s?Math.round(num(z.s))+' s':(num(z.kg)?fr(num(z.kg))+' kg × ':'')+esc(z.reps||'')).filter(Boolean).join(', '):''}</li>`).join('')}</ul>`:''}</div>`).join(''))}
   ${sec('Corps',[x.poids!=null?`Poids : <b>${fr(x.poids)} kg</b>`:'',x.mes&&x.mes.taille?`Tour de taille : <b>${esc(x.mes.taille)} cm</b>`:'',x.eau!=null?`Eau : <b>${esc(x.eau)} verre${x.eau>1?'s':''}</b>`:'',x.pas!=null?`Pas : <b>${Number(x.pas).toLocaleString('fr-FR')}</b>`:'',x.pilules!=null?`Prises cochées : <b>${esc(x.pilules)}</b>`:''].filter(Boolean).map(t=>`<div>${t}</div>`).join(''))}
   ${sec('Sommeil',sl)}
   ${sec('Humeur',x.humeur?Object.entries(x.humeur).map(([k2,v])=>`<span class="chip">${esc({h:'Humeur',e:'Énergie',c:'Courbatures',s:'Stress',f:'Faim'}[k2]||k2)} ${esc(v)}/5</span>`).join(' '):'')}
@@ -4146,7 +4147,7 @@ function obInit(){const W=$('welcome'),box=W&&W.querySelector('.wbox');if(!box||
   const intro=pre.find(e=>e.tagName==='P');if(intro)intro.textContent='3 petites questions, et c\'est parti.';
   pre.forEach(e=>s1.appendChild(e));nomD.style.marginBottom='16px';s1.appendChild(nomD);if(objL)s1.appendChild(objL);s1.appendChild(obj);s1.appendChild(btn('obNext','Suivant'));if(rest)s1.appendChild(rest);
   s2.innerHTML='<h2 style="margin:0">Pour calculer tes besoins</h2><p class="mute" style="font-size:16px;margin:6px 0 14px">Calories, protéines, eau : tout part de là.</p>';s2.appendChild(grid);s2.appendChild(btn('obNext','Suivant'));s2.appendChild(btn('obBack','Retour',1));
-  s3.innerHTML='<h2 style="margin:0">Ta santé</h2><p class="mute" style="font-size:16px;margin:6px 0 14px">Coche ce qui te concerne : repas, portions et séances s\'adapteront. Rien de particulier ? Touche « C\'est parti ».</p><div class="chips" id="obSante"></div><div id="obOp" hidden style="margin-top:12px"><label for="w-opdate">Date de l\'opération</label><input id="w-opdate" type="date"></div><p class="mute" style="font-size:14px;margin:12px 0 0">Ça reste sur ton téléphone. Tu pourras tout changer dans ton profil.</p>';
+  s3.innerHTML='<h2 style="margin:0">Ta santé</h2><p class="mute" style="font-size:16px;margin:6px 0 14px">Coche ce qui te concerne : repas, portions et séances s\'adapteront. Rien de particulier ? Touche « C\'est parti ».</p><div class="chips" id="obSante"></div><div id="obOp" hidden style="margin-top:12px"><label for="w-opdate">Date de l\'opération</label><input id="w-opdate" type="date"></div><p class="mute" style="font-size:14px;margin:12px 0 0">Ça reste sur ton téléphone. Quand tu demandes quelque chose au coach, ces infos sont envoyées à l\'IA gratuite (sans ton prénom) pour adapter sa réponse. Tu pourras tout changer dans ton profil.</p>';
   go.style.marginTop='22px';s3.appendChild(go);s3.appendChild(btn('obBack','Retour',1));
   const ind=document.createElement('p');ind.className='mute obind';ind.id='obInd';ind.setAttribute('aria-live','polite');ind.textContent='Étape 1 sur 3';
   later.textContent='Passer pour l\'instant';box.prepend(ind);box.append(s1,s2,s3,later);
@@ -4601,7 +4602,7 @@ function pushHTML(){const st=pushState(),R=store.get('pushReg',null)||{},n=pushI
   else if(st==='on')body=`<p class="pushp ok">✓ Activées : ${n} rappel${n>1?'s':''} programmé${n>1?'s':''}. Ils arrivent à quelques minutes près.</p><div class="row" style="gap:8px"><button class="ghost sm" data-act="pushOff">Désactiver sur ce téléphone</button></div>`;
   else if(st==='changed')body=`<p class="pushp">Tes rappels ont changé : mets à jour les notifications.</p><button data-act="pushGo" style="width:100%">Mettre à jour (${n} rappel${n>1?'s':''})</button>`;
   else body=n?`<button data-act="pushGo" style="width:100%">Activer les notifications (${n} rappel${n>1?'s':''})</button>`:`<p class="pushp mute">Active d'abord au moins un rappel ci-dessus.</p>`;
-  return head+body+'</div>'}
+  return head+body+secSeedNote(st)+'</div>'}
 const PUSH_ACTS={
   async pushSeed(b){let s=store.get('pushSeed','');if(!s){s=pB64(crypto.getRandomValues(new Uint8Array(32)));store.set('pushSeed',s)}if(await copy(s,b))toast('Clé copiée : colle-la sur GitHub dans « Secret ».');else{openSheet(`<h2 style="margin-top:0">Ta clé secrète</h2><p>Sélectionne et copie ce texte :</p><textarea readonly style="font:15px ui-monospace,monospace" rows="3">${esc(s)}</textarea><button data-act="rapOpen">Retour</button>`);return}rapRefresh()},
   async pushCheck(b){b.disabled=true;await pushKeys(true);b.disabled=false;if(!PUSHK)toast('Pas encore prêt : réessaie dans quelques minutes.');else toast('C\'est prêt !');rapRefresh()},
@@ -4619,7 +4620,7 @@ const PUSH_ACTS={
       const tok=await boxSeal({v:1,id:R.id,sub:sub.toJSON(),tz:'Europe/Paris',items:[],off:true},K.box);
       const url=`https://github.com/${PUSH_REPO}/issues/new?title=${encodeURIComponent('Rappels EdilganSuperCoach')}&body=${encodeURIComponent('Désactivation des rappels sur ce téléphone, chiffrée. Touche « Submit new issue ».\n\nEDGP1:'+tok)}`;
       store.set('pushReg',{...R,url,pend:1,off:1,ok:0,d:Date.now()});rapRefresh()}catch(e){toast('Désactivation impossible pour l\'instant.')}},
-  pushLink(b){const u=b.dataset.u||((store.get('pushReg',null)||{}).url);if(!u)return;const w=window.open(u,'_blank','noopener');if(!w)location.href=u},
+  pushLink(b){const u=b.dataset.u||((store.get('pushReg',null)||{}).url);if(!u||!/^https:\/\/github\.com\//.test(String(u)))return;const w=window.open(u,'_blank','noopener');if(!w)location.href=u},
   async pushShareLink(){const R=store.get('pushReg',null);if(!R||!R.url)return;try{if(navigator.share){await navigator.share({title:'Enregistrer mes rappels',text:'Ouvre ce lien sur un téléphone connecté au GitHub de l\'app, puis touche « Submit new issue ».',url:R.url});return}}catch(e){if(e&&e.name==='AbortError')return}if(await copy(R.url,document.createElement('button')))toast('Lien copié')}};
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')pushSync()});setTimeout(pushSync,3000);
 /* === ag_home === rangements doux : « Noter un repas » en premier dans Mes repas, Apparence dans l'ordre utile
@@ -4865,7 +4866,7 @@ SX.sleep=()=>{const pane=document.querySelector('section[data-v=sommeil] .pane[d
   const td=SL[today()],y=SL[dkey(Date.now()-864e5)],last=td||y,QW=['','Très mal','Mal','Moyen','Bien','Super'];
   const d=last?dur(last.c,last.l):0,f=Math.min(1,d/480),ok=d>=420&&d<=600;
   hero.querySelector('#sxSlTop').innerHTML=last?`<div class="sxslr"><div class="sxring sm" aria-hidden="true"><svg viewBox="0 0 120 120"><circle class="trk" cx="60" cy="60" r="54"/><circle class="prg" cx="60" cy="60" r="54" style="stroke-dasharray:${SX.C.toFixed(2)};stroke-dashoffset:${(SX.C*(1-f)).toFixed(2)}"/></svg><div class="sxrin"><b>${hm(d).replace(' h ','h')}</b><span>de sommeil</span></div></div>
-    <div class="sxslx"><small>${td?'Ta nuit dernière':'Ta dernière nuit notée'}</small><b class="q${last.q}">${QW[last.q]||'Nuit notée'}</b><span>Couché à ${esc(last.c)}, levé à ${esc(last.l)}</span><span class="${ok?'ok':'lo'}">${ok?'Dans la bonne zone (7 à 9 h)':d<420?'Un peu court : vise 7 h ce soir':'Longue nuit : ton corps récupère'}</span></div></div>`
+    <div class="sxslx"><small>${td?'Ta nuit dernière':'Ta dernière nuit notée'}</small><b class="q${esc(last.q)}">${QW[last.q]||'Nuit notée'}</b><span>Couché à ${esc(last.c)}, levé à ${esc(last.l)}</span><span class="${ok?'ok':'lo'}">${ok?'Dans la bonne zone (7 à 9 h)':d<420?'Un peu court : vise 7 h ce soir':'Longue nuit : ton corps récupère'}</span></div></div>`
     :`<div class="sxslx"><small>Ta nuit</small><b>Pas encore notée</b><span>Note-la en 10 secondes, juste en dessous.</span></div>`;
   const h2=form.querySelector('h2');if(h2)h2.textContent=td?'Corriger ma nuit':'Ma nuit dernière';
   if(td){if(pane.firstElementChild!==hero)pane.prepend(hero)}else if(form.nextElementSibling!==hero)form.after(hero)};
@@ -5033,9 +5034,20 @@ const AGR_ACTS={
 Promise.resolve().then(()=>{try{Object.assign(A,AGR_ACTS)}catch(e){console.error(e)}});
 /* === /ag_research === */
 
+/* === ag_sec === sécurité et vie privée : liens sûrs, protection anti-cadre, clé des rappels */
+function secUrl(u){u=String(u==null?'':u).trim();return /^https:\/\/[^\s"'<>`]+$/i.test(u)?u:'#'}
+/* anti-clickjacking : GitHub Pages n'envoie pas d'en-tête anti-cadre et frame-ancestors est ignoré en <meta>.
+   Sur github.io, si une autre page affiche l'app dans un cadre, on n'affiche rien (rien à cliquer en cachette). */
+try{if(window.top!==window.self&&/(^|\.)github\.io$/i.test(location.hostname))document.documentElement.style.display='none'}catch(e){try{document.documentElement.style.display='none'}catch(_){}}
+/* la clé secrète (= secret EDG_PUSH sur GitHub) ne sert qu'à la configuration : on propose de l'effacer ensuite */
+function secSeedNote(st){try{if(!store.get('pushSeed','')||st==='setup'||st==='loading')return '';
+  return `<div class="pushp" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">Ta clé secrète est encore gardée sur ce téléphone. Elle ne sert plus maintenant que GitHub l'a : tu peux l'effacer, tes rappels continuent.<button class="ghost sm" data-act="pushSeedDel" style="display:block;margin-top:8px;min-height:44px">Effacer la clé de ce téléphone</button></div>`}catch(e){return ''}}
+Object.assign(PUSH_ACTS,{pushSeedDel(){const v=store.get('pushSeed','');if(!v)return;try{localStorage.removeItem('coach_pushSeed')}catch(e){}rapRefresh();
+  undoToast('Clé effacée de ce téléphone',()=>{store.set('pushSeed',v);rapRefresh()})}});
+/* === /ag_sec === */
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
- <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
+ <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
 const exHTML=(x,id)=>{const p=clean(x.muscles),s=clean(x.muscles_secondaires),ak=ANIM.pick(x.nom,x.machine,x.anim);return `<details class="ex"><summary>${ANIM.html(ak,'animMini')}<span class="exn">${esc(x.nom)}<span class="dose">${esc(x.series)} × ${esc(x.reps)}</span>${x.machine?`<small class="mute">${esc(x.machine)}</small>`:''}</span></summary>
  <div class="in">${ANIM.html(ak)}${machBox(x)}<div class="mute">Repos ${esc(x.repos_s)} s${x.tempo?' · tempo '+esc(x.tempo):''}</div>${bodyMap(p,s,x.nom)}${chips(p,s)}
  ${x.execution?`<p style="margin:6px 0">${esc(x.execution)}</p>`:''}${x.conseil?`<p class="mute" style="margin:6px 0"><b>Astuce :</b> ${esc(x.conseil)}</p>`:''}
@@ -5196,7 +5208,7 @@ const REG=[];const reg=o=>{let i=REG.indexOf(o);if(i<0){REG.push(o);i=REG.length
 let FAVR=objs(store.get('favrec',[])).filter(f=>f.data&&typeof f.data==='object');
 const saveFood=()=>{store.set('menus',MENUS);store.set('favrec',FAVR);store.set('semaine',WEEK)};
 const sameMenu=(a,b)=>a===b||!!(a&&b&&JSON.stringify(arr(a.repas).map(r=>r&&r.nom))===JSON.stringify(arr(b.repas).map(r=>r&&r.nom)));const isFav=o=>FAVR.some(f=>f.data===o||(f.data&&f.data.nom===o.nom&&f.type!=='menu'));
-const favBtn=(o,type='recette')=>`<button class="ghost sm" data-act="favR" data-t="${type}" data-r="${reg(o)}">${isFav(o)?'En favori ★':'Favori ☆'}</button>`;
+const favBtn=(o,type='recette')=>`<button class="ghost sm" data-act="favR" data-t="${esc(type)}" data-r="${reg(o)}">${isFav(o)?'En favori ★':'Favori ☆'}</button>`;
 const cookBtn=o=>`<button class="sm" data-act="cook" data-r="${reg(o)}">Recette pas à pas</button>`;
 const mealHTML=(m,act='',type='recette')=>`<div class="meal"><div class="k">${esc(m.moment||(type==='sauce'?'Sauce':''))}</div><h3>${esc(m.nom)}</h3>
  ${m.description?`<p style="margin:4px 0">${esc(m.description)}</p>`:''}
@@ -5286,7 +5298,7 @@ function renderK(){
   if(K.i<0){
     ov.innerHTML=head+`<div class="dph wide" data-q="${esc(K.o.wiki||K.o.nom_local||d.nom||K.o.nom)}" data-pays="${esc(K.o.pays||'')}" data-en="${esc(K.o.nom_en||'')}" data-loc="${esc(K.o.nom_local||'')}" data-n="${esc(d.nom||K.o.nom)}" style="margin:6px 0 10px">${phIllu(d.nom||K.o.nom,K.o.course||'',K.o.pays||'')}</div><h1 style="font-size:clamp(28px,7vw,38px)">${esc(d.nom||K.o.nom)}</h1>
     <div class="macro" style="margin:8px 0">${num(d.temps_total_min)?`<span><b>${esc(d.temps_total_min)}</b> min</span>`:''}${d.difficulte?`<span>${esc(d.difficulte)}</span>`:''}${d.kcal_portion?`<span><b>${esc(d.kcal_portion)}</b> kcal / portion</span>`:''}</div>
-    ${d.source&&d.source.url?`<div class="srcnote"><svg class="i" aria-hidden="true"><use href="#i-globe"/></svg><span>Recette d'origine : <b>${esc(d.source.site)}</b>, un site en ${esc(d.source.lang||'langue étrangère')} (pas un site français). Traduite intégralement en français par le coach, mesures converties.${d.source.licence?' Licence '+esc(d.source.licence)+'.':''} <a href="${esc(d.source.url)}" target="_blank" rel="noopener">Voir l'original</a></span></div>`:''}
+    ${d.source&&d.source.url?`<div class="srcnote"><svg class="i" aria-hidden="true"><use href="#i-globe"/></svg><span>Recette d'origine : <b>${esc(d.source.site)}</b>, un site en ${esc(d.source.lang||'langue étrangère')} (pas un site français). Traduite intégralement en français par le coach, mesures converties.${d.source.licence?' Licence '+esc(d.source.licence)+'.':''} <a href="${esc(secUrl(d.source.url))}" target="_blank" rel="noopener noreferrer">Voir l'original</a></span></div>`:''}
     <label for="kN">Nombre de portions</label><div class="row"><select id="kN" style="width:auto">${[1,2,3,4,5,6,8].map(n=>`<option ${n===K.n?'selected':''}>${n}</option>`).join('')}</select><span class="mute">les quantités sont recalculées</span></div>
     <h3 style="margin-top:18px">Ingrédients <span class="mute">(coche quand c'est sorti)</span></h3>
     <div class="shop">${(d.ingredients||[]).map((g,i)=>`<label><input type="checkbox" data-kck="${i}" ${K.ck[i]?'checked':''}><span><b>${esc(g.quantite)}</b> ${esc(g.nom)}${g.preparation?` <span class="mute">— ${esc(g.preparation)}</span>`:''}</span></label>`).join('')}</div>
@@ -5466,7 +5478,7 @@ Clés de muscles autorisées : ${KEYS}.`,{modelTier:'default',cache:false});
   prodEdit(){if(!PROD)return;const c={...(PROD.c100||{})};['kcal','l','ags','g','sucres','fibres','p','sel'].forEach(k=>{const v=$('pe-'+k)?.value;if(v!=null&&v!=='')c[k]=num(v);else if(v==='')c[k]=null});PROD.c100=c;if(!/corrigé/.test(PROD.source||''))PROD.source=(PROD.source||'')+' · corrigé par toi';PRODS=[PROD,...PRODS.filter(x=>x!==PROD)].slice(0,30);store.set('produits',PRODS);renderProdHist();renderProd(PROD);toast('Note recalculée')},
   plAll(b){if(!PLATE)return;const en=addFood({nom:PLATE.nom||'Mon repas',kcal:PLATE.kcal,p:PLATE.proteines_g,g:PLATE.glucides_g,l:PLATE.lipides_g,plate:{nom:PLATE.nom,aliments:PLATE.aliments,kcal:PLATE.kcal,proteines_g:PLATE.proteines_g,glucides_g:PLATE.glucides_g,lipides_g:PLATE.lipides_g},part:1});PLATE.added=en.id;try{resetDrop('assiette');$('plTxt').value=''}catch(e){}renderPlate();toast('Repas ajouté à ton journal')},
   leftOpen(b){const c=b.dataset.ctx,box=$('leftBox-'+c);if(box){box.innerHTML=box.innerHTML?'':leftHTML(c);bindDrops(box)}},
-  leftJ(b){const i=+b.dataset.i,e=dayJ()[i];if(!e||!e.plate)return;const c='j'+i;openSheet(`<div class="row sb"><h2 style="margin:0">${esc(e.plate.nom||e.nom)}</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Servi : ${Math.round(num(e.plate.kcal))} kcal. Compté pour l'instant : ${e.kcal} kcal.</p><div class="row"><button class="ghost sm" data-act="leftQ" data-ctx="${c}" data-f="0">J'ai tout mangé</button></div>${leftHTML(c)}`);bindDrops($('sheetIn'))},
+  leftJ(b){const i=+b.dataset.i,e=dayJ()[i];if(!e||!e.plate)return;const c='j'+i;openSheet(`<div class="row sb"><h2 style="margin:0">${esc(e.plate.nom||e.nom)}</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Servi : ${Math.round(num(e.plate.kcal))} kcal. Compté pour l'instant : ${esc(e.kcal)} kcal.</p><div class="row"><button class="ghost sm" data-act="leftQ" data-ctx="${c}" data-f="0">J'ai tout mangé</button></div>${leftHTML(c)}`);bindDrops($('sheetIn'))},
   leftQ(b){const c=b.dataset.ctx,f=num(b.dataset.f),served=servedOf(c);if(!served)return;const n=arr(served.aliments).length||1;showEaten(c,eatenFrom(served,Array(n).fill(f)));if(f===0)A.leftOk({dataset:{ctx:c}})},
   leftGo(b){const c=b.dataset.ctx,served=servedOf(c),tx=($('leftTx-'+c)?.value||'').trim(),ph=PH['reste-'+c];if(!served)return;if(!tx&&!ph){toast('Écris ce que tu as laissé ou ajoute une photo.');return}
     run(b,$('leftRes-'+c),ph?'Je regarde ce qui reste':'Je calcule',async()=>{const L=arr(served.aliments);
@@ -5691,7 +5703,7 @@ Rayons : Fruits et légumes, Boucherie et poissonnerie, Crèmerie et œufs, Épi
 };
 let SCAN=null,ENV=null,SYN=null,CORPS=null,PLATE=null,FRIDGE='',FRM=null,PROD=null,PRODS=objs(store.get('produits',[]));
 /* ---------- Produits : code-barres + Open Food Facts + IA ---------- */
-const ZXURL='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
+const ZXURL='vendor/zxing-library-0.21.3.min.js';
 let zxp=null;
 const loadZX=()=>zxp||(zxp=new Promise((ok,ko)=>{if(window.ZXing)return ok(window.ZXing);const sc=document.createElement('script');sc.src=ZXURL;sc.onload=()=>ok(window.ZXing);sc.onerror=()=>{zxp=null;ko()};document.head.appendChild(sc)}));
 async function decodeBarcode(blob){
@@ -5783,7 +5795,7 @@ function verdictHTML(p){const a=prodAnalyse(p),c=a.c,u=a.drink?'100 ml':'100 g';
   ${p.portion?`<p class="mute">Portion indiquée : ${esc(p.portion)}</p>`:''}${p.allergenes?`<p class="mute"><b>Allergènes :</b> ${esc(p.allergenes)}</p>`:''}
   ${a.mark?`<details><summary style="cursor:pointer;font-weight:700;padding:8px 0">Ingrédients (sucres et additifs surlignés)</summary><p class="mute ingtxt">${a.mark}</p></details>`:''}
   <details style="margin-top:6px"><summary style="cursor:pointer;font-weight:700;padding:8px 0">Une valeur est fausse ? Corrige-la</summary><p class="mute" style="margin-top:0">Recopie les chiffres de l'étiquette (pour ${u}) : la note est recalculée tout de suite.</p><div class="grid pedit">${[['kcal','Énergie (kcal)'],['l','Matières grasses (g)'],['ags','dont saturées (g)'],['g','Glucides (g)'],['sucres','dont sucres (g)'],['fibres','Fibres (g)'],['p','Protéines (g)'],['sel','Sel (g)']].map(([k,l])=>`<div><label for="pe-${k}">${l}</label><input id="pe-${k}" type="number" inputmode="decimal" step="0.01" value="${c[k]==null||c[k]===''?'':esc(c[k])}"></div>`).join('')}</div><div class="row" style="margin-top:8px"><button class="alt" data-act="prodEdit">Recalculer la note</button></div></details>
-  <p class="mute" style="font-size:13px;margin-bottom:0">Source : ${esc(p.source||'')}${p.ean?' · code '+esc(p.ean):''}${p.ean&&/Open Food Facts/.test(p.source||'')?` · <a href="https://fr.openfoodfacts.org/produit/${encodeURIComponent(p.ean)}" target="_blank" rel="noopener">voir la fiche</a>`:''}. Note indicative calculée par l'app (Nutri-Score, transformation, additifs). Ce n'est pas un avis médical.</p></div>`}
+  <p class="mute" style="font-size:13px;margin-bottom:0">Source : ${esc(p.source||'')}${p.ean?' · code '+esc(p.ean):''}${p.ean&&/Open Food Facts/.test(p.source||'')?` · <a href="https://fr.openfoodfacts.org/produit/${encodeURIComponent(p.ean)}" target="_blank" rel="noopener noreferrer">voir la fiche</a>`:''}. Note indicative calculée par l'app (Nutri-Score, transformation, additifs). Ce n'est pas un avis médical.</p></div>`}
 async function prodAvis(p){const el=$('pAvis');if(!el)return;const a=prodAnalyse(p);if(!a.known)return;
   el.innerHTML='<div class="busy">Le coach regarde ce produit pour toi<span class="dots3"><i></i><i></i><i></i></span></div>';
   try{const r=await askJSON(`Tu es coach en nutrition, franc et simple, pour une famille (jeunes et seniors). ${profil(true)}
@@ -5868,7 +5880,7 @@ function renderHome(){try{renderNow()}catch(e){}
   /* séance du jour */
   const wk=LOG.filter(l=>l.d>=weekKey()).length,doneToday=LOG.some(l=>l.d===today());
   if(PR&&arr(PR.jours).length){let li=-1;for(let i=LOG.length-1;i>=0&&li<0;i--)li=PR.jours.findIndex(j=>j.nom===LOG[i].nom);const j=PR.jours[(li+1)%PR.jours.length];
-    $('homeSeance').innerHTML=`<div class="row sb"><span class="mute" style="font-weight:700">${doneToday?'Bravo, séance faite aujourd\'hui':'Ta prochaine séance'}</span><span class="mute">${wk} / ${P.jours||3} cette semaine</span></div>
+    $('homeSeance').innerHTML=`<div class="row sb"><span class="mute" style="font-weight:700">${doneToday?'Bravo, séance faite aujourd\'hui':'Ta prochaine séance'}</span><span class="mute">${wk} / ${esc(P.jours||3)} cette semaine</span></div>
     <h2 style="margin:8px 0 2px">${esc(j.nom)}</h2><div class="mute">${esc(j.focus||'')} · ${arr(j.exercices).length} exercice${arr(j.exercices).length>1?'s':''} · ${esc(j.duree_min||'')} min</div>
     <div class="row" style="margin-top:14px"><button data-act="start" data-j="${PR.jours.indexOf(j)}" style="flex:1">Démarrer la séance</button><button class="ghost" data-act="goPane" data-v="sport" data-p="programme">Programme</button></div>`}
   else $('homeSeance').innerHTML=`<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><h3>Ton programme sur mesure</h3><div class="mute">Le coach te crée une semaine d'entraînement adaptée.</div></div></div><div class="row" style="margin-top:14px"><button data-act="genProgHome" style="flex:1">Créer mon programme</button><button class="ghost" data-act="goPane" data-v="sport" data-p="prets" style="flex:1">Séance prête</button></div>`;
@@ -5896,13 +5908,13 @@ function installHTML(){if(DEFERRED)return `<div class="hcard"><span class="ic c-
   <p class="mute" style="margin:0">Ensuite, ouvre EdilganSuperCoach depuis son icône. Attention : l'app installée repart de zéro. Si tu as déjà noté des choses ici, fais d'abord Suivi › Sauvegarde › <b>Copier ma sauvegarde</b>, puis colle-la dans l'app installée (Suivi › Sauvegarde).</p>`}
 /* ---------- Partage ---------- */
 const APP_URL=/github\.io$/.test(location.host)?location.origin+location.pathname.replace(/index\.html$/,''):'https://francoismarechal91-hash.github.io/EdilganCoach/';
-let qrp=null;const loadQR=()=>qrp||(qrp=new Promise((ok,ko)=>{if(window.qrcode)return ok(window.qrcode);const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';sc.onload=()=>ok(window.qrcode);sc.onerror=()=>{qrp=null;ko()};document.head.appendChild(sc)}));
+let qrp=null;const loadQR=()=>qrp||(qrp=new Promise((ok,ko)=>{if(window.qrcode)return ok(window.qrcode);const sc=document.createElement('script');sc.src='vendor/qrcode-generator-1.4.4.js';sc.onload=()=>ok(window.qrcode);sc.onerror=()=>{qrp=null;ko()};document.head.appendChild(sc)}));
 let SHEETH=0;async function openSheet(html){$('sheetIn').innerHTML='<div class="grab"></div>'+html;$('sheet').classList.add('on');if(!SHEETH){try{history.pushState({edgSheet:1},'',location.href);SHEETH=1}catch(e){}}}
 window.addEventListener('popstate',()=>{if(SHEETH){SHEETH=0;$('sheet').classList.remove('on')}});
 $('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')$('sheet').classList.remove('on')});
 window.addEventListener('hashchange',()=>FXE.nav(route));
 
-$('provs').innerHTML=AI.order.map((p,i)=>`<div style="margin-top:14px"><div class="row sb"><b>${i+1}. ${esc(PROV[p].nom)}</b><a class="vid" style="min-height:38px;font-size:13px" href="${PROV[p].page}" target="_blank" rel="noopener">Créer ma clé</a></div><div class="mute">${esc(PROV[p].aide)}</div><input data-key="${p}" type="password" autocomplete="off" placeholder="Colle ta clé ${esc(PROV[p].nom)}" aria-label="Clé ${esc(PROV[p].nom)}"></div>`).join('');
+$('provs').innerHTML=AI.order.map((p,i)=>`<div style="margin-top:14px"><div class="row sb"><b>${i+1}. ${esc(PROV[p].nom)}</b><a class="vid" style="min-height:38px;font-size:13px" href="${PROV[p].page}" target="_blank" rel="noopener noreferrer">Créer ma clé</a></div><div class="mute">${esc(PROV[p].aide)}</div><input data-key="${p}" type="password" autocomplete="off" placeholder="Colle ta clé ${esc(PROV[p].nom)}" aria-label="Clé ${esc(PROV[p].nom)}"></div>`).join('');
 document.querySelectorAll('[data-key]').forEach(i=>i.value=AI.keys[i.dataset.key]||'');$('iaEng').value=AI.engine;
 $('ingPh').addEventListener('change',async e=>{
   const fs=[...e.target.files];if(!fs.length)return;const el=$('ingRes');
@@ -5968,7 +5980,7 @@ function applySkin(k,save){setTimeout(()=>{try{renderFoldSums()}catch(e){}},0);
 }
 let HEROURL='';
 async function loadHero(){try{const legacy=store.get('heroimg','');if(legacy){await phOp('readwrite',st=>st.put({id:'__hero',data:legacy,d:today()}));localStorage.removeItem('coach_heroimg');HEROURL=legacy}else{const r=await phOp('readonly',st=>st.get('__hero'));HEROURL=r&&r.data||''}}catch(e){HEROURL=store.get('heroimg','')}applyHero()}
-function applyHero(){const h=document.querySelector('.hero'),img=HEROURL;if(!h)return;
+function applyHero(){const h=document.querySelector('.hero'),img=/^(data:image\/|blob:)/.test(String(HEROURL||''))?HEROURL:'';if(!h)return;
   h.classList.toggle('hasimg',!!img);h.style.backgroundImage=img?`linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.55)),url("${img}")`:'';if($('heroDel'))$('heroDel').hidden=!img}
 $('heroIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const{canvas}=await shrink(f,1000);const url=canvas.toDataURL('image/jpeg',.8);try{await phOp('readwrite',st=>st.put({id:'__hero',data:url,d:today()}))}catch(e2){store.set('heroimg',url);if(store.get('heroimg','')!==url){toast('Mémoire pleine : image non enregistrée');return}}HEROURL=url;applyHero();toast('Image d\'accueil enregistrée')}catch(err){toast('Image illisible')}e.target.value=''});
 function applySize(z,save){setTimeout(()=>{try{renderFoldSums()}catch(e){}},0);document.documentElement.dataset.size=z;if(save)store.set('taille',z);document.querySelectorAll('#sizeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.size===z));document.querySelectorAll('#wSize button').forEach(b=>{b.classList.toggle('on',b.dataset.v===z);b.setAttribute('aria-pressed',String(b.dataset.v===z))})}
@@ -6142,7 +6154,7 @@ const chkTxt=()=>{const c=CHK[today()];return c?`Check-in du jour (1 à 5) : hum
 function chkHTML(compact){const c=CHK[today()]||{};return CHKQ.map(([k,n])=>`<div class="chkrow"><b>${n}</b><div class="dots5">${[1,2,3,4,5].map(v=>`<button data-act="chk" data-k="${k}" data-v="${v}" class="${c[k]===v?'on':''}" aria-label="${n} ${v} sur 5">${v}</button>`).join('')}</div></div>`).join('')+`<div class="mute" style="display:flex;justify-content:space-between;padding-left:100px;font-size:12px"><span>faible</span><span>fort</span></div>`}
 function renderChk(){
   const c=CHK[today()],done=c&&CHKQ.every(([k])=>c[k]);
-  $('homeChk').innerHTML=done?`<div class="row sb"><b>Ton ressenti du jour</b><button class="ghost sm" data-act="chkEdit">Modifier</button></div><div class="chips">${CHKQ.map(([k,n])=>`<span class="chip">${n} ${c[k]}/5</span>`).join('')}</div><div class="mute">${esc(chkAdvice(c))}</div>`
+  $('homeChk').innerHTML=done?`<div class="row sb"><b>Ton ressenti du jour</b><button class="ghost sm" data-act="chkEdit">Modifier</button></div><div class="chips">${CHKQ.map(([k,n])=>`<span class="chip">${n} ${esc(c[k])}/5</span>`).join('')}</div><div class="mute">${esc(chkAdvice(c))}</div>`
     :`<h3 style="margin:0">Comment tu te sens ?</h3><p class="mute" style="margin:2px 0 6px">10 secondes, et le coach adapte ta journée.</p>${chkHTML()}`;
   $('chkForm').innerHTML=chkHTML();
   const days=[...Array(14)].map((_,i)=>dkey(Date.now()-(13-i)*864e5)),sv=$('chkSvg');
@@ -6200,7 +6212,7 @@ function renderTrend(){
 /* mensurations */
 const MESF=[['taille','Tour de taille'],['hanches','Hanches'],['poitrine','Poitrine'],['bras','Bras'],['cuisse','Cuisse'],['cou','Cou']];
 function renderMes(){
-  const last=MES[MES.length-1]||{};$('mesForm').innerHTML=MESF.map(([k,n])=>`<div><label for="ms-${k}">${n} (cm)</label><input id="ms-${k}" type="number" inputmode="decimal" step="0.5" placeholder="${last[k]||''}"></div>`).join('');
+  const last=MES[MES.length-1]||{};$('mesForm').innerHTML=MESF.map(([k,n])=>`<div><label for="ms-${k}">${n} (cm)</label><input id="ms-${k}" type="number" inputmode="decimal" step="0.5" placeholder="${esc(last[k]||'')}"></div>`).join('');
   if(MES.length<1){$('mesHist').innerHTML='';return}const f=MES[0],l=MES[MES.length-1];let tot=0;
   $('mesHist').innerHTML=`<table class="tbl" style="margin-top:12px">${MESF.map(([k,n])=>{if(!num(l[k]))return'';const d=num(f[k])&&MES.length>1?num(l[k])-num(f[k]):0;tot+=d<0?-d:0;return `<tr><td>${n}</td><td>${fr(l[k])} cm ${d?`<span style="color:${d<0?'var(--green)':'var(--mute)'}">(${d>0?'+':''}${fr(d)})</span>`:''}</td></tr>`}).join('')}</table>${tot?`<p style="font-weight:800;color:var(--green)">${fr(tot)} cm perdus au total, bravo !</p>`:''}<p class="mute">Depuis le ${frd(f.d)} · ${MES.length} relevé${MES.length>1?'s':''}</p>`;
 }
@@ -6213,8 +6225,8 @@ function defaultPills(){return BARIA()?[{id:'p1',n:'Multivitamine',h:'08:00'},{i
 function renderPills(){
   if(!PILLS){PILLS=defaultPills();store.set('pilulier',PILLS)}const L=PLOG[today()]||{};
   const ps=[...PILLS].sort((a,b)=>a.h<b.h?-1:1);
-  $('pills').innerHTML=ps.length?ps.map(p=>`<div class="pill"><button class="ck${L[p.id]?' on':''}" data-act="pillT" data-id="${p.id}" aria-label="${esc(p.n)} pris"><svg class="i"><use href="#i-pill"/></svg></button><span style="flex:1"><b>${esc(p.n)}</b><div class="mute">${esc(p.h)}${L[p.id]?' · pris à '+new Date(L[p.id]).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):''}</div></span></div>`).join(''):finEmpty('pilules','Aucun complément pour l\'instant.','Ajoute-les avec leur heure : tu pourras cocher chaque prise.',{t:'Ajouter un complément',act:'finFocus',q:'#pillN'},1);
-  $('pillEdit').innerHTML=ps.map(p=>`<div class="jl"><span class="n">${esc(p.n)} · ${esc(p.h)}</span><button class="x" data-act="pillDel" data-id="${p.id}" aria-label="Retirer">×</button></div>`).join('');
+  $('pills').innerHTML=ps.length?ps.map(p=>`<div class="pill"><button class="ck${L[p.id]?' on':''}" data-act="pillT" data-id="${esc(p.id)}" aria-label="${esc(p.n)} pris"><svg class="i"><use href="#i-pill"/></svg></button><span style="flex:1"><b>${esc(p.n)}</b><div class="mute">${esc(p.h)}${L[p.id]?' · pris à '+new Date(L[p.id]).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):''}</div></span></div>`).join(''):finEmpty('pilules','Aucun complément pour l\'instant.','Ajoute-les avec leur heure : tu pourras cocher chaque prise.',{t:'Ajouter un complément',act:'finFocus',q:'#pillN'},1);
+  $('pillEdit').innerHTML=ps.map(p=>`<div class="jl"><span class="n">${esc(p.n)} · ${esc(p.h)}</span><button class="x" data-act="pillDel" data-id="${esc(p.id)}" aria-label="Retirer">×</button></div>`).join('');
   const tm=x=>tmin(x.h),fer=ps.filter(p=>/fer/i.test(p.n)),ca=ps.filter(p=>/calcium/i.test(p.n)),clash=fer.some(f=>ca.some(c=>Math.abs(tm(f)-tm(c))<120));
   $('pillTip').style.display=clash?'block':'none';$('pillTip').textContent='Le fer et le calcium se gênent : espace-les d\'au moins 2 heures.';
 }
@@ -6236,7 +6248,7 @@ async function renderPhotos(){let L=[];try{L=(await phOp('readonly',st=>st.getAl
   $('phCmp').innerHTML=L.length>1?`<div class="cmp" id="cmpBox"><img src="${L[0].data}" alt="Avant"><img class="after" src="${L[L.length-1].data}" alt="Après"><div class="bar2"></div><span style="left:8px">${frd(L[0].d)}</span><span style="right:8px">${frd(L[L.length-1].d)}</span></div><input type="range" min="0" max="100" value="50" id="cmpR" aria-label="Comparer avant et après" style="margin-top:8px;padding:0;min-height:30px;background:none;border:0">`:'';
   const r=$('cmpR');if(r)r.oninput=()=>$('cmpBox').style.setProperty('--cut',r.value+'%')}
 /* sauvegarde fichier */
-async function bkSave(btn){const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('coach_')&&k!=='coach_ia')d[k]=localStorage.getItem(k)}}catch(e){}
+async function bkSave(btn){const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('coach_')&&k!=='coach_ia'&&k!=='coach_pushSeed')d[k]=localStorage.getItem(k)}}catch(e){}
   let arch=[];try{await archiveDays(memDays());arch=(await phOp('readonly',st=>st.getAll())||[]).filter(x=>String(x.id).startsWith('__day_'))}catch(e){}
   const json=JSON.stringify({app:'EdilganSuperCoach',date:today(),data:d,archives:arch}),name=`edilgan-sauvegarde-${today()}.json`,file=new File([json],name,{type:'application/json'});
   
@@ -6244,7 +6256,7 @@ async function bkSave(btn){const d={};try{for(let i=0;i<localStorage.length;i++)
   const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);store.set('lastbk',today());toast('Sauvegarde téléchargée');renderSuivi()}
 
 /* ---------- Transfert de données (compatible toutes versions) ---------- */
-function exportCode(){const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('coach_')&&k!=='coach_ia')d[k]=localStorage.getItem(k)}}catch(e){}return JSON.stringify({app:'EdilganSuperCoach',date:today(),data:d})}
+function exportCode(){const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('coach_')&&k!=='coach_ia'&&k!=='coach_pushSeed')d[k]=localStorage.getItem(k)}}catch(e){}return JSON.stringify({app:'EdilganSuperCoach',date:today(),data:d})}
 function restoreFrom(txt){
   const out=$('impRes');let o;txt=String(txt||'').trim();
   const a=txt.indexOf('{'),b=txt.lastIndexOf('}');
@@ -6303,7 +6315,7 @@ const WHOQ=['Je me suis senti(e) bien et de bonne humeur','Je me suis senti(e) c
 const WHOA=['Jamais','De temps en temps','Moins de la moitié du temps','Plus de la moitié du temps','La plupart du temps','Tout le temps'];
 let WHOtmp=[];
 function renderWho(){const last=WHO[WHO.length-1],due=!last||(Date.now()-new Date(last.d))/864e5>=13;
-  if(!due&&!WHOtmp.started){const sc=last.s;$('who5').innerHTML=`<div class="kv"><b>${sc}</b><span class="mute">/ 100 le ${frd(last.d)}</span></div><div class="bar"><i style="width:${sc}%"></i></div><p class="mute">${sc>50?'Ton moral va plutôt bien. Continue à prendre soin de toi.':'Ton moral est en baisse. Parles-en à ton médecin ou à un proche : c\'est important. En cas de détresse, le 3114 répond gratuitement 24 h/24.'}</p>${WHO.length>1?`<p class="mute">Précédent : ${WHO[WHO.length-2].s}/100</p>`:''}<p class="mute">Prochain questionnaire dans ${(n=>n+(n>1?' jours':' jour'))(Math.ceil(14-(Date.now()-new Date(last.d))/864e5))}.</p>`;return}
+  if(!due&&!WHOtmp.started){const sc=last.s;$('who5').innerHTML=`<div class="kv"><b>${sc}</b><span class="mute">/ 100 le ${frd(last.d)}</span></div><div class="bar"><i style="width:${sc}%"></i></div><p class="mute">${sc>50?'Ton moral va plutôt bien. Continue à prendre soin de toi.':'Ton moral est en baisse. Parles-en à ton médecin ou à un proche : c\'est important. En cas de détresse, le 3114 répond gratuitement 24 h/24.'}</p>${WHO.length>1?`<p class="mute">Précédent : ${esc(WHO[WHO.length-2].s)}/100</p>`:''}<p class="mute">Prochain questionnaire dans ${(n=>n+(n>1?' jours':' jour'))(Math.ceil(14-(Date.now()-new Date(last.d))/864e5))}.</p>`;return}
   WHOtmp.started=1;const i=WHOtmp.length;
   if(i>=5){const s=WHOtmp.reduce((a,b)=>a+b,0)*4;WHO.push({d:today(),s});store.set('who5',WHO);WHOtmp=[];renderWho();return}
   $('who5').innerHTML=`<p class="mute">Question ${i+1} sur 5 · ces 2 dernières semaines</p><p style="font-size:18px;font-weight:700">${WHOQ[i]}</p><div style="display:grid;gap:6px">${WHOA.map((a,v)=>`<button class="ghost" data-act="whoA" data-v="${v}" style="text-align:left">${a}</button>`).join('')}</div>`}
@@ -6321,10 +6333,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.27-87';
+const APP_VERSION='2026.11.27-88';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.27-88','Plus sûre','Contrôle de sécurité complet : une sauvegarde piégée ne peut plus rien exécuter, la clé des rappels ne part plus dans tes sauvegardes, le serveur de notifications n\'accepte que toi, et le scanner et le QR code sont servis par l\'app elle-même.','moi',''],
  ['2026.11.27-87','Un suivi sleeve encore plus juste','Objectif protéines adapté à ton étape après l\'opération, calendrier de tes rendez-vous de suivi avec un résumé à montrer au médecin, rappel pour boire AVANT le repas, ton feu vert sport selon les semaines, et un message rassurant si ton poids fait un palier.','suivi','sante2'],
  ['2026.11.27-86','Toujours une image','Chaque plat a maintenant une image : une jolie illustration tout de suite, puis la vraie photo (Wikipédia en français ou en anglais, TheMealDB, Wikimedia Commons) dès qu\'elle est trouvée. Les textes des cartes sont plus courts.','cuisine','monde'],
  ['2026.11.26-85','Nouvelles animations d\'exercices','Une vraie silhouette, des mouvements justes et fluides, le matériel bien dessiné (barre, haltères, poulie, machines, banc) et les muscles qui travaillent mis en lumière. 91 démonstrations au lieu de 41.','sport','exos'],

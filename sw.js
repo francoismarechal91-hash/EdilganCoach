@@ -4,7 +4,7 @@
         - repli sur la page uniquement pour une navigation (jamais pour un .json) ;
         - précache tolérant (un fichier en échec ne bloque plus les autres), sans passer par le cache HTTP ;
         - suppression des anciens caches. */
-const C='edilgan-v6';
+const C='edilgan-v7';
 const SHELL=['./','manifest.json','icon.png','icon-192.png','icon-512.png','world.json','ciqual.json','fonts/bricolage-var-latin.woff2','fonts/orbitron-var-latin.woff2','fonts/fredoka-var-latin.woff2','fonts/nunito-var-latin.woff2'];
 const NAV_MS=3500;
 const okToCache=r=>!!r&&r.status===200&&r.type==='basic';
@@ -36,8 +36,11 @@ self.addEventListener('fetch',e=>{
 });
 
 /* Notifications de rappels (envoyées par GitHub Actions, même téléphone en veille) */
-self.addEventListener('push',e=>{let d={};try{d=e.data?e.data.json():{}}catch(_){d={body:e.data?e.data.text():''}}
+self.addEventListener('push',e=>{let d={};try{d=e.data?e.data.json():{}}catch(_){d={body:e.data?e.data.text():''}}if(!d||typeof d!=='object')d={};
+  if(d.kind!=null&&!/^[a-z]{1,12}$/.test(String(d.kind)))d.kind=null; // ag_sec : nom de drapeau de cache borné
   const t=d.title||'EdilganSuperCoach',flag=d.kind?caches.open('edg-flags').then(c=>c.put('push-'+d.kind,new Response(String(Date.now())))).catch(()=>{}):null;
   e.waitUntil(Promise.all([self.registration.showNotification(t,{body:d.body||'',icon:'icon-192.png',badge:'icon-192.png',tag:d.tag||'edg',renotify:true,data:{url:d.url||'./'}}),flag]))});
-self.addEventListener('notificationclick',e=>{e.notification.close();const url=new URL((e.notification.data&&e.notification.data.url)||'./',self.registration.scope).href;
+self.addEventListener('notificationclick',e=>{e.notification.close();let url=self.registration.scope;
+  // ag_sec : une notification n'ouvre jamais autre chose que l'app (pas d'adresse externe ni javascript:)
+  try{const u=new URL((e.notification.data&&e.notification.data.url)||'./',self.registration.scope);if(u.origin===location.origin&&u.href.startsWith(self.registration.scope))url=u.href}catch(_){}
   e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(L=>{for(const c of L){if('focus' in c){if(c.navigate)c.navigate(url).catch(()=>{});return c.focus()}}return self.clients.openWindow(url)}))});
