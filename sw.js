@@ -9,8 +9,8 @@
         - installation d'une nouvelle version : on ne retélécharge que la page et ce qui manque (avant : ~1 Mo à chaque mise à jour) ;
         - icon-512.png n'est plus précachée (sert seulement à l'installation, jamais hors connexion) : -225 Ko au premier lancement.
    Si un jour tu changes une police ou une icône SANS changer son nom, change aussi C ci-dessous (ex. 'edilgan-v7'). */
-const C='edilgan-v8';
-const SHELL=['./','manifest.json','icon.png','icon-192.png','world.json','ciqual.json','fonts/bricolage-var-latin.woff2','fonts/orbitron-var-latin.woff2','fonts/fredoka-var-latin.woff2','fonts/nunito-var-latin.woff2'];
+const C='edilgan-v9';
+const SHELL=['./','manifest.json','icon.png','icon-192.png','world.json','ciqual.json','fonts/bricolage-var-latin.woff2','fonts/orbitron-var-latin.woff2','fonts/fredoka-var-latin.woff2','fonts/nunito-var-latin.woff2','vendor/zxing-library-0.21.3.min.js','vendor/qrcode-generator-1.4.4.js'];
 const NAV_MS=3500;
 const okToCache=r=>!!r&&r.status===200&&r.type==='basic';
 const STATIC=/\.(woff2|png)$/; // fichiers fixes : cache d'abord, mise à jour en arrière-plan

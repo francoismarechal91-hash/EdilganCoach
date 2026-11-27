@@ -1540,6 +1540,10 @@ html{overscroll-behavior-y:contain}
 .xlDh{font-size:14px;margin:6px 0 0}
 @media (max-width:360px){.xlTg{grid-template-columns:1fr 1fr}.xlNav{grid-template-columns:1fr}.xlNav button:last-child{align-items:flex-start;text-align:left}}
 .xlTest input{background:var(--card);border:1px solid var(--line)}
+/* === rev1 === */
+#sheetIn .row>[data-act=closeSheet]{flex-shrink:0}#sheetIn .row:has(>[data-act=closeSheet])>h2{min-width:0;overflow-wrap:break-word;hyphens:auto}
+.toast button{pointer-events:auto}html .toast{width:max-content;max-width:90%}
+/* === /rev1 === */
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -2345,7 +2349,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
       <div id="impRes"></div>
       <h3 style="margin-top:18px">Envoyer mes données vers un autre téléphone</h3>
       <button class="alt wide" data-act="exportData" style="margin-top:8px">Copier ma sauvegarde</button></div>
-    <div class="card"><h2>Sauvegardes automatiques</h2><p class="sub">Chaque jour et avant chaque mise à jour, l'app garde une copie de tes données sur ce téléphone (les 12 dernières). Une mise à jour n'efface jamais tes repas : ceci est une sécurité en plus.</p><div id="autoBk"></div>
+    <div class="card"><h2>Sauvegardes automatiques</h2><p class="sub">Chaque jour et avant chaque mise à jour, l'app garde une copie de tes données sur ce téléphone (celles des 2 dernières semaines, puis une par mois pendant un an). Une mise à jour n'efface jamais tes repas : ceci est une sécurité en plus.</p><div id="autoBk"></div>
       <p class="mute" style="font-size:14px;margin-bottom:0">Elles restent sur ce téléphone : si tu supprimes l'app ou changes de téléphone, utilise aussi « Sauvegarder dans un fichier ».</p></div>
     <div class="card"><h2>Sources et crédits</h2>
       <ul class="mute" style="padding-left:18px;margin:0;font-size:14px;line-height:1.5">
@@ -4037,7 +4041,7 @@ Corde à sauter|Cœur,Mol/DA|corde|I|petits sauts sur l'avant du pied;ce sont le
 Course|Cœur/Quad,Mol|aucun|D|petits pas rapides;le pied se pose sous le bassin;buste un peu penché en avant|attaquer par le talon loin devant;partir trop vite|alterner marche et course|fractionné|course
 Chat-vache|Lom/Abd|tapis|D|à quatre pattes;enroule puis creuse le dos;suis ta respiration|à-coups;nuque bloquée|assis sur une chaise|bouger seulement le bassin|etirement
 Étirement des fléchisseurs de hanche|Quad|tapis|D|genou arrière au sol;rentre le bassin;avance un peu le corps|cambrer;pencher le buste|debout|bras levé|etirement
-Étirement des ischios|Isch/Mol|sangle|D|jambe tendue sur un support;penche-toi depuis les hanches;dos plat|dos rond;à-coups|allongé avec une sangle|pointe de pied tirée|etirement
+Étirement des ischios|Isch/Mol|chaise|D|jambe tendue sur un support;penche-toi depuis les hanches;dos plat|dos rond;à-coups|allongé avec une sangle|pointe de pied tirée|etirement
 Livre ouvert|Pec,Lom|tapis|D|sur le côté, genoux à 90°;ouvre le bras, le regard suit la main;genoux collés|genoux qui décollent;forcer|amplitude réduite|tenir 5 s ouvert|etirement
 Étirement des pectoraux à la porte|Pec,DA|cadre de porte|D|avant-bras contre le cadre;avance d'un pas;épaules basses|cambrer;douleur à l'épaule|coude bas|coude haut|etirement`;
 const MAB={Quad:'quadriceps',Fes:'fessiers',Isch:'ischios',Add:'adducteurs',Mol:'mollets',Pec:'pectoraux',DA:'epaules',DL:'epaules',DP:'epaules',Dor:'dorsaux',Tra:'trapezes',Bi:'biceps',Tri:'triceps',Abd:'abdominaux',Obl:'obliques',Lom:'lombaires',AvB:'avant_bras'};
@@ -4506,7 +4510,7 @@ document.addEventListener('change',e=>{const t=e.target;if(!t.classList||!t.clas
 const BK_KEEP=12;
 let BKGEN=1;const BKST=new Map(); /* ag_perf : n° de version de la liste des sauvegardes + résumés déjà calculés (mémoire seulement) */
 async function bkList(){try{return(await phOp('readonly',st=>st.getAll(IDBKeyRange.bound('__bk_','__bk_\uffff')))||[]).filter(x=>String(x.id).startsWith('__bk_')).sort((a,b)=>b.d-a.d)}catch(e){return[]}}
-async function autoSnap(reason,data){try{data=data||BOOT_LS;if(!data.coach_profil&&!data.coach_journal)return;const day=new Date().toISOString().slice(0,10),id='__bk_'+day+(reason==='maj'?'_maj_'+Date.now():'');
+async function autoSnap(reason,data){try{data=data||BOOT_LS;if(data&&data.coach_pushSeed){data={...data};delete data.coach_pushSeed}if(!data.coach_profil&&!data.coach_journal)return;const day=new Date().toISOString().slice(0,10),id='__bk_'+day+(reason==='maj'?'_maj_'+Date.now():reason&&reason!=='jour'?'_'+String(reason).slice(0,5).replace(/[^a-z]/g,'')+'_'+Date.now():'');
   await phOp('readwrite',st=>st.put({id,data,d:Date.now(),v:APP_VERSION,reason,n:Object.keys(data).length}));BKGEN++;
   await bkPrune()}catch(e){}}
 /* garde : 14 derniers jours + 8 dernières mises à jour + 1 par mois pendant 12 mois + 4 avant restauration/compactage */
@@ -5141,7 +5145,7 @@ renderS=function(){
   const lastN=SL[today()],sleepLow=lastN&&dur(lastN.c,lastN.l)<360,cc=CHK[today()],sore=cc&&cc.c>=4,dl=deloadNeeded();
   const g=suggest(x),p=clean(x.muscles),s=clean(x.muscles_secondaires),u=SX.unit(x),fx=S._fix;delete S._fix;if(fx&&fx.rir!=null)S.rir=+fx.rir;
   const ls=x.sets[x.sets.length-1],kg0=fx?fx.kg:ls?ls.kg:g.kg,r0=fx?fx.reps:ls?ls.reps:g.reps,prev=lastSets(x.nom)||[],cur=x.sets.length,rows=Math.max(n,cur+1);
-  const bw=!num(kg0)&&SX.bw(x),cardio=/\b(course|marche|v[ée]lo|rameur|elliptique|tapis|cardio)\b/i.test(x.nom+' '+(x.machine||''));
+  const cardio=/\b(course|marche|v[ée]lo|rameur|elliptique|tapis|cardio)\b/i.test(x.nom+' '+(x.machine||'')),timed=/[ée]chauffement|[ée]tirement|mobilit[ée]/i.test(x.nom)||/\bmin\b|minute|\d+\s*s\b|secondes?/i.test(String(x.reps||'')),bw=!num(kg0)&&SX.bw(x)&&!cardio&&!timed;
   const tips=[];if(!cur&&g.note)tips.push(['',g.note]);
   if((sleepLow||sore||dl)&&S.i===0&&!cur)tips.push(['warn',(sleepLow?'Nuit courte : fais une série de moins par exercice aujourd\'hui. ':'')+(sore?'Grosses courbatures : allège de 25 %. ':'')+(dl&&!sleepLow&&!sore?'Ton corps a besoin d\'une semaine plus légère : moitié moins de séries, 4 répétitions en réserve.':'')]);
   if(cardio&&!cur)tips.push(['',`Zone 2 : ${hrZones().z2.join('–')} pulsations/min, tu peux parler en phrases. Fractionné : ${hrZones().hiit.join('–')}.`]);
@@ -5591,6 +5595,7 @@ const PS={
  sii2:['La Revue du Praticien · Conseils diététiques dans le côlon irritable','https://www.larevuedupraticien.fr/outil/conseils-dietetiques-en-cas-de-syndrome-de-lintestin-irritable'],
  mici:['AFA Crohn RCH France · Manger en période de rémission (sante.fr)','https://www.sante.fr/node/1252891'],
  mici2:['AFA Crohn RCH France · Manger en poussée (recommandations HAS ALD 24)','https://www.sante.fr/node/1252763'],
+ micist:['AFA Crohn RCH France · MICI : en cas de sténose (sante.fr)','https://www.sante.fr/node/1252895'],
  diver:['HAS · Prise en charge de la diverticulite colique (2017)','https://www.has-sante.fr/upload/docs/application/pdf/2017-12/prise_en_charge_medicale_et_chirurgicale_-_recommandations.pdf'],
  diver2:['sante.fr · La diverticulite','https://www.sante.fr/node/1268352'],
  migr:['sante.fr · Migraine, une maladie de mieux en mieux connue','https://www.sante.fr/node/1252398'],
@@ -5600,6 +5605,7 @@ const PS={
  veine:['Vidal · Jambes lourdes : traitements et hygiène de vie','https://www.vidal.fr/maladies/coeur-circulation-veines/jambes-lourdes/traitements.html'],
  veine2:['sante.fr · Jambes lourdes','https://www.sante.fr/jambes-lourdes'],
  arthsf:['sante.fr · Arthrose et rhumatismes','https://www.sante.fr/node/2055459'],
+ sfhta:['Société française d’hypertension artérielle · Alimentation et tension (mise au point 2024)','https://www.sfhta.eu/wp-content/uploads/2024/12/Mise-au-Point-nutrition-SFHTA-10-12-2024-1.pdf'],
  htamemo:['HAS · Hypertension artérielle : des outils pour une prise en charge optimale','https://www.has-sante.fr/jcms/pprd_2974311/fr/hypertension-arterielle-des-outils-pour-une-prise-en-charge-optimale'],
  dyslip:['Ville de Paris · Alimentation et pathologies (cholestérol, tension)','https://cdn.paris.fr/paris/2025/12/11/alimentation-et-pathologies-W6Gw.pdf']
 };
@@ -5632,11 +5638,11 @@ const PATHO={
   ev:['de bloquer ta respiration en forçant : souffle toujours pendant l’effort','les positions tenues longtemps en force (gainage long, chaise contre le mur) et les charges maximales','un effort modéré ou intense si ta tension au repos est très haute (180/110 ou plus) : consulte d’abord','la grosse chaleur si tu prends un diurétique : bois régulièrement'],
   st:['un mal de tête violent ou une vue trouble','un vertige après la séance : assieds-toi, la tension peut baisser fort après l’effort, même quelques heures après'],
   pr:'si ta tension n’est pas encore équilibrée, si tu as des symptômes à l’effort, ou avant des efforts intenses',
-  a:{k:['Sel : au maximum 6 g par jour (repère HAS : 6 à 8 g au maximum), soit à peu près une cuillère à café rase en tout, sel caché compris.','Le sel caché est surtout dans le pain, le fromage, la charcuterie, les plats préparés, les soupes et sauces toutes prêtes.','Une alimentation équilibrée et, si tu es en surpoids, une perte de poids modérée.','Alcool : réduis-le ou arrête-le.'],p:['légumes, fruits, légumineuses','herbes, épices, ail, citron à la place du sel','poisson, volaille, œufs','eau du robinet'],m:['charcuterie, fromages très salés','plats préparés, pizzas, chips, biscuits apéritif','bouillon cube, sauce soja','alcool'],pi:['les céréales du petit-déjeuner et les biscottes sont salées','certaines eaux gazeuses sont riches en sodium','saler avant d’avoir goûté']},
+  a:{k:['Sel : moins de 5 g par jour (Société française d’hypertension, 2024 ; la HAS disait 6 à 8 g en 2016), soit à peu près une cuillère à café rase en tout, sel caché compris.','Le sel caché est surtout dans le pain, le fromage, la charcuterie, les plats préparés, les soupes et sauces toutes prêtes.','Une alimentation équilibrée et, si tu es en surpoids, une perte de poids modérée.','Alcool : réduis-le ou arrête-le.'],p:['légumes, fruits, légumineuses','herbes, épices, ail, citron à la place du sel','poisson, volaille, œufs','eau du robinet'],m:['charcuterie, fromages très salés','plats préparés, pizzas, chips, biscuits apéritif','bouillon cube, sauce soja','alcool'],pi:['les céréales du petit-déjeuner et les biscottes sont salées','certaines eaux gazeuses sont riches en sodium','saler avant d’avoir goûté']},
   h:['Prends ta tension à la maison si ton médecin te l’a demandé, et note-la.','Arrêter le tabac protège ton cœur, même s’il ne change pas directement la tension.'],
-  sv:[['sel',6]],pg:{f:'meta',ban:['iso']},src:['hta','htap','htamemo'],
+  sv:[['sel',5]],pg:{f:'meta',ban:['iso']},src:['hta','htap','htamemo','sfhta'],
   ias:'Hypertension : endurance modérée 30 min/j 3 à 7 j/sem ; renforcement 2-3 j/sem charges modérées en soufflant ; aucun blocage respiratoire, pas de gainage long ni de chaise statique ni de charges maximales ; avec bêtabloquant, intensité selon l’essoufflement (0-10) et non le cardio.',
-  ian:'Hypertension : sel 6 g/j maximum au total ; aucune charcuterie, fromage très salé, bouillon cube, sauce soja ni plat préparé ; assaisonne aux herbes, épices et citron.'},
+  ian:'Hypertension : moins de 5 g de sel par jour au total ; aucune charcuterie, fromage très salé, bouillon cube, sauce soja ni plat préparé ; assaisonne aux herbes, épices et citron.'},
  chol:{s:'cholestérol',r:'Bouger régulièrement protège tes artères et aide ton traitement contre le cholestérol à mieux agir. Avec une alimentation pauvre en graisses saturées, c’est la base de la prise en charge.',
   f:[['Endurance','150 à 300 minutes par semaine d’intensité modérée (effort 5-6 sur 10), en 3 à 5 fois.'],['Renforcement','Au moins 2 séances par semaine.'],['Souplesse','2 à 3 fois par semaine.']],
   ev:['les efforts violents si tu n’as pas bougé depuis longtemps : commence doucement'],
@@ -5839,8 +5845,8 @@ const PATHO={
   ev:['de prolonger un régime sans résidu après la poussée','d’éliminer d’office le gluten, le lactose, les fruits ou les légumes'],
   st:['une poussée (diarrhée avec du sang, douleurs, fièvre) → appelle ton gastro-entérologue','des vomissements ou un ventre très gonflé et douloureux → urgence'],
   pr:'en poussée, l’alimentation et l’effort s’adaptent avec ton équipe',
-  a:{k:['En dehors des poussées, une alimentation variée et riche en fibres est recommandée.','Pendant une poussée, l’alimentation peut être pauvre en fibres un temps, puis on élargit rapidement.','Une diététicienne habituée aux MICI peut t’aider.'],p:['alimentation variée','fibres bien tolérées hors poussée'],m:['les aliments que tu as remarqué mal tolérer'],pi:['le régime sans résidu prolongé']},
-  sv:[],pg:{f:'doux'},src:['mici','mici2'],
+  a:{k:['En dehors des poussées, une alimentation variée et riche en fibres est recommandée.','Exception : si ton médecin a trouvé un rétrécissement de l’intestin (sténose), suis ses consignes : aliments mous, fruits et légumes sans peau ni pépins, bien mâchés.','Pendant une poussée, l’alimentation peut être pauvre en fibres un temps, puis on élargit rapidement.','Une diététicienne habituée aux MICI peut t’aider.'],p:['alimentation variée','fibres bien tolérées hors poussée'],m:['les aliments que tu as remarqué mal tolérer'],pi:['le régime sans résidu prolongé']},
+  sv:[],pg:{f:'doux'},src:['mici','mici2','micist'],
   ias:'MICI : activité modérée hors poussée seulement ; en poussée, repos relatif.',
   ian:'MICI hors poussée : alimentation variée et équilibrée, fibres bien tolérées ; en poussée, pauvre en fibres temporairement.'},
  diverticulose:{s:'diverticules',r:'Une alimentation riche en fibres et l’activité physique sont recommandées pour prévenir les problèmes de diverticules. Aucun régime restrictif n’est nécessaire pour éviter une récidive de diverticulite.',
@@ -5878,7 +5884,7 @@ const PATHO={
   f:[['Pendant le traitement','Marche et étirements, effort léger (3-4 sur 10).'],['Ensuite','Reprise progressive vers les repères de tous.']],
   ev:['les efforts intenses tant que tu es très fatigué(e) ou essoufflé(e)'],
   st:['des saignements inhabituels (selles noires, règles très abondantes) → consulte'],pr:'pour trouver d’où vient le manque de fer : c’est important de chercher la cause',
-  a:{k:['Le fer le mieux absorbé se trouve dans la viande rouge, le boudin, le foie, les poissons et les fruits de mer.','Lentilles, pois chiches et haricots en contiennent aussi : associe-les à un aliment riche en vitamine C (poivron, agrumes, kiwi, brocoli).','Thé et café pendant le repas freinent l’absorption du fer : prends-les 1 à 2 heures après.','Le fer prescrit l’est souvent pour 3 à 6 mois : ne l’arrête pas trop tôt.'],p:['viande rouge, boudin','lentilles, pois chiches','agrumes, kiwi, poivron'],m:['thé ou café au repas'],pi:['les épinards contiennent moins de fer qu’on le croit']},
+  a:{k:['Le fer le mieux absorbé se trouve dans la viande rouge, le boudin, le foie, les poissons et les fruits de mer. Si tu es enceinte : pas de foie ni de boudin, et tout bien cuit.','Lentilles, pois chiches et haricots en contiennent aussi : associe-les à un aliment riche en vitamine C (poivron, agrumes, kiwi, brocoli).','Thé et café pendant le repas freinent l’absorption du fer : prends-les 1 à 2 heures après.','Le fer prescrit l’est souvent pour 3 à 6 mois : ne l’arrête pas trop tôt.'],p:['viande rouge, boudin','lentilles, pois chiches','agrumes, kiwi, poivron'],m:['thé ou café au repas'],pi:['les épinards contiennent moins de fer qu’on le croit']},
   sv:[['fer']],pg:{f:'doux',cm:[10,15,15,20],eff:[[3,4],[3,4],[3,4],[4,5]]},src:['anemie','anses','fer'],
   ias:'Anémie : effort léger (3-4/10) tant qu’elle n’est pas corrigée, reprise progressive.',
   ian:'Anémie : aliments riches en fer (viande rouge, boudin, poisson, légumineuses) avec une source de vitamine C au même repas, pas de thé ni de café pendant le repas.'},
@@ -5887,10 +5893,10 @@ const PATHO={
   ev:['le renforcement en bloquant ta respiration','les exercices allongée sur le dos à partir de 24 semaines d’aménorrhée','les activités avec risque de chute ou de choc','la chaleur humide et l’altitude'],
   st:['des saignements, des contractions régulières et douloureuses qui ne passent pas au repos, une perte de liquide','un vertige, un malaise, des maux de tête','une douleur ou une oppression dans la poitrine → consulte en urgence','un essoufflement excessif qui ne passe pas au repos','une faiblesse musculaire qui gêne ton équilibre','une douleur ou un gonflement d’un mollet'],
   pr:'à chaque étape de ta grossesse, surtout en cas de complication',
-  a:{k:['Aucun aliment à risque : lait cru et fromages au lait cru, charcuterie, viande, poisson ou œufs crus ou peu cuits.','Zéro alcool.','Pas de régime pendant la grossesse.','Lave bien les fruits, les légumes et les herbes.'],p:['viandes, poissons et œufs bien cuits','fromages au lait pasteurisé'],m:['alcool','lait cru, charcuterie','poisson cru, sushis'],pi:['les fromages « au lait cru » sous l’emballage']},
+  a:{k:['Aucun aliment à risque : lait cru et fromages au lait cru, charcuterie, viande, poisson ou œufs crus ou peu cuits.','Pas de foie ni de produits à base de foie (pâté, foie gras) : trop de vitamine A pour le bébé.','Zéro alcool.','Pas de régime pendant la grossesse.','Lave bien les fruits, les légumes et les herbes.'],p:['viandes, poissons et œufs bien cuits','fromages au lait pasteurisé'],m:['alcool','lait cru, charcuterie','poisson cru, sushis','foie, pâté de foie, foie gras'],pi:['les fromages « au lait cru » sous l’emballage']},
   sv:[],pg:{f:'gros'},src:['gros'],
   ias:'Grossesse : intensité modérée (parler possible), 60 à 90 min maximum par séance, pas de blocage respiratoire, aucun exercice sur le dos dès 24 SA, aucun risque de chute ou de choc.',
-  ian:'Grossesse : zéro alcool, cuisson complète des viandes, poissons et œufs.'},
+  ian:'Grossesse : zéro alcool, cuisson complète des viandes, poissons et œufs ; ni foie ni produit à base de foie (vitamine A), ni charcuterie, ni lait cru, ni poisson cru ou fumé.'},
  postpartum:{s:'post-partum',fort:1,cap:5,r:'Après la naissance, la reprise se fait par étapes : d’abord la marche, la respiration et le périnée, puis des activités sans impact, puis le renforcement.',
   f:[['Étape 1','Marche, respiration, contractions du périnée.'],['Étape 2','Activités sans impact (vélo, natation quand tout est cicatrisé), renforcement léger.'],['Course et sauts','Pas avant 12 semaines environ, et après le feu vert de ta sage-femme ou de ton médecin.']],
   ev:['les abdominaux en enroulement (crunch) au début','la course et les sauts avant le feu vert','de porter lourd en poussant sur le ventre'],
@@ -6131,11 +6137,11 @@ const patActBtns=k=>{const pa=patActive();return pa&&pa.k===k?`<p class="mute" s
 
 /* 5. Suivi diététique dans le journal : sel, sucres, graisses saturées, fibres, fer, calcium, protéines (reins) */
 const PTRK={
- sel:{n:'Sel',u:'g',max:1,key:'se',lim:v=>v||6,src:'repère HAS pour la tension : 6 g maximum',tip:'Tu dépasses ton repère de sel. Pour la suite de la journée : pas de charcuterie, de fromage ni de plat tout prêt ; assaisonne avec des herbes, du citron, des épices.'},
+ sel:{n:'Sel',u:'g',max:1,key:'se',lim:v=>v||6,src:'repère : moins de 5 g pour la tension (Société française d’hypertension, 2024), 6 g au maximum sinon',tip:'Tu dépasses ton repère de sel. Pour la suite de la journée : pas de charcuterie, de fromage ni de plat tout prêt ; assaisonne avec des herbes, du citron, des épices.'},
  sucres:{n:'Sucres',u:'g',max:1,key:'su',lim:()=>100,src:'ANSES : 100 g de sucres par jour au maximum ; ton équipe peut viser moins',tip:'Beaucoup de sucres aujourd’hui : pour la suite, de l’eau plutôt qu’une boisson sucrée, un fruit entier plutôt qu’un dessert sucré.'},
  ags:{n:'Graisses saturées',u:'g',max:1,key:'sa',lim:(v,kc)=>Math.round(kc*(v||12)/100/9),src:'environ 10 à 12 % de tes calories',tip:'Pas mal de graisses saturées : choisis poisson, volaille ou légumineuses, et l’huile de colza ou d’olive plutôt que beurre ou crème.'},
  fibres:{n:'Fibres',u:'g',min:1,key:'f',lim:v=>v||null,src:'ANSES : 30 g par jour',tip:'Il manque des fibres : légumes, fruits, pain complet ou légumineuses au prochain repas (augmente doucement si ton ventre est sensible).'},
- fer:{n:'Fer',u:'mg',min:1,key:'fe',lim:()=>11,src:'ANSES : 11 mg par jour (16 mg si tes règles sont abondantes)',tip:'Pour le fer : viande rouge, boudin, poisson ou lentilles avec un fruit riche en vitamine C ; thé et café loin des repas.'},
+ fer:{n:'Fer',u:'mg',min:1,key:'fe',lim:()=>(P.santeL||[]).some(k=>k==='enceinte'||k==='allait')?16:11,src:'ANSES : 11 mg par jour, 16 mg pendant la grossesse, l’allaitement ou si tes règles sont abondantes',tip:'Pour le fer : viande rouge ou poisson bien cuits, lentilles ou pois chiches, avec un fruit riche en vitamine C ; thé et café loin des repas.'},
  ca:{n:'Calcium',u:'mg',min:1,key:'ca',lim:v=>v||950,src:'ANSES : 950 mg par jour',tip:'Pour le calcium : 2 à 3 produits laitiers par jour, ou une eau riche en calcium.'},
  protmax:{n:'Protéines (repère reins)',u:'g',max:1,key:'p',jr:1,lim:v=>num(P.poids)?Math.round(v*num(P.poids)):null,src:'repère fréquent 0,8 g par kilo, à valider avec ton néphrologue',tip:'Tu dépasses ton repère de protéines pour les reins : parles-en à ton néphrologue ou ta diététicienne pour fixer ton chiffre.'},
  gluc:{n:'Glucides',u:'g',info:1,key:'g',jr:1,lim:()=>null,src:'à répartir sur tes repas ; ta quantité se règle avec ton équipe',tip:''}
@@ -6188,7 +6194,7 @@ function patProd(p,a){const L=patL();if(!L.length||!a||!a.known)return null;cons
  if(L.includes('steatose')&&/alcool|\bvin\b|bi[èe]re|rhum|liqueur/.test(il+' '+nm))out.push(['ko','Contient de l’alcool : mauvais pour ton foie']);
  if(has(['rein','dialyse']).length){if(/e\s?33[89]|e\s?34[01]|e\s?45[0-2]|phosphate/.test(il))out.push(['mid','Additifs phosphatés : à limiter si tes reins sont fragiles (vois avec ton néphrologue)']);if(/chlorure de potassium|e\s?508/.test(il))out.push(['ko','Contient du chlorure de potassium (sel de régime) : demande à ton néphrologue'])}
  if(L.includes('sii')&&(/inuline|fructo-?oligo|chicor|sorbitol|maltitol|xylitol|mannitol|isomalt|e\s?96[05]|e\s?953|e\s?42[01]/.test(il)))out.push(['mid','Fibres fermentescibles ou polyols (FODMAP) : peut gonfler si ton ventre est sensible']);
- if(L.includes('enceinte')){if(/lait cru/.test(il+' '+nm))out.push(['ko','Au lait cru : à éviter pendant la grossesse']);if(/alcool|\bvin\b|bi[èe]re/.test(il+' '+nm))out.push(['ko','Contient de l’alcool : zéro alcool pendant la grossesse'])}
+ if(L.includes('enceinte')){if(/lait cru/.test(il+' '+nm))out.push(['ko','Au lait cru : à éviter pendant la grossesse']);if(/\bfoie\b/.test(nm+' '+il))out.push(['ko','À base de foie : à éviter pendant la grossesse (trop de vitamine A)']);if(/alcool|\bvin\b|bi[èe]re/.test(il+' '+nm))out.push(['ko','Contient de l’alcool : zéro alcool pendant la grossesse'])}
  if(has(['diverticulose','diab2','chol','obesite']).length&&num(c.fibres)>=6)out.push(['ok','Riche en fibres (6 g ou plus pour 100 g)']);
  return{out,L}}
 {const _pa=prodAnalyse;prodAnalyse=function(p){const a=_pa.apply(this,arguments);try{const r=patProd(p,a);if(r&&Array.isArray(a.me))r.out.forEach(x=>{if(x[0]!=='ko')return;const g=x[2],add=g==='sel'?!r.L.includes('hta'):g==='suc'?!r.L.some(k=>/^diab/.test(k)):g==='ags'?!r.L.includes('chol'):true;if(add&&!a.me.some(y=>y[1]===x[1])){a.me.push(['ko',x[1]]);a._pat=1}});
@@ -6533,7 +6539,7 @@ const ICO={play:'<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="
 const VWN={face:'vue de face',dessus:'vue de dessus',haut:'vue de face',side:'vue de profil'};
 function panel(key,role){return`<div class="anim xdA${role==='bad'?' xdBad':role==='good'?' xdGood':''}" data-anim data-k="${ESC(key)}" data-xd="${role}" role="img" aria-label="${role==='bad'?'À éviter':role==='good'?'Comme ça':'Démonstration pas à pas'}"><svg viewBox="0 -24 240 226" aria-hidden="true"></svg></div>`}
 function body(p){const s=state(p),n=s.mode==='pas'?s.inf.steps.length:s.inf.errs.length,i=s.i;
-  let stage;if(s.mode==='pas')stage=panel(s.inf.key,'pas');else{const e=s.inf.errs[i];let wide='';try{if(!e.none&&D.vb(e.key,e.view,e.ops).ar>1.05)wide=' wide'}catch(x){}stage=e.none?`<div class="xdduo one"><figure class="xdcell good"><figcaption>${ICO.warn}<span>À éviter</span></figcaption>${panel(s.inf.key,'pas')}</figure></div>`:`<div class="xdduo${wide}"><figure class="xdcell bad"><figcaption><b aria-hidden="true">✗</b><span>À éviter</span></figcaption>${panel(e.key,'bad')}</figure><figure class="xdcell good"><figcaption><b aria-hidden="true">✓</b><span>Comme ça</span></figcaption>${panel(e.key,'good')}</figure></div>`}
+  let stage;if(s.mode==='pas')stage=panel(s.inf.key,'pas');else{const e=s.inf.errs[i];let wide='';try{if(!e.none&&D.vb(e.key,e.view,e.ops).ar>1.05)wide=' wide'}catch(x){}stage=e.none?`<div class="xdduo one"><figure class="xdcell good"><figcaption><b aria-hidden="true">✓</b><span>Le bon geste</span></figcaption>${panel(s.inf.key,'pas')}</figure></div>`:`<div class="xdduo${wide}"><figure class="xdcell bad"><figcaption><b aria-hidden="true">✗</b><span>À éviter</span></figcaption>${panel(e.key,'bad')}</figure><figure class="xdcell good"><figcaption><b aria-hidden="true">✓</b><span>Comme ça</span></figcaption>${panel(e.key,'good')}</figure></div>`}
   const dots=n>1?`<div class="xddots" role="group" aria-label="${s.mode==='pas'?'Étapes':'Erreurs'}">${Array.from({length:n},(_,k)=>`<button class="ghost" data-act="xdDot" data-v="${k}" aria-label="${s.mode==='pas'?'Étape':'Erreur'} ${k+1}"${k===i?' aria-current="step"':''}><i></i></button>`).join('')}</div>`:'';
   return`<div class="xdtop"><div class="seg xdseg" role="group" aria-label="Démonstration"><button class="${s.mode==='pas'?'on':''}" data-act="xdMode" data-v="pas" aria-pressed="${s.mode==='pas'}">Pas à pas</button><button class="${s.mode==='err'?'on':''}" data-act="xdMode" data-v="err" aria-pressed="${s.mode==='err'}">À éviter</button></div><button class="ghost xdx" data-act="xdClose" aria-label="Fermer la démonstration">${ICO.close}</button></div>
   <div class="xdstage">${stage}</div><div class="xdcap" aria-live="polite"></div>${dots}
@@ -6857,11 +6863,11 @@ const NPAD=()=>Rc(30,168,30,12,5,P,.75)+Rc(26,180,8,G-180,2,P,.5);
 S.nordicass={n:'Nordic curl assisté',m:['ham','glute'],p:[()=>X.mat()+NPAD()],pf:[J=>X.band([14,26],J.sh)],k:[NP(0,{e:.2}),NP(0,{e:.2}),NP(36,{e:.8}),NP(58,{e:1}),NPF(70,{e:.7}),NPF(48,{e:.6})],tp:[.5,1.6,1.4,.6,.6,.9]};
 S.nordic={n:'Nordic curl',m:['ham','glute'],p:[()=>X.mat()+NPAD()],k:[NP(0,{e:.2}),NP(0,{e:.2}),NP(40,{e:.9}),NP(66,{e:1}),NPF(76,{e:.7}),NPF(50,{e:.6})],tp:[.5,1.8,1.6,.5,.5,1]};
 /* ===== Ponts ===== */
-const TB0={hx:112,hy:180,t:-28,n1:[168,GF],n2:[165,GF],kb1:-1,kb2:-1,w1:[76,186],w2:[73,186],wb1:1,wb2:1,hd:-10,e:.2};
-const TB1={hx:128,hy:136,t:-90,n1:[170,GF],n2:[167,GF],kb1:-1,kb2:-1,w1:[76,186],w2:[73,186],wb1:1,wb2:1,hd:0,e:1};
+const TB0={hx:112,hy:180,t:-28,n1:[168,GF],n2:[165,GF],kb1:1,kb2:1,w1:[76,186],w2:[73,186],wb1:1,wb2:1,hd:-10,e:.2};
+const TB1={hx:128,hy:136,t:-90,n1:[170,GF],n2:[167,GF],kb1:1,kb2:1,w1:[76,186],w2:[73,186],wb1:1,wb2:1,hd:0,e:1};
 S.tablebridge={n:'Pont table',m:['glute','shoulder','ham'],p:[()=>X.mat()],k:[TB0,TB0,TB1,{...TB1,hy:137},TB1],tp:[.5,1,1.4,1.2,1]};
-const WH0={hx:125,hy:GB,tt:[73,GB],n1:[164,GF],n2:[161,GF],kb1:-1,kb2:-1,w1:[80,186],w2:[77,186],wb1:-1,wb2:-1,hd:0,e:.1};
-const WH1={hx:132,hy:112,tt:[92,140],sp:-9,n1:[164,GF],n2:[161,GF],kb1:-1,kb2:-1,w1:[74,186],w2:[71,186],wb1:-1,wb2:-1,hd:0,e:1};
+const WH0={hx:125,hy:GB,tt:[73,GB],n1:[164,GF],n2:[161,GF],kb1:1,kb2:1,w1:[80,186],w2:[77,186],wb1:1,wb2:1,hd:0,e:.1};
+const WH1={hx:132,hy:112,tt:[92,140],sp:-9,n1:[164,GF],n2:[161,GF],kb1:1,kb2:1,w1:[64,186],w2:[61,186],wb1:1,wb2:1,hd:0,e:1};
 S.wheel={n:'Pont complet (roue)',m:['back','shoulder','glute'],p:[()=>X.mat()],k:[WH0,WH0,WH1,{...WH1,hy:113.4},WH1],tp:[.6,1.3,1.4,1.2,1.2]};
 /* ===== Mobilité ===== */
 const H9A={cx:120,hy:176,KL:[146,172],NL:[100,185],KR:[178,175],NR:[188,160],wL:[128,146],wR:[112,146],wbL:1,wbR:-1,lean:-3,e:.7};
@@ -7017,7 +7023,7 @@ const CHS=YK([118,HY],2,[122,GF],[119,GF],add(shOf([118,HY],2),[2,54]),add(shOf(
 const CHH=YK([100,134],32,[122,GF],[119,GF],add(shOf([100,134],32),up(30,54)),add(shOf([100,134],32),up(28,54)),{wb:1,hd:-8,e:1});
 S.yogachaise={n:'Chaise (yoga)',m:['quad','glute','shoulder'],k:[CHS,CHS,CHH,{...CHH,hy:135.2},CHH],tp:[.6,1.2,1.8,1.8,1.2]};
 const TRS={cx:120,hy:HY,nL:[111,GF],nR:[129,GF],wL:[116,78],wR:[124,78],wbL:1,wbR:-1,e:.1};
-const TRT={...TRS,nR:[116,150],e:.6},TRU={...TRT,wL:[115,-4],wR:[125,-4],e:1};
+const TRT={...TRS,nR:[117,127],e:.6},TRU={...TRT,wL:[115,-4],wR:[125,-4],e:1};
 S.arbre={n:'Arbre',fr:1,m:['calf','glute','abs'],k:[TRS,TRT,TRU,{...TRU,cx:121.6,lean:-1.5},{...TRU,cx:118.4,lean:1.5},TRU,TRT],tp:[.7,.9,1.2,1.2,1.2,.9,.9]};
 const CB0={hx:100,hy:181,t:86,n1:[16,184],n2:[13,184],ft1:-100,ft2:-100,w1:[158,186],w2:[155,186],wb1:-1,wb2:-1,hd:0,e:.1};
 const CB1={...CB0,t:58,sp:-8,hd:-26,e:1};
@@ -7477,6 +7483,13 @@ try{const b0=beep;let t=0;
  document.addEventListener('visibilitychange',()=>{if(document.hidden)idle()});
  const o=$('ov');if(o)new MutationObserver(()=>{if(!o.classList.contains('on')){clearTimeout(t);t=setTimeout(idle,3000)}}).observe(o,{attributes:true,attributeFilter:['class']})}catch(e){}
 /* === /ag_perf2 === */
+/* === rev1 === vérification indépendante : copie de secours avant une restauration par fichier ou code collé */
+{const _rf=restoreFrom;restoreFrom=function(txt){try{const t=String(txt||''),a=t.indexOf('{'),b=t.lastIndexOf('}');if(a>=0&&b>a){JSON.parse(t.slice(a,b+1));
+  const cur={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('coach_'))cur[k]=localStorage.getItem(k)}
+  /* identifiant propre (comme « _maj_ ») : ne remplace pas la sauvegarde du jour ; même format d'enregistrement que autoSnap, rangée « autre » par bkPrune (4 gardées) */
+  if(cur.coach_profil||cur.coach_journal)phOp('readwrite',st=>st.put({id:'__bk_'+new Date().toISOString().slice(0,10)+'_rest_'+Date.now(),data:cur,d:Date.now(),v:APP_VERSION,reason:'avant-restauration',n:Object.keys(cur).length})).then(()=>{BKGEN++;return bkPrune()}).catch(()=>{})}}catch(e){}
+  return _rf.apply(this,arguments)}}
+/* === /rev1 === */
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -8314,7 +8327,7 @@ function renderHome(){try{renderNow()}catch(e){}
   const wk=LOG.filter(l=>l.d>=weekKey()).length,doneToday=LOG.some(l=>l.d===today());
   if(PR&&arr(PR.jours).length){let li=-1;for(let i=LOG.length-1;i>=0&&li<0;i--)li=PR.jours.findIndex(j=>j.nom===LOG[i].nom);const j=PR.jours[(li+1)%PR.jours.length];
     $('homeSeance').innerHTML=`<div class="row sb"><span class="mute" style="font-weight:700">${doneToday?'Bravo, séance faite aujourd\'hui':'Ta prochaine séance'}</span><span class="mute">${wk} / ${esc(P.jours||3)} cette semaine</span></div>
-    <h2 style="margin:8px 0 2px">${esc(j.nom)}</h2><div class="mute">${esc(j.focus||'')} · ${arr(j.exercices).length} exercice${arr(j.exercices).length>1?'s':''} · ${esc(j.duree_min||'')} min</div>
+    <h2 style="margin:8px 0 2px">${esc(j.nom)}</h2><div class="mute">${esc(j.focus||'')}${j.focus?' · ':''}${arr(j.exercices).length} exercice${arr(j.exercices).length>1?'s':''}${j.duree_min?' · '+esc(j.duree_min)+' min':''}</div>
     <div class="row" style="margin-top:14px"><button data-act="start" data-j="${PR.jours.indexOf(j)}" style="flex:1">Démarrer la séance</button><button class="ghost" data-act="goPane" data-v="sport" data-p="programme">Programme</button></div>`}
   else $('homeSeance').innerHTML=`<div class="hcard"><span class="ic c-red"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><h3>Ton programme sur mesure</h3><div class="mute">Le coach te crée une semaine d'entraînement adaptée.</div></div></div><div class="row" style="margin-top:14px"><button data-act="genProgHome" style="flex:1">Créer mon programme</button><button class="ghost" data-act="goPane" data-v="sport" data-p="prets" style="flex:1">Séance prête</button></div>`;
   /* menu */
@@ -8739,7 +8752,7 @@ function runBreath(){const m=BMODES[BM],c=document.querySelector('#breath .bcirc
 let NZ=null,NK='rain',NT=null;
 const SNDS={rain:'Pluie',waves:'Vagues',stream:'Ruisseau',storm:'Orage',wind:'Vent',birds:'Oiseaux','summer-night':'Nuit d\'été',fireplace:'Feu de cheminée','coffee-shop':'Café',train:'Train',boat:'Bateau'};
 function sndStart(){const a=new Audio('sounds/'+NK+'.m4a');a.loop=true;a.preload='auto';a.setAttribute('playsinline','');const v=()=>Math.min(1,num($('nVol').value)/100);try{a.volume=0}catch(e){}
-  NZ={el:a,k:NK};a.play().then(()=>{let x=0;const up=setInterval(()=>{x+=.05;try{a.volume=Math.min(v(),x*v()/1)}catch(e){}if(x>=1)clearInterval(up)},100)}).catch(()=>{toast('Touche encore « Lancer le son »');noiseStop()});
+  NZ={el:a,k:NK};a.play().then(()=>{let x=0;const up=setInterval(()=>{x+=.05;try{a.volume=Math.min(v(),x*v()/1)}catch(e){}if(x>=1)clearInterval(up)},100)}).catch(e=>{toast(navigator.onLine===false||e&&e.name==='NotSupportedError'?'Le son n’a pas pu se charger : il faut internet pour l’écouter.':'Touche encore « Lancer le son »');noiseStop()});
   try{if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:SNDS[NK],artist:'EdilganSuperCoach',album:'Sons pour s\'endormir',artwork:[{src:'icon-192.png',sizes:'192x192',type:'image/png'}]});navigator.mediaSession.setActionHandler('pause',()=>noiseStop());navigator.mediaSession.setActionHandler('stop',()=>noiseStop())}}catch(e){}
   $('nVol').oninput=()=>{if(NZ&&NZ.el)try{NZ.el.volume=v()}catch(e){}};
   const until=Date.now()+num($('nTime').value)*6e4,chk=()=>{if(!NZ||NZ.el!==a)return;const l=until-Date.now();if(l<=0)return noiseStop(true);$('nLeft').textContent='Arrêt dans '+Math.ceil(l/6e4)+' min';if(l<60e3)try{a.volume=v()*(l/60e3)}catch(e){}};
@@ -8783,10 +8796,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.27-97';
+const APP_VERSION='2026.11.28-98';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.28-98','Vérification n°1','14 corrections : le bouton « Annuler » des messages remarche, une copie de sécurité est faite avant chaque restauration, repères santé mis à jour (sel sous 5 g pour la tension, foie déconseillé pendant la grossesse), animations corrigées, scanner disponible hors ligne.','accueil',''],
  ['2026.11.27-97','Animations plus fluides','Les démonstrations sont redessinées sur place au lieu d\'être recréées : séance et repos environ 60 % plus légers, bibliothèque d\'exercices 2 fois plus légère.','sport','exos'],
  ['2026.11.27-96','Encore plus léger','Moins de travail quand l\'app est en arrière-plan (de 922 réveils à 10 en 2 heures), mémoire au démarrage divisée par 2, écrans de séance et de repos plus fluides, photos et calendrier qui ne sont plus recalculés pour rien.','accueil',''],
  ['2026.11.27-95','180 exercices, calisthénie complète','120 nouveaux exercices animés : calisthénie (tractions, dips, pompes jusqu\'à une main, muscle-up, pistol, L-sit, handstand, front et back lever, planche, drapeau…), HIIT, kettlebell, TRX, boxe, yoga, Pilates, mobilité, équilibre. Échelles de progression, test de niveau et 11 nouvelles séances prêtes.','sport','exos'],
