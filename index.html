@@ -4453,7 +4453,7 @@ const FI_ACTS={fiCat(b){FIC=b.dataset.v;renderFiches()},santeNone(b){store.set('
 /* ---- Signatures : yeux du chat, vraie lune, veilleuse ---- */
 addEventListener('pointermove',e=>{if(RM||document.documentElement.dataset.fx==='off'||document.documentElement.dataset.skin!=='pets')return;const s=document.querySelector('.hero svg.pets');if(!s)return;const r=s.getBoundingClientRect(),c=v=>Math.max(-1,Math.min(1,v));s.style.setProperty('--ex',c((e.clientX-r.left)/r.width*2-1)*2.5+'px');s.style.setProperty('--ey',c((e.clientY-r.top)/300)*2+'px')},{passive:true});
 function skyTick(){try{const ph=((Date.now()-Date.UTC(2000,0,6,18,14))/864e5/29.530588)%1,lit=(1-Math.cos(2*Math.PI*ph))/2;document.documentElement.style.setProperty('--mx',(ph<.5?-1:1)*Math.max(3,lit*32)+'px');const h=new Date().getHours();document.documentElement.toggleAttribute('data-late',h>=22||h<6)}catch(e){}}
-skyTick();setInterval(skyTick,10*6e4);
+skyTick();agVisInterval(skyTick,10*6e4,1);
 
 
 /* ---- Économie de batterie : décor en pause après 30 s sans toucher l'écran ---- */
@@ -4505,7 +4505,7 @@ async function autoSnap(reason,data){try{data=data||BOOT_LS;if(!data.coach_profi
   await phOp('readwrite',st=>st.put({id,data,d:Date.now(),v:APP_VERSION,reason,n:Object.keys(data).length}));BKGEN++;
   await bkPrune()}catch(e){}}
 /* garde : 14 derniers jours + 8 dernières mises à jour + 1 par mois pendant 12 mois + 4 avant restauration/compactage */
-async function bkPrune(){const L=await bkList(),keep=new Set(),nb={jour:0,maj:0,autre:0},mois=new Set();
+async function bkPrune(){const L=await agBkMeta(),keep=new Set(),nb={jour:0,maj:0,autre:0},mois=new Set();
   for(const x of L){const r=x.reason==='maj'?'maj':x.reason==='jour'?'jour':'autre',m=new Date(x.d).toISOString().slice(0,7);
     if(r==='jour'&&nb.jour<14||r==='maj'&&nb.maj<8||r==='autre'&&nb.autre<4)keep.add(x.id);nb[r]++}
   [...L].reverse().forEach(x=>{const m=new Date(x.d).toISOString().slice(0,7);if(!mois.has(m)&&mois.size<12&&Date.now()-x.d<400*864e5){mois.add(m);keep.add(x.id)}});
@@ -4531,10 +4531,10 @@ const BK_ACTS={
 /* ===================== CALENDRIER : historique jour par jour, archivé pour toujours (IndexedDB) ===================== */
 let NOTES=store.get('notes',{});if(!NOTES||typeof NOTES!=='object'||Array.isArray(NOTES))NOTES={};
 const CALF=['repas','eau','poids','seances','sommeil','pas','humeur','pilules','note','mes','bonnes','chat','menu'];
-function dayData(d){const ses=LOG.filter(l=>l.d===d).map(l=>({nom:l.nom,min:l.min,type:l.type||'',ressenti:l.ressenti||'',ex:arr(l.ex).map(e=>({nom:e.nom,sets:arr(e.sets).map(x=>({kg:x.kg,reps:x.reps,s:x.s}))}))}));
-  const w=W.find(x=>x.d===d),day0=new Date(d+'T00:00').getTime(),ch=CH.filter(m=>m.t&&m.t>=day0&&m.t<day0+864e5).map(m=>({r:m.role,c:String(m.content).slice(0,600),t:m.t}));
+function dayData(d){const ses=agDX('L',d).map(l=>({nom:l.nom,min:l.min,type:l.type||'',ressenti:l.ressenti||'',ex:arr(l.ex).map(e=>({nom:e.nom,sets:arr(e.sets).map(x=>({kg:x.kg,reps:x.reps,s:x.s}))}))}));
+  const w=agDX('W',d),day0=new Date(d+'T00:00').getTime(),ch=agDX('C',d,day0).map(m=>({r:m.role,c:String(m.content).slice(0,600),t:m.t}));
   return{repas:Array.isArray(J[d])?J[d].map(e=>({nom:e.nom,kcal:e.kcal,p:e.p,g:e.g,l:e.l,part:e.part})):undefined,eau:EAU[d],poids:w?w.w:undefined,seances:ses.length||(LOG[0]&&d>=LOG[0].d)?ses:undefined,sommeil:SL[d],pas:PAS[d],humeur:CHK[d],
-    pilules:PLOG[d]?Object.keys(PLOG[d]).length:undefined,note:NOTES[d],mes:arr(MES).find(x=>x.d===d),bonnes:GOOD[d],chat:ch.length?ch:undefined,menu:MENUS[d]?arr(MENUS[d].repas).map(r=>r&&r.nom).filter(Boolean):undefined}}
+    pilules:PLOG[d]?Object.keys(PLOG[d]).length:undefined,note:NOTES[d],mes:agDX('M',d),bonnes:GOOD[d],chat:ch.length?ch:undefined,menu:MENUS[d]?arr(MENUS[d].repas).map(r=>r&&r.nom).filter(Boolean):undefined}}
 const hasData=m=>CALF.some(k=>m[k]!=null&&!(Array.isArray(m[k])&&!m[k].length)&&!(k==='menu'));
 async function archiveDays(days){let pre=null,n=0;if(days.length>3){try{pre=new Map(((await phOp('readonly',st=>st.getAll(IDBKeyRange.bound('__day_','__day_\uffff'))))||[]).map(x=>[x.id,x]))}catch(e){pre=null}}
   for(const d of days){try{if(pre&&++n%25===0)await new Promise(r=>setTimeout(r,0));const cur=dayData(d),old=(pre?pre.get('__day_'+d):await phOp('readonly',st=>st.get('__day_'+d)))||{},m={...old,id:'__day_'+d,d};
@@ -4543,7 +4543,7 @@ function memDays(){const s=new Set([...Object.keys(J),...Object.keys(EAU),...W.m
 let archT=0;function archSoon(){clearTimeout(archT);archT=setTimeout(()=>archiveDays([today(),dkey(Date.now()-864e5)]),1500)}
 setTimeout(()=>archiveDays(memDays()),4000);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')archiveDays([today()])});
-setInterval(()=>{if(document.visibilityState==='visible')archiveDays([today()])},120000);
+agVisInterval(()=>{if(document.visibilityState==='visible')archiveDays([today()])},120000);
 let CALM=null,CALD=null;
 async function calMonth(y,m){const pre=`__day_${y}-${String(m+1).padStart(2,'0')}-`;let A2=[];try{A2=(await phOp('readonly',st=>st.getAll(IDBKeyRange.bound(pre,pre+'￿'))))||[]}catch(e){}
   const map={};A2.forEach(x=>map[x.d]=x);memDays().filter(d=>d.startsWith(pre.slice(6))).forEach(d=>{const cur=dayData(d),m2={...(map[d]||{}),d};for(const k of CALF)if(cur[k]!==undefined)m2[k]=cur[k];map[d]=m2});return map}
@@ -4753,9 +4753,11 @@ const FXE=(()=>{
  let cur=null,box=null,pe=null,pr=0;
  const glowAt=(x,y)=>{if(!box){if(!cur)return;box=cur.getBoundingClientRect()}RL.setProperty('--lx',Math.round(x-box.left)+'px');RL.setProperty('--ly',Math.round(y-box.top)+'px')};
  const light=(el,x,y)=>{if(cur&&cur!==el)cur.classList.remove('fx-lit');cur=el;box=(el.classList.contains('hero')&&el.querySelector('.deco')||el).getBoundingClientRect();glowAt(x,y);el.classList.add('fx-lit')};
+ /* ag_perf2 : à l'appui, mesure reportée à l'image suivante (même rendu, sans mise en page forcée avant le clic) */
+ const lightD=(el,x,y)=>{if(cur&&cur!==el)cur.classList.remove('fx-lit');cur=el;box=null;el.classList.add('fx-lit');requestAnimationFrame(()=>{if(cur===el&&el.isConnected)light(el,x,y)})};
  const release=()=>{if(cur){cur.classList.remove('fx-lit');cur=null;box=null}if(!tilt.on){clearTimeout(back);back=setTimeout(rest,1200)}};
  const frame=()=>{pr=0;if(!pe)return;const e=pe;pe=null;if(cur&&cur.isConnected)glowAt(e.clientX,e.clientY);if(!tilt.on)aim(e.clientX/innerWidth*2-1,e.clientY/innerHeight*2-1,true)};
- addEventListener('pointerdown',e=>{if(!rich())return;const el=e.target.closest&&e.target.closest(LIT);if(el&&!el.classList.contains('hasimg'))light(el,e.clientX,e.clientY);else if(cur)release();
+ addEventListener('pointerdown',e=>{if(!rich())return;const el=e.target.closest&&e.target.closest(LIT);if(el&&!el.classList.contains('hasimg'))lightD(el,e.clientX,e.clientY);else if(cur)release();
   if(!tilt.on)aim(e.clientX/innerWidth*2-1,e.clientY/innerHeight*2-1,true)},{passive:true});
  addEventListener('pointermove',e=>{if(!rich())return;if(e.pointerType==='mouse'&&!e.buttons){const el=e.target.closest&&e.target.closest(LIT);if(el!==cur){if(el&&!el.classList.contains('hasimg'))light(el,e.clientX,e.clientY);else if(cur){cur.classList.remove('fx-lit');cur=null}}}
   else if(!cur)return;pe=e;if(!pr)pr=requestAnimationFrame(frame)},{passive:true});
@@ -4879,7 +4881,7 @@ function rapTick(){if(pushState()==='on'||document.visibilityState!=='visible'||
   el.innerHTML=`<div class="row" style="gap:12px;flex-wrap:nowrap;align-items:flex-start"><span class="rapi" aria-hidden="true">${RAPN[due.k][1]}</span><div style="flex:1;min-width:0"><b>${esc(due.x.t.replace(/^\S+\s/,''))}</b><div class="mute" style="font-size:14px">${esc(due.x.d)}</div></div></div><div class="row" style="margin-top:10px;gap:8px;flex-wrap:nowrap"><button class="sm" data-act="${act[0]}" data-go="${go}" style="flex:1">${act[1]}</button><button class="ghost sm" data-act="rapLater">Dans 20 min</button><button class="ghost sm" data-act="rapX" aria-label="Fermer">OK</button></div>`;
   document.body.appendChild(el);try{beep(2)}catch(e){}try{navigator.vibrate&&navigator.vibrate([60,60,60])}catch(e){}}
 let RAPCUR=null;const rapClose=()=>document.querySelectorAll('.rapban').forEach(x=>{x.classList.add('out');setTimeout(()=>x.remove(),250)});
-setInterval(rapTick,30000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(rapTick,1200)});setTimeout(rapTick,6000);setTimeout(rapRefresh,0);
+agVisInterval(rapTick,30000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(rapTick,1200)});setTimeout(rapTick,6000);setTimeout(rapRefresh,0);
 const RAP_ACTS={
   rapOpen(b){openSheet(rapHTML());pushKeys().then(()=>{pushSync();rapRefresh()});const k=b&&b.dataset&&b.dataset.k;if(k)setTimeout(()=>{const c=document.querySelector(`[data-rk="${k}"]`);if(c){c.closest('.rapr').scrollIntoView({block:'center'});if(!c.checked){c.checked=true;c.dispatchEvent(new Event('change',{bubbles:true}))}}},60)},
   rapDay(b){const d=+b.dataset.d,j=arr(RAP.seance.j).map(Number);RAP.seance.j=j.includes(d)?j.filter(x=>x!==d):[...j,d];rapSave()},
@@ -5430,10 +5432,10 @@ AGR.renderDrink=renderDrink;
 renderDrink=function(){const r=AGR.renderDrink.apply(this,arguments);try{AGR.pre()}catch(e){console.error(e)}return r};
 AGR.mealGo=mealGo;
 mealGo=function(){AGR.rm('preRepas');return AGR.mealGo.apply(this,arguments)};
-setInterval(()=>{if(document.visibilityState!=='visible')return;const pr=store.get('preRepas',null);if(!pr||!pr.at)return;const now=Date.now();let ch=0;
+agVisInterval(()=>{if(document.visibilityState!=='visible')return;const pr=store.get('preRepas',null);if(!pr||!pr.at)return;const now=Date.now();let ch=0;
   if(!pr.s1&&now>=pr.at-30*6e4){pr.s1=1;ch=1;toast('Dernières gorgées : ton repas est dans 30 minutes.');try{beep(1)}catch(e){}}
   if(!pr.s2&&now>=pr.at){pr.s2=1;ch=1;toast('À table ! Protéines d\'abord, petites bouchées.');try{beep(2)}catch(e){}}
-  if(ch)store.set('preRepas',pr);try{renderDrink()}catch(e){}},30000);
+  if(ch)store.set('preRepas',pr);try{renderDrink()}catch(e){}},30000,1);
 
 /* 4. Feu vert sport : mêmes repères que ceux donnés à l'IA pour le programme (semaines depuis l'opération) ; affiché jusqu'à 18 mois */
 AGR.SP=[[3,'semaines 1 à 3','Marche douce chaque jour, un peu plus longtemps chaque semaine. Pas de charges lourdes ni d\'abdominaux.'],
@@ -5523,7 +5525,7 @@ function qaFit(p,r){try{if(!r||typeof r!=='object')return false;p=String(p);cons
    pilulier n'était jamais remis à zéro (absent de la liste de minuit). On redessine dès que la date a changé. */
 {let qaD=null;const qaDay=()=>{let d;try{d=today()}catch(e){return}if(qaD===null){qaD=d;return}if(d===qaD)return;qaD=d;
   [()=>renderDaily(),()=>renderHome(),()=>renderDay(),()=>renderMenu(),()=>renderSleep(),()=>renderChk(),()=>renderDrink(),()=>renderPills(),()=>renderProgToday(),()=>renderWeekCard()].forEach(f=>{try{f()}catch(e){}})};
- setTimeout(qaDay,0);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')qaDay()});addEventListener('pageshow',qaDay);addEventListener('focus',qaDay);setInterval(qaDay,60000)}
+ setTimeout(qaDay,0);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')qaDay()});addEventListener('pageshow',qaDay);addEventListener('focus',qaDay);agVisInterval(qaDay,60000)}
 /* Écran allumé : le système relâche le verrou d'écran dès que l'app passe en arrière-plan ; au retour pendant une séance,
    une recette ou un repas guidé, l'écran se remettait en veille pendant le repos. On le redemande (et on le rend
    à la fermeture de l'écran guidé, quel qu'il soit, pour ne jamais le garder par erreur). */
@@ -7380,6 +7382,96 @@ Object.assign(SPORT_ACTS,{
 
 })()}catch(e){console.error('ag_exlib',e)}
 /* === fin ag_exlib === */
+/* === ag_perf2 === Chasse aux gaspillages mesurés (compteurs injectés, scénarios réalistes) : index par jour pour
+   l'archivage du calendrier, rendus évités quand rien n'a changé (photos, sauvegardes auto hors écran), démonstrations
+   animées mises à jour sur place (au lieu de reconstruire le dessin 30 fois par seconde), minuteries en pause quand
+   l'app est cachée, son coupé quand il ne sert plus. Aucune clé ni aucun format de stockage changé. */
+/* version des données : +1 à chaque enregistrement (store.set) ; sert à jeter les caches mémoire au bon moment */
+function agDV(){return agDV.v|0}
+try{const s0=store.set;store.set=function(){agDV.v=(agDV.v|0)+1;return s0.apply(this,arguments)};addEventListener('storage',()=>{agDV.v=(agDV.v|0)+1})}catch(e){}
+/* index par jour (séances, pesées, messages, mesures) pour dayData : même résultat que les filtres d'origine,
+   mais calculé une fois pour 365 jours au lieu de parcourir tout l'historique pour chaque jour */
+function agDX(k,d,day0){
+  const mes=arr(MES);let X=agDX.X;
+  if(!X||X.dv!==agDV()||X.L!==LOG||X.nL!==LOG.length||X.W!==W||X.nW!==W.length||X.C!==CH||X.nC!==CH.length||X.M!==mes||X.nM!==mes.length||Date.now()-X.t>5000){
+    X=null;const now=Date.now();if(!agDX.w||now-agDX.w>3000){agDX.w=now;agDX.k=0}
+    /* 1 ou 2 jours seulement (archivage courant) : le calcul direct est moins cher que l'index */
+    if(++agDX.k>8)try{const L=new Map(),Wm=new Map(),M=new Map(),ct=[];
+      LOG.forEach(l=>{const a=L.get(l.d);if(a)a.push(l);else L.set(l.d,[l])});
+      W.forEach(x=>{if(!Wm.has(x.d))Wm.set(x.d,x)});
+      mes.forEach(x=>{if(!M.has(x.d))M.set(x.d,x)});
+      CH.forEach((m,i)=>{if(m.t){const t=+m.t;if(t===t)ct.push([t,i])}});ct.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+      X={dv:agDV(),L:LOG,nL:LOG.length,W,nW:W.length,C:CH,nC:CH.length,M:mes,nM:mes.length,t:Date.now(),iL:L,iW:Wm,iM:M,ct}}catch(e){X=null}
+    agDX.X=X}
+  if(!X){/* repli : calcul d'origine */
+    if(k==='L')return LOG.filter(l=>l.d===d);if(k==='W')return W.find(x=>x.d===d);if(k==='M')return mes.find(x=>x.d===d);
+    return CH.filter(m=>m.t&&m.t>=day0&&m.t<day0+864e5)}
+  if(k==='L')return X.iL.get(d)||[];if(k==='W')return X.iW.get(d);if(k==='M')return X.iM.get(d);
+  const a=X.ct,lo=day0,hi=day0+864e5;let i=0,j=a.length;while(i<j){const h=(i+j)>>1;if(a[h][0]<lo)i=h+1;else j=h}
+  const ix=[];for(;i<a.length&&a[i][0]<hi;i++)ix.push(a[i][1]);ix.sort((p,q)=>p-q);return ix.map(n=>CH[n])}
+/* démonstrations animées : une animation est un cycle ; chaque pose (au 1/30 s près, 1/11 s pour les miniatures) est
+   préparée une seule fois puis réutilisée (grandes démonstrations), et le dessin déjà à l'écran est mis à jour sur place (attributs des formes)
+   au lieu d'être recréé à chaque image (avant : tout le dessin refait ~30 fois/s -> recalcul de style de la page) */
+function agSvgSet(svg,key,make){let e;
+  if(key!=null){const C=agSvgSet.c||(agSvgSet.c=new Map());e=C.get(key);
+    if(!e){const html=make(),t=document.createElementNS('http://www.w3.org/2000/svg','svg');try{t.innerHTML=html}catch(x){}e={t,html};C.set(key,e);
+      if(C.size>160){let n=0;for(const k of C.keys()){C.delete(k);if(++n>=40)break}}}
+    agSvgSet.u=Date.now();if(!agSvgSet.tm)agSvgSet.tm=setTimeout(agSvgGC,10000)}
+  else{const t=agSvgSet.t||(agSvgSet.t=document.createElementNS('http://www.w3.org/2000/svg','svg')),html=make();try{t.innerHTML=html}catch(x){}e={t,html}}
+  try{if(agSvgM(svg,e.t))return}catch(x){}
+  svg.innerHTML=e.html}
+/* poses gardées en mémoire tant qu'une démonstration tourne ; libérées 10 à 20 s après (mémoire rendue) */
+function agSvgGC(){agSvgSet.tm=0;const C=agSvgSet.c;if(!C||!C.size)return;if(Date.now()-(agSvgSet.u||0)>8000)C.clear();else agSvgSet.tm=setTimeout(agSvgGC,10000)}
+/* même arbre (mêmes balises dans le même ordre) -> on recopie les attributs qui ont changé ; sinon false (on remplace tout) */
+function agSvgM(a,b){let x=a.firstChild,y=b.firstChild;
+  while(x&&y){if(x.nodeType!==y.nodeType)return false;
+    if(x.nodeType===1){if(x.tagName!==y.tagName)return false;const ba=y.attributes,n=ba.length;
+      for(let i=0;i<n;i++){const at=ba[i],v=at.value;if(x.getAttribute(at.name)!==v){if(at.name.indexOf(':')>=0)return false;x.setAttribute(at.name,v)}}
+      const xa=x.attributes;if(xa.length!==n)for(let i=xa.length-1;i>=0;i--){const nm=xa[i].name;if(!y.hasAttribute(nm))x.removeAttribute(nm)}
+      if((x.firstChild||y.firstChild)&&!agSvgM(x,y))return false}
+    else if(x.nodeValue!==y.nodeValue)return false;
+    x=x.nextSibling;y=y.nextSibling}
+  return !x&&!y}
+/* calculs sur tout l'historique (jours actifs, bilan de la semaine) : gardés en mémoire jusqu'au prochain
+   enregistrement ou au jour suivant (avant : refaits 3 à 5 fois à chaque visite de Suivi). On rend une copie. */
+function agMemo(name,fn){const C=new Map();return function(){let refs;try{refs=[LOG,W,J,EAU,SL,CHK,PLOG,MES,P,PILLS]}catch(e){return fn.apply(this,arguments)}
+  const k=name+'|'+Array.prototype.join.call(arguments,','),dv=agDV(),td=today(),r=C.get(k);
+  if(r&&r.dv===dv&&r.td===td&&r.nL===LOG.length&&r.nW===W.length&&r.refs.every((x,i)=>x===refs[i]))return Object.assign({},r.v);
+  const v=fn.apply(this,arguments);if(v&&typeof v==='object')C.set(k,{dv,td,refs,nL:LOG.length,nW:W.length,v:Object.assign({},v)});return v}}
+try{activeDays=agMemo('ad',activeDays);weekStats=agMemo('ws',weekStats)}catch(e){}
+/* rangement quotidien des sauvegardes automatiques : on ne garde en mémoire que date/raison de chaque copie, une à
+   la fois (avant : les 35 copies complètes des données chargées d'un coup -> pic de mémoire au 1er lancement du jour) */
+async function agBkMeta(){try{const out=[];await phOp('readonly',st=>{const r=st.openCursor(IDBKeyRange.bound('__bk_','__bk_\uffff'));
+  r.onsuccess=()=>{const c=r.result;if(!c)return;const v=c.value;if(v&&String(v.id).startsWith('__bk_'))out.push({id:v.id,d:v.d,reason:v.reason});c.continue()};return{result:null}});
+  return out.sort((a,b)=>b.d-a.d)}catch(e){return bkList()}}
+/* minuteries « de fond » : arrêtées quand l'app est cachée (écran verrouillé, autre app), relancées au retour.
+   now=1 : on rattrape tout de suite au retour (affichage à jour). */
+function agVisInterval(fn,ms,now){let id=0;const on=()=>{if(!id)id=setInterval(fn,ms)},off=()=>{if(id){clearInterval(id);id=0}};
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){on();if(now)try{fn()}catch(e){}}else off()});
+  if(document.visibilityState==='visible')on()}
+/* Suivi › Données : la liste des sauvegardes automatiques (lecture de toutes les copies + analyse) n'est préparée
+   que si on la regarde (sous-onglet Données ouvert), pas à chaque visite de Suivi */
+try{const r0=renderAutoBk;let pend=false;
+ const seen=el=>{const pn=el.closest('.pane'),sc=el.closest('section');return(!pn||pn.classList.contains('on'))&&(!sc||sc.classList.contains('on'))};
+ renderAutoBk=function(){const el=$('autoBk');if(el&&!seen(el)){pend=true;return Promise.resolve()}pend=false;return r0.apply(this,arguments)};
+ document.addEventListener('click',e=>{if(!pend)return;const b=e.target.closest&&e.target.closest('section[data-v=suivi] .seg [data-pane]');if(b)setTimeout(()=>{const el=$('autoBk');if(pend&&el&&seen(el))renderAutoBk()},0)})}catch(e){}
+/* Photos de progrès : on relit les photos et on refait la liste seulement si elles ont changé (ajout, suppression).
+   Avant : 6 photos relues et ré-affichées (1,4 Mo de texte, images redécodées) à chaque visite de Suivi et à chaque pesée */
+try{const r0=renderPhotos;
+ renderPhotos=async function(){let sig=null;
+  try{const ks=await phOp('readonly',st=>{const a=st.getAllKeys(IDBKeyRange.upperBound('__',true)),b=st.getAllKeys(IDBKeyRange.lowerBound('_`'));return{get result(){return(a.result||[]).concat(b.result||[])}}});
+   if(Array.isArray(ks))sig=ks.filter(k=>!String(k).startsWith('__')).sort().join('|')}catch(e){sig=null}
+  const pl=$('phList');
+  if(sig!==null&&pl&&pl._agSig===sig&&pl.isConnected&&(pl.firstChild||!sig)){const r=$('cmpR');if(r&&r.value!=='50'){r.value=50;const cb=$('cmpBox');if(cb)cb.style.removeProperty('--cut')}return}
+  const out=await r0.apply(this,arguments);if(pl)pl._agSig=sig;return out}}catch(e){}
+/* bip de la séance : le son du téléphone est remis en veille 3 s après le dernier bip quand aucune séance n'est en
+   cours, et quand l'app est cachée (avant : laissé allumé jusqu'à la fermeture de l'app -> batterie) */
+try{const b0=beep;let t=0;
+ const idle=()=>{try{if(AC&&AC.state==='running'&&!S)AC.suspend().catch(()=>{})}catch(e){}};
+ beep=function(n){const r=b0.apply(this,arguments);clearTimeout(t);t=setTimeout(idle,(n==null?2:+n||0)*300+3000);return r};
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)idle()});
+ const o=$('ov');if(o)new MutationObserver(()=>{if(!o.classList.contains('on')){clearTimeout(t);t=setTimeout(idle,3000)}}).observe(o,{attributes:true,attributeFilter:['class']})}catch(e){}
+/* === /ag_perf2 === */
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -8322,7 +8414,7 @@ $('heroIn').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)
 function applySize(z,save){setTimeout(()=>{try{renderFoldSums()}catch(e){}},0);document.documentElement.dataset.size=z;if(save)store.set('taille',z);document.querySelectorAll('#sizeSeg button').forEach(b=>b.classList.toggle('on',b.dataset.size===z));document.querySelectorAll('#wSize button').forEach(b=>{b.classList.toggle('on',b.dataset.v===z);b.setAttribute('aria-pressed',String(b.dataset.v===z))})}
 $('sizeSeg').addEventListener('click',e=>{const b=e.target.closest('[data-size]');if(b)applySize(b.dataset.size,true)});
 {let k0=store.get('skin','');if(!k0){k0=BOOT_LS.coach_profil||BOOT_LS.coach_onb?'synth':'clair';if(BOOT_LS.coach_profil||BOOT_LS.coach_onb)store.set('skin',k0)}applySkin(k0)}applySize(store.get('taille','m'));setTimeout(loadHero,0);
-const domNoise=ms=>ms.every(m=>{for(const n of m.addedNodes)if(n.nodeType===1&&!(m.target.closest&&m.target.closest('[data-anim]')))return false;return true});
+const domNoise=ms=>ms.every(m=>{for(const n of m.addedNodes)if(n.nodeType===1&&!(m.target.closest&&m.target.closest('[data-anim]'))&&!(n.classList&&(n.classList.contains('rip')||n.classList.contains('pt')&&m.target===document.body)))return false;return true});
 new MutationObserver(ms=>{if(!domNoise(ms))ANIM.mount()}).observe(document.body,{childList:true,subtree:true});ANIM.mount();
 $('envie').value=store.get('envie','');$('envie').addEventListener('input',()=>store.set('envie',$('envie').value));
 $('envieChips').innerHTML=['Plutôt cardio','Je suis courbaturé','Peu de temps','Haut du corps','Bas du corps','Séance douce','Je veux transpirer','À la maison'].map(v=>`<button class="chip" data-act="envieC" data-v="${v}">${v}</button>`).join('');
@@ -8381,7 +8473,7 @@ $('fxSeg').addEventListener('click',e=>{const b=e.target.closest('[data-fx]');if
 document.addEventListener('pointerdown',e=>{
   if(document.documentElement.dataset.fx==='off')return;
   const b=e.target.closest('button,.tile');
-  if(b&&!b.disabled){const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height)*2.2,s=document.createElement('span');s.className='rip';s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;b.appendChild(s);setTimeout(()=>s.remove(),600)}
+  if(b&&!b.disabled){const cx=e.clientX,cy=e.clientY;requestAnimationFrame(()=>{if(!b.isConnected)return;const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height)*2.2,s=document.createElement('span');s.className='rip';s.style.cssText=`width:${d}px;height:${d}px;left:${cx-r.left-d/2}px;top:${cy-r.top-d/2}px`;b.appendChild(s);setTimeout(()=>s.remove(),600)})}
   if(b)burst(e.clientX,e.clientY);
   if(b&&document.documentElement.dataset.skin==='pets'){const w=document.querySelector('.hero .wag');if(w){w.style.animationDuration='.16s';clearTimeout(w._t);w._t=setTimeout(()=>w.style.animationDuration='',1600)}}
   if(document.documentElement.dataset.skin==='pets'){const p=document.createElement('span');p.className='pawtap';p.innerHTML=PAW;p.style.left=e.clientX+'px';p.style.top=e.clientY+'px';p.style.transform=`rotate(${Math.round(Math.random()*40-20)}deg)`;document.body.appendChild(p);setTimeout(()=>p.remove(),950)}
@@ -8575,7 +8667,7 @@ function renderDrink(){
   const mc=$('mealCard');if(mc){if(BARIA()){mc.style.display='block';mc.innerHTML=`<div class="row sb" style="flex-wrap:nowrap;gap:10px"><span><b>À table ?</b><div class="mute">${act?'Pas de boisson avant '+hh+'.':'Un repas guidé de 20 à 30 min, en petites bouchées.'}</div></span><button class="sm" data-act="mealGo">Repas en douceur</button></div>`}else mc.style.display='none'}
   const hd=$('homeDrink');if(BARIA()&&act){hd.style.display='block';hd.innerHTML=`<div class="row sb"><span><b>Pas de boisson pour l'instant</b><div class="mute">Tu pourras boire à ${hh} (dans ${mm} min)</div></span><button class="ghost sm" data-act="drinkStop">OK</button></div>`}else hd.style.display='none';
 }
-setInterval(()=>{if(document.visibilityState==='visible'){const d=store.get('boire',null);if(d){if(d.until<=Date.now()&&!d.done){d.done=1;store.set('boire',d);toast('Tu peux boire à nouveau');try{beep(2)}catch(e){}}renderDrink()}}},30000);
+agVisInterval(()=>{if(document.visibilityState==='visible'){const d=store.get('boire',null);if(d){if(d.until<=Date.now()&&!d.done){d.done=1;store.set('boire',d);toast('Tu peux boire à nouveau');try{beep(2)}catch(e){}}renderDrink()}}},30000,1);
 /* photos (IndexedDB) */
 /* ag_perf : une seule connexion IndexedDB, réutilisée (avant : une nouvelle connexion à chaque lecture/écriture) ;
    fermée au retour au premier plan puis rouverte à la demande, et un nouvel essai si Safari a perdu la connexion. */
@@ -8686,10 +8778,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.27-95';
+const APP_VERSION='2026.11.27-96';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.27-96','Encore plus léger','Moins de travail quand l\'app est en arrière-plan (de 922 réveils à 10 en 2 heures), mémoire au démarrage divisée par 2, écrans de séance et de repos plus fluides, photos et calendrier qui ne sont plus recalculés pour rien.','accueil',''],
  ['2026.11.27-95','180 exercices, calisthénie complète','120 nouveaux exercices animés : calisthénie (tractions, dips, pompes jusqu\'à une main, muscle-up, pistol, L-sit, handstand, front et back lever, planche, drapeau…), HIIT, kettlebell, TRX, boxe, yoga, Pilates, mobilité, équilibre. Échelles de progression, test de niveau et 11 nouvelles séances prêtes.','sport','exos'],
  ['2026.11.27-94','Les exercices expliqués en animation','Sur chaque exercice : « Pas à pas » (l\'animation s\'arrête sur chaque moment clé avec la consigne et un repère dessiné) et « Erreurs à éviter » (une silhouette rouge qui fait l\'erreur à côté d\'une verte qui fait bien, avec ce que ça provoque).','sport','exos'],
  ['2026.11.27-93','Programmes santé','44 maladies : exercices adaptés avec un programme de 4 semaines, suivi de ton assiette (sel, sucres, graisses, fibres, fer…), recettes adaptées et avis produit selon ta santé. Sport › Programme › « Programmes santé ».','sport','programme'],
