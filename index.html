@@ -2249,9 +2249,11 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
       <p class="mute" style="margin-bottom:0">Assis, sans forcer. En cas de vertige, arrête et respire normalement.</p>
     </div>
     <div class="card">
-      <h2>Sons pour s'endormir</h2><p class="sub">Un fond sonore doux qui masque les bruits. Il s'arrête tout seul. Sur iPhone, laisse l'app ouverte (baisse la luminosité) : le son se coupe si tu changes d'app ou si l'écran se verrouille.</p>
-      <div class="chips" id="noiseKind"><button class="chip p" data-act="nKind" data-v="brown">Pluie douce</button><button class="chip" data-act="nKind" data-v="pink">Bruit rose</button><button class="chip" data-act="nKind" data-v="ocean">Vagues</button></div>
+      <h2>Sons pour s'endormir</h2><p class="sub">De vrais enregistrements de nature, en boucle douce, qui s'arrêtent tout seuls.</p>
+      <div class="chips" id="noiseKind"><button class="chip p" data-act="nKind" data-v="rain">🌧️ Pluie</button><button class="chip" data-act="nKind" data-v="waves">🌊 Vagues</button><button class="chip" data-act="nKind" data-v="stream">💧 Ruisseau</button><button class="chip" data-act="nKind" data-v="storm">⛈️ Orage</button><button class="chip" data-act="nKind" data-v="wind">🍃 Vent</button><button class="chip" data-act="nKind" data-v="birds">🐦 Oiseaux</button><button class="chip" data-act="nKind" data-v="summer-night">🦗 Nuit d'été</button><button class="chip" data-act="nKind" data-v="fireplace">🔥 Feu de cheminée</button><button class="chip" data-act="nKind" data-v="coffee-shop">☕ Café</button><button class="chip" data-act="nKind" data-v="train">🚆 Train</button><button class="chip" data-act="nKind" data-v="boat">⛵ Bateau</button><button class="chip" data-act="nKind" data-v="brown">Bruit brun</button><button class="chip" data-act="nKind" data-v="pink">Bruit rose</button></div>
+      <p class="mute" id="nIos" style="font-size:13.5px;margin:4px 0 8px" hidden>Les vrais sons continuent écran verrouillé. Règle le volume avec les boutons du téléphone.</p>
       <div class="row"><label for="nTime" style="margin:0">Arrêt après</label><select id="nTime" style="width:auto;flex:1;margin:0"><option value="15">15 min</option><option value="30" selected>30 min</option><option value="45">45 min</option><option value="60">1 h</option></select></div>
+      <details class="sndcred" style="margin:6px 0 4px"><summary style="cursor:pointer;font-size:13.5px;color:var(--mute);min-height:44px;display:flex;align-items:center">Crédits des sons</summary><p class="mute" style="font-size:13px;margin:0">Enregistrements libres (domaine public, CC0, CC BY) issus de Freesound et SoundBible, montés par le projet Blanket : pluie alex36917, orage Digifish music, vagues Luftrum, ruisseau gluckose, vent felix.blume, oiseaux kvgarlic, nuit d'été Lisa Redfern, cheminée ezwa, café stephan, train SDLx, bateau Falcet (CC BY : attribution aux auteurs cités).</p></details>
       <label for="nVol" style="margin-top:12px">Volume</label><input id="nVol" type="range" min="0" max="100" value="40" style="padding:0;min-height:30px;background:none;border:0">
       <button class="wide" data-act="noiseGo" id="nBtn" style="margin-top:8px">Lancer le son</button><p class="mute" id="nLeft"></p>
     </div>
@@ -5649,7 +5651,7 @@ Format JSON : {"nom":"titre court de la séance","pourquoi":"1 phrase qui expliq
   breathGo(){if(bT){stopBreath();return}runBreath()},
   bMode(b){BM=b.dataset.v;store.set('bmode',BM);if(bT)stopBreath();renderBModes()},
   bDur(b){BDUR=+b.dataset.v;if(bT)stopBreath();renderBModes()},
-  nKind(b){NK=b.dataset.v;document.querySelectorAll('#noiseKind .chip').forEach(x=>x.classList.toggle('p',x===b));if(NZ){noiseStop();noiseStart()}},
+  nKind(b){NK=b.dataset.v;{const n=$('nIos');if(n)n.hidden=!(SNDS[NK]&&isIOS())}document.querySelectorAll('#noiseKind .chip').forEach(x=>x.classList.toggle('p',x===b));if(NZ){noiseStop();noiseStart()}},
   noiseGo(){if(NZ)noiseStop();else noiseStart()},
   grndGo(){GI=GI>=GRND.length?0:GI+1;renderGrnd()},
   goodSave(){GOOD[today()]=[0,1,2].map(i=>$('gd'+i).value.trim());const k=Object.keys(GOOD).sort().slice(-60);GOOD=Object.fromEntries(k.map(x=>[x,GOOD[x]]));store.set('bonnes',GOOD);toast('Trois belles choses, bravo !');renderGood()},
@@ -6381,15 +6383,22 @@ function runBreath(){const m=BMODES[BM],c=document.querySelector('#breath .bcirc
   const step=()=>{if(!bT)return;if(Date.now()>=end){stopBreath();toast('Bravo, '+BDUR+' minutes de calme');return}const[t,d,sc]=m.ph[i%m.ph.length];$('bTxt').textContent=t+'…';c.style.transitionDuration=d+'s';c.style.transform=`scale(${.55+.45*sc})`;i++;bTO=setTimeout(step,d*1000)};
   bT=setInterval(()=>{const l=Math.max(0,Math.round((end-Date.now())/1000));$('bTime').textContent=Math.floor(l/60)+':'+String(l%60).padStart(2,'0')},500);$('bBtn').textContent='Arrêter';step()}
 /* sons (Web Audio) */
-let NZ=null,NK='brown',NT=null;
-function noiseStart(){try{navigator.audioSession&&(navigator.audioSession.type='playback')}catch(e){}const AC2=new (window.AudioContext||window.webkitAudioContext)(),len=AC2.sampleRate*4,buf=AC2.createBuffer(1,len,AC2.sampleRate),d=buf.getChannelData(0);
+let NZ=null,NK='rain',NT=null;
+const SNDS={rain:'Pluie',waves:'Vagues',stream:'Ruisseau',storm:'Orage',wind:'Vent',birds:'Oiseaux','summer-night':'Nuit d\'été',fireplace:'Feu de cheminée','coffee-shop':'Café',train:'Train',boat:'Bateau'};
+function sndStart(){const a=new Audio('sounds/'+NK+'.m4a');a.loop=true;a.preload='auto';a.setAttribute('playsinline','');const v=()=>Math.min(1,num($('nVol').value)/100);try{a.volume=0}catch(e){}
+  NZ={el:a,k:NK};a.play().then(()=>{let x=0;const up=setInterval(()=>{x+=.05;try{a.volume=Math.min(v(),x*v()/1)}catch(e){}if(x>=1)clearInterval(up)},100)}).catch(()=>{toast('Touche encore « Lancer le son »');noiseStop()});
+  try{if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:SNDS[NK],artist:'EdilganSuperCoach',album:'Sons pour s\'endormir',artwork:[{src:'icon-192.png',sizes:'192x192',type:'image/png'}]});navigator.mediaSession.setActionHandler('pause',()=>noiseStop());navigator.mediaSession.setActionHandler('stop',()=>noiseStop())}}catch(e){}
+  $('nVol').oninput=()=>{if(NZ&&NZ.el)try{NZ.el.volume=v()}catch(e){}};
+  const until=Date.now()+num($('nTime').value)*6e4,chk=()=>{if(!NZ||NZ.el!==a)return;const l=until-Date.now();if(l<=0)return noiseStop(true);$('nLeft').textContent='Arrêt dans '+Math.ceil(l/6e4)+' min';if(l<60e3)try{a.volume=v()*(l/60e3)}catch(e){}};
+  a.addEventListener('timeupdate',chk);clearInterval(NT);NT=setInterval(chk,1000);$('nBtn').textContent='Arrêter le son'}
+function noiseStart(){try{navigator.audioSession&&(navigator.audioSession.type='playback')}catch(e){}if(SNDS[NK])return sndStart();const AC2=new (window.AudioContext||window.webkitAudioContext)(),len=AC2.sampleRate*4,buf=AC2.createBuffer(1,len,AC2.sampleRate),d=buf.getChannelData(0);
   let last=0,b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
   for(let i=0;i<len;i++){const w=Math.random()*2-1;if(NK==='pink'){b0=.99886*b0+w*.0555179;b1=.99332*b1+w*.0750759;b2=.969*b2+w*.153852;b3=.8665*b3+w*.3104856;b4=.55*b4+w*.5329522;b5=-.7616*b5-w*.016898;d[i]=(b0+b1+b2+b3+b4+b5+b6+w*.5362)*.11;b6=w*.115926}else{last=(last+.02*w)/1.02;d[i]=last*3.5}}
   const src=AC2.createBufferSource();src.buffer=buf;src.loop=true;const g=AC2.createGain();g.gain.value=0;
   let out=g;if(NK==='ocean'){const lfo=AC2.createOscillator(),lg=AC2.createGain();lfo.frequency.value=.1;lg.gain.value=.35;lfo.connect(lg);const g2=AC2.createGain();g2.gain.value=.55;lg.connect(g2.gain);src.connect(g2);g2.connect(g);lfo.start()}else src.connect(g);
   g.connect(AC2.destination);src.start();g.gain.linearRampToValueAtTime(num($('nVol').value)/100*.8,AC2.currentTime+2);NZ={AC2,g};try{navigator.wakeLock&&navigator.wakeLock.request('screen').then(w=>{if(NZ)NZ.wl=w;else w.release()}).catch(()=>{})}catch(e){}$('nVol').oninput=()=>{if(NZ)NZ.g.gain.setTargetAtTime(num($('nVol').value)/100*.8,NZ.AC2.currentTime,.15)};
   const until=Date.now()+num($('nTime').value)*6e4;clearInterval(NT);NT=setInterval(()=>{const l=until-Date.now();if(l<=0)return noiseStop(true);$('nLeft').textContent='Arrêt dans '+Math.ceil(l/6e4)+' min';if(l<60e3&&NZ)NZ.g.gain.value=num($('nVol').value)/100*.8*(l/60e3)},1000);$('nBtn').textContent='Arrêter le son'}
-function noiseStop(auto){clearInterval(NT);if(NZ){try{NZ.g.gain.linearRampToValueAtTime(0,NZ.AC2.currentTime+1.5);const a=NZ.AC2;setTimeout(()=>a.close(),1700)}catch(e){}}try{NZ&&NZ.wl&&NZ.wl.release();navigator.audioSession&&(navigator.audioSession.type='auto')}catch(e){}NZ=null;$('nBtn').textContent='Lancer le son';$('nLeft').textContent=auto?'Son arrêté. Bonne nuit !':''}
+function noiseStop(auto){clearInterval(NT);if(NZ&&NZ.el){const a=NZ.el;let x=1;const vol0=a.volume||1,dn=setInterval(()=>{x-=.1;try{a.volume=Math.max(0,vol0*x)}catch(e){}if(x<=0){clearInterval(dn);a.pause();a.removeAttribute('src');a.load()}},80);try{navigator.mediaSession&&(navigator.mediaSession.metadata=null)}catch(e){}}else if(NZ){try{NZ.g.gain.linearRampToValueAtTime(0,NZ.AC2.currentTime+1.5);const a=NZ.AC2;setTimeout(()=>a.close(),1700)}catch(e){}}try{NZ&&NZ.wl&&NZ.wl.release();navigator.audioSession&&(navigator.audioSession.type='auto')}catch(e){}NZ=null;$('nBtn').textContent='Lancer le son';$('nLeft').textContent=auto?'Son arrêté. Bonne nuit !':''}
 /* ancrage */
 const GRND=[['5','choses que tu VOIS autour de toi'],['4','choses que tu peux TOUCHER'],['3','sons que tu ENTENDS'],['2','odeurs que tu SENS'],['1','goût dans ta bouche, ou une chose que tu aimes chez toi']];let GI=-1;
 function renderGrnd(){$('grnd').innerHTML=GI<0?'':GI>=GRND.length?'<p class="big" style="font-size:30px;text-align:center">Bien joué.</p><p class="mute" style="text-align:center">Respire tranquillement. Tu es là, maintenant.</p>':`<div style="text-align:center;padding:10px 0"><div class="big">${GRND[GI][0]}</div><p style="font-size:19px;margin:6px 0">${GRND[GI][1]}</p><p class="mute">Prends ton temps pour les nommer dans ta tête.</p></div>`;$('grndBtn').textContent=GI<0?'Commencer':GI>=GRND.length?'Recommencer':'Suivant'}
@@ -6421,10 +6430,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.27-91';
+const APP_VERSION='2026.11.27-92';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.27-92','De vrais sons pour dormir','11 vrais enregistrements de nature en boucle douce : pluie, vagues, ruisseau, orage, vent, oiseaux, nuit d\'été, feu de cheminée, café, train, bateau. Sur iPhone, ils continuent même écran verrouillé.','sommeil','detente'],
  ['2026.11.27-91','Plus rapide','Démarrage deux fois moins chargé, mémoire divisée par 3, la bibliothèque d\'exercices fluide même avec les animations, et le texte s\'affiche tout de suite même avec un réseau lent.','accueil',''],
  ['2026.11.27-90','La virgule marche partout','Tu peux écrire 96,4 dans tous les champs (poids, charge, grammes…). « Kilos perdus en tout » compte tes vraies pesées, et « Le mot du coach » ne montre plus jamais de texte technique.','suivi','progres2'],
  ['2026.11.27-89','Plus solide','13 corrections : une réponse bizarre de l\'IA ne peut plus effacer ton programme ni vider ton menu, l\'app passe au nouveau jour toute seule à minuit (pilulier compris), textes et boutons mieux lisibles sur petit écran et en très grand.','accueil',''],

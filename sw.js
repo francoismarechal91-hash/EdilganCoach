@@ -24,6 +24,8 @@ self.addEventListener('activate',e=>{
   e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C&&k!=='edg-flags').map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
 });
 self.addEventListener('fetch',e=>{
+  if(/\/sounds\//.test(e.request.url)||e.request.headers.has('range'))return; // sons : le navigateur gère les requêtes partielles (lecture iPhone)
+
   const req=e.request,u=new URL(req.url);
   if(req.method!=='GET'||u.origin!==location.origin||/\/(version\.json|sw\.js)$/.test(u.pathname))return; // API tierces et version.json : non interceptés
   const nav=req.mode==='navigate',key=nav?'./':req;   // une seule copie de la page (#accueil, index.html, ?source=pwa…)
