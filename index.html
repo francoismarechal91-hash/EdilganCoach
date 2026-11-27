@@ -3713,12 +3713,17 @@ function vbMini(key){const sc=S[key]||S.etirement;if(sc._mv)return sc._mv;let x0
 /* ---------- Lecture : une seule boucle pour toutes les animations visibles ---------- */
 const live=new Set();let raf=0,lastTs=-1e9;
 const off=()=>document.documentElement.dataset.fx==='off';
-function loop(ts){raf=0;if(ts-lastTs<30){if(live.size)raf=requestAnimationFrame(loop);return}lastTs=ts;const st=off();
-  for(const el of live){if(!el.isConnected){live.delete(el);continue}if(el.dataset.xd!=null){if(XH)try{XH(el,ts,st)}catch(e){}if(st||!XH)live.delete(el);continue}const mini=el.classList.contains('animMini'),k=el.dataset.k;
+function loop(ts){raf=0;if(ts-lastTs<30){if(live.size)raf=requestAnimationFrame(loop);return}lastTs=ts;const st=off(),ovon=document.documentElement.classList.contains('ovon');let nx=1e12;
+  for(const el of live){if(!el.isConnected){live.delete(el);continue}if(el.dataset.xd!=null){nx=0;if(XH)try{XH(el,ts,st)}catch(e){}if(st||!XH)live.delete(el);continue}const mini=el.classList.contains('animMini'),k=el.dataset.k;
     if(st){el.firstChild.innerHTML=frame(k,0,mini?3:2);live.delete(el);continue}
-    if(mini){if(ts-(el._t||0)<90)continue;el._t=ts}
-    const d=dur(S[k]||S.etirement)*1000;el.firstChild.innerHTML=frame(k,(ts%d)/d,mini?1:0)}
-  if(live.size)raf=requestAnimationFrame(loop)}
+    /* ag_perf2 : sous un écran plein (séance, recette), les démonstrations de la page cachée ne sont plus dessinées
+       (les démos « pas à pas » / « erreurs » ci-dessus continuent comme avant) */
+    if(ovon&&!el.closest('#ov')){nx=Math.min(nx,ts+250);continue}
+    if(mini){if(ts-(el._t||0)<90){nx=Math.min(nx,el._t+90);continue}el._t=ts;nx=Math.min(nx,ts+90)}else nx=0;
+    /* ag_perf2 : dessin mis à jour sur place ; grandes démonstrations : poses préparées une fois (au 1/30 s près) */
+    const d=dur(S[k]||S.etirement)*1000;if(mini)agSvgSet(el.firstChild,null,()=>frame(k,(ts%d)/d,1));else{const N=Math.max(8,Math.round(d/33.4)),q=Math.round((ts%d)/d*N)%N;agSvgSet(el.firstChild,k+'|'+N+'|'+q,()=>frame(k,q/N,0))}}
+  /* ag_perf2 : seulement des miniatures (≈11 images/s) -> réveil au bon moment au lieu de 60 fois par seconde */
+  if(live.size){const w=nx-ts-12;if(w>12){raf=-1;setTimeout(()=>{raf=requestAnimationFrame(loop)},w)}else raf=requestAnimationFrame(loop)}}
 const io=typeof IntersectionObserver!=='undefined'?new IntersectionObserver(es=>{for(const e of es){if(e.isIntersecting)live.add(e.target);else live.delete(e.target)}if(live.size&&!raf)raf=requestAnimationFrame(loop)}):null;
 /* réglage Animations changé en direct : on relance (ou on fige) les démonstrations déjà affichées */
 try{new MutationObserver(()=>{if(!io)return;document.querySelectorAll('[data-anim][data-on]').forEach(el=>{io.unobserve(el);io.observe(el)})}).observe(document.documentElement,{attributes:true,attributeFilter:['data-fx']})}catch(e){}
@@ -3728,7 +3733,7 @@ function mount(root){(root||document).querySelectorAll('[data-anim]:not([data-on
 /* bibliothèque et séances prêtes : le nom précis l'emporte ; les duos « A : … · B : … » gardent le mouvement choisi par l'auteur */
 const libKey=(nom,k)=>/·|^[AB] :/.test(String(nom))&&S[k]?k:pick(nom,'',k);
 /* extension : d'autres modules peuvent ajouter des scènes et des règles nom → scène (prioritaires sur les règles d'origine) */
-function extend(scenes,rules){if(scenes)Object.assign(S,scenes);if(Array.isArray(rules))RULES.unshift(...rules.filter(r=>r&&r[0] instanceof RegExp&&typeof r[1]==='string'))}
+function extend(scenes,rules){if(scenes){Object.assign(S,scenes);try{if(agSvgSet.c)agSvgSet.c.clear()}catch(e){}}if(Array.isArray(rules))RULES.unshift(...rules.filter(r=>r&&r[0] instanceof RegExp&&typeof r[1]==='string'))}
 /* === ag_exdemo === Démonstrations pédagogiques (moteur, dans ANIM) : « pas à pas » (poses clés + repères dessinés sur la
    silhouette) et « erreurs à éviter » : bibliothèque d'erreurs-types qui DÉFORMENT la pose de n'importe quelle scène
    (valgus du genou, dos rond, cambrure, bassin trop bas / trop haut, épaules haussées, coudes écartés, tête, talons,
@@ -6552,13 +6557,13 @@ function frameOf(p,el,ts,stc){const s=state(p),role=el.dataset.xd,svg=el.firstCh
     const el2=(s.play?ts-s.t0:s.fz)/1000,from=s.from,to=st.ph,dist=fwd(from,to),tt=dist?cl2(dist*dd*1.9,.6,4.5):0,pre=.35,hold=holdOf(st.txt);
     let ph,al=0;if(el2<pre)ph=from;else if(el2<pre+tt)ph=from+dist*((el2-pre)/tt);else{ph=to;const h=el2-pre-tt;al=cl2(h/.35,0,1);if(s.play&&n>1)al*=cl2((hold-h)/.3,0,1)}
     if(s.said!==s.i&&el2>=pre&&s.play){s.said=s.i;try{if(VOICE&&p.closest('#ov'))say(st.txt)}catch(e){}}
-    s.cur=((ph%1)+1)%1;svg.innerHTML=D.render(key,s.cur,{view:st.view,mk:st.mk,al,pl:.5+.5*Math.sin(ts/260)});
+    s.cur=((ph%1)+1)%1;agSvgSet(svg,null,()=>D.render(key,s.cur,{view:st.view,mk:st.mk,al,pl:.5+.5*Math.sin(ts/260)}));
     if(s.play&&n>1&&el2>pre+tt+hold){s.from=to;s.i=(s.i+1)%n;s.t0=ts;caption(p)}
     return}
   const e=s.inf.errs[s.i];if(!e)return;const v=e.none?D.vb(key,'side',[],240/226):D.vb(e.key,e.view,e.ops);setVB(svg,v.vb);if(!e.none&&el.style.aspectRatio!==String(v.ar))el.style.aspectRatio=v.ar;const vv=v.vb.split(' ').map(Number),top=[vv[0]+vv[2]/2,vv[1]+17];const k2=e.none?key:e.key,d2=D.dur(k2),pk=e.pk??(e.pk=e.none?D.stops(k2).end:D.errPeak(k2,e.ops,e.view));
   if(stc){svg.innerHTML=e.none?D.render(k2,pk,{}):D.render(k2,pk,{view:e.view,ops:role==='bad'?e.ops:[],mk:role==='bad'?e.bad:e.good,mc:role==='bad'?'var(--xdBad)':'var(--xdOk)',ghost:D.stops(k2).start,al:1,pl:.5,top});return}
   if(s.t0<0)s.t0=ts;const el2=(s.play?ts-s.t0:s.fz)/1000,ph=(el2*.72/d2+pk-.08)%1;
-  svg.innerHTML=e.none?D.render(k2,ph,{}):D.render(k2,ph,{view:e.view,ops:role==='bad'?e.ops:[],mk:role==='bad'?e.bad:e.good,mc:role==='bad'?'var(--xdBad)':'var(--xdOk)',al:1,pl:.5+.5*Math.sin(ts/260),top});
+  agSvgSet(svg,null,()=>e.none?D.render(k2,ph,{}):D.render(k2,ph,{view:e.view,ops:role==='bad'?e.ops:[],mk:role==='bad'?e.bad:e.good,mc:role==='bad'?'var(--xdBad)':'var(--xdOk)',al:1,pl:.5+.5*Math.sin(ts/260),top}));
   /* lecture automatique des erreurs : on passe à la suivante après 3 cycles (au moins 9 s) */
   const n=s.inf.errs.length;if(role!=='bad'&&s.play&&n>1&&el2>Math.max(9,3*d2/.72)){s.i=(s.i+1)%n;s.t0=-1;draw(p)}}
 function paint(p){p.querySelectorAll('[data-xd]').forEach(el=>{try{frameOf(p,el,performance.now(),off())}catch(e){console.error(e)}})}
@@ -8778,10 +8783,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.27-96';
+const APP_VERSION='2026.11.27-97';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.27-97','Animations plus fluides','Les démonstrations sont redessinées sur place au lieu d\'être recréées : séance et repos environ 60 % plus légers, bibliothèque d\'exercices 2 fois plus légère.','sport','exos'],
  ['2026.11.27-96','Encore plus léger','Moins de travail quand l\'app est en arrière-plan (de 922 réveils à 10 en 2 heures), mémoire au démarrage divisée par 2, écrans de séance et de repos plus fluides, photos et calendrier qui ne sont plus recalculés pour rien.','accueil',''],
  ['2026.11.27-95','180 exercices, calisthénie complète','120 nouveaux exercices animés : calisthénie (tractions, dips, pompes jusqu\'à une main, muscle-up, pistol, L-sit, handstand, front et back lever, planche, drapeau…), HIIT, kettlebell, TRX, boxe, yoga, Pilates, mobilité, équilibre. Échelles de progression, test de niveau et 11 nouvelles séances prêtes.','sport','exos'],
  ['2026.11.27-94','Les exercices expliqués en animation','Sur chaque exercice : « Pas à pas » (l\'animation s\'arrête sur chaque moment clé avec la consigne et un repère dessiné) et « Erreurs à éviter » (une silhouette rouge qui fait l\'erreur à côté d\'une verte qui fait bien, avec ce que ça provoque).','sport','exos'],
