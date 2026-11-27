@@ -1377,6 +1377,11 @@ label:has(>#sFrigo){min-height:44px;cursor:pointer}
 /* paysage / petits écrans : les chiffres du minuteur dépassaient de l'anneau (anneau limité par la hauteur) */
 #ov .sxt{font-size:clamp(34px,min(16vw,11.5vh),74px)}
 /* === /ag_qa2 === */
+/* === ag_perf === listes longues et démonstrations animées : seul ce qui est à l'écran est préparé et redessiné */
+#exoList>details.ex{content-visibility:auto;contain-intrinsic-size:auto 84px}
+#exoList>details.ex>summary:focus-visible{outline-offset:-3px}
+[data-anim]{contain:paint}
+/* === /ag_perf === */
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -2016,7 +2021,7 @@ input::-webkit-date-and-time-value{text-align:left;min-height:1.5em}
 #iaCard>summary::-webkit-details-marker{display:none}
 /* S6 superpositions : pas de défilement de la page derrière, pas de rebond qui fuit */
 #ov,#welcome,#scanOv,#sheet .in{overscroll-behavior:contain}
-html:has(:is(#ov,#sheet,#welcome,#scanOv).on),html:has(:is(#ov,#sheet,#welcome,#scanOv).on) body{overflow:hidden}
+html:has(>body>:is(#ov,#sheet,#welcome,#scanOv).on),html:has(>body>:is(#ov,#sheet,#welcome,#scanOv).on) body{overflow:hidden}
 /* S7 clavier ouvert (classe .kb posée par le script) : barre d'onglets masquée, boutons collés au-dessus du clavier */
 html.kb .tabs{opacity:0;pointer-events:none;transform:translateY(130%)}
 html.kb #ov [data-act=doneSet],html.kb #ov>.row:last-child{bottom:calc(8px + var(--kb,0px))}
@@ -4090,22 +4095,24 @@ document.addEventListener('change',e=>{const t=e.target;if(!t.classList||!t.clas
 
 /* ===================== SAUVEGARDES AUTOMATIQUES (sur le téléphone, IndexedDB) ===================== */
 const BK_KEEP=12;
-async function bkList(){try{return(await phOp('readonly',st=>st.getAll())||[]).filter(x=>String(x.id).startsWith('__bk_')).sort((a,b)=>b.d-a.d)}catch(e){return[]}}
+let BKGEN=1;const BKST=new Map(); /* ag_perf : n° de version de la liste des sauvegardes + résumés déjà calculés (mémoire seulement) */
+async function bkList(){try{return(await phOp('readonly',st=>st.getAll(IDBKeyRange.bound('__bk_','__bk_\uffff')))||[]).filter(x=>String(x.id).startsWith('__bk_')).sort((a,b)=>b.d-a.d)}catch(e){return[]}}
 async function autoSnap(reason,data){try{data=data||BOOT_LS;if(!data.coach_profil&&!data.coach_journal)return;const day=new Date().toISOString().slice(0,10),id='__bk_'+day+(reason==='maj'?'_maj_'+Date.now():'');
-  await phOp('readwrite',st=>st.put({id,data,d:Date.now(),v:APP_VERSION,reason,n:Object.keys(data).length}));
+  await phOp('readwrite',st=>st.put({id,data,d:Date.now(),v:APP_VERSION,reason,n:Object.keys(data).length}));BKGEN++;
   await bkPrune()}catch(e){}}
 /* garde : 14 derniers jours + 8 dernières mises à jour + 1 par mois pendant 12 mois + 4 avant restauration/compactage */
 async function bkPrune(){const L=await bkList(),keep=new Set(),nb={jour:0,maj:0,autre:0},mois=new Set();
   for(const x of L){const r=x.reason==='maj'?'maj':x.reason==='jour'?'jour':'autre',m=new Date(x.d).toISOString().slice(0,7);
     if(r==='jour'&&nb.jour<14||r==='maj'&&nb.maj<8||r==='autre'&&nb.autre<4)keep.add(x.id);nb[r]++}
   [...L].reverse().forEach(x=>{const m=new Date(x.d).toISOString().slice(0,7);if(!mois.has(m)&&mois.size<12&&Date.now()-x.d<400*864e5){mois.add(m);keep.add(x.id)}});
-  for(const x of L)if(!keep.has(x.id))await phOp('readwrite',st=>st.delete(x.id))}
+  for(const x of L)if(!keep.has(x.id)){await phOp('readwrite',st=>st.delete(x.id));BKGEN++}}
+function bkStatsM(x){const k=x.id+'|'+x.d;let s=BKST.get(k);if(!s){s=bkStats(x.data);BKST.set(k,s)}return s}
 function bkStats(data){let jd=0,ses=0;try{jd=Object.values(JSON.parse(data.coach_journal||'{}')).filter(a=>Array.isArray(a)&&a.length).length}catch(e){}try{ses=JSON.parse(data.coach_seances||'[]').length}catch(e){}return{jd,ses}}
-async function renderAutoBk(){const el=$('autoBk');if(!el)return;const L=await bkList();
-  const row=x=>{const st=bkStats(x.data);return `<div class="jl"><span class="n"><b>${new Date(x.d).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})} ${new Date(x.d).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</b><div class="mute">${x.reason==='maj'?'avant la mise à jour · ':x.reason==='compactage'?'avant rangement · ':x.reason==='avant-restauration'?'avant restauration · ':''}${st.jd} jour${st.jd>1?'s':''} de repas · ${st.ses} séance${st.ses>1?'s':''}</div></span><button class="ghost sm" data-act="bkAutoRestore" data-id="${esc(x.id)}">Restaurer</button></div>`};
-  el.innerHTML=L.length?L.slice(0,6).map(row).join('')+(L.length>6?`<details><summary style="cursor:pointer;font-weight:700;padding:10px 0">Plus anciennes (${L.length-6})</summary>${L.slice(6).map(row).join('')}</details>`:''):'<p class="mute">La première sauvegarde automatique se fera aujourd\'hui.</p>'}
+async function renderAutoBk(){const el=$('autoBk');if(!el)return;const g=BKGEN;if(el.dataset.bkg===String(g))return;const L=await bkList();
+  const row=x=>{const st=bkStatsM(x);return `<div class="jl"><span class="n"><b>${new Date(x.d).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})} ${new Date(x.d).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</b><div class="mute">${x.reason==='maj'?'avant la mise à jour · ':x.reason==='compactage'?'avant rangement · ':x.reason==='avant-restauration'?'avant restauration · ':''}${st.jd} jour${st.jd>1?'s':''} de repas · ${st.ses} séance${st.ses>1?'s':''}</div></span><button class="ghost sm" data-act="bkAutoRestore" data-id="${esc(x.id)}">Restaurer</button></div>`};
+  el.innerHTML=L.length?L.slice(0,6).map(row).join('')+(L.length>6?`<details><summary style="cursor:pointer;font-weight:700;padding:10px 0">Plus anciennes (${L.length-6})</summary>${L.slice(6).map(row).join('')}</details>`:''):'<p class="mute">La première sauvegarde automatique se fera aujourd\'hui.</p>';if(g===BKGEN)el.dataset.bkg=String(g)}
 async function bkGuard(){try{const last=localStorage.getItem('coach_lastver');
-  if(last&&last!==APP_VERSION)await autoSnap('maj');else{const L=await bkList(),day=new Date().toISOString().slice(0,10);if(!L.some(x=>x.id==='__bk_'+day))await autoSnap('jour')}
+  if(last&&last!==APP_VERSION)await autoSnap('maj');else{const day=new Date().toISOString().slice(0,10);let has=0;try{has=await phOp('readonly',st=>st.count('__bk_'+day))}catch(e){}if(!has)await autoSnap('jour')}
   localStorage.setItem('coach_lastver',APP_VERSION);
   /* données disparues ? on propose la dernière sauvegarde automatique */
   if(!BOOT_LS.coach_profil&&!BOOT_LS.coach_journal&&!store.get('bkAsked',0)){const L=await bkList(),b=L.find(x=>x.data&&(x.data.coach_profil||x.data.coach_journal));if(b){store.set('bkAsked',1);const st=bkStats(b.data);
@@ -4125,8 +4132,9 @@ function dayData(d){const ses=LOG.filter(l=>l.d===d).map(l=>({nom:l.nom,min:l.mi
   return{repas:Array.isArray(J[d])?J[d].map(e=>({nom:e.nom,kcal:e.kcal,p:e.p,g:e.g,l:e.l,part:e.part})):undefined,eau:EAU[d],poids:w?w.w:undefined,seances:ses.length||(LOG[0]&&d>=LOG[0].d)?ses:undefined,sommeil:SL[d],pas:PAS[d],humeur:CHK[d],
     pilules:PLOG[d]?Object.keys(PLOG[d]).length:undefined,note:NOTES[d],mes:arr(MES).find(x=>x.d===d),bonnes:GOOD[d],chat:ch.length?ch:undefined,menu:MENUS[d]?arr(MENUS[d].repas).map(r=>r&&r.nom).filter(Boolean):undefined}}
 const hasData=m=>CALF.some(k=>m[k]!=null&&!(Array.isArray(m[k])&&!m[k].length)&&!(k==='menu'));
-async function archiveDays(days){for(const d of days){try{const cur=dayData(d),old=await phOp('readonly',st=>st.get('__day_'+d))||{},m={...old,id:'__day_'+d,d};
-  for(const k of CALF){if(cur[k]!==undefined)m[k]=cur[k]}if(hasData(m)||old.id)await phOp('readwrite',st=>st.put(m))}catch(e){}}}
+async function archiveDays(days){let pre=null,n=0;if(days.length>3){try{pre=new Map(((await phOp('readonly',st=>st.getAll(IDBKeyRange.bound('__day_','__day_\uffff'))))||[]).map(x=>[x.id,x]))}catch(e){pre=null}}
+  for(const d of days){try{if(pre&&++n%25===0)await new Promise(r=>setTimeout(r,0));const cur=dayData(d),old=(pre?pre.get('__day_'+d):await phOp('readonly',st=>st.get('__day_'+d)))||{},m={...old,id:'__day_'+d,d};
+  for(const k of CALF){if(cur[k]!==undefined)m[k]=cur[k]}if((hasData(m)||old.id)&&JSON.stringify(m)!==JSON.stringify(old))await phOp('readwrite',st=>st.put(m))}catch(e){}}}
 function memDays(){const s=new Set([...Object.keys(J),...Object.keys(EAU),...W.map(x=>x.d),...LOG.map(l=>l.d),...Object.keys(SL),...Object.keys(PAS),...Object.keys(CHK),...Object.keys(PLOG),...Object.keys(NOTES),...arr(MES).map(x=>x.d)]);return[...s].filter(d=>/^\d{4}-\d\d-\d\d$/.test(d))}
 let archT=0;function archSoon(){clearTimeout(archT);archT=setTimeout(()=>archiveDays([today(),dkey(Date.now()-864e5)]),1500)}
 setTimeout(()=>archiveDays(memDays()),4000);
@@ -4290,7 +4298,7 @@ const AGV=(()=>{
     [/(\d) (kg|g|kcal|cal|mg|min|h|cm|mm|ml|cl|L|km|m|s|j|ans|°C|pas|verres?|séances?|jours?|nuits?|exercices|portions?)(?![\p{L}\d])/gu,'$1\u00A0$2']];
   const TYT=/[ \u00A0][;!?]| [:»%€]|« |\d [a-zA-Z°éèpvsjn]/;
   const skip=n=>{for(let e=n.parentNode;e&&e!==document.body;e=e.parentNode){if(e.nodeType===1&&(SKIP.test(e.nodeName)||e.isContentEditable))return true}return false};
-  function txt(t){if(!t.parentNode||skip(t))return;let v=t.nodeValue;if(!v||!(TYT.test(v)||GRX.test(v)||ALONE[v.trim()]))return;
+  function txt(t){if(!t.parentNode)return;let v=t.nodeValue;if(!v||!(TYT.test(v)||GRX.test(v)||ALONE[v.trim()]))return;if(skip(t))return;
     if(TYT.test(v)){let w=v;for(const[r,s]of TY)w=w.replace(r,s);if(w!==v){t.nodeValue=w;v=w}}
     const p=t.parentNode,tr=v.trim();
     if(ALONE[tr]&&p.nodeName==='BUTTON'&&p.textContent.trim()===tr){p.replaceChild(ico(ALONE[tr]),t);return}
@@ -4304,7 +4312,7 @@ const AGV=(()=>{
   function state(el){if(!el||el.nodeType!==1)return;const b=el.closest&&el.closest('button,.bub');if(!b)return;const e=b.textContent.trim()==='…';
     b.classList.toggle(b.nodeName==='BUTTON'?'agv-busy':'agv-typing',e)}
   let mo=null;
-  function on(muts){for(const m of muts){if(m.type==='characterData'){txt(m.target);state(m.target.parentNode)}else{m.addedNodes.forEach(n=>{walk(n);if(n.nodeType===1)state(n)});state(m.target)}}if(mo)mo.takeRecords()}
+  function on(muts){for(const m of muts){if(m.type!=='characterData'&&m.target.closest&&m.target.closest('svg,[data-anim]'))continue;if(m.type==='characterData'){txt(m.target);state(m.target.parentNode)}else{m.addedNodes.forEach(n=>{walk(n);if(n.nodeType===1)state(n)});state(m.target)}}if(mo)mo.takeRecords()}
   function start(){try{walk(document.body);mo=new MutationObserver(on);mo.observe(document.body,{childList:true,subtree:true,characterData:true})}catch(e){console.log(e)}}
   if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
   return {walk};
@@ -4401,7 +4409,7 @@ const FXE=(()=>{
  const sync=()=>{const k=R.dataset.skin;needTex(k);if(!rich()){if(cur)release();tilt.stop();const d=document.querySelector('.hero .deco');if(d)d.style.transform=''}else if(store.get('fxtilt',0))tilt.start();tiltUI()};
  new MutationObserver(sync).observe(R,{attributes:true,attributeFilter:['data-fx','data-skin']});
  document.addEventListener('visibilitychange',()=>{if(document.hidden){clearTimeout(tmr);tmr=0;if(tilt.on)removeEventListener('deviceorientation',tilt.h)}else if(tilt.on){tilt.b=null;addEventListener('deviceorientation',tilt.h,{passive:true})}});
- setTimeout(()=>{sync();initTilt();enter()},0);setTimeout(()=>{needTex('foret');needTex('ocean')},1500);
+ setTimeout(()=>{sync();initTilt();enter()},0);{const preTex=()=>{needTex('foret');needTex('ocean')};addEventListener('hashchange',()=>{if(location.hash==='#moi')preTex()});setTimeout(()=>{if(location.hash==='#moi')preTex();else if(window.requestIdleCallback)requestIdleCallback(preTex,{timeout:6000});else setTimeout(preTex,0)},12000)} /* ag_perf */
  return {nav,deco,amb:k=>amb[k]?amb[k]():'',rich};
 })();
 /* === /ag_theme === */
@@ -5914,7 +5922,7 @@ function renderProd(p){
 function renderProdHist(){$('prodHistC').style.display='block';$('prodHist').innerHTML=(PRODS.length?'':finEmpty('scans','Aucun produit scanné pour l\'instant.','Tes produits et leur note s\'afficheront ici.',{t:'Scanner un produit',act:'finPick',q:'[data-in=produit]'},1))+PRODS.map((p,i)=>{let a=null;try{a=prodAnalyse(p)}catch(e){}return `<button class="chip" data-act="showProd" data-i="${i}">${a&&a.known?`<i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${a.col};margin-right:6px"></i>`:''}${esc(p.nom)}</button>`}).join('')}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b&&A[b.dataset.act])A[b.dataset.act](b,e)});
 document.querySelectorAll('.seg').forEach(seg=>seg.addEventListener('click',e=>{const b=e.target.closest('button[data-pane]');if(!b||!seg.contains(b))return;const sec=seg.closest('section');
-  seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));sec.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.pane===b.dataset.pane));lazyPane(sec);b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo(0,0)}));
+  seg.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));sec.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.pane===b.dataset.pane));lazyPane(sec);requestAnimationFrame(()=>{b.scrollIntoView({inline:'center',block:'nearest'});window.scrollTo(0,0)})}));
 function lazyPane(sec){if(!sec)return;const L=lazyPane.L||(lazyPane.L={calendrier:renderCal,prets:renderPrets,exos:renderExo,fiches:renderFiches,reperes:renderRef,monde:initWorld,programme:renderProg,favoris:renderFav});
   sec.querySelectorAll('.pane.on').forEach(p=>{const k=p.dataset.pane,f=L[k];if(!f)return;if(k!=='reperes'&&k!=='calendrier')delete L[k];try{f()}catch(e){console.error(k,e)}});sec.querySelectorAll('textarea.grow').forEach(t=>{if(t.value&&t.getClientRects().length)grow(t)})}
 function openPane(v,p){if(location.hash!=='#'+v)location.hash=v;setTimeout(()=>{const b=document.querySelector(`section[data-v="${v}"] .seg [data-pane="${p}"]`);if(b)b.click()},30)}
@@ -5927,7 +5935,7 @@ function route(){
   document.querySelectorAll('section[data-v]').forEach(s=>s.classList.toggle('on',s.dataset.v===v));
   document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('on',a.dataset.t===(v==='sommeil'?'accueil':v)));{const tb=document.querySelector('.tabs'),ti=['accueil','sport','scan','cuisine','suivi'].indexOf(v==='sommeil'?'accueil':v);if(tb){tb.style.setProperty('--ti',Math.max(ti,0));tb.classList.toggle('noti',ti<0)}}
   $('avatar').classList.toggle('on',v==='moi');
-  if(v!=='sommeil'&&bT)stopBreath();const sw=$('sweep');if(sw&&document.documentElement.dataset.fx!=='off'&&route.last&&route.last!==v){sw.classList.remove('go');void sw.offsetWidth;sw.classList.add('go')}route.last=v;if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='suivi'){try{renderWeekCard();renderDuo();renderAutoBk()}catch(e){}}lazyPane(document.querySelector(`section[data-v="${v}"]`));if(v==='sommeil'){renderSleep();renderBModes();renderGrnd();renderGood();sleepKpi()}if(v==='suivi')renderSuivi();$('coachBtn').classList.toggle('on',v==='coach');window.scrollTo(0,0);
+  if(v!=='sommeil'&&bT)stopBreath();const sw=$('sweep');if(sw&&document.documentElement.dataset.fx!=='off'&&route.last&&route.last!==v){requestAnimationFrame(()=>{sw.classList.remove('go');void sw.offsetWidth;sw.classList.add('go')})}route.last=v;if(v==='moi')drawW();if(v==='sport')recovery();if(v==='accueil')renderHome();if(v==='suivi'){try{renderWeekCard();renderDuo();renderAutoBk()}catch(e){}}lazyPane(document.querySelector(`section[data-v="${v}"]`));if(v==='sommeil'){renderSleep();renderBModes();renderGrnd();renderGood();sleepKpi()}if(v==='suivi')renderSuivi();$('coachBtn').classList.toggle('on',v==='coach');window.scrollTo(0,0);
 }
 window.addEventListener('scroll',()=>$('appbar').classList.toggle('sc',scrollY>4),{passive:true});
 /* ---------- Accueil ---------- */
@@ -6315,15 +6323,21 @@ function renderDrink(){
 }
 setInterval(()=>{if(document.visibilityState==='visible'){const d=store.get('boire',null);if(d){if(d.until<=Date.now()&&!d.done){d.done=1;store.set('boire',d);toast('Tu peux boire à nouveau');try{beep(2)}catch(e){}}renderDrink()}}},30000);
 /* photos (IndexedDB) */
-const idb=()=>new Promise((ok,ko)=>{try{const r=indexedDB.open('edilgan',1);r.onupgradeneeded=()=>r.result.createObjectStore('photos',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)}catch(e){ko(e)}});
-const phOp=(mode,fn)=>idb().then(db=>new Promise((ok,ko)=>{const t=db.transaction('photos',mode),st=t.objectStore('photos'),r=fn(st);t.oncomplete=()=>ok(r&&r.result);t.onerror=()=>ko(t.error)}));
-async function renderPhotos(){let L=[];try{L=(await phOp('readonly',st=>st.getAll())||[]).filter(p=>!String(p.id).startsWith('__'))}catch(e){}L.sort((a,b)=>a.d<b.d?-1:1);
+/* ag_perf : une seule connexion IndexedDB, réutilisée (avant : une nouvelle connexion à chaque lecture/écriture) ;
+   fermée au retour au premier plan puis rouverte à la demande, et un nouvel essai si Safari a perdu la connexion. */
+let IDBC=null;
+const idbOpen=()=>new Promise((ok,ko)=>{try{const r=indexedDB.open('edilgan',1);r.onupgradeneeded=()=>r.result.createObjectStore('photos',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)}catch(e){ko(e)}});
+const idb=()=>IDBC||(IDBC=idbOpen().then(db=>{db.onversionchange=()=>{try{db.close()}catch(e){}IDBC=null};db.onclose=()=>{IDBC=null};return db},e=>{IDBC=null;throw e}));
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&IDBC){const c=IDBC;IDBC=null;c.then(db=>{try{db.close()}catch(e){}},()=>{})}});
+const phOp=(mode,fn,again)=>idb().then(db=>new Promise((ok,ko)=>{let t;try{t=db.transaction('photos',mode)}catch(e){IDBC=null;if(!again){ok(phOp(mode,fn,1));return}ko(e);return}
+  const st=t.objectStore('photos'),r=fn(st);t.oncomplete=()=>ok(r&&r.result);t.onerror=ev=>{const er=(ev&&ev.target&&ev.target.error)||t.error;if(!again&&er&&/UnknownError|InvalidStateError/.test(er.name)){IDBC=null;ok(phOp(mode,fn,1))}else ko(t.error)}}));
+async function renderPhotos(){let L=[];try{L=(await phOp('readonly',st=>{const a=st.getAll(IDBKeyRange.upperBound('__',true)),b=st.getAll(IDBKeyRange.lowerBound('_`'));return{get result(){return(a.result||[]).concat(b.result||[])}}})||[]).filter(p=>!String(p.id).startsWith('__'))}catch(e){}L.sort((a,b)=>a.d<b.d?-1:1);
   $('phList').innerHTML=L.map(p=>`<figure><img src="${p.data}" alt="Photo du ${frd(p.d)}"><figcaption>${frd(p.d)} <button class="x" style="min-height:28px;min-width:28px;font-size:16px" data-act="phDel" data-id="${p.id}" aria-label="Supprimer">×</button></figcaption></figure>`).join('')||finEmpty('photos','Pas encore de photo.','La première servira de point de départ : même pose, même lumière, une fois par mois.',{t:'Prendre ma première photo',act:'finPick',q:'#phIn'});
   $('phCmp').innerHTML=L.length>1?`<div class="cmp" id="cmpBox"><img src="${L[0].data}" alt="Avant"><img class="after" src="${L[L.length-1].data}" alt="Après"><div class="bar2"></div><span style="left:8px">${frd(L[0].d)}</span><span style="right:8px">${frd(L[L.length-1].d)}</span></div><input type="range" min="0" max="100" value="50" id="cmpR" aria-label="Comparer avant et après" style="margin-top:8px;padding:0;min-height:30px;background:none;border:0">`:'';
   const r=$('cmpR');if(r)r.oninput=()=>$('cmpBox').style.setProperty('--cut',r.value+'%')}
 /* sauvegarde fichier */
 async function bkSave(btn){const d={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('coach_')&&k!=='coach_ia'&&k!=='coach_pushSeed')d[k]=localStorage.getItem(k)}}catch(e){}
-  let arch=[];try{await archiveDays(memDays());arch=(await phOp('readonly',st=>st.getAll())||[]).filter(x=>String(x.id).startsWith('__day_'))}catch(e){}
+  let arch=[];try{await archiveDays(memDays());arch=(await phOp('readonly',st=>st.getAll(IDBKeyRange.bound('__day_','__day_\uffff')))||[]).filter(x=>String(x.id).startsWith('__day_'))}catch(e){}
   const json=JSON.stringify({app:'EdilganSuperCoach',date:today(),data:d,archives:arch}),name=`edilgan-sauvegarde-${today()}.json`,file=new File([json],name,{type:'application/json'});
   
   try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'Sauvegarde EdilganSuperCoach'});store.set('lastbk',today());toast('Sauvegarde prête');renderSuivi();return}}catch(e){if(e&&e.name==='AbortError')return}
@@ -6407,10 +6421,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.27-90';
+const APP_VERSION='2026.11.27-91';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.27-91','Plus rapide','Démarrage deux fois moins chargé, mémoire divisée par 3, la bibliothèque d\'exercices fluide même avec les animations, et le texte s\'affiche tout de suite même avec un réseau lent.','accueil',''],
  ['2026.11.27-90','La virgule marche partout','Tu peux écrire 96,4 dans tous les champs (poids, charge, grammes…). « Kilos perdus en tout » compte tes vraies pesées, et « Le mot du coach » ne montre plus jamais de texte technique.','suivi','progres2'],
  ['2026.11.27-89','Plus solide','13 corrections : une réponse bizarre de l\'IA ne peut plus effacer ton programme ni vider ton menu, l\'app passe au nouveau jour toute seule à minuit (pilulier compris), textes et boutons mieux lisibles sur petit écran et en très grand.','accueil',''],
  ['2026.11.27-88','Plus sûre','Contrôle de sécurité complet : une sauvegarde piégée ne peut plus rien exécuter, la clé des rappels ne part plus dans tes sauvegardes, le serveur de notifications n\'accepte que toi, et le scanner et le QR code sont servis par l\'app elle-même.','moi',''],
@@ -6477,7 +6492,7 @@ Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS,BK_ACTS
  if(vv){const upd=()=>{const kb=Math.max(0,Math.round(innerHeight-vv.height-vv.offsetTop));R.style.setProperty('--kb',kb+'px');R.classList.toggle('kb',kb>120)};vv.addEventListener('resize',upd);vv.addEventListener('scroll',upd)}
  const SK=/^(SCRIPT|STYLE|TEXTAREA|INPUT|CODE|PRE)$/,RX=/ ([:;?!»])|(«) /g;
  const fx=n=>{if(n.nodeType===3){const p=n.parentNode,v=n.data;if(!p||SK.test(p.nodeName)||v.indexOf(' ')<0)return;const w=v.replace(RX,(m,a,b)=>a?' '+a:b+' ');if(w!==v)n.data=w}else if(n.nodeType===1&&!SK.test(n.nodeName)){const t=document.createTreeWalker(n,NodeFilter.SHOW_TEXT);let x;while((x=t.nextNode()))fx(x)}};
- fx(document.body);new MutationObserver(ms=>ms.forEach(m=>m.type==='characterData'?fx(m.target):m.addedNodes.forEach(fx))).observe(document.body,{childList:true,subtree:true,characterData:true});
+ fx(document.body);new MutationObserver(ms=>ms.forEach(m=>m.type==='characterData'?fx(m.target):m.target.closest&&m.target.closest('[data-anim]')?0:m.addedNodes.forEach(fx))).observe(document.body,{childList:true,subtree:true,characterData:true});
  try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 })();
 window.__edgOK=1;

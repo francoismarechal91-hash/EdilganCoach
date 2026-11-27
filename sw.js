@@ -3,16 +3,22 @@
         - ne met en cache que les réponses 200 « basic » du même site : jamais d'erreur 404/500, jamais de réponse opaque ni d'API tierce ;
         - repli sur la page uniquement pour une navigation (jamais pour un .json) ;
         - précache tolérant (un fichier en échec ne bloque plus les autres), sans passer par le cache HTTP ;
-        - suppression des anciens caches. */
-const C='edilgan-v7';
-const SHELL=['./','manifest.json','icon.png','icon-192.png','icon-512.png','world.json','ciqual.json','fonts/bricolage-var-latin.woff2','fonts/orbitron-var-latin.woff2','fonts/fredoka-var-latin.woff2','fonts/nunito-var-latin.woff2'];
+        - suppression des anciens caches.
+   v3 (ag_perf) : - polices et icônes (fichiers qui ne changent pas) servies tout de suite depuis le cache, puis vérifiées en arrière-plan :
+          le texte s'affiche sans attendre le réseau, même lent ; la page et les .json restent « réseau d'abord » comme avant ;
+        - installation d'une nouvelle version : on ne retélécharge que la page et ce qui manque (avant : ~1 Mo à chaque mise à jour) ;
+        - icon-512.png n'est plus précachée (sert seulement à l'installation, jamais hors connexion) : -225 Ko au premier lancement.
+   Si un jour tu changes une police ou une icône SANS changer son nom, change aussi C ci-dessous (ex. 'edilgan-v7'). */
+const C='edilgan-v8';
+const SHELL=['./','manifest.json','icon.png','icon-192.png','world.json','ciqual.json','fonts/bricolage-var-latin.woff2','fonts/orbitron-var-latin.woff2','fonts/fredoka-var-latin.woff2','fonts/nunito-var-latin.woff2'];
 const NAV_MS=3500;
 const okToCache=r=>!!r&&r.status===200&&r.type==='basic';
+const STATIC=/\.(woff2|png)$/; // fichiers fixes : cache d'abord, mise à jour en arrière-plan
 
 self.addEventListener('install',e=>{
   self.skipWaiting();
-  e.waitUntil(caches.open(C).then(c=>Promise.all(SHELL.map(u=>
-    fetch(new Request(u,{cache:'reload'})).then(r=>okToCache(r)?c.put(u,r):null).catch(()=>null)))));
+  e.waitUntil(caches.open(C).then(c=>Promise.all(SHELL.map(u=>(u==='./'?Promise.resolve(null):c.match(u).catch(()=>null)).then(hit=>hit||
+    fetch(new Request(u,{cache:'reload'})).then(r=>okToCache(r)?c.put(u,r):null).catch(()=>null))))));
 });
 self.addEventListener('activate',e=>{
   e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C&&k!=='edg-flags').map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
@@ -21,6 +27,11 @@ self.addEventListener('fetch',e=>{
   const req=e.request,u=new URL(req.url);
   if(req.method!=='GET'||u.origin!==location.origin||/\/(version\.json|sw\.js)$/.test(u.pathname))return; // API tierces et version.json : non interceptés
   const nav=req.mode==='navigate',key=nav?'./':req;   // une seule copie de la page (#accueil, index.html, ?source=pwa…)
+  if(!nav&&!u.search&&req.cache!=='no-store'&&STATIC.test(u.pathname)){
+    const pc=caches.open(C),net=fetch(req,{cache:'no-cache'});
+    e.waitUntil(net.then(r=>{if(!okToCache(r))return;const cp=r.clone();return pc.then(c=>c.put(req,cp))}).catch(()=>{}));
+    e.respondWith(pc.then(c=>c.match(req,{ignoreSearch:true})).catch(()=>null).then(hit=>hit||net.catch(()=>Response.error())));
+    return}
   const net=fetch(req,{cache:'no-cache'});
   e.waitUntil(net.then(r=>{if(!okToCache(r))return;const cp=r.clone();return caches.open(C).then(c=>c.put(key,cp))}).catch(()=>{}));
   e.respondWith((async()=>{
