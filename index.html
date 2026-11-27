@@ -1382,6 +1382,58 @@ label:has(>#sFrigo){min-height:44px;cursor:pointer}
 #exoList>details.ex>summary:focus-visible{outline-offset:-3px}
 [data-anim]{contain:paint}
 /* === /ag_perf === */
+/* === ag_patho === programmes santé, fiche maladie, suivi santé du journal, recettes adaptées, verdict produit */
+.patcard .sub{margin-bottom:10px}
+.patst{background:var(--fill);border-radius:var(--r2,14px);padding:12px 14px;margin:0 0 12px}
+.patpill{flex:none;font-size:14px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--tint,var(--fill));color:var(--tintink,var(--ink))}
+.patst .ghost,.patconf .ghost{background:var(--card);border:1px solid var(--line)}
+.patwkd{display:flex;gap:6px;margin:10px 0 4px}.patwkd i{flex:1;height:8px;border-radius:5px;background:var(--line);overflow:hidden;display:block}
+.patwkd i b{display:block;height:100%;background:var(--red);transform-origin:left;transition:transform .4s}
+.patwkd i.f b{transform:scaleX(1)!important}
+.patsect{margin:4px 0 6px}
+.patgh{display:block;flex-basis:100%;width:100%;font-size:14px;font-weight:700;color:var(--mute);margin:10px 0 2px}
+#santeChips .patgh:first-child,#obSante .patgh:first-child{margin-top:0}
+.patall{margin-top:12px}.patall>summary{cursor:pointer;font-weight:700;padding:10px 0;min-height:44px;display:flex;align-items:center}
+.patall .chips{margin-top:4px}
+.chip.patc{min-height:44px}
+.patbtns{display:flex;flex-direction:column;gap:10px;margin-top:12px}.patbtns>button{min-height:52px}
+.patst .patbtns{flex-direction:row;flex-wrap:wrap}.patst .patbtns>button{flex:1 1 140px;min-height:48px}
+.patsheet h2{font-size:clamp(22px,6vw,27px);line-height:1.15}
+.patdoc{margin:12px 0;padding:12px 14px;border-radius:var(--r2,14px);background:var(--fill);border-left:4px solid var(--yel);font-size:15px;line-height:1.45}
+.patdoc.fort{border-left-color:var(--red)}
+.patr{font-size:17px;line-height:1.5;margin:4px 0 6px}
+.patsec{margin-top:18px}.patsec>h3{margin:0 0 6px;font-size:19px}
+.patsec .fl{margin:0;padding-left:20px}.patsec .fl li{margin:4px 0;line-height:1.45}
+.patstop{background:var(--fill);border-radius:var(--r2,14px);padding:12px 14px;border:2px solid var(--red)}
+.patstop>h3{color:var(--ink)}
+.patcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
+.patcols>div{background:var(--fill);border-radius:12px;padding:10px 12px}.patcols .fl{padding-left:18px;font-size:15px}
+.patint summary,.patw summary{cursor:pointer;font-weight:700;padding:10px 0;min-height:44px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.patint p{margin:0 0 6px;line-height:1.5}
+.patw{border-top:1px solid var(--line)}.patw summary small{font-weight:400;color:var(--mute);font-size:14px}.patw summary em{font-style:normal;color:var(--tintink,var(--ink))}
+.patj1{margin:4px 0 12px}.patj1 .fl{font-size:15px}
+.patconf{background:var(--fill);border-radius:var(--r2,14px);padding:12px 14px}.patconf .row>button{flex:1 1 140px;min-height:48px}
+.patmulti{margin:12px 0 0}
+.patsrc a{word-break:break-word}
+.patwk{font-size:14px;font-weight:700;color:var(--tintink,var(--ink));margin:0 0 6px}
+.patjc h2{font-size:20px}
+.patg{margin:10px 0 0}.patg .row b{font-size:16px}.patg small{display:block;font-size:13px;line-height:1.35}
+.patbar{height:10px;border-radius:7px;background:var(--fill);overflow:hidden;margin:6px 0 4px}
+.patbar i{display:block;height:100%;border-radius:7px;background:var(--green);transition:width .5s}
+.patg.near .patbar i{background:var(--yel)}.patg.over .patbar i{background:#d9442b}.patg.low .patbar i{background:var(--blue)}
+.pattip{margin:6px 0 0;padding:8px 10px;border-radius:10px;background:var(--fill);font-size:15px;line-height:1.4}
+.patrec .chips{margin-top:4px}
+.pattag{display:inline-block;font-size:13px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--fill);color:var(--ink);border:1px solid var(--line);margin:0 0 6px}
+.patwhy{margin:2px 0 6px;font-size:15px}
+.patprod{margin:12px 0 0;padding:10px 12px;border-radius:12px;background:var(--fill);border-left:4px solid var(--green);font-size:15px;line-height:1.45}
+.patprod.mid{border-left-color:var(--yel)}.patprod.ko{border-left-color:#d9442b}
+@media (prefers-reduced-motion:reduce){.patwkd i b,.patbar i{transition:none}}
+/* === /ag_patho === */
+/* === ag_compat === pièges connus Android / iPhone (voir REPORT.txt) */
+/* C1 Android (Chrome, Samsung Internet), app installée comprise : « tirer vers le bas pour actualiser » rechargeait
+   la page et faisait perdre une séance, une recette guidée ou un texte en cours. L'effet élastique d'iOS est conservé. */
+html{overscroll-behavior-y:contain}
+/* === fin ag_compat === */
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -3569,7 +3621,9 @@ function html(key,cls='anim'){key=S[key]?key:pick(key);const mini=/animMini/.tes
 function mount(root){(root||document).querySelectorAll('[data-anim]:not([data-on])').forEach(el=>{el.dataset.on=1;if(io)io.observe(el)})}
 /* bibliothèque et séances prêtes : le nom précis l'emporte ; les duos « A : … · B : … » gardent le mouvement choisi par l'auteur */
 const libKey=(nom,k)=>/·|^[AB] :/.test(String(nom))&&S[k]?k:pick(nom,'',k);
-return{S,pick,html,mount,frame,libKey};
+/* extension : d'autres modules peuvent ajouter des scènes et des règles nom → scène (prioritaires sur les règles d'origine) */
+function extend(scenes,rules){if(scenes)Object.assign(S,scenes);if(Array.isArray(rules))RULES.unshift(...rules.filter(r=>r&&r[0] instanceof RegExp&&typeof r[1]==='string'))}
+return{S,pick,html,mount,frame,libKey,extend};
 })();
 
 /* ===================== BIBLIOTHÈQUE D'EXERCICES (60) + SÉANCES PRÊTES + MINUTEUR GUIDÉ ===================== */
@@ -5129,6 +5183,766 @@ function qaFit(p,r){try{if(!r||typeof r!=='object')return false;p=String(p);cons
  if(ovq)new MutationObserver(()=>{if(!ovq.classList.contains('on'))try{if(WL&&!WL.released)WL.release()}catch(e){}}).observe(ovq,{attributes:true,attributeFilter:['class']})}
 /* === /ag_qa2 === */
 function unJSONtxt(t){t=String(t||'').trim();if(!/^[\[{]/.test(t))return t;try{const o=JSON.parse(t),out=[];(function walk(v){if(typeof v==='string'){if(v.trim())out.push(v.trim())}else if(Array.isArray(v))v.forEach(walk);else if(v&&typeof v==='object')Object.values(v).forEach(walk)})(o);return out.join(' ')||t}catch(e){return t.replace(/[{}\[\]"]+/g,' ').replace(/\s*[a-z_]+\s*:\s*/gi,' ').replace(/\s+/g,' ').trim()}}
+/* === ag_patho === Programmes santé par maladie (HAS, Inserm, ANSES…) : fiches, programmes 4 semaines, règles IA, suivi diététique, recettes adaptées, verdict produit.
+   Clés nouvelles : coach_pathoPlan, coach_pathoPrev, coach_jnut. Aucune clé existante modifiée. */
+{
+/* --- ag_patho : contenus par maladie (vérifiés contre HAS, Inserm, ANSES, sociétés savantes, sante.fr, Vidal) --- */
+const PAT_NEW={coronaire:'Maladie des coronaires (angine de poitrine, infarctus)',icardiaque:'Insuffisance cardiaque',avc:'Après un AVC',veineuse:'Jambes lourdes, varices',obesite:'Surpoids ou obésité',steatose:'Foie gras (stéatose)',goutte:'Goutte (acide urique)',hyperthyro:'Hyperthyroïdie',bpco:'BPCO (bronchite chronique)',osteo:'Ostéoporose',polyarthrite:'Polyarthrite rhumatoïde',fibro:'Fibromyalgie',depression:'Dépression ou anxiété',migraine:'Migraine',parkinson:'Maladie de Parkinson',sii:'Côlon irritable (SII)',mici:'Crohn ou rectocolite (MICI)',diverticulose:'Diverticules (diverticulose)',dialyse:'Dialyse',anemie:'Anémie, manque de fer',endometriose:'Endométriose',menopause:'Ménopause',cancer:'Cancer (pendant ou après)',senior:'Plus de 65 ans · prévenir les chutes'};
+const PAT_CAT=[['Cœur et vaisseaux',['hta','chol','coeur','coronaire','icardiaque','avc','veineuse']],['Sucre, poids, foie, thyroïde',['diab1','diab2','obesite','steatose','goutte','sopk','thyro','hyperthyro']],['Respiration',['asthme','bpco']],['Os, muscles et articulations',['dos','articul','osteo','polyarthrite','fibro']],['Tête et moral',['depression','migraine','parkinson']],['Ventre et digestion',['rgo','sii','mici','diverticulose','lactose','gluten']],['Reins et sang',['rein','dialyse','anemie']],['Femmes, grossesse',['enceinte','postpartum','allait','endometriose','menopause']],['Chirurgie de l’obésité',['sleeve','bypass','anneau']],['Cancer et âge',['cancer','senior']]];
+const PS={
+ guide:['HAS · Guide de consultation et de prescription d’activité physique chez l’adulte','https://www.has-sante.fr/upload/docs/application/pdf/2018-10/guide_aps_vf.pdf'],
+ liste:['HAS · Toutes les fiches de prescription d’activité physique par maladie','https://www.has-sante.fr/jcms/c_2876862/fr/activite-physique-adaptee'],
+ r10:['Ministère des Sports · Les 10 réflexes en or (Club des cardiologues du sport)','https://www.sports.gouv.fr/en/les-bienfaits-du-sport-25'],
+ inserm:['Inserm · Activité physique : prévention et traitement des maladies chroniques (2019)','https://www.inserm.fr/wp-content/uploads/2019-02/inserm-ec-2019-activitephysiquemaladieschroniques-synthese.pdf'],
+ anses:['ANSES · Références nutritionnelles en vitamines et minéraux','https://www.anses.fr/fr/article/references-nutritionnelles-vitamines-mineraux'],
+ dt2:['HAS · Prescription d’activité physique : diabète de type 2','https://www.has-sante.fr/upload/docs/application/pdf/2018-10/ref_aps_dt2_vf.pdf'],
+ nutdiab:['La Revue du Praticien · Conseils nutritionnels pour le diabète (types 1 et 2)','https://www.larevuedupraticien.fr/outil/conseils-nutritionnels-pour-le-diabete-type-2-et-1-visant-la-protection-cardiovasculaire'],
+ dt1:['HAS · L’activité physique pour votre santé : diabète de type 1','https://www.has-sante.fr/upload/docs/application/pdf/2022-11/ap_fiche_diabete_1.pdf'],
+ hta:['HAS · Prescription d’activité physique : hypertension artérielle','https://www.has-sante.fr/upload/docs/application/pdf/2018-10/ref_aps_hta_vf.pdf'],
+ htap:['HAS · L’activité physique pour votre santé : hypertension','https://www.has-sante.fr/upload/docs/application/pdf/2022-11/ap_fiche_hta.pdf'],
+ scc:['HAS · Prescription d’activité physique : syndrome coronarien chronique (2022)','https://www.has-sante.fr/upload/docs/application/pdf/2022-09/fiche-aps-scc.pdf'],
+ sccp:['HAS · L’activité physique pour votre santé : maladie coronaire','https://www.has-sante.fr/upload/docs/application/pdf/2022-11/ap_fiche_maladie_coronaire.pdf'],
+ icc:['HAS · Synthèse : insuffisance cardiaque chronique (2022)','https://has-sante.fr/upload/docs/application/pdf/2022-08/synthese_aps_icc_vf.pdf'],
+ iccp:['HAS · L’activité physique pour votre santé : insuffisance cardiaque','https://www.has-sante.fr/upload/docs/application/pdf/2022-11/ap_fiche_icc.pdf'],
+ avc:['HAS · L’activité physique pour votre santé : AVC','https://www.has-sante.fr/upload/docs/application/pdf/2022-11/ap_fiche_avc.pdf'],
+ obe:['HAS · Synthèse : surpoids et obésité de l’adulte (2022)','https://has-sante.fr/upload/docs/application/pdf/2022-08/synthese_aps_surpoids_obesite_vf.pdf'],
+ bpco:['HAS · L’activité physique pour votre santé : BPCO','https://www.has-sante.fr/upload/docs/application/pdf/2022-11/ap_fiche_bpco.pdf'],
+ rr:['HAS · Réhabilitation respiratoire dans la BPCO','https://www.has-sante.fr/jcms/c_1744735/fr/comment-mettre-en-oeuvre-la-rehabilitation-respiratoire-pour-les-patients-ayant-une-bronchopneum'],
+ asthme:['HAS · L’activité physique pour votre santé : asthme','https://www.has-sante.fr/upload/docs/application/pdf/2022-11/ap_fiche_asthme.pdf'],
+ cancer:['HAS · L’activité physique pour votre santé : cancer (sein, côlon, prostate)','https://www.has-sante.fr/upload/docs/application/pdf/2022-11/ap_fiche_cancer.pdf'],
+ onco:['Réseau ONCOPL / INCa · Guide de prescription d’activité physique adaptée (contre-indications HAS)','https://www.cancer.fr/content/download/6674/file/ONCOPL%20-%2020201110_Guide_Prescription-APA_liensHT.PDF?version=3'],
+ dep:['HAS · L’activité physique pour votre santé : dépression','https://www.has-sante.fr/upload/docs/application/pdf/2022-11/ap_fiche_depression.pdf'],
+ lomb:['HAS · L’activité physique pour votre santé : lombalgie chronique (2024)','https://www.has-sante.fr/upload/docs/application/pdf/2024-12/ap_fiche_lombalgie.pdf'],
+ lombm:['HAS · Lombalgie commune : prise en charge (2019)','https://www.has-sante.fr/jcms/c_2961499/fr/lombalgie-commune'],
+ arth:['HAS · Prescription d’activité physique : arthroses (2022)','https://has-sante.fr/upload/docs/application/pdf/2022-08/fiche_aps_arthroses_vf.pdf'],
+ arthv:['Vidal · Arthrose : traitements et prévention','https://www.vidal.fr/maladies/appareil-locomoteur/arthrose-rhumatismes/traitements.html'],
+ osteo:['Vidal · Prévenir l’ostéoporose (recommandations GRIO et SFR 2023)','https://www.vidal.fr/maladies/appareil-locomoteur/osteoporose/prevention.html'],
+ osteo2:['La Revue du Praticien · Mesures non médicamenteuses de l’ostéoporose','https://www.larevuedupraticien.fr/outil/mesures-non-pharmacologiques-du-traitement-de-losteoporose'],
+ pr:['HAS · L’activité physique pour votre santé : polyarthrite rhumatoïde (2024)','https://www.has-sante.fr/upload/docs/application/pdf/2024-12/ap_fiche_polyarthrite.pdf'],
+ fibro:['HAS · Fibromyalgie : aider les personnes à mieux vivre avec la douleur (2025)','https://has-sante.fr/jcms/p_3634985/fr/fibromyalgie-aider-les-personnes-a-mieux-vivre-avec-la-douleur'],
+ park:['HAS · L’activité physique pour votre santé : maladie de Parkinson','https://www.has-sante.fr/upload/docs/application/pdf/2022-11/ap_fiche_parkinson.pdf'],
+ chute:['HAS · Synthèse : personnes âgées à risque de chute (2024)','https://www.has-sante.fr/upload/docs/application/pdf/2024-04/synthese_aps_personnes_agees_a_risque_de_chute.pdf'],
+ gros:['HAS · L’activité physique pour votre santé : grossesse','https://www.has-sante.fr/upload/docs/application/pdf/2022-11/ap_fiche_grossesse.pdf'],
+ post:['HAS · L’activité physique pour votre santé : après une naissance','https://www.has-sante.fr/upload/docs/application/pdf/2022-11/ap_fiche_postpartum.pdf'],
+ mrc:['HAS · Guide du parcours de soins : maladie rénale chronique (2021, mis à jour 2023)','https://www.has-sante.fr/upload/docs/application/pdf/2021-09/guide__mrc.pdf'],
+ ircv:['Vidal · Diététique de l’insuffisance rénale chronique avant la dialyse','https://www.vidal.fr/maladies/recommandations/dietetique-insuffisance-renale-chronique-avant-le-stade-de-la-dialyse-et-hors-transplantation-1490.html'],
+ goutte:['Vidal · Goutte : peut-on prévenir les crises ?','https://www.vidal.fr/maladies/metabolisme-diabete/goutte/causes.html'],
+ goutte2:['sante.fr · Boire du café prévient-il les crises de goutte ?','https://www.sante.fr/decryptage/nos-reponses/boire-du-cafe-previent-il-les-crises-de-goutte'],
+ mash:['Vidal · De la NASH à la MASH : conduite à tenir','https://www.vidal.fr/actualites/31509-de-la-nash-a-la-mash-quelle-conduite-a-tenir-en-pratique-en-soins-primaires.html'],
+ mash2:['SOS Hépatites · La NASH, maladie du foie gras','https://soshepatites.org/wp-content/uploads/2021/01/Brochure-NASH-version-2.pdf'],
+ anemie:['Vidal · Anémie par carence en fer de l’adulte','https://www.vidal.fr/recommandations/3455/anemie_ferriprive_de_l_adulte/prise_en_charge/'],
+ fer:['Santé Canada · Le fer, un élément nutritif essentiel','https://www.canada.ca/fr/sante-canada/services/publications/aliments-et-nutrition/le-fer-element-nutritif-essentiel-sante.html'],
+ sii:['Vidal · Syndrome de l’intestin irritable (recommandations)','https://www.vidal.fr/maladies/recommandations/syndrome-de-l-intestin-irritable-2499.html'],
+ sii2:['La Revue du Praticien · Conseils diététiques dans le côlon irritable','https://www.larevuedupraticien.fr/outil/conseils-dietetiques-en-cas-de-syndrome-de-lintestin-irritable'],
+ mici:['AFA Crohn RCH France · Manger en période de rémission (sante.fr)','https://www.sante.fr/node/1252891'],
+ mici2:['AFA Crohn RCH France · Manger en poussée (recommandations HAS ALD 24)','https://www.sante.fr/node/1252763'],
+ diver:['HAS · Prise en charge de la diverticulite colique (2017)','https://www.has-sante.fr/upload/docs/application/pdf/2017-12/prise_en_charge_medicale_et_chirurgicale_-_recommandations.pdf'],
+ diver2:['sante.fr · La diverticulite','https://www.sante.fr/node/1268352'],
+ migr:['sante.fr · Migraine, une maladie de mieux en mieux connue','https://www.sante.fr/node/1252398'],
+ migr2:['sante.fr · Canal Détox Inserm : des régimes miracles contre la migraine ?','https://www.sante.fr/node/6816811'],
+ endo:['sante.fr · En mouvement avec l’endométriose (ministère des Sports)','https://www.sante.fr/node/11244487'],
+ endo2:['sante.fr · Vivre avec l’endométriose (EndoFrance)','https://www.sante.fr/node/1263790'],
+ veine:['Vidal · Jambes lourdes : traitements et hygiène de vie','https://www.vidal.fr/maladies/coeur-circulation-veines/jambes-lourdes/traitements.html'],
+ veine2:['sante.fr · Jambes lourdes','https://www.sante.fr/jambes-lourdes'],
+ arthsf:['sante.fr · Arthrose et rhumatismes','https://www.sante.fr/node/2055459'],
+ htamemo:['HAS · Hypertension artérielle : des outils pour une prise en charge optimale','https://www.has-sante.fr/jcms/pprd_2974311/fr/hypertension-arterielle-des-outils-pour-une-prise-en-charge-optimale'],
+ dyslip:['Ville de Paris · Alimentation et pathologies (cholestérol, tension)','https://cdn.paris.fr/paris/2025/12/11/alimentation-et-pathologies-W6Gw.pdf']
+};
+const PAT_INT='Note ton effort de 0 (repos) à 10 (impossible d’aller plus fort). 3-4 = léger : tu parles sans être essoufflé(e). 5-6 = modéré : tu es un peu essoufflé(e), tu transpires un peu, mais la conversation reste possible. 7-8 = soutenu : parler devient difficile. C’est le « test de la parole » : si tu ne peux plus dire une phrase, ralentis.';
+const PAT_STOP0=['une douleur ou une gêne dans la poitrine (si elle dure, appelle le 15)','un essoufflement anormal pour l’effort, ou qui ne passe pas au repos','des palpitations, un cœur qui bat vite ou de façon irrégulière','un malaise, un vertige, une vue qui se brouille'];
+const PAT_HAB0=['Moins de temps assis : lève-toi et bouge au moins 1 minute toutes les heures.','Marche dans tes trajets : escaliers, un arrêt de bus plus tôt. Objectif : environ 7 000 pas par jour, en montant de 1 000 à 3 000 pas par semaine.','Garde tes séances : les bienfaits disparaissent en 2 mois d’arrêt.'];
+const PATHO={
+ diab2:{s:'diabète',r:'Bouger fait baisser le sucre dans le sang pendant et après l’effort et rend ton insuline plus efficace. Avec le renforcement musculaire, c’est un vrai traitement, qui réduit aussi le risque de complications.',
+  f:[['Endurance','3 à 7 jours par semaine, sans jamais rester plus de 2 jours de suite sans en faire. Au moins 150 minutes par semaine (par exemple 30 min, 5 jours), effort 5-6 sur 10 ; au-delà de 300 minutes, c’est encore mieux.'],['Renforcement','2, idéalement 3 jours par semaine, pas deux jours de suite : 8 à 10 exercices, 1 à 3 séries de 10 à 15 répétitions.'],['Souplesse','2 à 3 fois par semaine : étirements tenus 10 à 30 secondes, 2 à 4 fois chacun.'],['Au quotidien','Marche, escaliers, jardinage, ménage chaque jour, et une pause active d’au moins 1 minute toutes les heures.']],
+  ev:['les efforts très intenses si ton diabète est mal équilibré, ou si tu as un problème aux yeux non stabilisé (rétinopathie évolutive, laser récent)','de commencer un effort quand ta glycémie est très haute : demande la conduite à tenir à ton médecin','les ampoules et petites plaies aux pieds : bonnes chaussures, chaussettes sans coutures'],
+  st:['des signes d’hypoglycémie : tremblements, sueurs, faim brutale, faiblesse, vision trouble, confusion → arrête, prends du sucre, contrôle ta glycémie (elle peut aussi baisser jusqu’à 12 h après l’effort)','une plaie ou une ampoule au pied qui ne guérit pas → montre-la vite à ton médecin'],
+  pr:'si tu prends de l’insuline ou des comprimés qui peuvent donner des hypoglycémies (sulfamides, glinides), ou si tu as des complications aux yeux, aux reins, aux pieds ou au cœur',
+  a:{k:['2 à 3 vrais repas par jour, sans grignotage, avec à chaque repas un féculent (plutôt complet) ou des légumineuses.','Associe toujours féculents et légumes verts : leurs fibres ralentissent l’arrivée du sucre dans le sang.','Fruits : 2 à 3 par jour au maximum, entiers plutôt qu’en jus.','Graisses : huile d’olive, de noix ou de colza ; poisson au moins 2 fois par semaine ; charcuterie et viande rouge limitées.'],p:['légumes à chaque repas','légumineuses (lentilles, pois chiches)','pain et féculents complets','poisson 2 fois par semaine','eau à volonté'],m:['sodas, jus de fruits, sirops','pâtisseries, viennoiseries, biscuits','plats cuisinés et charcuterie','alcool'],pi:['le jus « 100 % pur jus » fait monter la glycémie comme un soda','les produits « sans sucres ajoutés » restent parfois riches en glucides','sauter un repas puis grignoter']},
+  h:['Quand tu peux, marche 10 à 15 minutes après un repas : la glycémie y est plus haute et l’effort aide à la faire baisser.','Regarde tes pieds chaque soir et sèche bien entre les orteils.','Si ton traitement peut donner des hypoglycémies : sucre toujours sur toi et glycémie avant et après les nouvelles activités.'],
+  sv:[['sucres'],['fibres',30],['gluc']],pg:{f:'meta'},src:['dt2','nutdiab','guide'],
+  ias:'Diabète de type 2 : endurance 3 à 7 j/sem (jamais plus de 2 jours sans), renforcement 2-3 j/sem non consécutifs ; rappeler sucre sur soi et glycémie si insuline ou sulfamides ; pas de haute intensité si rétinopathie non stabilisée ; soin des pieds.',
+  ian:'Diabète : 2 à 3 repas réguliers sans grignotage, féculent complet ou légumineuses à chaque repas avec des légumes verts, 2 à 3 fruits entiers par jour au maximum, aucune boisson sucrée.'},
+ diab1:{s:'diabète de type 1',fort:1,r:'Le sport est bon pour ton cœur, ta forme et ton moral, et presque toutes les activités sont possibles. Il demande d’anticiper : l’effort fait baisser la glycémie, parfois jusqu’à 12 heures après.',
+  f:[['Endurance','150 minutes par semaine en 3 à 5 fois, effort 5-6 sur 10, comme tout le monde.'],['Renforcement','Au moins 2 séances par semaine.'],['Avant, pendant, après','Glycémie avant l’effort, pendant si c’est long, puis plusieurs heures après, surtout pour une activité nouvelle ou un changement de traitement.']],
+  ev:['de commencer quand ta glycémie est trop basse ou très haute : suis les seuils et la conduite à tenir (recherche de cétones) donnés par ton diabétologue','de faire une activité nouvelle seul(e) : préviens quelqu’un','les activités où une hypoglycémie serait dangereuse (plongée, escalade, natation seul·e) sans avis spécialisé'],
+  st:['des signes d’hypoglycémie (tremblements, sueurs, faim, faiblesse, vision trouble, confusion) → arrête et resucre-toi tout de suite','nausées, vomissements, très grande soif avec une glycémie haute → arrête et suis ton plan d’action'],
+  pr:'toujours : c’est ton diabétologue qui t’aide à adapter l’insuline et les collations à l’effort. L’app ne donne jamais de dose',
+  a:{k:['Compte tes glucides comme te l’a appris ton équipe : c’est ce qui règle ton insuline.','Emporte toujours du sucre rapide pendant le sport (morceaux de sucre, petit jus).','Après le sport, un vrai repas avec féculents et protéines aide à éviter l’hypoglycémie tardive.','Les produits sucrés ne sont pas interdits, mais ils servent surtout à corriger une hypoglycémie.'],p:['féculents complets et légumineuses','légumes verts à chaque repas','fruits entiers'],m:['boissons sucrées en dehors des hypoglycémies','alcool, surtout le soir après le sport (hypoglycémie la nuit)'],pi:['oublier que l’hypoglycémie peut arriver la nuit après une séance de l’après-midi']},
+  h:['Note tes glycémies et ton effort : tu apprendras vite comment ton corps réagit.','Préviens ton entourage sportif de ce qu’il faut faire en cas d’hypoglycémie.'],
+  sv:[['gluc'],['sucres']],pg:{f:'meta'},src:['dt1','dt2','nutdiab'],
+  ias:'Diabète de type 1 : glycémie avant, pendant si long et après (hypoglycémie possible jusqu’à 12 h après) ; sucre rapide toujours sur soi ; ne jamais donner de dose d’insuline ; ne pas s’entraîner seul lors d’une nouvelle activité.',
+  ian:'Diabète de type 1 : indique les glucides de chaque plat en grammes ; ne propose jamais de dose d’insuline.'},
+ hta:{s:'HTA',r:'Une activité régulière fait baisser la tension, en plus de ton traitement, et limite les autres risques pour le cœur comme le surpoids ou le prédiabète. Après une séance, la tension reste un peu plus basse pendant plusieurs heures.',
+  f:[['Endurance','3 à 7 jours par semaine, au moins 30 minutes par jour (d’un coup ou en plusieurs morceaux), effort modéré 5-6 sur 10. Commence par allonger la durée petit à petit.'],['Renforcement','2 à 3 jours par semaine non consécutifs, grands muscles, 2 à 4 séries de 8 à 12 répétitions, charges modérées ; débutant(e) ou senior, commence plus léger.'],['Souplesse','2 à 3 fois par semaine, étirements de 10 à 30 secondes.'],['Avec un bêtabloquant','Ton cœur monte moins vite : fie-toi à ton essoufflement (échelle 0-10) plutôt qu’à ta montre.']],
+  ev:['de bloquer ta respiration en forçant : souffle toujours pendant l’effort','les positions tenues longtemps en force (gainage long, chaise contre le mur) et les charges maximales','un effort modéré ou intense si ta tension au repos est très haute (180/110 ou plus) : consulte d’abord','la grosse chaleur si tu prends un diurétique : bois régulièrement'],
+  st:['un mal de tête violent ou une vue trouble','un vertige après la séance : assieds-toi, la tension peut baisser fort après l’effort, même quelques heures après'],
+  pr:'si ta tension n’est pas encore équilibrée, si tu as des symptômes à l’effort, ou avant des efforts intenses',
+  a:{k:['Sel : au maximum 6 g par jour (repère HAS : 6 à 8 g au maximum), soit à peu près une cuillère à café rase en tout, sel caché compris.','Le sel caché est surtout dans le pain, le fromage, la charcuterie, les plats préparés, les soupes et sauces toutes prêtes.','Une alimentation équilibrée et, si tu es en surpoids, une perte de poids modérée.','Alcool : réduis-le ou arrête-le.'],p:['légumes, fruits, légumineuses','herbes, épices, ail, citron à la place du sel','poisson, volaille, œufs','eau du robinet'],m:['charcuterie, fromages très salés','plats préparés, pizzas, chips, biscuits apéritif','bouillon cube, sauce soja','alcool'],pi:['les céréales du petit-déjeuner et les biscottes sont salées','certaines eaux gazeuses sont riches en sodium','saler avant d’avoir goûté']},
+  h:['Prends ta tension à la maison si ton médecin te l’a demandé, et note-la.','Arrêter le tabac protège ton cœur, même s’il ne change pas directement la tension.'],
+  sv:[['sel',6]],pg:{f:'meta',ban:['iso']},src:['hta','htap','htamemo'],
+  ias:'Hypertension : endurance modérée 30 min/j 3 à 7 j/sem ; renforcement 2-3 j/sem charges modérées en soufflant ; aucun blocage respiratoire, pas de gainage long ni de chaise statique ni de charges maximales ; avec bêtabloquant, intensité selon l’essoufflement (0-10) et non le cardio.',
+  ian:'Hypertension : sel 6 g/j maximum au total ; aucune charcuterie, fromage très salé, bouillon cube, sauce soja ni plat préparé ; assaisonne aux herbes, épices et citron.'},
+ chol:{s:'cholestérol',r:'Bouger régulièrement protège tes artères et aide ton traitement contre le cholestérol à mieux agir. Avec une alimentation pauvre en graisses saturées, c’est la base de la prise en charge.',
+  f:[['Endurance','150 à 300 minutes par semaine d’intensité modérée (effort 5-6 sur 10), en 3 à 5 fois.'],['Renforcement','Au moins 2 séances par semaine.'],['Souplesse','2 à 3 fois par semaine.']],
+  ev:['les efforts violents si tu n’as pas bougé depuis longtemps : commence doucement'],
+  st:['des douleurs musculaires ou des tendons inhabituelles qui durent, si tu prends une statine → parles-en à ton médecin'],
+  pr:'si tu reprends un sport intense après 35 ans (homme) ou 45 ans (femme), ou si tu as d’autres facteurs de risque',
+  a:{k:['Limite les graisses saturées : beurre, crème, fromages gras, viandes grasses, charcuterie, viennoiseries.','Choisis les huiles d’olive, de colza ou de noix.','Poisson au moins 2 fois par semaine, dont un poisson gras (sardine, maquereau, saumon).','Des fibres tous les jours : légumes, fruits, légumineuses, flocons d’avoine.'],p:['poissons gras','légumineuses','flocons d’avoine','fruits et légumes','noix (une petite poignée)'],m:['charcuterie, viandes grasses','beurre, crème, fromages gras','viennoiseries, biscuits, plats frits'],pi:['les huiles de palme et de coco sont riches en graisses saturées','« allégé » ne veut pas dire pauvre en graisses saturées']},
+  sv:[['ags',10],['fibres',30]],pg:{f:'meta'},src:['guide','sccp','dyslip'],
+  ias:'Cholestérol : endurance modérée 150 à 300 min/sem + renforcement 2 fois/sem, progressif.',
+  ian:'Cholestérol : graisses saturées 10 % des calories maximum (pas de beurre, crème, fromages gras ni charcuterie), huiles d’olive ou de colza, poisson gras 1 fois par semaine, fibres chaque jour.'},
+ coeur:{s:'cœur',fort:1,cap:5,r:'Pour la plupart des maladies du cœur, une activité régulière et bien dosée fait partie du traitement : elle renforce le cœur et les muscles et réduit l’essoufflement. Le bon niveau d’effort dépend de ta maladie : c’est ton cardiologue qui le fixe.',
+  f:[['Endurance','Marche, vélo, plusieurs fois par semaine, à l’intensité fixée par ton cardiologue (souvent après une épreuve d’effort).'],['Renforcement','Léger à modéré, en soufflant pendant l’effort.'],['Échauffement et retour au calme','10 minutes chacun, à chaque séance.']],
+  ev:['tout effort intense ou de compétition sans l’accord de ton cardiologue','de bloquer ta respiration en forçant','le sport intense par grand froid (moins de -5 °C), forte chaleur (plus de 30 °C) ou pic de pollution','de fumer dans l’heure qui précède et les 2 heures qui suivent le sport'],
+  st:['si ton médecin t’a prescrit un spray de trinitrine, garde-le toujours sur toi pendant le sport'],
+  pr:'avant tout nouveau programme : c’est indispensable. Si tu as une maladie des coronaires ou une insuffisance cardiaque, coche plutôt la case précise dans ton profil',
+  a:{k:['Peu de sel : repère de l’app 6 g par jour au maximum, ton cardiologue peut te donner un autre chiffre.','Beaucoup de légumes, de fruits et de légumineuses, poisson 2 fois par semaine.','Huiles d’olive, de colza ou de noix plutôt que beurre et crème.','Arrêt complet du tabac.'],p:['légumes et fruits','poissons','légumineuses'],m:['plats préparés et charcuterie','beurre, crème, fromages gras'],pi:['le sel caché du pain et des fromages']},
+  sv:[['sel',6],['ags',10]],pg:{f:'card',cm:[10,15,20,25]},src:['sccp','iccp','r10'],
+  ias:'Problème cardiaque : intensité modérée seulement (effort 3 à 5 sur 10, test de la parole), échauffement et retour au calme de 10 min, ni blocage respiratoire ni isométrie, aucun effort maximal ni compétition sans accord du cardiologue.',
+  ian:'Cœur : peu de sel (6 g/j maximum), peu de graisses saturées, poisson 2 fois par semaine.'},
+ coronaire:{s:'coronaires',fort:1,cap:5,r:'Avec une maladie des coronaires stable, bouger régulièrement et rester moins assis limite les complications et renforce l’effet de tes médicaments, comme les statines. L’activité fait partie du traitement, au même titre que les médicaments.',
+  f:[['Endurance','Marche, vélo, natation… régulièrement, à l’intensité fixée par ton cardiologue d’après l’épreuve d’effort. Sous bêtabloquant, fie-toi à ton essoufflement plutôt qu’au cardio.'],['Renforcement','Associé à l’endurance pour la plupart des personnes : charges légères à modérées, en soufflant.'],['Échauffement et récupération','Toujours un échauffement, puis 10 minutes de récupération : étirements doux, mouvements des articulations, marche lente.'],['Après un infarctus ou un stent','La réadaptation cardiaque (souvent 3 semaines, 3 à 5 séances par semaine) est la meilleure façon de reprendre.']],
+  ev:['les sports intenses ou de compétition sans l’accord de ton cardiologue (son autorisation vaut un an)','les sports avec risque de choc si tu prends un antiagrégant','le tabac : l’arrêt doit être total et définitif','le froid intense, la forte chaleur et les pics de pollution pour les efforts soutenus'],
+  st:['des nausées ou des sueurs inhabituelles pendant l’effort','des douleurs musculaires ou des tendons inhabituelles (statines) → parles-en à ton médecin'],
+  pr:'toujours : l’intensité se règle avec ton cardiologue, souvent après une épreuve d’effort ; après un infarctus, un stent ou un pontage récent, commence par la réadaptation cardiaque',
+  a:{k:['Une alimentation de type méditerranéen : légumes, fruits, légumineuses, poisson, huile d’olive ou de colza.','Peu de graisses saturées : beurre, crème, fromages gras, charcuterie, viandes grasses.','Peu salé, et pas de plats tout prêts.','Arrêt complet du tabac.'],p:['poisson 2 fois par semaine, dont un gras','légumineuses','fruits et légumes','noix'],m:['charcuterie, viandes grasses','beurre, crème, fromages gras','plats préparés'],pi:['les viennoiseries et biscuits sont riches en graisses saturées']},
+  sv:[['ags',10],['fibres',30]],pg:{f:'card'},src:['sccp','scc','r10'],
+  ias:'Maladie coronaire stable : endurance + renforcement modérés selon l’épreuve d’effort ; effort 3-5/10 (test de la parole) ; sous bêtabloquant se fier à l’essoufflement ; échauffement progressif et 10 min de récupération ; pas d’effort maximal, pas d’isométrie ni de blocage respiratoire.',
+  ian:'Maladie coronaire : type méditerranéen, graisses saturées 10 % des calories maximum, poisson 2 fois par semaine dont un gras, peu salé, aucun plat préparé.'},
+ icardiaque:{s:'insuffisance cardiaque',fort:1,cap:5,r:'Même avec un cœur fatigué, une activité adaptée rend tes muscles plus forts, réduit l’essoufflement et améliore ta qualité de vie. Elle peut aussi renforcer l’effet de tes médicaments.',
+  f:[['Endurance et renforcement','Au moins 3 séances par semaine de 30 à 60 minutes qui associent endurance et renforcement musculaire, à commencer de préférence dans un programme encadré (réadaptation cardiaque ou activité physique adaptée).'],['Intensité','Modérée et réglée par ton médecin après une épreuve d’effort ; écoute tes sensations et ralentis avant d’être essoufflé(e).'],['Au quotidien','Augmente doucement tes activités de tous les jours et limite le temps assis ou allongé.']],
+  ev:['les efforts intenses, la musculation lourde et la compétition','la plongée sous-marine, même en apnée','l’eau à moins de 25 °C et l’altitude au-dessus de 2 500 m'],
+  st:['un essoufflement plus fort que d’habitude, des chevilles qui gonflent, une prise de poids rapide en quelques jours, une tension basse avec des vertiges → ce sont des signes d’alerte : appelle ton médecin'],
+  pr:'toujours : ton médecin fixe le type et l’intensité après une épreuve d’effort ; commence si possible dans un programme encadré',
+  a:{k:['Peu salé, comme te l’a dit ton cardiologue (repère de l’app : 6 g par jour au maximum).','Si ton médecin t’a fixé une quantité de boisson par jour, respecte-la, même après le sport.','Pèse-toi régulièrement, à la même heure : une prise de poids rapide doit être signalée.'],p:['légumes, fruits','plats faits maison'],m:['plats préparés, charcuterie, fromages salés','bouillon cube, soupes toutes prêtes'],pi:['le sel caché dans le pain et les plats tout prêts']},
+  h:['Pèse-toi chaque matin, après être passé(e) aux toilettes, et note-le.'],
+  sv:[['sel',6]],pg:{f:'card',cm:[10,15,20,25]},src:['iccp','icc'],
+  ias:'Insuffisance cardiaque : au moins 3 séances/sem de 30 à 60 min associant endurance et renforcement légers, intensité modérée seulement (effort 3-4 puis 4-5/10) ; aucun effort intense, musculation lourde ni compétition ; pas de plongée ; eau à 25 °C minimum ; rappeler les signes d’alerte (essoufflement, chevilles gonflées, prise de poids rapide).',
+  ian:'Insuffisance cardiaque : peu salé (6 g/j maximum sauf consigne du cardiologue), respecte la quantité de boisson fixée par le médecin, aucun plat préparé.'},
+ avc:{s:'AVC',fort:1,cap:5,r:'Après un AVC, bouger limite les séquelles, aide à rester autonome et diminue le risque d’un nouvel AVC en agissant sur la tension, le sucre et le cholestérol.',
+  f:[['Quand','Idéalement dans les 6 mois après l’AVC, d’abord en rééducation, puis avec un professionnel de l’activité physique adaptée.'],['Endurance et renforcement','Associe les deux, à ton rythme, selon tes capacités et tes limites.'],['Souplesse et équilibre','Ajoute-les si besoin : ils aident à marcher plus sûrement.'],['Au quotidien','Bouge le plus possible et réduis le temps assis et devant les écrans.']],
+  ev:['de forcer jusqu’à la douleur sur le côté atteint','les exercices d’équilibre sans appui à portée de main','de bloquer ta respiration en forçant'],
+  st:['un signe d’AVC : visage qui se déforme, bras ou jambe qui faiblit, parole difficile → appelle le 15 immédiatement'],
+  pr:'toujours : ton médecin s’appuie sur un bilan de tes séquelles et un avis du cardiologue avant de prescrire l’activité',
+  a:{k:['Les mêmes règles que pour protéger ton cœur : peu de sel, peu de graisses saturées, beaucoup de légumes.','Si tu as du mal à avaler, suis les conseils de texture de ton orthophoniste.'],p:['légumes, fruits, légumineuses','poisson'],m:['plats préparés, charcuterie'],pi:['les textures dures ou sèches si la déglutition est difficile']},
+  sv:[['sel',6],['ags',10]],pg:{f:'sen',w:10,eff:[[3,4],[3,4],[4,5],[4,5]]},src:['avc','liste'],
+  ias:'Après un AVC : endurance + renforcement + équilibre à son rythme, appui toujours disponible, ne pas forcer sur le côté atteint, intensité modérée (effort 3-5/10), pas de blocage respiratoire.',
+  ian:'Après un AVC : peu de sel, peu de graisses saturées, beaucoup de légumes ; textures adaptées en cas de difficulté à avaler.'},
+ veineuse:{s:'veines',r:'Quand tu marches, les muscles de tes mollets poussent le sang vers le cœur : c’est la pompe de tes jambes. Bouger soulage la lourdeur et freine l’évolution de la maladie, avec les bas de contention s’ils te sont prescrits.',
+  f:[['Endurance','Marche (au moins 20 minutes par jour), vélo, natation : des activités douces qui font travailler les mollets.'],['Renforcement','Mollets et jambes, 2 à 3 fois par semaine.'],['Au quotidien','Bouge les chevilles quand tu restes assis(e) longtemps, prends les escaliers.']],
+  ev:['de rester longtemps debout ou assis(e) sans bouger','la chaleur sur les jambes (bains chauds, sauna, soleil)','de croiser les jambes longtemps'],
+  st:['une jambe qui devient brusquement douloureuse, chaude ou gonflée d’un seul côté → consulte en urgence','un essoufflement brutal ou une douleur dans la poitrine → appelle le 15'],
+  pr:'si tu as déjà eu une phlébite ou un ulcère de jambe, ou si tes jambes gonflent beaucoup',
+  a:{k:['Pas de régime particulier : une alimentation équilibrée et un poids stable soulagent tes veines (le surpoids aggrave l’insuffisance veineuse).','Bois suffisamment dans la journée.'],p:['légumes, fruits','eau'],m:['alcool en excès'],pi:[]},
+  h:['Dors les jambes légèrement surélevées.','Termine ta douche par de l’eau fraîche sur les jambes.','Enfile tes bas de contention le matin, s’ils te sont prescrits.'],
+  sv:[],pg:{f:'meta'},src:['veine','veine2'],
+  ias:'Insuffisance veineuse : marche, vélo, natation, renforcement des mollets ; éviter les positions statiques prolongées et la chaleur.',
+  ian:'Jambes lourdes : alimentation équilibrée, hydratation suffisante.'},
+ obesite:{s:'surpoids',r:'Bouger aide surtout à garder tes muscles pendant que tu perds du poids, et à ne pas le reprendre ensuite. Même sans perte de poids, l’activité améliore ton cœur, ton sucre, ton souffle et ton moral.',
+  f:[['Endurance','Au moins 150 minutes par semaine d’intensité modérée (effort 5-6 sur 10) pendant la perte de poids, puis 200 à 300 minutes par semaine pour garder ton poids.'],['Renforcement','Quelques séances par semaine, pour limiter la perte de muscle.'],['Type','Sans impact au début : marche, vélo, aquagym, natation.'],['Suivi','Regarde ton tour de taille plutôt que seulement la balance.']],
+  ev:['les sauts et la course au début','un effort intense sans avis médical si ton IMC dépasse 35 ou si ton risque cardiaque est au moins modéré'],
+  st:['une douleur d’articulation qui dure plus de 24 heures → allège et parles-en'],
+  pr:'si ton IMC dépasse 35, ou si tu as aussi du diabète, de la tension ou un problème cardiaque',
+  a:{k:['Pas de régime strict : des portions un peu plus petites, des légumes en premier, des protéines à chaque repas.','L’eau comme boisson principale : boissons sucrées et alcool apportent beaucoup de calories.','Cuisine maison le plus souvent possible.'],p:['légumes','protéines maigres','féculents complets en portions modérées'],m:['boissons sucrées','plats industriels, fritures','grignotage'],pi:['les régimes très stricts : on reprend souvent plus ensuite']},
+  sv:[['sucres'],['fibres',30]],pg:{f:'meta',ban:['sol']},src:['obe','inserm'],
+  ias:'Surpoids : endurance 150 min/sem minimum pendant la perte de poids puis 200-300 min/sem, renforcement pour garder le muscle, ni sauts ni course au début, peu de passages au sol.',
+  ian:'Surpoids : portions modérées sans régime strict, légumes en premier, protéines à chaque repas, eau comme boisson, cuisine maison.'},
+ steatose:{s:'foie',r:'Le gras en trop dans le foie diminue quand on bouge et qu’on perd un peu de poids : 5 % de poids en moins réduisent déjà le gras, 7 à 10 % réduisent l’inflammation. Il n’y a pas de médicament spécifique : l’hygiène de vie est le traitement.',
+  f:[['Endurance','Au moins 150 minutes par semaine (par exemple 30 minutes 5 jours), effort 5-6 sur 10.'],['Renforcement','2 séances par semaine, comme recommandé pour tous.']],
+  ev:['l’alcool, qui abîme aussi le foie'],st:[],pr:'pour le suivi de ton foie (prise de sang, examen de l’élasticité du foie)',
+  a:{k:['Les sucres en excès sont la principale cause : sodas, jus, pâtisseries, plats industriels sucrés. C’est la priorité.','Alimentation de type méditerranéen : légumes, légumineuses, poisson, huile d’olive, fruits entiers.','Alcool : le moins possible, parles-en avec ton médecin.'],p:['légumes et légumineuses','poisson','huile d’olive','eau'],m:['sodas, jus de fruits','pâtisseries, biscuits','plats cuisinés industriels','alcool'],pi:['les plats salés industriels contiennent souvent du sucre ajouté']},
+  sv:[['sucres'],['ags',12]],pg:{f:'meta'},src:['mash','mash2'],
+  ias:'Foie gras : endurance 150 min/sem minimum + renforcement 2 fois/sem, perte de poids progressive de 5 à 10 %.',
+  ian:'Stéatose hépatique : presque pas de sucres ajoutés (aucun soda ni jus), type méditerranéen, aucun alcool dans les recettes.'},
+ goutte:{s:'goutte',r:'La goutte vient d’un excès d’acide urique qui forme des cristaux dans les articulations. Bouger régulièrement, perdre du poids si besoin et surtout limiter alcool et boissons sucrées aide à espacer les crises, en plus du traitement.',
+  f:[['Hors crise','Activité régulière d’intensité modérée : marche, vélo, natation, vers 150 minutes par semaine.'],['Pendant une crise','Repos de l’articulation qui fait mal ; reprends quand l’inflammation est passée.'],['Renforcement','2 séances par semaine.']],
+  ev:['de forcer sur une articulation en crise','de te déshydrater : bois bien pendant et après le sport'],
+  st:['une articulation brusquement rouge, chaude et très douloureuse → repos et appel à ton médecin','de la fièvre avec une articulation gonflée → consulte vite'],
+  pr:'si tes crises sont fréquentes ou si tu as un problème aux reins',
+  a:{k:['Évite la bière, même sans alcool, et limite les autres alcools : ils font monter l’acide urique.','Pas de sodas ni de jus sucrés : le fructose favorise les crises.','Modère les abats, le gibier, les fruits de mer et certains poissons (anchois, sardines, hareng).','Bois beaucoup d’eau.'],p:['eau','légumes','laitages nature','œufs'],m:['bière (même sans alcool), alcools','sodas, jus de fruits','abats, gibier, fruits de mer'],pi:['la bière sans alcool contient aussi des purines','les sodas « boissons énergisantes »']},
+  sv:[['sucres']],pg:{f:'meta'},src:['goutte','goutte2'],
+  ias:'Goutte : activité modérée régulière hors crise, repos de l’articulation en crise, bonne hydratation.',
+  ian:'Goutte : aucune bière (même sans alcool) ni alcool dans les recettes, aucun soda ni jus, peu d’abats, de gibier et de fruits de mer, eau à volonté.'},
+ sopk:{s:'SOPK',r:'Les repères sont ceux de l’activité pour la santé : bouger aide à mieux gérer le poids et le sucre dans le sang. Le plus important est la régularité.',
+  f:[['Endurance','150 à 300 minutes par semaine, effort 5-6 sur 10.'],['Renforcement','Au moins 2 séances par semaine.']],ev:[],st:[],pr:'si tu as aussi un diabète ou une tension élevée',
+  a:{k:['Index glycémique bas : féculents complets, légumineuses, légumes.','Des protéines et des fibres à chaque repas.','Peu de produits sucrés et de boissons sucrées.'],p:['légumineuses','légumes','féculents complets'],m:['boissons sucrées','pâtisseries'],pi:[]},
+  sv:[['sucres'],['fibres',30]],pg:{f:'meta'},src:['guide'],ias:'SOPK : endurance 150 à 300 min/sem + renforcement 2 fois/sem.',ian:''},
+ thyro:{s:'hypothyroïdie',r:'Quand ton traitement est bien équilibré, tu peux bouger comme tout le monde : l’activité aide contre la fatigue et pour garder un poids stable. Au début du traitement, vas-y progressivement.',
+  f:[['Endurance','150 minutes par semaine à terme, en commençant doucement.'],['Renforcement','2 séances par semaine.']],ev:['de forcer quand tu es très fatigué(e), tant que ton traitement n’est pas équilibré'],st:[],
+  pr:'si tu te sens très fatigué(e) ou essoufflé(e), ou si ton bilan n’est pas encore équilibré',
+  a:{k:['Alimentation équilibrée, sans régime restrictif.','Demande à ton pharmacien à quelle distance des repas et des compléments (fer, calcium) prendre ton traitement.'],p:[],m:[],pi:[]},
+  sv:[],pg:{f:'meta'},src:['guide'],ias:'Hypothyroïdie : progressivité si fatigue, programme normal si traitement équilibré.',ian:''},
+ hyperthyro:{s:'hyperthyroïdie',fort:1,cap:4,r:'Tant que la thyroïde s’emballe, ton cœur bat plus vite et tes muscles fatiguent : les efforts intenses sont à éviter. Une fois le traitement équilibré, tu peux reprendre progressivement.',
+  f:[['Tant que ce n’est pas équilibré','Marche douce, étirements, effort léger (3-4 sur 10).'],['Ensuite','Reprise progressive vers les repères de tous : 150 minutes par semaine et 2 séances de renforcement.']],
+  ev:['les efforts intenses tant que ton cœur bat vite au repos'],st:[],pr:'toujours avant de reprendre un effort modéré ou intense : ton médecin vérifie que la thyroïde et le cœur sont calmés',
+  a:{k:['Tu peux perdre du poids sans le vouloir : mange suffisamment, avec des protéines à chaque repas.','Pas de compléments à base d’algues ou d’iode sans avis médical.'],p:['repas complets et réguliers'],m:['compléments iodés, algues'],pi:[]},
+  sv:[],pg:{f:'doux',eff:[[3,4],[3,4],[3,4],[3,4]]},src:['guide'],
+  ias:'Hyperthyroïdie non équilibrée : effort léger seulement (3-4/10), aucun effort intense, reprise progressive après accord médical.',
+  ian:'Hyperthyroïdie : pas de déficit calorique, protéines à chaque repas, pas d’algues ni de compléments iodés.'},
+ asthme:{s:'asthme',r:'Bien soigné, l’asthme n’empêche pas le sport : l’activité régulière améliore ta tolérance à l’effort, tu es moins essoufflé(e) et tu as moins de risque d’asthme d’effort. Elle réduit aussi l’anxiété.',
+  f:[['Endurance','Comme tout le monde : 150 minutes par semaine d’intensité modérée, en commençant doucement.'],['Échauffement','Long et progressif (10 à 15 minutes) : il limite l’asthme d’effort.'],['Renforcement','2 séances par semaine.']],
+  ev:['le sport pendant une crise, ou si tu ressens une gêne respiratoire anormale','le froid sec, les pics de pollution ou de pollens pour les efforts soutenus','la plongée sous-marine sans avis spécialisé'],
+  st:['une crise (sifflements, toux, oppression) → arrête, prends ton traitement de crise ; si ça ne passe pas, appelle le 15'],
+  pr:'si ton asthme n’est pas bien contrôlé, ou avant de reprendre une activité modérée ou intense',
+  a:{k:['Pas d’alimentation spéciale : équilibrée, avec fruits et légumes.'],p:[],m:[],pi:[]},
+  h:['Garde ton traitement de crise sur toi pendant le sport.','Si ton médecin te l’a prescrit, prends ton traitement avant l’effort.'],
+  sv:[],pg:{f:'resp',w:15,cx:'marche',cm:[10,15,15,20],eff:[[4,5],[4,5],[5,6],[5,6]]},src:['asthme','r10'],
+  ias:'Asthme : échauffement long et progressif (10-15 min), cardio modéré, traitement de crise à portée de main, éviter froid sec et pollution, pas d’effort en crise.',ian:''},
+ bpco:{s:'BPCO',fort:1,cap:5,r:'Avec une BPCO, l’essoufflement pousse à moins bouger, et moins bouger rend chaque effort plus dur : l’activité casse ce cercle. Elle diminue la gêne respiratoire et la fatigue et améliore ta qualité de vie.',
+  f:[['Endurance','3 à 5 fois par semaine, 30 à 45 minutes, dans ta vie de tous les jours (marche, vélo, escaliers), en commençant par des morceaux de quelques minutes.'],['Intensité','Ajustée à ton essoufflement : une gêne modérée que tu supportes (4-5 sur 10), jamais jusqu’à ne plus pouvoir parler.'],['Renforcement','Jambes et bras, 2 à 3 fois par semaine.'],['Réhabilitation respiratoire','Si ton médecin te la propose, c’est le meilleur moyen de démarrer.']],
+  ev:['de fumer : arrêter le tabac est la priorité','l’effort par grand froid ou pendant un pic de pollution','de forcer jusqu’à ne plus pouvoir parler'],
+  st:['une douleur dans la poitrine → arrête tout de suite et appelle le 15','un essoufflement qui ne redescend pas après quelques minutes de repos, des lèvres qui bleuissent'],
+  pr:'avant tout programme : ton médecin vérifie ton souffle et ton cœur, parfois avec une épreuve d’effort',
+  a:{k:['Garde assez de protéines à chaque repas pour tes muscles.','Si tu perds du poids sans le vouloir, signale-le à ton médecin.','Si tu es essoufflé(e) en mangeant, fractionne en petits repas.','La réhabilitation respiratoire comprend un bilan et un suivi nutritionnel : profites-en.'],p:['protéines à chaque repas','laitages'],m:['repas trop copieux'],pi:[]},
+  h:['Souffle lentement, lèvres pincées, quand tu montes un escalier.','Monte les escaliers à ton rythme, avec des pauses.'],
+  sv:[],pg:{f:'resp'},src:['bpco','rr'],
+  ias:'BPCO : 3 à 5 fois/sem 30 à 45 min, marche ou vélo fractionnés au début (1 à 2 min d’effort, pauses), essoufflement modéré (4-5/10), renforcement jambes et bras, respiration lèvres pincées ; arrêt immédiat et 15 si douleur thoracique.',
+  ian:'BPCO : protéines suffisantes à chaque repas, petits repas fractionnés si essoufflement.'},
+ dos:{s:'dos',r:'Pour le mal de dos commun, ce n’est pas le repos mais l’activité qui diminue la douleur et redonne de la mobilité : c’est même le traitement principal. Pratiquée régulièrement, elle évite aussi les rechutes.',
+  f:[['Rester actif','Continue tes activités de tous les jours autant que possible, même si ça tire un peu.'],['Exercices','Gainage doux, fessiers, jambes et mobilité, 2 à 3 fois par semaine, en augmentant petit à petit.'],['Endurance','Marche, vélo, natation, vers 150 minutes par semaine.'],['Douleur','Une douleur légère pendant l’exercice est acceptable (3 sur 10 au maximum) si elle est revenue comme avant le lendemain.']],
+  ev:['de rester au lit ou de tout arrêter','les charges lourdes et les mouvements brusques au début','les abdominaux en enroulement (crunch) et les relevés de jambes s’ils font mal'],
+  st:['une douleur avec fièvre, une perte de poids inexpliquée, ou après une chute → consulte','des fourmillements ou une faiblesse dans une jambe, une perte de sensibilité entre les jambes, un trouble pour uriner → consulte en urgence'],
+  pr:'si la douleur descend dans la jambe, si elle dure depuis plus de 3 mois sans s’améliorer, ou si c’est nouveau après 50 ans',
+  a:{k:['Pas d’aliment miracle pour le dos : une alimentation équilibrée et un poids stable.'],p:[],m:[],pi:[]},
+  sv:[],pg:{f:'arti',ban:['dos_charge']},src:['lomb','lombm'],
+  ias:'Lombalgie : rester actif, progressivité, douleur 3/10 maximum et revenue à la normale le lendemain.',ian:''},
+ articul:{s:'arthrose',r:'Bouger fait partie du traitement de l’arthrose : des muscles plus forts protègent l’articulation et diminuent la douleur. À l’inverse, le manque d’exercice aggrave l’arthrose.',
+  f:[['Endurance sans choc','Marche, vélo, natation, aquagym, vers 150 minutes par semaine, par séances de 20 à 30 minutes.'],['Renforcement','Cuisses, fessiers, mollets (et épaules pour le haut) 2 à 3 fois par semaine.'],['Mobilité','Bouge l’articulation dans toute son amplitude, sans douleur, tous les jours.'],['Douleur','Acceptable jusqu’à 3 sur 10 pendant l’effort, si elle a disparu le lendemain.']],
+  ev:['les sauts et la course si tes genoux ou tes hanches sont touchés','le squat profond et les grandes fentes','de porter des charges lourdes','de rester debout longtemps : utilise un tabouret pour jardiner, un caddie pour les courses'],
+  st:['une articulation qui gonfle, devient chaude ou se bloque → repos et avis médical'],pr:'si une articulation gonfle souvent, ou avant de reprendre un sport à impact',
+  a:{k:['En cas de surpoids, perdre du poids est essentiel, surtout pour les genoux.','Combine toujours perte de poids et activité physique, pour ne pas faire fondre tes muscles.','Évite les régimes sévères : une perte progressive tient mieux dans le temps.'],p:['protéines à chaque repas','légumes, fruits'],m:['grignotage, boissons sucrées'],pi:['les régimes très stricts qui font perdre du muscle']},
+  sv:[],pg:{f:'arti',ban:['genou']},src:['arth','arthv','arthsf'],
+  ias:'Arthrose : activités sans impact, renforcement des cuisses, douleur 3/10 maximum et disparue le lendemain.',
+  ian:'Arthrose : si surpoids, perte de poids progressive sans régime sévère, protéines suffisantes.'},
+ osteo:{s:'ostéoporose',r:'L’os se renforce quand il porte le poids du corps et quand les muscles tirent dessus. Bouger améliore aussi ton équilibre : c’est ce qui évite les chutes, donc les fractures.',
+  f:[['En charge','Marche ou autre activité « en charge » 30 minutes, au moins 3 fois par semaine (ou 30 minutes de marche par jour).'],['Équilibre','Exercices d’équilibre plusieurs fois par semaine, avec un appui à portée de main.'],['Renforcement','Jambes, fessiers et muscles du dos, 2 à 3 fois par semaine.']],
+  ev:['si tu as eu une fracture d’une vertèbre : de te pencher en avant en portant une charge et les torsions brusques du dos (demande les bons gestes au kiné)','les activités à fort risque de chute'],
+  st:['une douleur brutale du dos après un effort ou une chute → consulte'],pr:'si tu as déjà eu une fracture, pour savoir quels mouvements sont sûrs pour toi',
+  a:{k:['Calcium : 2 à 3 produits laitiers par jour (environ 1 000 mg), ou une eau riche en calcium.','Vitamine D : ton médecin peut la doser et te prescrire un complément si besoin.','Assez de protéines à chaque repas : elles aident l’os quand le calcium et la vitamine D sont suffisants.','Arrête le tabac et limite l’alcool.'],p:['yaourts, fromages, lait','eaux riches en calcium','poissons gras'],m:['alcool','tabac'],pi:['supprimer les laitages sans les remplacer']},
+  sv:[['ca',950]],pg:{f:'sen',cm:[20,25,30,30],eff:[[4,5],[4,5],[5,6],[5,6]],ban:['dos_charge']},src:['osteo','osteo2','anses','chute'],
+  ias:'Ostéoporose : activités en charge (marche) au moins 30 min 3 fois/sem, équilibre avec appui, renforcement jambes et dos ; aucune flexion du dos en charge, pas de torsion brusque ni de sport à risque de chute.',
+  ian:'Ostéoporose : 2 à 3 produits laitiers par jour ou eau riche en calcium, protéines suffisantes, poissons gras.'},
+ polyarthrite:{s:'polyarthrite',fort:1,r:'Quel que soit son degré, la polyarthrite n’empêche pas de bouger : l’activité entretient tes muscles, ton cœur et la mobilité de tes articulations.',
+  f:[['Endurance','Marche, vélo, natation, aquagym, d’intensité modérée, progressivement vers 150 minutes par semaine.'],['Renforcement','2 à 3 fois par semaine, sans douleur, charges légères.'],['Mobilité','Tous les jours, mains et poignets compris.'],['En poussée','Mets au repos les articulations enflammées et continue de bouger doucement le reste.']],
+  ev:['de forcer sur une articulation gonflée et chaude','les chocs répétés sur les articulations touchées'],
+  st:['une poussée (articulations gonflées, chaudes, raideur longue le matin) → allège et préviens ton rhumatologue','de la fièvre sous traitement de fond → appelle ton médecin'],
+  pr:'une consultation est recommandée avant une activité d’intensité modérée à élevée, et l’avis d’un cardiologue avant une activité intense',
+  a:{k:['Une alimentation variée de type méditerranéen.','Si tu prends de la cortisone : peu de sel et de sucres rapides et assez de calcium, comme te l’a dit ton médecin.'],p:['poissons','légumes, fruits','huile d’olive ou de colza'],m:[],pi:[]},
+  sv:[],pg:{f:'arti'},src:['pr'],
+  ias:'Polyarthrite : endurance et renforcement modérés sans douleur, mobilité quotidienne des mains, aucun travail sur une articulation en poussée ; avis cardiologique avant un effort intense.',
+  ian:'Polyarthrite : type méditerranéen ; si cortisone, peu de sel et de sucres rapides, calcium suffisant.'},
+ fibro:{s:'fibromyalgie',cap:5,r:'La fibromyalgie est une vraie maladie, reconnue par l’OMS. Le premier traitement recommandé par la HAS est l’activité physique douce et régulière, encadrée si possible par un professionnel de l’activité physique adaptée : elle aide à mieux vivre avec la douleur.',
+  f:[['Rythme','2 à 3 fois par semaine, des activités douces : marche, vélo, aquagym, étirements.'],['Progression','Commence petit (10 minutes) et augmente doucement, même les jours où tu te sens bien.'],['Intensité','Légère à modérée : effort 3 à 5 sur 10.']],
+  ev:['le gros effort les « bons jours », suivi de plusieurs jours épuisé(e)','les efforts intenses au début'],
+  st:['une douleur nouvelle, différente de d’habitude, ou une articulation qui gonfle → consulte'],pr:'pour être orienté(e) vers un programme d’activité physique adaptée encadré',
+  a:{k:['Pas de régime miracle : une alimentation équilibrée.'],p:[],m:[],pi:['les régimes d’exclusion présentés comme des remèdes']},
+  sv:[],pg:{f:'arti',per:2,cm:[10,12,15,20],ser:[1,1,1,2],eff:[[3,4],[3,4],[4,5],[4,5]]},src:['fibro'],
+  ias:'Fibromyalgie : activités douces 2 à 3 fois/sem, effort 3 à 5/10, départ très court (10 min) et progression lente, pas de pic d’effort.',ian:''},
+ depression:{s:'moral',r:'Pour une dépression légère à modérée, un programme d’activité physique adaptée est aussi efficace qu’un antidépresseur ou une psychothérapie. Il réduit la fatigue et l’anxiété, et continuer après la guérison diminue le risque de rechute.',
+  f:[['Activités','Marche, yoga, qi gong ont montré leurs bienfaits ; à plusieurs, c’est encore mieux.'],['Rythme','Régulier, à ton rythme, en visant peu à peu 150 minutes par semaine.'],['Intensité','Légère à modérée au début (effort 3 à 5 sur 10).']],
+  ev:['de te comparer : chaque petite séance compte','les objectifs trop grands au début'],
+  st:['des idées noires ou l’envie de mourir → appelle le 3114 (prévention du suicide, 24 h/24, gratuit) ou le 15'],
+  pr:'si tes médicaments te rendent somnolent(e) ou te font tourner la tête quand tu te lèves, ou si tu as un trouble du comportement alimentaire (comme l’anorexie)',
+  a:{k:['Des repas réguliers, même simples : ne saute pas de repas.','Une alimentation variée : poissons, légumes, fruits, légumineuses.','Limite l’alcool.'],p:[],m:['alcool'],pi:[]},
+  h:['Sors marcher à la lumière du jour, si possible avec quelqu’un.','Lève-toi doucement si ton traitement te fait tourner la tête.'],
+  sv:[],pg:{f:'doux',cm:[15,20,25,30],eff:[[3,4],[4,5],[4,5],[5,6]]},src:['dep'],
+  ias:'Dépression/anxiété : marche, yoga, étirements, renforcement léger, 3 fois/sem, intensité légère à modérée, objectifs très atteignables ; attention à la somnolence et au vertige au lever avec les traitements.',ian:'Dépression : repas réguliers, simples et variés.'},
+ migraine:{s:'migraine',r:'Un effort physique inhabituellement intense, un repas sauté ou un manque de sommeil peuvent déclencher une crise. Une activité régulière, modérée et à heures fixes évite ces changements brusques.',
+  f:[['Endurance','Marche, vélo, natation, 3 fois par semaine, effort modéré, en augmentant progressivement.'],['Échauffement','Toujours progressif.'],['Hydratation','Bois avant, pendant et après.']],
+  ev:['les efforts brutaux et inhabituels','le sport à jeun ou après avoir sauté un repas','le sport pendant une crise'],
+  st:['un mal de tête brutal, très violent et inhabituel, ou avec fièvre, raideur de la nuque, trouble de la parole ou faiblesse d’un bras → appelle le 15'],
+  pr:'si tes maux de tête changent, si les crises deviennent plus fréquentes, ou si tu as des migraines avec aura',
+  a:{k:['Des repas à heures régulières, sans en sauter, et pas trop lourds.','Bois suffisamment d’eau.','Méfie-toi des régimes « anti-migraine » qui suppriment beaucoup d’aliments : ils ne sont pas prouvés. Si un aliment déclenche toujours tes crises, parles-en à un professionnel de santé.'],p:['repas réguliers','eau'],m:['repas sautés ou très copieux'],pi:['les régimes d’exclusion trouvés sur internet']},
+  sv:[],pg:{f:'meta',eff:[[4,5],[4,5],[4,5],[5,5]]},src:['migr','migr2'],
+  ias:'Migraine : activité modérée régulière à heures fixes, échauffement progressif, ni effort brutal, ni à jeun, ni pendant une crise.',
+  ian:'Migraine : repas à heures régulières, jamais de repas sauté, plats pas trop lourds, hydratation.'},
+ parkinson:{s:'Parkinson',fort:1,r:'Bouger régulièrement est un traitement à part entière : cela peut ralentir l’évolution de la maladie et améliore la marche, l’équilibre et les gestes du quotidien. Cela réduit aussi le risque de chute et améliore le moral.',
+  f:[['Activités conseillées','Tai-chi, yoga, danse et marche nordique sont particulièrement recommandés.'],['Programme','Endurance, renforcement, souplesse, équilibre et marche, plusieurs fois par semaine.'],['Moment','Fais tes séances quand ton traitement agit bien (la phase « ON »).']],
+  ev:['les exercices sans appui si ton équilibre est fragile','de te lever brusquement si ta tension baisse quand tu te mets debout'],
+  st:['un vertige au lever ou pendant l’effort → assieds-toi','une chute → parles-en à ton médecin'],pr:'si ta tension baisse quand tu te lèves, ou si tu chutes',
+  a:{k:['Bois suffisamment et mange des fibres (légumes, fruits, pain complet) : la constipation est fréquente.','Si ton traitement contient de la lévodopa, demande à ton médecin comment placer les repas riches en protéines par rapport aux prises.'],p:['légumes, fruits','eau'],m:[],pi:['changer l’horaire des repas ou des médicaments sans avis']},
+  sv:[['fibres',30]],pg:{f:'park'},src:['park'],
+  ias:'Parkinson : marche à grands pas, équilibre avec appui, renforcement, étirements, grands mouvements ; séances en phase ON ; prudence au lever.',
+  ian:'Parkinson : fibres et hydratation, ne pas déplacer les repas protéinés sans avis médical.'},
+ rgo:{s:'reflux',r:'Le reflux se calme souvent avec des repas plus légers le soir et quelques précautions au sport, qui reste tout à fait possible.',
+  f:[['Activité','Les repères de tous : 150 minutes par semaine et 2 séances de renforcement.'],['Moment','Laisse 2 heures environ entre un repas et une séance.']],
+  ev:['le sport juste après un repas','les exercices tête en bas ou allongé(e) à plat juste après manger'],st:['une douleur dans la poitrine qui ressemble au reflux mais arrive à l’effort → consulte, ce peut être le cœur'],
+  pr:'si le reflux te réveille la nuit, si tu as du mal à avaler ou si tu perds du poids',
+  a:{k:['Évite les gros repas, surtout le soir.','Limite gras, épicé, café, alcool, menthe, chocolat, tomate crue et agrumes si ça te gêne.','Surélève la tête du lit si le reflux est nocturne.'],p:['petits repas'],m:['repas copieux le soir','alcool'],pi:['se coucher juste après le dîner']},
+  sv:[],pg:{f:'meta'},src:['guide'],ias:'Reflux : pas d’exercice tête en bas ni allongé à plat juste après un repas.',ian:''},
+ sii:{s:'côlon irritable',r:'Le côlon irritable est une maladie bénigne mais gênante. Manger calmement, ajuster certains aliments avec un professionnel et garder une activité régulière soulagent souvent ballonnements et douleurs.',
+  f:[['Activité','Les repères de tous : 150 minutes par semaine, effort modéré, et 2 séances de renforcement.']],
+  ev:['de supprimer de toi-même beaucoup d’aliments : risque de carences'],
+  st:['du sang dans les selles, une perte de poids inexpliquée, de la fièvre, ou des symptômes nouveaux après 50 ans → consulte (ce ne sont pas des signes de côlon irritable)'],
+  pr:'avant tout régime d’exclusion : le régime pauvre en FODMAP se fait avec une diététicienne',
+  a:{k:['Prends le temps de manger, mâche bien, bois assez d’eau ; limite alcool, café, plats gras et épices.','Le régime pauvre en FODMAP (certains sucres qui fermentent) se suit strictement quelques semaines seulement, puis on réintroduit les aliments un par un avec une diététicienne.','Pas de régime sans gluten si tu n’as pas de maladie cœliaque prouvée.','Fibres : augmente-les très progressivement, surtout si tu es constipé(e).'],p:['repas calmes, bien mâchés','eau'],m:['alcool, café','plats gras ou épicés','chewing-gums et bonbons aux polyols (sorbitol, maltitol)'],pi:['le régime pauvre en FODMAP suivi des mois sans réintroduction']},
+  sv:[['fibres',0]],pg:{f:'meta'},src:['sii','sii2'],
+  ias:'Côlon irritable : activité régulière modérée.',
+  ian:'Côlon irritable : plats simples, peu gras et peu épicés, légumineuses et crudités en petite quantité, aucun édulcorant polyol ; pas de régime sans gluten sans maladie cœliaque.'},
+ mici:{s:'MICI',fort:1,r:'Hors poussée, tu peux bouger et manger presque normalement : l’alimentation ne change pas l’évolution de la maladie, mais une alimentation variée évite les carences et la fatigue.',
+  f:[['Hors poussée','Les repères de tous : 150 minutes par semaine et 2 séances de renforcement, à ton rythme.'],['En poussée','Repos relatif, puis reprise douce quand ça va mieux.']],
+  ev:['de prolonger un régime sans résidu après la poussée','d’éliminer d’office le gluten, le lactose, les fruits ou les légumes'],
+  st:['une poussée (diarrhée avec du sang, douleurs, fièvre) → appelle ton gastro-entérologue','des vomissements ou un ventre très gonflé et douloureux → urgence'],
+  pr:'en poussée, l’alimentation et l’effort s’adaptent avec ton équipe',
+  a:{k:['En dehors des poussées, une alimentation variée et riche en fibres est recommandée.','Pendant une poussée, l’alimentation peut être pauvre en fibres un temps, puis on élargit rapidement.','Une diététicienne habituée aux MICI peut t’aider.'],p:['alimentation variée','fibres bien tolérées hors poussée'],m:['les aliments que tu as remarqué mal tolérer'],pi:['le régime sans résidu prolongé']},
+  sv:[],pg:{f:'doux'},src:['mici','mici2'],
+  ias:'MICI : activité modérée hors poussée seulement ; en poussée, repos relatif.',
+  ian:'MICI hors poussée : alimentation variée et équilibrée, fibres bien tolérées ; en poussée, pauvre en fibres temporairement.'},
+ diverticulose:{s:'diverticules',r:'Une alimentation riche en fibres et l’activité physique sont recommandées pour prévenir les problèmes de diverticules. Aucun régime restrictif n’est nécessaire pour éviter une récidive de diverticulite.',
+  f:[['Activité','Les repères de tous : 150 minutes par semaine et 2 séances de renforcement.']],
+  ev:['de supprimer graines et pépins sans raison : aucun régime restrictif n’a montré d’intérêt'],
+  st:['une douleur du bas-ventre à gauche avec fièvre ou trouble du transit → consulte','du sang dans les selles → consulte'],pr:'si tu as déjà eu une diverticulite',
+  a:{k:['Des fibres : légumes, fruits, céréales complètes, légumineuses, en augmentant progressivement.','Bois suffisamment d’eau.','Pas de régime d’exclusion pour prévenir une récidive.'],p:['légumes, fruits','céréales complètes','légumineuses','eau'],m:[],pi:['supprimer les graines « par précaution »']},
+  sv:[['fibres',30]],pg:{f:'meta'},src:['diver','diver2'],ias:'Diverticulose : activité physique régulière.',
+  ian:'Diverticulose : riche en fibres (progressivement), eau suffisante, aucune éviction de graines.'},
+ lactose:{s:'lactose',r:'L’intolérance au lactose ne change rien au sport. Côté assiette, il s’agit de trouver ta limite et de garder assez de calcium.',f:[],ev:[],st:[],pr:'',
+  a:{k:['Les yaourts et les fromages affinés (comté, emmental…) contiennent très peu de lactose et passent souvent bien.','Laits sans lactose, eaux riches en calcium, sardines avec arêtes, amandes : d’autres sources de calcium.'],p:['yaourts, fromages affinés','laits sans lactose'],m:['lait en grande quantité'],pi:['oublier le calcium en supprimant les laitages']},
+  sv:[['ca',950]],pg:null,src:['anses'],ias:'',ian:''},
+ gluten:{s:'sans gluten',r:'La maladie cœliaque ne change rien au sport. Côté assiette, le sans gluten doit être strict et à vie.',f:[],ev:[],st:[],pr:'',
+  a:{k:['Sans gluten strict : blé, orge, seigle, épeautre et leurs dérivés.','Attention aux traces : logo « épi barré », planche et grille-pain à part.','Riz, maïs, sarrasin, quinoa, pommes de terre et légumineuses sont naturellement sans gluten.'],p:['riz, maïs, sarrasin, quinoa','pommes de terre, légumineuses'],m:['pain, pâtes, biscuits classiques'],pi:['sauces, panures, bières et plats préparés contiennent souvent du gluten']},
+  sv:[],pg:null,src:['guide'],ias:'',ian:''},
+ rein:{s:'reins',fort:1,cap:5,r:'Quand les reins sont fragiles, l’activité régulière aide à contrôler la tension, le sucre et le poids, qui comptent pour les reins. L’alimentation compte beaucoup, surtout le sel et la quantité de protéines.',
+  f:[['Endurance','Marche, vélo, natation, régulièrement, d’intensité modérée (effort 4-5 sur 10).'],['Renforcement','Léger, 2 fois par semaine.']],
+  ev:['les efforts extrêmes et la déshydratation (chaleur, sauna)','les anti-inflammatoires pour une douleur de sport sans avis médical : ils peuvent abîmer les reins'],
+  st:['des jambes qui gonflent, un essoufflement inhabituel, des urines très rares → appelle ton médecin'],
+  pr:'toujours : c’est ton néphrologue qui fixe tes repères (sel, protéines, potassium, boissons) selon le stade de ta maladie. Si tu es dialysé(e), coche plutôt « Dialyse »',
+  a:{k:['Sel : peu salé ; ton néphrologue fixe ton chiffre (souvent 4 à 5 g par jour quand la tension est haute ; repère de l’app : 6 g au maximum).','Protéines : ni trop ni trop peu ; un repère fréquent est 0,8 g par kilo de poids et par jour, à valider avec ton néphrologue ou ta diététicienne.','Ne change pas tes boissons ni ton potassium (certains fruits et légumes) sans consigne : ça dépend du stade.','Pas de sel de régime au potassium sans avis.'],p:['plats maison peu salés','herbes et épices'],m:['plats préparés, charcuterie, fromages salés','produits avec additifs phosphatés'],pi:['les « sels de régime » contiennent souvent du potassium']},
+  sv:[['sel',6],['protmax',0.8]],pg:{f:'doux',cm:[15,20,25,30],eff:[[3,4],[4,5],[4,5],[4,5]]},src:['mrc','ircv'],
+  ias:'Maladie rénale : intensité modérée (4-5/10), hydratation selon les consignes du néphrologue, aucun effort extrême.',
+  ian:'Maladie rénale : sel 6 g/j maximum (souvent 4 à 5 g), protéines modérées (repère 0,8 g/kg/j à valider), aucun sel de régime au potassium, peu d’aliments ultra-transformés.'},
+ dialyse:{s:'dialyse',fort:1,cap:5,r:'En dialyse, bouger aide à garder tes muscles, ton souffle et ton moral. Les règles alimentaires sont très personnelles : elles se règlent avec ton néphrologue et ta diététicienne.',
+  f:[['Endurance','Marche, vélo d’appartement, intensité légère à modérée (3 à 5 sur 10), les jours et aux moments que ton centre te conseille.'],['Renforcement','Léger, surtout les jambes, sans charge sur le bras de la fistule.']],
+  ev:['de porter une charge, de serrer ou de t’appuyer sur le bras de la fistule','de faire un effort juste après une séance de dialyse si tu es fatigué(e)','de boire plus que la quantité fixée par ton équipe, même après le sport'],
+  st:['une fistule qui ne vibre plus, devient rouge ou douloureuse → appelle ton centre de dialyse'],
+  pr:'toujours : ton équipe de dialyse te dit quels jours et quel effort sont possibles',
+  a:{k:['Les besoins en protéines sont souvent plus élevés en dialyse : ton néphrologue ou ta diététicienne te donnera ton chiffre.','Le sel, les boissons, le potassium (certains fruits et légumes, chocolat) et le phosphore (fromages, additifs) se règlent avec ton équipe.','Pas de sel de régime au potassium.'],p:['plats maison peu salés'],m:['plats préparés','sels de régime au potassium'],pi:['boire beaucoup après le sport sans tenir compte de ta limite']},
+  sv:[['sel',6]],pg:{f:'doux',cm:[10,15,20,20],eff:[[3,4],[3,4],[3,4],[4,5]],ban:['bras']},src:['mrc'],
+  ias:'Dialyse : effort léger à modéré (3-5/10) aux moments conseillés par le centre, aucune charge ni appui sur le bras de la fistule, respecter la quantité de boisson.',
+  ian:'Dialyse : peu de sel, aucun sel de régime au potassium ; boissons, potassium et phosphore selon l’équipe ; ne donne aucun chiffre de protéines (à demander au néphrologue).'},
+ anemie:{s:'anémie',cap:5,r:'Le manque de fer fatigue et essouffle vite. Tant que l’anémie est importante, l’effort reste léger ; quand le traitement fait effet, tu peux reprendre progressivement.',
+  f:[['Pendant le traitement','Marche et étirements, effort léger (3-4 sur 10).'],['Ensuite','Reprise progressive vers les repères de tous.']],
+  ev:['les efforts intenses tant que tu es très fatigué(e) ou essoufflé(e)'],
+  st:['des saignements inhabituels (selles noires, règles très abondantes) → consulte'],pr:'pour trouver d’où vient le manque de fer : c’est important de chercher la cause',
+  a:{k:['Le fer le mieux absorbé se trouve dans la viande rouge, le boudin, le foie, les poissons et les fruits de mer.','Lentilles, pois chiches et haricots en contiennent aussi : associe-les à un aliment riche en vitamine C (poivron, agrumes, kiwi, brocoli).','Thé et café pendant le repas freinent l’absorption du fer : prends-les 1 à 2 heures après.','Le fer prescrit l’est souvent pour 3 à 6 mois : ne l’arrête pas trop tôt.'],p:['viande rouge, boudin','lentilles, pois chiches','agrumes, kiwi, poivron'],m:['thé ou café au repas'],pi:['les épinards contiennent moins de fer qu’on le croit']},
+  sv:[['fer']],pg:{f:'doux',cm:[10,15,15,20],eff:[[3,4],[3,4],[3,4],[4,5]]},src:['anemie','anses','fer'],
+  ias:'Anémie : effort léger (3-4/10) tant qu’elle n’est pas corrigée, reprise progressive.',
+  ian:'Anémie : aliments riches en fer (viande rouge, boudin, poisson, légumineuses) avec une source de vitamine C au même repas, pas de thé ni de café pendant le repas.'},
+ enceinte:{s:'grossesse',fort:1,cap:6,r:'Pendant la grossesse, bouger est bon pour toi : l’activité aide à prévenir l’hypertension, diminue le risque de fuites urinaires et améliore ton bien-être.',
+  f:[['Ce qu’il faut','Endurance et renforcement d’intensité modérée, plus des étirements, adaptés à tes capacités et à l’avancée de ta grossesse.'],['Durée','Pas plus de 60 à 90 minutes par séance.'],['Intensité','Modérée : tu peux parler pendant l’effort.']],
+  ev:['le renforcement en bloquant ta respiration','les exercices allongée sur le dos à partir de 24 semaines d’aménorrhée','les activités avec risque de chute ou de choc','la chaleur humide et l’altitude'],
+  st:['des saignements, des contractions régulières et douloureuses qui ne passent pas au repos, une perte de liquide','un vertige, un malaise, des maux de tête','une douleur ou une oppression dans la poitrine → consulte en urgence','un essoufflement excessif qui ne passe pas au repos','une faiblesse musculaire qui gêne ton équilibre','une douleur ou un gonflement d’un mollet'],
+  pr:'à chaque étape de ta grossesse, surtout en cas de complication',
+  a:{k:['Aucun aliment à risque : lait cru et fromages au lait cru, charcuterie, viande, poisson ou œufs crus ou peu cuits.','Zéro alcool.','Pas de régime pendant la grossesse.','Lave bien les fruits, les légumes et les herbes.'],p:['viandes, poissons et œufs bien cuits','fromages au lait pasteurisé'],m:['alcool','lait cru, charcuterie','poisson cru, sushis'],pi:['les fromages « au lait cru » sous l’emballage']},
+  sv:[],pg:{f:'gros'},src:['gros'],
+  ias:'Grossesse : intensité modérée (parler possible), 60 à 90 min maximum par séance, pas de blocage respiratoire, aucun exercice sur le dos dès 24 SA, aucun risque de chute ou de choc.',
+  ian:'Grossesse : zéro alcool, cuisson complète des viandes, poissons et œufs.'},
+ postpartum:{s:'post-partum',fort:1,cap:5,r:'Après la naissance, la reprise se fait par étapes : d’abord la marche, la respiration et le périnée, puis des activités sans impact, puis le renforcement.',
+  f:[['Étape 1','Marche, respiration, contractions du périnée.'],['Étape 2','Activités sans impact (vélo, natation quand tout est cicatrisé), renforcement léger.'],['Course et sauts','Pas avant 12 semaines environ, et après le feu vert de ta sage-femme ou de ton médecin.']],
+  ev:['les abdominaux en enroulement (crunch) au début','la course et les sauts avant le feu vert','de porter lourd en poussant sur le ventre'],
+  st:['des saignements qui augmentent, de la fièvre, une douleur au ventre ou à la cicatrice','des fuites urinaires ou une sensation de pesanteur dans le bas-ventre → parles-en à ta sage-femme','une douleur ou un gonflement d’un mollet'],
+  pr:'à la visite après l’accouchement : demande ton feu vert, et une rééducation du périnée si besoin',
+  a:{k:['Pas de régime strict les premiers mois, encore moins si tu allaites : mange à ta faim et bois bien.'],p:[],m:[],pi:[]},
+  sv:[],pg:{f:'post'},src:['post'],ias:'',ian:''},
+ allait:{s:'allaitement',r:'L’activité physique est compatible avec l’allaitement et aide à retrouver la forme. Le plus important est de bien manger et de bien boire.',
+  f:[['Activité','Reprise progressive vers les repères de tous : 150 minutes par semaine et 2 séances de renforcement.']],ev:[],st:[],pr:'si tu es encore dans les 3 premiers mois après l’accouchement',
+  a:{k:['Pas de déficit calorique marqué.','Bois bien, avant et après la séance.'],p:[],m:['alcool'],pi:[]},
+  sv:[],pg:{f:'meta',eff:[[3,4],[4,5],[4,5],[5,6]]},src:['post'],ias:'Allaitement : reprise progressive, hydratation.',ian:''},
+ endometriose:{s:'endométriose',r:'Adaptée à ton énergie, l’activité physique aide à réduire la douleur, la fatigue et le stress liés à l’endométriose. Le but n’est pas l’intensité mais la régularité.',
+  f:[['Endurance','Activité d’intensité modérée 3 à 5 fois par semaine.'],['Renforcement','Modéré, qui fait travailler les principaux groupes musculaires.'],['Douceur','Étirements et respiration abdominale ; adapte pendant les périodes douloureuses.']],
+  ev:['de forcer pendant une période douloureuse','le renforcement du périnée en contraction si tu as des douleurs pelviennes : demande à ton kiné'],
+  st:['une douleur inhabituelle et très forte, avec fièvre ou malaise → consulte'],pr:'pour trouver une activité compatible (les Maisons Sport-Santé peuvent t’aider)',
+  a:{k:['Aucune alimentation n’a prouvé qu’elle guérit l’endométriose ; certaines femmes se sentent mieux avec beaucoup de légumes, de fruits, de poissons et d’huiles végétales.','Méfie-toi des régimes très restrictifs : parles-en à un professionnel.'],p:['légumes, fruits','poissons'],m:[],pi:['les régimes « miracles »']},
+  sv:[],pg:{f:'doux',cm:[15,20,25,30],eff:[[4,5],[4,5],[5,6],[5,6]]},src:['endo','endo2'],
+  ias:'Endométriose : endurance modérée 3 à 5 fois/sem, renforcement modéré, étirements, respiration abdominale, adaptation les jours douloureux.',ian:''},
+ menopause:{s:'ménopause',r:'Après la ménopause, l’os s’affaiblit plus vite : les activités en charge et le renforcement le protègent, et l’endurance protège ton cœur et ton poids.',
+  f:[['Endurance','150 à 300 minutes par semaine, effort 5-6 sur 10.'],['En charge et équilibre','Marche, montée d’escaliers, exercices d’équilibre plusieurs fois par semaine.'],['Renforcement','2 à 3 séances par semaine.']],ev:[],st:[],pr:'si tu as déjà eu une fracture ou si tu as une ostéoporose',
+  a:{k:['Calcium : 2 à 3 produits laitiers par jour, ou une eau riche en calcium.','Assez de protéines à chaque repas.','Vitamine D : parles-en à ton médecin.'],p:['laitages','eaux riches en calcium','poissons gras'],m:['alcool'],pi:[]},
+  sv:[['ca',950]],pg:{f:'meta'},src:['osteo','anses'],ias:'Ménopause : endurance + renforcement + activités en charge et équilibre.',
+  ian:'Ménopause : 2 à 3 produits laitiers par jour, protéines suffisantes.'},
+ cancer:{s:'cancer',fort:1,cap:6,r:'L’activité physique est le seul traitement efficace contre la fatigue liée au cancer et à ses traitements. Pour les cancers du sein, du côlon, du rectum et certains cancers de la prostate, elle réduit aussi le risque de récidive.',
+  f:[['Quand','Pendant et après les traitements : évite autant que possible l’inactivité, tant que l’activité n’aggrave pas tes symptômes.'],['Comment','Endurance (marche, vélo) et renforcement, en commençant court et doux, puis en progressant peu à peu vers les repères de tous (150 minutes par semaine, 2 séances de renforcement).'],['Les jours de grande fatigue','10 minutes d’activité légère suffisent.']],
+  ev:['l’effort modéré ou intense en cas de fièvre, de fatigue extrême, d’anémie importante ou de globules blancs ou plaquettes très bas (ton équipe te le dira)','la piscine, le lac ou la mer si tu as un cathéter ou une sonde','de porter lourd avec un bras qui gonfle (lymphœdème) sans l’avis de ton équipe','les chocs et les sports à risque de chute si tu as des métastases osseuses : programme encadré'],
+  st:['de la fièvre, des saignements, une douleur osseuse nouvelle','une fatigue très inhabituelle ou des douleurs musculaires qui persistent → signale-les à ton médecin','un bras ou une jambe qui gonfle davantage'],
+  pr:'toujours : ton médecin peut te prescrire un programme d’activité physique adaptée, encadré par un enseignant en APA',
+  a:{k:['Pendant les traitements, le but est de garder tes forces : mange suffisamment, avec des protéines à chaque repas.','Si tu perds du poids sans le vouloir ou si manger devient difficile, demande à voir une diététicienne.','Pas de jeûne ni de régime « anticancer » sans l’accord de ton équipe.'],p:['protéines à chaque repas','collations si l’appétit est faible'],m:[],pi:['les régimes « anticancer » trouvés sur internet']},
+  sv:[],pg:{f:'doux',cm:[10,15,20,25],eff:[[3,4],[4,5],[4,5],[5,6]]},src:['cancer','onco'],
+  ias:'Cancer : endurance et renforcement doux et progressifs, 10 min légères les jours de grande fatigue ; aucun effort modéré ou intense en cas de fièvre, anémie ou plaquettes basses ; pas de piscine avec cathéter ; ménager un membre avec lymphœdème.',
+  ian:'Cancer : aucun déficit calorique ni jeûne, protéines à chaque repas.'},
+ senior:{s:'chutes',r:'Avec l’âge, ce sont surtout l’équilibre et la force des jambes qui évitent les chutes. Des exercices simples, au moins 3 fois par semaine, réduisent nettement le risque de tomber et aident à rester autonome.',
+  f:[['Équilibre et force','Au moins 3 fois par semaine : exercices d’équilibre et de coordination, et renforcement, surtout des jambes.'],['Endurance','Marche, avec des changements de rythme et des sols variés : 150 à 300 minutes par semaine en tout.'],['Au quotidien','Des exercices glissés dans les gestes de tous les jours : te lever de la chaise sans les mains, monter les escaliers.']],
+  ev:['les exercices d’équilibre sans appui à portée de main au début','les petits tapis et le désordre au sol','l’alcool si tu as des vertiges'],
+  st:['une chute, une instabilité nouvelle ou la peur de tomber → parles-en à ton médecin','un vertige ou un malaise'],
+  pr:'si tu es déjà tombé(e) dans l’année, si tu prends beaucoup de médicaments ou si tu as des vertiges',
+  a:{k:['Des protéines à chaque repas (œufs, poisson, viande, laitages, légumineuses) : elles gardent tes muscles.','2 à 3 produits laitiers par jour pour le calcium.','Vitamine D : parles-en à ton médecin.','Bois régulièrement, même sans soif.'],p:['œufs, poisson, laitages','légumineuses'],m:['alcool'],pi:['manger moins avec l’âge et perdre du muscle']},
+  h:['Range le sol, fixe ou enlève les petits tapis, éclaire bien les escaliers.','Fais revoir tes médicaments régulièrement par ton médecin.'],
+  sv:[['ca',950]],pg:{f:'sen'},src:['chute'],
+  ias:'Prévention des chutes : équilibre et renforcement des jambes au moins 3 fois/sem, toujours un appui à portée de main, marche avec changements de rythme, apprendre à se relever du sol.',
+  ian:'Senior : protéines à chaque repas, laitages, hydratation régulière.'},
+ sleeve:{s:'sleeve',fort:1,cap:5,r:'Après une sleeve, le sport aide à garder tes muscles pendant la perte de poids rapide et à stabiliser ton poids ensuite. On reprend par étapes, avec le feu vert de ton chirurgien.',
+  f:[['Les premières semaines','Marche douce tous les jours, en augmentant petit à petit.'],['Ensuite','Cardio modéré (3 à 4 fois 30 à 40 minutes par semaine) et renforcement 2 à 3 fois par semaine, sans charge abdominale lourde avant l’accord de ton équipe.'],['Hydratation','Petites gorgées régulières, en respectant les 30 minutes autour des repas.']],
+  ev:['les abdominaux et les charges lourdes tant que ton chirurgien ne l’a pas autorisé','de faire du sport sans avoir assez bu ou mangé dans la journée'],
+  st:['un vertige, des sueurs, un malaise','une douleur au ventre ou dans l’épaule gauche, des vomissements'],pr:'à chaque étape : c’est ton chirurgien qui donne le feu vert',
+  a:{k:['Protéines en premier à chaque prise, petites portions, manger lentement.','Ne bois pas pendant le repas ni 30 minutes avant et après ; aucune boisson gazeuse ni alcool.','Prends les compléments vitaminiques prescrits.'],p:['protéines'],m:['boissons gazeuses, alcool','sucres rapides'],pi:['boire pendant le repas']},
+  sv:[],pg:{f:'baria'},src:['obe'],ias:'',ian:''},
+ bypass:{s:'bypass',fort:1,cap:5,r:'Après un bypass, le sport aide à garder tes muscles pendant la perte de poids et à stabiliser ton poids. On reprend par étapes, avec le feu vert de ton chirurgien.',
+  f:[['Les premières semaines','Marche douce tous les jours.'],['Ensuite','Cardio modéré et renforcement progressif, sans charge abdominale lourde avant l’accord de ton équipe.']],
+  ev:['les abdominaux et les charges lourdes sans autorisation','les boissons sucrées pendant l’effort (risque de dumping)'],
+  st:['des sueurs, un cœur qui bat vite ou un malaise après avoir mangé sucré (dumping) → parles-en à ton équipe','une douleur au ventre, des vomissements'],pr:'à chaque étape : c’est ton chirurgien qui donne le feu vert',
+  a:{k:['Protéines en premier, petites portions, manger lentement.','Pas de boisson pendant le repas ni 30 minutes avant et après.','Très peu de sucres rapides : ils provoquent le dumping.','Compléments vitaminiques prescrits, à vie.'],p:['protéines'],m:['sucres rapides','alcool'],pi:['les boissons « énergétiques » sucrées pendant le sport']},
+  sv:[],pg:{f:'baria'},src:['obe'],ias:'',ian:''},
+ anneau:{s:'anneau',fort:1,cap:5,r:'Avec un anneau, bouger aide à perdre du poids en gardant tes muscles. On reprend par étapes, avec le feu vert de ton chirurgien.',
+  f:[['Les premières semaines','Marche douce tous les jours.'],['Ensuite','Cardio modéré et renforcement progressif.']],
+  ev:['les abdominaux et charges lourdes sans autorisation'],st:['des vomissements répétés, des aliments qui bloquent → appelle ton équipe'],pr:'à chaque étape : c’est ton chirurgien qui donne le feu vert',
+  a:{k:['Petites bouchées très bien mâchées, manger lentement.','Pas de boisson pendant le repas.','Évite les aliments durs ou filandreux qui bloquent.'],p:['protéines tendres'],m:['pain frais, viande sèche'],pi:['manger vite']},
+  sv:[],pg:{f:'baria'},src:['obe'],ias:'',ian:''}
+};
+
+/* --- ag_patho : moteur (règles IA, programmes 4 semaines, carte Sport, fiche, suivi diététique, recettes, produits) --- */
+Object.assign(SANTE,PAT_NEW);
+const patL=()=>(P.santeL||[]).filter(k=>PATHO[k]);
+const patKeys=extra=>{const L=patL();if(extra&&PATHO[extra]&&!L.includes(extra))L.push(extra);return L};
+const patS=k=>PATHO[k]?PATHO[k].s:k;
+let PAT_FOCUS=null,PAT_FT=0,PAT_RM='',PAT_NC={},PAT_CQW=0;
+
+/* 1. Règles IA : alimentation (toutes les demandes passent par profil() → santeTxt) et sport (SPORT_RULES) */
+{const _st=santeTxt;santeTxt=function(){let t=_st.apply(this,arguments);try{const L=patL();if(!L.length)return t;
+  const R=L.map(k=>PATHO[k].ian).filter(Boolean);if(R.length)t+='\nRègles alimentaires par maladie (strictes) : '+R.join(' ');
+  if(L.length>1)t+='\nPlusieurs problèmes de santé : respecte toutes ces règles à la fois ; en cas de conflit, applique la plus stricte et conseille d\'en parler au médecin ou à la diététicienne.';
+  if(L.some(k=>PATHO[k].fort))t+='\nNe pose jamais de diagnostic, ne donne aucune dose de médicament ; pour tout doute, renvoie vers le médecin.'}catch(e){}return t}}
+{const _sr=SPORT_RULES;SPORT_RULES=function(){let r=_sr.apply(this,arguments);try{const L=patL();
+  L.forEach(k=>{if(PATHO[k].ias)r+='\n- Santé · '+SANTE[k]+' : '+PATHO[k].ias});
+  const c=patCap();if(L.length&&c<10)r+=`\n- Intensité maximale pour sa santé : effort ${c} sur 10 (il doit toujours pouvoir parler en phrases).`;
+  if(L.length>1)r+='\n- PLUSIEURS problèmes de santé : combine toutes ces précautions ; pour chaque point (intensité, exercices déconseillés, durée), applique toujours la plus stricte.';
+  if(L.length)r+='\n- Signes d\'arrêt à rappeler dans le conseil du premier exercice : douleur ou gêne dans la poitrine, essoufflement anormal, palpitations, malaise ou vertige.';
+  const f=PAT_FOCUS&&Date.now()-PAT_FT<15000?PAT_FOCUS:null;PAT_FOCUS=null;
+  if(f){const d=PATHO[f];r+=`\nPROGRAMME SANTÉ DEMANDÉ pour « ${SANTE[f]} » (recommandations HAS, à respecter strictement) : ${d.f.map(x=>x[0]+' : '+x[1]).join(' ; ')}. À éviter : ${d.ev.join(' ; ')||'rien de particulier'}. Séances de 20 à 45 minutes ; premier exercice = échauffement de 5 à 10 min (en minutes) ; termine par des étirements doux ; exprime l'intensité sur l'échelle d'effort de 0 à 10 avec le test de la parole ; préfère marche rapide, vélo, assis-debout sur une chaise, pompe contre le mur, tirage horizontal élastique, mollets debout, étirements. Titre : « Programme santé adapté · ${SANTE[f]} ».`}}catch(e){}return r}}
+
+/* 2. Programmes 4 semaines : bibliothèque d'exercices, familles de séances, précautions combinées */
+const PX={
+ marche:['Marche rapide','marche','aucun',['quadriceps','mollets'],['fessiers'],'Marche d’un bon pas, bras actifs, épaules relâchées.',[]],
+ marcheFr:['Marche fractionnée','marche','aucun',['quadriceps','mollets'],['fessiers'],'Alterne 1 à 2 minutes de marche plus vive et 1 minute de marche lente.',[]],
+ grandspas:['Marche à grands pas, bras qui balancent','marche','aucun',['quadriceps','fessiers'],['mollets'],'Fais de grands pas, pose le talon d’abord et balance bien les bras. Compter à voix haute aide.',[]],
+ velo:['Vélo d’appartement','velo','vélo',['quadriceps'],['fessiers','mollets'],'Selle à hauteur de hanche, pédale régulièrement sans forcer. Natation ou aquagym si tu préfères.',[]],
+ assis:['Assis-debout sur une chaise','squatchaise','poids du corps, avec une chaise',['quadriceps','fessiers'],['adducteurs'],'Pieds à plat, lève-toi en soufflant, sans les mains si tu peux, puis rassieds-toi doucement.',[]],
+ squat:['Squat','squat','poids du corps',['quadriceps','fessiers'],['adducteurs','lombaires'],'Pieds largeur d’épaules, descends comme pour t’asseoir, genoux dans l’axe des pieds.',['genou']],
+ montee:['Montée sur banc','stepup','poids du corps, banc ou marche d’escalier',['quadriceps','fessiers'],['mollets'],'Tiens-toi à la rampe, monte avec une jambe, redescends doucement, puis change.',[]],
+ fentearr:['Fente arrière courte','fentearr','poids du corps',['quadriceps','fessiers'],['ischios'],'Petit pas en arrière, descends le genou sans le poser, remonte en poussant sur le talon avant. Une main sur une chaise si besoin.',['genou']],
+ pont:['Pont fessier','pont','poids du corps, sur un tapis',['fessiers'],['ischios','lombaires'],'Sur le dos, genoux pliés, monte le bassin en soufflant, serre les fesses 1 seconde.',['sol','dos_allonge']],
+ mollets:['Mollets debout','mollets','poids du corps',['mollets'],[],'Mains sur un mur ou une chaise, monte sur la pointe des pieds, redescends lentement.',[]],
+ pompemur:['Pompe contre le mur','pompemur','poids du corps, contre un mur',['pectoraux','triceps'],['epaules'],'Mains sur le mur à hauteur d’épaules, corps droit, approche la poitrine puis repousse en soufflant.',['bras']],
+ pompeinc:['Pompe inclinée (mains sur une table)','pompeinc','poids du corps, table solide',['pectoraux','triceps'],['epaules','abdominaux'],'Mains sur une table stable, corps gainé, descends la poitrine vers le bord puis repousse en soufflant.',['bras']],
+ tirelast:['Tirage horizontal élastique','tirelast','élastique',['dorsaux','trapezes'],['biceps'],'Assis(e), élastique autour des pieds, tire les mains vers le nombril en serrant les omoplates.',['bras']],
+ rowing:['Rowing un bras','rowing1','haltère léger ou bouteille d’eau',['dorsaux'],['trapezes','biceps'],'Une main et un genou sur une chaise, dos plat, tire le coude vers la hanche.',['bras']],
+ elev:['Élévations latérales légères','lateral','haltères légers ou bouteilles d’eau',['epaules'],['trapezes'],'Bras légèrement pliés, monte jusqu’à hauteur d’épaules, redescends lentement.',['bras']],
+ develop:['Développé épaules assis','militaire','haltères légers ou bouteilles d’eau',['epaules','triceps'],['trapezes'],'Assis(e), dos droit, pousse les mains vers le plafond en soufflant.',['bras']],
+ curl:['Curl biceps','curl','haltères légers ou élastique',['biceps'],['avant_bras'],'Coudes collés au corps, monte les mains vers les épaules, redescends lentement.',['bras']],
+ pullapart:['Pull-apart élastique','pullapart','élastique',['epaules','trapezes'],[],'Bras tendus devant toi, écarte l’élastique en serrant les omoplates.',['bras']],
+ bandwalk:['Marche latérale mini-band','bandwalk','mini-band (élastique)',['fessiers'],['quadriceps'],'Élastique au-dessus des genoux, petits pas sur le côté, genoux légèrement fléchis.',[]],
+ birddog:['Bird-dog (bras et jambe opposés)','birddog','poids du corps, sur un tapis',['lombaires','abdominaux'],['fessiers'],'À quatre pattes, dos plat, tends un bras et la jambe opposée, tiens 3 secondes, change.',['sol']],
+ deadbug:['Dead bug (insecte sur le dos)','deadbug','poids du corps, sur un tapis',['abdominaux'],['obliques'],'Sur le dos, bas du dos au sol, descends bras et jambe opposés en soufflant.',['sol','dos_allonge']],
+ pallof:['Pallof press','pallof','élastique',['obliques','abdominaux'],[],'Élastique accroché sur le côté, mains contre la poitrine, tends les bras devant sans tourner le buste. Respire.',['bras']],
+ equil:['Équilibre sur un pied (avec appui)','mollets','poids du corps, avec une chaise',['mollets'],['fessiers'],'Une main sur le dossier d’une chaise, lève un pied et tiens. Quand c’est facile, ne garde qu’un doigt.',[]],
+ tandem:['Marche talon-pointe en ligne','marche','poids du corps, le long d’un mur',['mollets'],['quadriceps'],'Le long d’un mur, pose le talon juste devant les orteils de l’autre pied, regard devant.',[]],
+ cercles:['Cercles de bras','cercles','poids du corps',['epaules'],[],'Grands cercles lents vers l’avant puis vers l’arrière.',[]],
+ hanches:['Rotations de hanches','hanches','poids du corps',['fessiers'],['lombaires'],'Mains sur les hanches, dessine de grands cercles avec le bassin.',[]],
+ chatvache:['Chat-vache','chatvache','poids du corps, sur un tapis',['lombaires'],['abdominaux'],'À quatre pattes, enroule le dos en soufflant, puis creuse doucement en inspirant.',['sol']],
+ livre:['Livre ouvert','livre','poids du corps, sur un tapis',['pectoraux'],['lombaires'],'Allongé(e) sur le côté, genoux pliés, ouvre le bras du dessus en suivant la main des yeux.',['sol']],
+ enfant:['Posture de l’enfant','enfant','poids du corps, sur un tapis',['lombaires'],[],'À genoux, fesses vers les talons, bras devant, respire lentement.',['sol']],
+ etischio:['Étirement des ischios','etischio','poids du corps, avec une chaise',['ischios'],['mollets'],'Talon posé sur une chaise basse, jambe tendue, penche-toi doucement en avant, dos droit, sans à-coups.',[]],
+ ethanche:['Étirement des fléchisseurs de hanche','ethanche','poids du corps, sur un tapis',['quadriceps'],[],'Un genou au sol sur un coussin, avance doucement le bassin, buste droit.',['sol']],
+ etmollet:['Étirement des mollets','etmollet','poids du corps, contre un mur',['mollets'],[],'Mains au mur, une jambe tendue derrière, talon au sol.',[]],
+ etpec:['Étirement des pectoraux à la porte','etpec','poids du corps, cadre de porte',['pectoraux'],['epaules'],'Avant-bras contre le cadre, avance doucement jusqu’à sentir l’étirement.',[]],
+ respi:['Respiration lente, lèvres pincées','respiration','aucun',['abdominaux'],[],'Inspire par le nez 2 secondes, souffle lentement par la bouche, lèvres pincées, 4 secondes.',[]],
+ perinee:['Contractions du périnée','respiration','aucun',['abdominaux'],[],'Assise, serre le périnée comme pour retenir un pipi en soufflant, puis relâche complètement en inspirant.',[]]
+};
+const PXALT={squat:'assis',fentearr:'montee',pont:'bandwalk',deadbug:'pallof',birddog:'pallof',chatvache:'cercles',livre:'etpec',ethanche:'etischio',enfant:'respi',pompeinc:'pompemur'};
+const PFAM={
+ meta:{per:3,w:5,z:0,ser:[1,2,2,2],reps:['12-15','12-15','10-12','10-12'],eff:[[4,5],[4,5],[5,6],[5,6]],S:[
+  {n:'Séance A – Marche et renforcement',fo:'endurance + tout le corps',b:[['c','marche',[15,20,20,25]],['r','squat'],['r','pompeinc'],['r','tirelast'],['r','birddog'],['s','etischio','30 s']]},
+  {n:'Séance B – Vélo et renforcement',fo:'endurance + jambes, dos, épaules',b:[['c','velo',[15,15,20,20]],['r','fentearr'],['r','rowing'],['r','pont'],['r','mollets'],['s','etpec','30 s']]},
+  {n:'Séance C – Marche longue et souplesse',fo:'endurance + souplesse',long:1,b:[['c','marche',[20,25,30,35]],['s','chatvache','8 fois'],['s','livre','8 par côté'],['s','ethanche','30 s'],['s','etmollet','30 s']]}]},
+ card:{per:3,w:10,z:5,ser:[1,1,2,2],reps:'12-15',rest:90,eff:[[3,4],[3,4],[4,5],[4,5]],ban:['iso'],S:[
+  {n:'Séance A – Marche douce et renforcement léger',fo:'endurance modérée + renforcement léger',b:[['c','marche',[10,15,15,20]],['r','assis'],['r','pompemur'],['r','tirelast'],['s','etmollet','30 s']]},
+  {n:'Séance B – Vélo et souplesse',fo:'endurance modérée + souplesse',b:[['c','velo',[15,20,20,25]],['r','montee'],['s','etischio','30 s'],['s','etpec','30 s']]},
+  {n:'Séance C – Marche et équilibre',fo:'endurance + équilibre',long:1,b:[['c','marche',[15,20,20,25]],['b','equil'],['r','mollets'],['s','cercles','10 fois']]}]},
+ resp:{per:3,w:10,z:5,ser:[1,1,2,2],reps:'10-12',rest:90,eff:[[3,4],[4,5],[4,5],[4,5]],resp:1,S:[
+  {n:'Séance A – Marche fractionnée et jambes',fo:'souffle + jambes',b:[['c',['marcheFr','marcheFr','marcheFr','marche'],[10,15,15,20]],['r','assis'],['r','mollets'],['r','tirelast'],['s','respi','2 min']]},
+  {n:'Séance B – Vélo et bras',fo:'souffle + haut du corps',b:[['c','velo',[10,15,15,20]],['r','montee'],['r','pompemur'],['r','elev'],['s','respi','2 min']]},
+  {n:'Séance C – Marche et mobilité',fo:'souffle + mobilité',long:1,b:[['c','marche',[15,20,25,25]],['s','cercles','10 fois'],['s','hanches','10 fois'],['s','respi','2 min']]}]},
+ arti:{per:3,w:5,z:0,ser:[1,2,2,2],reps:['10-12','10-12','12-15','12-15'],eff:[[4,5],[4,5],[5,6],[5,6]],S:[
+  {n:'Séance A – Vélo et renforcement doux',fo:'sans impact + jambes et dos',b:[['c','velo',[15,20,20,20]],['r','assis'],['r','pont'],['r','tirelast'],['r','birddog'],['s','etischio','30 s']]},
+  {n:'Séance B – Marche et stabilité',fo:'endurance + hanches et tronc',b:[['c','marche',[15,15,20,20]],['r','montee'],['r','bandwalk'],['r','rowing'],['r','deadbug'],['s','ethanche','30 s']]},
+  {n:'Séance C – Vélo et mobilité',fo:'sans impact + souplesse',long:1,b:[['c','velo',[20,25,25,30]],['r','mollets'],['s','chatvache','8 fois'],['s','livre','8 par côté'],['s','etmollet','30 s']]}]},
+ sen:{per:3,w:5,z:0,ser:[1,2,2,2],reps:'8-12',eff:[[3,4],[4,5],[4,5],[5,6]],S:[
+  {n:'Séance A – Équilibre et jambes',fo:'équilibre + force des jambes',b:[['c','marche',[10,15,15,20]],['r','assis'],['r','mollets'],['b','equil'],['b','tandem'],['r','tirelast']]},
+  {n:'Séance B – Force et marche',fo:'force + endurance',b:[['c','marche',[10,10,15,15]],['r','montee'],['r','pompemur'],['r','bandwalk'],['b','equil'],['s','etmollet','30 s']]},
+  {n:'Séance C – Marche variée et souplesse',fo:'endurance + coordination',long:1,b:[['c','marche',[15,20,20,25]],['b','tandem'],['r','assis'],['s','cercles','10 fois'],['s','hanches','10 fois']]}]},
+ park:{per:3,w:5,z:0,ser:[1,2,2,2],reps:'8-12',eff:[[3,4],[4,5],[4,5],[5,6]],S:[
+  {n:'Séance A – Grands pas et équilibre',fo:'marche + équilibre',b:[['c','grandspas',[10,15,15,20]],['r','assis'],['b','equil'],['b','tandem'],['s','cercles','10 fois'],['s','etpec','30 s']]},
+  {n:'Séance B – Vélo et force',fo:'endurance + force',b:[['c','velo',[10,10,15,15]],['r','montee'],['r','pompemur'],['r','tirelast'],['r','mollets'],['s','hanches','10 fois']]},
+  {n:'Séance C – Grands mouvements',fo:'amplitude + coordination',long:1,b:[['c','grandspas',[15,20,20,25]],['s','cercles','10 fois'],['s','hanches','10 fois'],['b','equil'],['s','etischio','30 s']]}]},
+ doux:{per:3,w:5,z:0,ser:[1,1,2,2],reps:'10-12',eff:[[3,4],[3,4],[4,5],[4,5]],S:[
+  {n:'Séance A – Marche et renforcement doux',fo:'endurance légère + tout le corps',b:[['c','marche',[10,15,15,20]],['r','assis'],['r','pompemur'],['r','tirelast'],['s','etischio','30 s'],['s','respi','2 min']]},
+  {n:'Séance B – Vélo et étirements',fo:'endurance légère + souplesse',b:[['c','velo',[10,10,15,15]],['r','mollets'],['r','elev'],['s','chatvache','8 fois'],['s','enfant','30 s']]},
+  {n:'Séance C – Marche et détente',fo:'endurance + détente',long:1,b:[['c','marche',[15,20,20,25]],['s','cercles','10 fois'],['s','hanches','10 fois'],['s','livre','8 par côté'],['s','respi','2 min']]}]},
+ gros:{per:3,w:5,z:0,ser:[1,2,2,2],reps:'10-12',eff:[[4,5],[5,6],[5,6],[5,6]],ban:['dos_allonge','abdo'],S:[
+  {n:'Séance A – Marche et renforcement',fo:'endurance + renforcement modéré',b:[['c','marche',[15,15,20,20]],['r','assis'],['r','pompemur'],['r','tirelast'],['r','bandwalk'],['s','perinee','10 fois']]},
+  {n:'Séance B – Vélo et haut du corps',fo:'endurance + bras et dos',b:[['c','velo',[10,15,15,20]],['r','montee'],['r','elev'],['r','curl'],['s','chatvache','8 fois'],['s','perinee','10 fois']]},
+  {n:'Séance C – Marche et détente',fo:'endurance + respiration',long:1,b:[['c','marche',[20,20,25,25]],['s','respi','2 min'],['s','cercles','10 fois'],['s','hanches','10 fois'],['s','etmollet','30 s']]}]},
+ post:{per:3,w:5,z:0,ser:[1,1,2,2],reps:'10-12',eff:[[3,4],[3,4],[4,5],[4,5]],ban:['abdo'],S:[
+  {n:'Séance A – Marche et périnée',fo:'reprise douce',b:[['c','marche',[10,15,15,20]],['s','perinee','10 fois'],['s','respi','2 min'],['r','pompemur'],['r','tirelast']]},
+  {n:'Séance B – Renforcement léger',fo:'jambes et bras',b:[['c','marche',[10,10,15,15]],['r','assis',0,2],['r','bandwalk',0,2],['r','elev'],['s','perinee','10 fois'],['s','chatvache','8 fois']]},
+  {n:'Séance C – Marche et souplesse',fo:'endurance + détente',long:1,b:[['c','marche',[15,20,20,25]],['s','respi','2 min'],['s','perinee','10 fois'],['s','cercles','10 fois'],['s','etmollet','30 s']]}]},
+ baria:{per:3,w:5,z:0,ser:[0,1,2,2],reps:'12-15',eff:[[3,4],[4,5],[4,5],[5,5]],ban:['abdo'],S:[
+  {n:'Séance A – Marche et renforcement léger',fo:'marche + renforcement léger',b:[['c','marche',[15,20,20,25]],['r','assis'],['r','pompemur'],['r','tirelast'],['r','mollets'],['s','etischio','30 s']]},
+  {n:'Séance B – Vélo et jambes',fo:'endurance + jambes',b:[['c',['marche','velo','velo','velo'],[15,15,20,20]],['r','montee',0,3],['r','elev'],['r','bandwalk'],['s','etpec','30 s']]},
+  {n:'Séance C – Marche longue',fo:'endurance + souplesse',long:1,b:[['c','marche',[20,25,30,35]],['s','cercles','10 fois'],['s','hanches','10 fois'],['s','etmollet','30 s']]}]}
+};
+function patBans(k){const s=new Set();patKeys(k).forEach(x=>{const p=PATHO[x].pg;if(!p)return;(p.ban||[]).forEach(b=>s.add(b));(PFAM[p.f].ban||[]).forEach(b=>s.add(b))});return s}
+function patCap(k){let c=10;patKeys(k).forEach(x=>{if(PATHO[x].cap)c=Math.min(c,PATHO[x].cap)});return c}
+function patEx(id,bans){let i=id,n=0;while(i&&PX[i]&&PX[i][6].some(t=>bans.has(t))&&n<5){i=PXALT[i];n++}return i&&PX[i]&&!PX[i][6].some(t=>bans.has(t))?i:null}
+const patEff=(lo,hi,resp)=>`${resp?'Essoufflement':'Effort'} ${lo===hi?lo:lo+' à '+hi} sur 10 : ${hi<=4?'tu parles sans être essoufflé(e)':hi<=5?'un peu essoufflé(e), tu peux parler en phrases':'essoufflé(e) mais tu peux encore parler (pas chanter)'}. Ralentis si tu ne peux plus dire une phrase.`;
+function patIt(id,series,reps,rest,tip){const x=PX[id];return{nom:x[0],anim:x[1],machine:x[2],reglage:'',series,reps,repos_s:rest,tempo:'',muscles:x[3].slice(),muscles_secondaires:x[4].slice(),execution:x[5],conseil:tip||''}}
+function patSess(k,lvl,w){const d=PATHO[k],o={...PFAM[d.pg.f],...d.pg},bans=patBans(k),cap=patCap(k),wi=w-1,up=Math.max(0,(lvl||1)-1);
+ const ser=o.ser[wi]?Math.min(3,o.ser[wi]+up):0,reps=Array.isArray(o.reps)?o.reps[wi]:o.reps,rest=o.rest||60;
+ let[lo,hi]=o.eff[wi];hi=Math.min(cap,hi+up);lo=Math.min(lo+up,hi);
+ const soft=o.f==='card'||o.f==='resp'||bans.has('iso')||cap<=5,rtip=soft?'Souffle pendant l’effort, ne bloque jamais ta respiration. Garde 3 répétitions en réserve.':'Souffle pendant l’effort. Arrête la série en gardant 2 à 3 répétitions en réserve.';
+ const S=o.S.slice(0,Math.min(o.per,o.S.length));
+ return S.map(s=>{const ex=[{nom:'Échauffement en douceur',anim:'marche',machine:'aucun',reglage:'',series:1,reps:(o.w||5)+' min',repos_s:30,tempo:'',muscles:['mollets'],muscles_secondaires:['quadriceps'],execution:'Marche tranquille, puis cercles de bras et rotations de hanches.',conseil:'Monte en température doucement : c’est ce qui protège ton cœur et tes articulations.'}],used=new Set();let card=null;
+  for(const b of s.b){const t=b[0];
+   if(t==='c'){let id=Array.isArray(b[1])?b[1][wi]:b[1];if(o.cx&&id==='marcheFr')id=o.cx;const m=Math.min(40,(d.pg.cm?d.pg.cm[wi]+(s.long?5:0):Array.isArray(b[2])?b[2][wi]:15)+up*5);card=patIt(id,1,m+' min',60,patEff(lo,hi,o.resp)+(id==='velo'?'':' Si tu préfères : vélo, natation ou aquagym.'));card._m=m;ex.push(card)}
+   else if(t==='r'){if(!ser||(b[3]&&w<b[3]))continue;const id=patEx(b[1],bans);if(!id||used.has(id))continue;used.add(id);ex.push(patIt(id,ser,b[2]||reps,rest,rtip))}
+   else if(t==='s'){const id=patEx(b[1],bans);if(!id||used.has(id))continue;used.add(id);ex.push(patIt(id,1,b[2]||'30 s',15,'Doucement, sans douleur, en respirant calmement.'))}
+   else if(t==='b'){const id=patEx(b[1],bans);if(!id||used.has(id))continue;used.add(id);ex.push(patIt(id,2,id==='tandem'?['4 m','5 m','6 m','8 m'][wi]+' aller-retour':['15 s','20 s','30 s','30 s'][wi]+' par pied',30,'Garde toujours un appui à portée de main (mur, dossier de chaise).'))}}
+  if(o.z)ex.push({nom:'Retour au calme : marche lente',anim:'marche',machine:'aucun',reglage:'',series:1,reps:o.z+' min',repos_s:0,tempo:'',muscles:['mollets'],muscles_secondaires:[],execution:'Ralentis petit à petit et respire profondément.',conseil:'Ne t’arrête pas net : la récupération protège ton cœur.'});
+  const est=()=>ex.reduce((a,x)=>{const r=String(x.reps),n=num(x.series)||1;if(/\bmin\b/.test(r))return a+num(r)*n;if(/\d\s*s\b/.test(r))return a+n*.75+.25;if(/fois|côté|\d\s*m\b/.test(r))return a+n;return a+n*1.75},0);
+  let tot=est(),g=0;const c0=card?Math.min(card._m,15):0;
+  while(tot>45&&g++<40){const st=ex.filter(x=>/^\d+(-\d+)?$/.test(String(x.reps)));if(card&&card._m>c0)card._m--;else{const z=st.filter(x=>x.series>1).pop();if(z)z.series--;else if(st.length>2)ex.splice(ex.indexOf(st[st.length-1]),1);else if(card&&card._m>10)card._m--;else break}if(card)card.reps=card._m+' min';tot=est()}
+  if(card&&tot<20){card._m+=Math.ceil(20-tot);card.reps=card._m+' min';tot=est()}if(card)delete card._m;
+  return{nom:s.n,focus:s.fo,duree_min:Math.max(20,Math.min(45,Math.round(tot/5)*5)),exercices:ex}})}
+const patTitle=(k,lvl)=>`Programme santé · ${SANTE[k]}${lvl>1?' · niveau '+lvl:''}`;
+function patBuild(k,lvl,w){const d=PATHO[k],J=patSess(k,lvl,w),per=J.length,mn=Math.min(...J.map(j=>j.duree_min)),mx=Math.max(...J.map(j=>j.duree_min));
+ return{titre:patTitle(k,lvl),resume:`Semaine ${w} sur 4 · ${per} séances par semaine de ${mn===mx?mn:mn+' à '+mx} minutes, d’après les recommandations de la HAS. Parles-en à ton médecin avant de commencer.`,echauffement:'Il est compris dans chaque séance : c’est le premier exercice (marche tranquille, cercles de bras, rotations de hanches).',progression:`Tu passes à la semaine suivante quand tu as fait les ${per} séances de la semaine : les durées et les séries augmentent doucement. Si c’est trop dur, fais une série de moins.`,jours:J}}
+/* plan en cours : clés nouvelles « pathoPlan » (programme santé actif) et « pathoPrev » (ancien programme gardé de côté) */
+const patPlan=()=>{const p=store.get('pathoPlan',null);return p&&typeof p==='object'&&PATHO[p.k]&&Array.isArray(p.names)&&num(p.per)>0?p:null};
+const patActive=()=>{const p=patPlan();return p&&PR&&PR.titre===p.titre?p:null};
+const patDone=p=>LOG.filter(l=>l&&num(l.t)>=num(p.t)&&p.names.includes(l.nom)).length;
+const patWeek=p=>Math.min(4,1+Math.floor(patDone(p)/p.per));
+const patPrev=()=>{const b=store.get('pathoPrev',null);return b&&typeof b==='object'&&'pr' in b?b:null};
+function patSync(){const p=patActive();if(!p)return;const w=patWeek(p);if(num(p.w)===w)return;const B=patBuild(p.k,p.lvl,w);PR.jours=B.jours;PR.resume=B.resume;store.set('programme',PR);p.w=w;store.set('pathoPlan',p)}
+function patStart(k,lvl){const pa=patActive();if(!(pa&&patPrev()))store.set('pathoPrev',{pr:PR||null,d:today(),titre:PR?String(PR.titre||''):''});
+ const B=patBuild(k,lvl,1);PR=B;store.set('programme',PR);store.set('pathoPlan',{k,lvl,t:Date.now(),d:today(),per:B.jours.length,titre:B.titre,names:B.jours.map(j=>j.nom),w:1});renderProg()}
+
+/* 3. Sport › Programme : carte « Programmes santé » */
+function patChip(k,on){return `<button class="chip patc${on?' p':''}" data-act="patOpen" data-k="${k}">${esc(SANTE[k])}</button>`}
+function patCard(){const pane=document.querySelector('section[data-v=sport] .pane[data-pane=programme]'),pr=$('prog');if(!pane||!pr)return;let c=$('patCard');
+ if(!c){c=document.createElement('div');c.className='card patcard';c.id='patCard'}if(c.nextElementSibling!==pr)pr.before(c);
+ const L=patL(),sug=num(P.age)>=65&&!L.includes('senior')?['senior']:[],pa=patActive(),bk=patPrev();let h='';
+ if(pa){const done=patDone(pa),w=patWeek(pa),fin=done>=4*pa.per,inw=done-(w-1)*pa.per;
+  h+=`<div class="patst"><div class="row sb" style="flex-wrap:nowrap;gap:8px"><b>En cours : ${esc(SANTE[pa.k])}${pa.lvl>1?' · niveau '+pa.lvl:''}</b><span class="patpill">${fin?'terminé':'semaine '+w+'/4'}</span></div>
+  <div class="patwkd" role="img" aria-label="Semaine ${w} sur 4">${[1,2,3,4].map(i=>`<i class="${i<w||fin?'f':''}"><b style="transform:scaleX(${i<w||fin?1:i===w?Math.min(1,inw/pa.per).toFixed(2):0})"></b></i>`).join('')}</div>
+  ${fin?`<p style="margin:6px 0 4px"><b>Bravo, tes 4 semaines sont faites !</b> Tu peux recommencer un cran plus fort, refaire le même, ou passer à un programme classique fait pour toi.</p><div class="patbtns"><button data-act="patAgain">Recommencer un cran plus fort</button><button class="alt" data-act="patSame">Refaire le même</button><button class="ghost" data-act="patClassic">Programme classique</button></div>`
+   :`<p class="mute" style="margin:6px 0 4px">Semaine ${w} sur 4 · séance ${Math.min(pa.per,inw+1)} sur ${pa.per} cette semaine. Tu passes à la semaine suivante quand ses ${pa.per} séances sont faites.</p>`}
+  <div class="row" style="margin-top:8px"><button class="ghost sm" data-act="patOpen" data-k="${pa.k}">Voir la fiche</button>${bk?'<button class="ghost sm" data-act="patBack">Revenir à mon ancien programme</button>':''}</div></div>`}
+ else if(bk&&PR&&bk.pr!==undefined&&/^Programme santé adapté/.test(String(PR.titre||'')))h+=`<div class="row" style="margin:0 0 8px"><button class="ghost sm" data-act="patBack">Revenir à mon ancien programme</button></div>`;
+ const mine=[...L,...sug];
+ h+=mine.length?`<div class="sect patsect">Pour toi</div><div class="chips">${mine.map(k=>patChip(k,L.includes(k))).join('')}</div>${L.length>1?'<p class="mute" style="font-size:14px;margin:6px 0 0">Tu as indiqué plusieurs problèmes de santé : chaque fiche combine les précautions, et l’IA applique toujours la plus stricte.</p>':''}`
+  :`<p class="mute" style="margin:0 0 6px">Rien d’indiqué dans ton profil santé. Choisis ci-dessous, ou coche tes problèmes de santé dans ton profil.</p>`;
+ h+=`<details class="patall"${mine.length?'':' open'}><summary>Toutes les maladies (${Object.keys(PATHO).length})</summary>${PAT_CAT.map(([t,ks])=>`<div class="patgh">${esc(t)}</div><div class="chips">${ks.filter(k=>PATHO[k]&&!mine.includes(k)).map(k=>patChip(k,0)).join('')}</div>`).join('')}</details>`;
+ c.innerHTML=`<h2>Programmes santé</h2><p class="sub">Des séances et des repères pensés pour ta santé, d’après les recommandations officielles (HAS). Parles-en à ton médecin avant de commencer.</p>`+h}
+{const _rp=renderProg;renderProg=function(){try{patSync()}catch(e){console.error(e)}const r=_rp.apply(this,arguments);try{patCard()}catch(e){console.error(e)}return r}}
+{const _rt=renderProgToday;renderProgToday=function(){const r=_rt.apply(this,arguments);try{const el=$('progToday'),pa=patActive();if(el&&!el.hidden&&pa&&!el.querySelector('.patwk'))el.insertAdjacentHTML('afterbegin',`<div class="patwk">Programme santé · ${esc(patS(pa.k))} · semaine ${patWeek(pa)} sur 4</div>`)}catch(e){}return r}}
+
+/* 4. Fiche maladie (feuille) */
+const patUl=a=>a&&a.length?`<ul class="fl">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'';
+function patWeeksHTML(k){const d=PATHO[k];if(!d.pg)return '';const pa=patActive(),cw=pa&&pa.k===k?patWeek(pa):0;let h='';
+ for(let w=1;w<=4;w++){const J=patSess(k,pa&&pa.k===k?pa.lvl:1,w);h+=`<details class="patw"${w===(cw||1)?' open':''}><summary>Semaine ${w}${w===cw?' · <em>en cours</em>':''}<small>${J.length} séances · ${(a=>a[0]===a[1]?a[0]:a[0]+' à '+a[1])([Math.min(...J.map(j=>j.duree_min)),Math.max(...J.map(j=>j.duree_min))])} min</small></summary>${J.map(j=>`<div class="patj1"><b>${esc(j.nom)}</b> <span class="mute">· ${j.duree_min} min</span><ul class="fl">${j.exercices.map(x=>`<li>${esc(x.nom)} <span class="mute">${x.series>1?esc(x.series)+' × ':''}${esc(x.reps)}</span></li>`).join('')}</ul></div>`).join('')}</details>`}return h}
+function patSheet(k){const d=PATHO[k];if(!d)return;const L=patL(),others=L.filter(x=>x!==k),mine=L.includes(k),sec=(t,b,c='')=>`<section class="patsec ${c}"><h3>${t}</h3>${b}</section>`;
+ const T=patTargets([k]).filter(t=>(PATHO[k].sv||[]).some(s=>s[0]===t.id));
+ let h=`<div class="row sb" style="flex-wrap:nowrap"><h2 style="margin:0">${esc(SANTE[k])}</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div>`;
+ if(!mine)h+=`<button class="alt sm" data-act="patAdd" data-k="${k}" style="margin-top:10px">C’est mon cas : l’ajouter à mon profil santé</button>`;
+ if(others.length)h+=`<div class="tip patmulti">Tu as aussi indiqué : <b>${others.map(x=>esc(SANTE[x])).join(', ')}</b>. Les précautions sont combinées : le programme ci-dessous retire les exercices déconseillés pour l’une d’elles et garde l’effort le plus prudent, et l’IA applique toujours la règle la plus stricte.</div>`;
+ h+=`<div class="patdoc${d.fort?' fort':''}"><b>Parles-en à ton médecin avant de commencer${d.pr?', surtout '+esc(d.pr):''}.</b> Ces repères viennent des recommandations officielles : ce n’est pas un diagnostic et ça ne remplace pas ses conseils.</div><p class="patr">${esc(d.r)}</p>`;
+ if(d.f.length)h+=sec('Ce qui t’aide',`<ul class="fl">${d.f.map(([a,b])=>`<li><b>${esc(a)} :</b> ${esc(b)}</li>`).join('')}</ul><details class="patint"><summary>Comment mesurer ton effort ?</summary><p>${esc(PAT_INT)}</p></details>`);
+ if(d.ev.length)h+=sec('À éviter',patUl(d.ev));
+ h+=sec('Stop si…',`<p style="margin:0 0 4px">Arrête-toi et parles-en à ton médecin si tu ressens :</p>${patUl([...d.st,...PAT_STOP0])}`,'patstop');
+ const a=d.a||{};h+=sec('Ton assiette',patUl(a.k)+`<div class="patcols">${[['À privilégier',a.p],['À limiter',a.m],['Pièges',a.pi]].filter(x=>x[1]&&x[1].length).map(([t,l])=>`<div><b>${t}</b>${patUl(l)}</div>`).join('')}</div><p class="mute" style="font-size:14px;margin:8px 0 0">Tes menus, recettes et analyses de produits tiennent compte de ces règles automatiquement. Pour un plan précis, une diététicienne est la bonne personne.</p>`);
+ h+=sec('Ton suivi',T.length?`<p style="margin:0 0 6px">Ajouté à ton journal (Cuisine › Mes repas), en plus de tes objectifs habituels :</p><ul class="fl">${T.map(t=>`<li><b>${PTRK[t.id].n}</b> : ${esc(patLimTxt(t))}</li>`).join('')}</ul><button class="ghost sm" data-act="patGoJ">Voir mon suivi du jour</button>`:'<p style="margin:0">Pas de chiffre particulier à suivre : tes objectifs habituels suffisent.</p>');
+ h+=sec('Au quotidien',patUl([...(d.h||[]),...PAT_HAB0]));
+ h+=d.pg?sec('Ton programme 4 semaines',`<p class="mute" style="margin:0 0 6px">${PATHO[k].pg&&patSess(k,1,1).length} séances par semaine de 20 à 45 minutes, échauffement compris. Les exercices sont animés dans la séance guidée.</p>${patWeeksHTML(k)}<div class="patbtns" id="patAct">${patActBtns(k)}</div>`):sec('Sport',`<p style="margin:0 0 8px">Pas de précaution sport particulière : tous les programmes de l’app te conviennent.</p><button class="ghost sm" data-act="go" data-to="sport/prets">Voir les séances prêtes</button>`);
+ h+=sec('Sources',`<ul class="fl patsrc">${(d.src||[]).map(s=>PS[s]).filter(Boolean).concat([PS.guide]).filter((s,i,A)=>A.indexOf(s)===i).map(([t,u])=>`<li><a href="${secUrl(u)}" target="_blank" rel="noopener noreferrer">${esc(t)}</a></li>`).join('')}</ul>`);
+ openSheet(`<div class="patsheet">${h}</div>`)}
+const patActBtns=k=>{const pa=patActive();return pa&&pa.k===k?`<p class="mute" style="margin:0 0 8px">C’est ton programme en ce moment.</p><button class="alt wide" data-act="patAI" data-k="${k}">L’adapter à moi avec l’IA</button>`:`<button class="wide" data-act="patUse" data-k="${k}">Utiliser ce programme</button><button class="alt wide" data-act="patAI" data-k="${k}">L’adapter à moi avec l’IA</button>`};
+
+/* 5. Suivi diététique dans le journal : sel, sucres, graisses saturées, fibres, fer, calcium, protéines (reins) */
+const PTRK={
+ sel:{n:'Sel',u:'g',max:1,key:'se',lim:v=>v||6,src:'repère HAS pour la tension : 6 g maximum',tip:'Tu dépasses ton repère de sel. Pour la suite de la journée : pas de charcuterie, de fromage ni de plat tout prêt ; assaisonne avec des herbes, du citron, des épices.'},
+ sucres:{n:'Sucres',u:'g',max:1,key:'su',lim:()=>100,src:'ANSES : 100 g de sucres par jour au maximum ; ton équipe peut viser moins',tip:'Beaucoup de sucres aujourd’hui : pour la suite, de l’eau plutôt qu’une boisson sucrée, un fruit entier plutôt qu’un dessert sucré.'},
+ ags:{n:'Graisses saturées',u:'g',max:1,key:'sa',lim:(v,kc)=>Math.round(kc*(v||12)/100/9),src:'environ 10 à 12 % de tes calories',tip:'Pas mal de graisses saturées : choisis poisson, volaille ou légumineuses, et l’huile de colza ou d’olive plutôt que beurre ou crème.'},
+ fibres:{n:'Fibres',u:'g',min:1,key:'f',lim:v=>v||null,src:'ANSES : 30 g par jour',tip:'Il manque des fibres : légumes, fruits, pain complet ou légumineuses au prochain repas (augmente doucement si ton ventre est sensible).'},
+ fer:{n:'Fer',u:'mg',min:1,key:'fe',lim:()=>11,src:'ANSES : 11 mg par jour (16 mg si tes règles sont abondantes)',tip:'Pour le fer : viande rouge, boudin, poisson ou lentilles avec un fruit riche en vitamine C ; thé et café loin des repas.'},
+ ca:{n:'Calcium',u:'mg',min:1,key:'ca',lim:v=>v||950,src:'ANSES : 950 mg par jour',tip:'Pour le calcium : 2 à 3 produits laitiers par jour, ou une eau riche en calcium.'},
+ protmax:{n:'Protéines (repère reins)',u:'g',max:1,key:'p',jr:1,lim:v=>num(P.poids)?Math.round(v*num(P.poids)):null,src:'repère fréquent 0,8 g par kilo, à valider avec ton néphrologue',tip:'Tu dépasses ton repère de protéines pour les reins : parles-en à ton néphrologue ou ta diététicienne pour fixer ton chiffre.'},
+ gluc:{n:'Glucides',u:'g',info:1,key:'g',jr:1,lim:()=>null,src:'à répartir sur tes repas ; ta quantité se règle avec ton équipe',tip:''}
+};
+const patLimTxt=t=>{const D=PTRK[t.id];return t.lim==null?D.src:`${D.max?'au maximum':'au moins'} ${t.lim.toLocaleString('fr-FR')} ${D.u} par jour (${D.src})`};
+function patTargets(extra){const L=[...new Set([...patL(),...(extra||[])])].filter(k=>PATHO[k]),kc=(metrics()||{}).kcal||2000,T={};
+ L.forEach(k=>(PATHO[k].sv||[]).forEach(([id,v])=>{const D=PTRK[id];if(!D)return;const lim=D.lim(v,kc),cur=T[id];
+  if(!cur){T[id]={id,lim,who:[k]};return}cur.who.push(k);if(lim!=null&&(cur.lim==null||(D.max?lim<cur.lim:lim>cur.lim)))cur.lim=lim}));
+ return Object.values(T)}
+function patNut(e){const key=e.nom+'|'+num(e.kcal);if(key in PAT_NC)return PAT_NC[key];const J2=store.get('jnut',null),rec=J2&&J2[today()]&&J2[today()][e.nom];let r=null;
+ if(rec&&typeof rec==='object'){const f=num(rec.k)>0?num(e.kcal)/num(rec.k):1;r={};['se','su','sa','f','fe','ca'].forEach(x=>{if(rec[x]!=null)r[x]=num(rec[x])*f})}
+ else if(CQ){const m=String(e.nom||'').match(/^(.*?)\s*\((\d+(?:[.,]\d+)?)\s*g\)\s*$/),base=(m?m[1]:String(e.nom||'')).trim(),g=m?num(m[2]):0;let f=CQ.find(x=>x.nom===base);if(!f&&base.length>2)f=cqSearch(base,1)[0];
+  if(f){const fac=g?g/100:(num(f.k)>0&&num(e.kcal)>0?num(e.kcal)/num(f.k):0);if(fac){r={};['se','su','sa','f','fe','ca'].forEach(x=>{if(f[x]!=null)r[x]=f[x]*fac})}}}
+ if(r||CQ)PAT_NC[key]=r;return r}
+function patCapture(it,en){if(!en||!patTargets().length)return;let n=null;
+ try{if(PROD&&PROD.c100&&String(en.nom).indexOf(String(PROD.nom||'')+' (')===0){const g=num((String(en.nom).match(/\((\d+(?:[.,]\d+)?)\s*g\)\s*$/)||[])[1]),c=PROD.c100;if(g){n={};[['se','sel'],['su','sucres'],['sa','ags'],['f','fibres']].forEach(([a,b])=>{if(c[b]!=null&&c[b]!=='')n[a]=num(c[b])*g/100})}}}catch(e){}
+ try{if(!n&&PLATE&&en.nom===(PLATE.nom||'Mon repas')&&CQ&&arr(PLATE.aliments).length){let s={},k0=0,ok=0;arr(PLATE.aliments).forEach(a=>{const f=cqSearch(String(a.nom||''),1)[0];if(!f)return;const fac=num(a.grammes)?num(a.grammes)/100:(num(f.k)>0&&num(a.kcal)>0?num(a.kcal)/num(f.k):0);if(!fac)return;ok++;k0+=num(f.k)*fac;['se','su','sa','f','fe','ca'].forEach(x=>{if(f[x]!=null)s[x]=(s[x]||0)+f[x]*fac})});
+  if(ok){n=s;const kk=num(en.kcal);if(k0>0&&kk>0)Object.keys(n).forEach(x=>n[x]=n[x]*kk/k0)}}}catch(e){}
+ if(!n)return;n.k=num(en.kcal);const J2=store.get('jnut',null)||{},d=today();J2[d]=J2[d]||{};J2[d][en.nom]=n;Object.keys(J2).sort().slice(0,-14).forEach(x=>delete J2[x]);store.set('jnut',J2);delete PAT_NC[en.nom+'|'+num(en.kcal)]}
+{const _af=addFood;addFood=function(it){const en=_af.apply(this,arguments);try{patCapture(it,en);patJ()}catch(e){}return en}}
+function patJ(){const pane=document.querySelector('section[data-v=cuisine] .pane[data-pane=journal]');if(!pane)return;let c=$('patJ');const T=patTargets();
+ if(!T.length){if(c)c.remove();return}
+ if(!c){c=document.createElement('div');c.className='card patjc';c.id='patJ';const f=pane.querySelector(':scope>.card');if(f)f.after(c);else pane.prepend(c)}
+ const E=dayJ();if(E.length&&!CQ&&!PAT_CQW){PAT_CQW=1;loadCQ().then(()=>{PAT_NC={};patJ()}).catch(()=>{})}
+ const sum={},jr={p:0,g:0};let known=0;E.forEach(e=>{jr.p+=num(e.p);jr.g+=num(e.g);const n=patNut(e);if(n){known++;Object.entries(n).forEach(([x,v])=>sum[x]=(sum[x]||0)+num(v))}});
+ const h=new Date().getHours(),who=t=>t.who.map(patS).join(' · ');
+ const rows=T.map(t=>{const D=PTRK[t.id],v=D.jr?jr[D.key]:(sum[D.key]||0),dec=D.u==='g'&&v<10?1:0,vt=(Math.round(v*(dec?10:1))/(dec?10:1)).toLocaleString('fr-FR');
+  if(D.info||t.lim==null)return `<div class="patg info"><div class="row sb"><b>${D.n}</b><span class="mute">${vt} ${D.u} aujourd’hui</span></div><small class="mute">${esc(D.src)} · pour : ${esc(who(t))}</small></div>`;
+  const pct=Math.min(100,v/t.lim*100),st=D.max?(v>t.lim?'over':v>t.lim*.85?'near':'ok'):(v>=t.lim?'ok':'low'),tip=D.max?(st==='over'?D.tip:''):(st==='low'&&h>=18&&E.length>=2?D.tip:'');
+  return `<div class="patg ${st}"><div class="row sb"><b>${D.n}</b><span class="mute">${vt} / ${t.lim.toLocaleString('fr-FR')} ${D.u} ${D.max?'max':'min'}</span></div><div class="patbar" role="img" aria-label="${D.n} : ${vt} sur ${t.lim} ${D.u}"><i style="width:${pct.toFixed(0)}%"></i></div><small class="mute">${esc(D.src)} · pour : ${esc(who(t))}</small>${tip?`<p class="pattip">${esc(tip)}</p>`:''}</div>`}).join('');
+ const conf=T.some(t=>t.id==='protmax')&&patL().some(k=>['sleeve','bypass','anneau','dialyse'].includes(k))?'<p class="pattip">Tes repères de protéines se contredisent (reins et '+(patL().includes('dialyse')?'dialyse':'chirurgie de l’obésité')+') : demande ton chiffre à ton équipe médicale.</p>':'';
+ const cov=!E.length?'Ajoute tes repas : je compte au fur et à mesure.':known?`Estimé sur ${known} aliment${known>1?'s':''} sur ${E.length} (table Ciqual de l’ANSES et étiquettes scannées)${known<E.length?' : les autres ne sont pas comptés':''}.`:'Je n’ai pas encore les détails de ces aliments : ajoute-les avec la recherche ANSES ci-dessous ou scanne-les pour que je puisse compter.';
+ c.innerHTML=`<div class="row sb" style="flex-wrap:nowrap;gap:8px"><h2 style="margin:0">Mon suivi santé</h2><button class="ghost sm" data-act="patOpenJ">Pourquoi ?</button></div><p class="mute" style="font-size:14px;margin:4px 0 10px">En plus de tes objectifs, selon ton profil santé : ${esc(patL().map(k=>SANTE[k]).join(', '))}.</p>${rows}${conf}<p class="mute" style="font-size:13px;margin:8px 0 0">${esc(cov)} Ce sont des repères généraux : si ton médecin ou ta diététicienne t’a donné d’autres chiffres, ce sont eux qui comptent.</p>`}
+{const _rd=renderDay;renderDay=function(){const r=_rd.apply(this,arguments);try{patJ()}catch(e){console.error(e)}return r}}
+
+/* 6. Idées repas : « Recettes adaptées à ma santé » */
+function patRecCard(){const pane=document.querySelector('section[data-v=cuisine] .pane[data-pane=menus]');if(!pane)return;let c=$('patRec');
+ if(!c){c=document.createElement('div');c.className='card patrec';c.id='patRec';c.innerHTML='<div id="patRecH"></div><div id="patRecRes"></div>';const f=pane.querySelector(':scope>.card');if(f)f.after(c);else pane.prepend(c)}
+ const L=patL(),hr=new Date().getHours();if(!PAT_RM)PAT_RM=hr<10?'Petit-déjeuner':hr<15?'Déjeuner':hr<18?'Collation':'Dîner';
+ $('patRecH').innerHTML=`<h2>Recettes adaptées à ma santé</h2>${L.length?`<p class="sub">Compatibles avec tout ton profil : <b>${esc(L.map(patS).join(' · '))}</b>.</p><div class="chips" role="group" aria-label="Pour quel repas ?">${['Petit-déjeuner','Déjeuner','Collation','Dîner'].map(m=>`<button class="chip${m===PAT_RM?' on':''}" data-act="patRecM" data-v="${m}" aria-pressed="${m===PAT_RM}">${m}</button>`).join('')}</div><button class="wide" data-act="patRec" style="margin-top:8px">Trouver 3 recettes adaptées</button>`:`<p class="sub">Indique tes problèmes de santé dans ton profil (diabète, tension, reins, côlon irritable…) : je te proposerai des recettes qui en tiennent compte.</p><button class="alt wide" data-act="patGoProfil">Remplir mon profil santé</button>`}`}
+{const _rm=renderMenu;renderMenu=function(){const r=_rm.apply(this,arguments);try{patRecCard()}catch(e){console.error(e)}return r}}
+
+/* 7. Scanner : « Pour ta santé : … » sur le verdict d'un produit */
+const PAT_SEL=['hta','rein','dialyse','icardiaque','coeur','avc','coronaire'],PAT_SUC=['diab1','diab2','steatose','goutte','sopk','obesite'],PAT_AGS=['chol','coronaire','coeur','avc','steatose'];
+function patProd(p,a){const L=patL();if(!L.length||!a||!a.known)return null;const c=a.c||{},il=String(p.ingredients||'').toLowerCase(),nm=String(p.nom||'').toLowerCase(),out=[],has=K=>L.filter(k=>K.includes(k)),nms=K=>K.map(patS).join(', ');
+ const s1=has(PAT_SEL);if(s1.length&&a.L.se)out.push(a.L.se==='hi'?['ko',`Très salé (${fr(Math.round(num(c.sel)*10)/10)} g pour 100 ${a.drink?'ml':'g'}) : à limiter pour ${nms(s1)}`,'sel']:a.L.se==='md'?['mid',`Moyennement salé : en petite quantité pour ${nms(s1)}`]:['ok',`Peu salé : bien pour ${nms(s1)}`]);
+ const s2=has(PAT_SUC);if(s2.length&&a.L.su)out.push(a.L.su==='hi'?['ko',`Très sucré : à limiter pour ${nms(s2)}`,'suc']:a.L.su==='lo'?['ok',`Peu sucré : bien pour ${nms(s2)}`]:['mid',`Moyennement sucré : en petite quantité pour ${nms(s2)}`]);
+ const s3=has(PAT_AGS);if(s3.length&&a.L.sa==='hi')out.push(['ko',`Riche en graisses saturées : à limiter pour ${nms(s3)}`,'ags']);
+ if(L.includes('goutte')&&(/bi[èe]re/.test(il+' '+nm)||/fructose/.test(il)||/soda|cola/.test(nm)))out.push(['ko','Bière, soda ou sirop au fructose : favorise les crises de goutte']);
+ if(L.includes('steatose')&&/alcool|\bvin\b|bi[èe]re|rhum|liqueur/.test(il+' '+nm))out.push(['ko','Contient de l’alcool : mauvais pour ton foie']);
+ if(has(['rein','dialyse']).length){if(/e\s?33[89]|e\s?34[01]|e\s?45[0-2]|phosphate/.test(il))out.push(['mid','Additifs phosphatés : à limiter si tes reins sont fragiles (vois avec ton néphrologue)']);if(/chlorure de potassium|e\s?508/.test(il))out.push(['ko','Contient du chlorure de potassium (sel de régime) : demande à ton néphrologue'])}
+ if(L.includes('sii')&&(/inuline|fructo-?oligo|chicor|sorbitol|maltitol|xylitol|mannitol|isomalt|e\s?96[05]|e\s?953|e\s?42[01]/.test(il)))out.push(['mid','Fibres fermentescibles ou polyols (FODMAP) : peut gonfler si ton ventre est sensible']);
+ if(L.includes('enceinte')){if(/lait cru/.test(il+' '+nm))out.push(['ko','Au lait cru : à éviter pendant la grossesse']);if(/alcool|\bvin\b|bi[èe]re/.test(il+' '+nm))out.push(['ko','Contient de l’alcool : zéro alcool pendant la grossesse'])}
+ if(has(['diverticulose','diab2','chol','obesite']).length&&num(c.fibres)>=6)out.push(['ok','Riche en fibres (6 g ou plus pour 100 g)']);
+ return{out,L}}
+{const _pa=prodAnalyse;prodAnalyse=function(p){const a=_pa.apply(this,arguments);try{const r=patProd(p,a);if(r&&Array.isArray(a.me))r.out.forEach(x=>{if(x[0]!=='ko')return;const g=x[2],add=g==='sel'?!r.L.includes('hta'):g==='suc'?!r.L.some(k=>/^diab/.test(k)):g==='ags'?!r.L.includes('chol'):true;if(add&&!a.me.some(y=>y[1]===x[1])){a.me.push(['ko',x[1]]);a._pat=1}});
+  if(a._pat&&a.known){const ko=a.me.filter(x=>x[0]==='ko').length,okn=a.me.filter(x=>x[0]==='ok').length,sc=a.sc;a.forMe=ko>=2||(ko&&sc<35)?['non','pas idéal']:ko||sc<35?['mod','avec modération']:okn||sc>=55?['oui','adapté à ton objectif']:['mod','ça passe, sans plus']}}catch(e){}return a}}
+{const _vh=verdictHTML;verdictHTML=function(p){let h=_vh.apply(this,arguments);try{const r=patProd(p,prodAnalyse(p));if(r){const o=r.out,w=o.some(x=>x[0]==='ko')?'ko':o.some(x=>x[0]==='mid')?'mid':'ok';
+  h=h.replace('<div id="pAvis"',`<div class="patprod ${w}"><b>Pour ta santé :</b> ${o.length?o.slice(0,4).map(x=>esc(x[1])).join(' · '):'rien de particulier à signaler pour '+esc(r.L.map(patS).join(', '))}.</div><div id="pAvis"`)}}catch(e){}return h}}
+
+/* 8. Profil : cases santé rangées par thème (mêmes boutons, mêmes clés) */
+function patChipsHTML(act){const L=P.santeL||[],seen=new Set(),b=k=>{seen.add(k);return `<button ${act==='obSante'?'type="button" ':''}class="chip${L.includes(k)?' p':''}" data-act="${act}" data-k="${k}" aria-pressed="${L.includes(k)}">${esc(SANTE[k])}</button>`};
+ let h=PAT_CAT.map(([t,ks])=>{const z=ks.filter(k=>SANTE[k]).map(b).join('');return z?`<span class="patgh">${esc(t)}</span>${z}`:''}).join('');const rest=Object.keys(SANTE).filter(k=>!seen.has(k));if(rest.length)h+=`<span class="patgh">Autres</span>${rest.map(b).join('')}`;return h}
+{const _rs=renderSante;renderSante=function(){const r=_rs.apply(this,arguments);try{const c=$('santeChips');if(c){c.innerHTML=patChipsHTML('santeT');if(!$('patGoS'))c.insertAdjacentHTML('afterend','<p class="mute" id="patGoS" style="font-size:14px;margin:8px 0 0">Chaque case cochée adapte tes repas, tes recettes, tes produits scannés et ton sport. <button class="ghost sm" data-act="patGoSport">Voir mes programmes santé</button></p>')}}catch(e){console.error(e)}return r}}
+{const _ob=obSanteR;obSanteR=function(){const r=_ob.apply(this,arguments);try{const c=$('obSante');if(c)c.innerHTML=patChipsHTML('obSante')}catch(e){}return r}}
+
+/* 9. Actions */
+const PATHO_ACTS={
+ patOpen(b){patSheet(b.dataset.k)},
+ patOpenJ(){const L=patL();if(L.length===1)patSheet(L[0]);else openPane('sport','programme')},
+ patAdd(b){const k=b.dataset.k,L=P.santeL||[];if(!L.includes(k)){P.santeL=[...L,k];saveP();try{renderSante();calc()}catch(e){}}renderProg();patSheet(k);toast('Ajouté à ton profil santé : repas, recettes et sport en tiennent compte.')},
+ patUse(b){const k=b.dataset.k,el=$('patAct');if(!el)return;el.innerHTML=`<div class="patconf"><p style="margin:0 0 10px"><b>${PR?`Ton programme actuel « ${esc(PR.titre||'')} » sera remplacé.`:'Ce programme deviendra ton programme.'}</b> Tu pourras revenir à l’ancien quand tu veux (bouton « Revenir à mon ancien programme »).</p><div class="row"><button data-act="patUseOk" data-k="${k}">Oui, utiliser ce programme</button><button class="ghost" data-act="patUseNo" data-k="${k}">Annuler</button></div></div>`;const f=el.querySelector('button');if(f)f.focus()},
+ patUseNo(b){const el=$('patAct');if(el)el.innerHTML=patActBtns(b.dataset.k)},
+ patUseOk(b){const k=b.dataset.k;patStart(k,1);A.closeSheet();openPane('sport','programme');toast('C’est parti : semaine 1 sur 4. Commence par la séance A.')},
+ patAI(b){const k=b.dataset.k;if(!(patActive()&&patPrev()))store.set('pathoPrev',{pr:PR||null,d:today(),titre:PR?String(PR.titre||''):''});PAT_FOCUS=k;PAT_FT=Date.now();A.closeSheet();openPane('sport','programme');setTimeout(()=>{const g=$('genProg');if(g&&!g.disabled)A.genProg(g)},120)},
+ patBack(){const b=patPrev();if(!b)return;const cur=PR,cp=store.get('pathoPlan',null);PR=b.pr&&typeof b.pr==='object'?b.pr:null;store.set('programme',PR);store.set('pathoPrev',null);renderProg();
+  undoToast(PR?'Ton ancien programme est revenu':'Programme santé retiré',()=>{PR=cur;store.set('programme',PR);store.set('pathoPrev',b);if(cp)store.set('pathoPlan',cp);renderProg()})},
+ patAgain(){const pa=patActive();if(!pa)return;patStart(pa.k,Math.min(3,(pa.lvl||1)+1));toast('Nouveau cycle de 4 semaines, un cran plus fort.')},
+ patSame(){const pa=patActive();if(!pa)return;patStart(pa.k,pa.lvl||1);toast('C’est reparti pour 4 semaines.')},
+ patClassic(){const g=$('genProg');if(g)A.genProg(g)},
+ patRecM(b){PAT_RM=b.dataset.v;patRecCard()},
+ patRec(b){const L=patL();if(!L.length)return;const tag=`Adapté : ${L.map(patS).join(' · ')}`;run(b,$('patRecRes'),'Le coach cherche des recettes pour ta santé',async()=>{
+  const r=await askJSON(`Tu es diététicien(ne) et cuisinier(ère). ${profil()}
+${MENU_RULES()}
+Propose 3 recettes différentes pour le moment « ${PAT_RM} », compatibles avec TOUTES ses contraintes de santé à la fois (${L.map(k=>SANTE[k]).join(', ')}) : ${L.map(k=>PATHO[k].ian||RULES[k]||'').filter(Boolean).join(' ')} Si deux règles se contredisent, applique la plus stricte. Pour chaque recette, explique en une phrase pourquoi elle convient.
+Format JSON : {"recettes":[{"nom":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"sel_g":0,"temps_min":20,"pourquoi":"1 phrase","ingredients":["quantité + ingrédient"],"preparation":["étape"]}]}`,{modelTier:'default',cache:false});
+  const R=arr(r.recettes).filter(x=>x&&typeof x==='object'&&x.nom);R.forEach(m=>m.moment=m.moment||PAT_RM);
+  $('patRecRes').innerHTML=R.length?R.map(m=>mealHTML(m,`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button>`).replace('<div class="meal">',`<div class="meal"><div class="pattag">${esc(tag)}</div>`).replace('</h3>',`</h3>${m.pourquoi||num(m.sel_g)?`<p class="mute patwhy">${esc(m.pourquoi||'')}${num(m.sel_g)?' · sel ≈ '+fr(num(m.sel_g))+' g':''}</p>`:''}`)).join('')+'<p class="mute" style="font-size:13px">Recettes proposées par l’IA en suivant tes règles de santé : vérifie toujours les ingrédients, surtout en cas d’allergie.</p>':'<p class="mute">Aucune recette trouvée, réessaie.</p>'})},
+ patGoJ(){A.closeSheet();openPane('cuisine','journal')},
+ patGoSport(){openPane('sport','programme')},
+ patGoProfil(){location.hash='moi';setTimeout(()=>{const f=$('foldSante');if(f){f.open=true;f.scrollIntoView({block:'start'})}},300)}
+};
+Promise.resolve().then(()=>{try{Object.assign(A,PATHO_ACTS)}catch(e){console.error(e)}});
+
+}
+/* === /ag_patho === */
+/* === ag_compat === iPhone (Safari, app sur l'écran d'accueil) et Android : pièges connus relevés dans les forums et les
+   traqueurs de bugs (sources dans REPORT.txt). Rien n'est stocké en plus, aucun format ne change ; tout est protégé par try/catch. */
+{const agcIOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),
+  agcStand=()=>!!(navigator.standalone||matchMedia('(display-mode: standalone)').matches);
+ /* 1. Bip et voix après une pause (app en arrière-plan, écran verrouillé, appel) : sur iPhone le contexte audio reste muet ou
+       « interrompu » au retour, même s'il se dit « running » (WebKit 291892, 281566, 263627, 276016), et la voix du coach ne
+       parle pas tant qu'un toucher ne l'a pas autorisée. Au premier toucher qui suit, on recrée le contexte du bip
+       (dans le geste, donc autorisé) et on « réveille » la voix avec un énoncé muet si elle est activée. */
+ let agcStale=1;
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')agcStale=1});
+ const agcUnlock=()=>{if(!agcStale)return;agcStale=0;
+  try{if(AC){const old=AC;AC=new (window.AudioContext||window.webkitAudioContext)();try{old.close()}catch(e){}
+   const b=AC.createBuffer(1,1,22050),src=AC.createBufferSource();src.buffer=b;src.connect(AC.destination);src.start(0);if(AC.state!=='running')AC.resume().catch(()=>{})}}catch(e){}
+  try{if(store.get('voix',false)&&window.speechSynthesis&&!speechSynthesis.speaking&&!speechSynthesis.pending){const u=new SpeechSynthesisUtterance(' ');u.volume=0;u.lang='fr-FR';speechSynthesis.speak(u)}}catch(e){}};
+ ['touchend','click','keydown'].forEach(t=>document.addEventListener(t,agcUnlock,{capture:true,passive:true}));
+
+ /* 2. Scanner : iOS coupe la caméra quand l'app passe en arrière-plan et l'image restait noire ou figée au retour
+       (WebKit 206219, 252465, 212040). On arrête proprement le scanner en partant et on prévient au retour. */
+ let agcCam=0;
+ document.addEventListener('visibilitychange',()=>{const sc=$('scanOv');
+  if(document.visibilityState==='hidden'){if(sc&&sc.classList.contains('on')){try{A.scanStop()}catch(e){}agcCam=1}}
+  else if(agcCam){agcCam=0;setTimeout(()=>toast('La caméra s\'est coupée pendant ta pause : touche à nouveau « Scanner ».'),500)}});
+
+ /* 3. Bouton ou geste « retour » d'Android pendant une séance, une recette guidée, un repas guidé ou le scanner :
+       avant, il changeait d'onglet derrière l'écran plein, puis fermait l'app (séance en cours perdue).
+       Maintenant : le scanner se ferme ; pour un écran guidé, le coach rappelle comment quitter et rien n'est perdu.
+       Même principe que la feuille du bas (entrée d'historique), sans toucher à son fonctionnement. */
+ let agcH=0,agcSkip=0;const agcOn=()=>['ov','scanOv'].some(id=>{const e=$(id);return !!e&&e.classList.contains('on')});
+ const agcSync=()=>{const on=agcOn();
+  if(on&&!agcH){try{history.pushState({edgOv:1},'',location.href);agcH=1}catch(e){}}
+  else if(!on&&agcH){agcH=0;try{if(history.state&&history.state.edgOv&&!$('sheet').classList.contains('on')){agcSkip=1;history.back()}}catch(e){}}};
+ ['ov','scanOv'].forEach(id=>{const e=$(id);if(e)new MutationObserver(agcSync).observe(e,{attributes:true,attributeFilter:['class']})});
+ addEventListener('popstate',e=>{if(agcSkip){agcSkip=0;return}if(!agcH||(e.state&&e.state.edgOv))return;
+  const sc=$('scanOv');if(sc&&sc.classList.contains('on')){agcH=0;try{A.scanStop()}catch(er){}return}
+  if($('ov').classList.contains('on')){try{history.pushState({edgOv:1},'',location.href)}catch(er){}toast('Pour quitter, touche « Terminer » ou « Fermer » en haut de l\'écran.')}});
+
+ /* 4. Notifications de rappels : sur iPhone, l'abonnement peut disparaître sans prévenir (mise à jour d'iOS, longue pause ;
+       WebKit 273063, forums Apple 728796 et 727372) ; l'app affichait encore « Activées ». On vérifie l'abonnement à
+       l'ouverture des rappels et au retour dans l'app ; s'il a disparu, on propose de le réactiver (même bouton qu'avant). */
+ let agcLost=0;
+ const agcPush=async()=>{try{const R=store.get('pushReg',null);if(!R||R.ok!==1||R.off||R.pend||!pushCan())return;
+   const perm=Notification.permission;if(perm==='denied')return;let l=1;
+   if(perm==='granted'){const reg=await navigator.serviceWorker.getRegistration();if(!reg||!reg.pushManager)return;l=(await reg.pushManager.getSubscription())?0:1}
+   if(l!==agcLost){agcLost=l;try{rapRefresh()}catch(e){}}}catch(e){}};
+ const agcPS=pushState;pushState=function(){const st=agcPS.apply(this,arguments);return st==='on'&&agcLost?'changed':st};
+ const agcPH=pushHTML;pushHTML=function(){const h=agcPH.apply(this,arguments);return agcLost&&agcPS()==='on'?h.replace('Tes rappels ont changé : mets à jour les notifications.','Ton téléphone a coupé les notifications de l\'app (cela arrive parfois sur iPhone, après une mise à jour ou une longue pause). Touche le bouton pour les réactiver.').replace('>Mettre à jour (','>Réactiver les notifications ('):h};
+ setTimeout(agcPush,5000);
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(agcPush,1500)});
+ document.addEventListener('click',e=>{if(e.target&&e.target.closest&&e.target.closest('[data-act=rapOpen]'))agcPush()},true);
+
+ /* 5. Enregistrer un fichier (sauvegarde, calendrier .ics) dans l'app installée sur iPhone : un lien de téléchargement
+       ouvrait un aperçu plein écran sans bouton pour revenir (WebKit 236943, 290847 ; forums Apple 95911, 119017).
+       Ce cas n'arrive que si le partage direct a échoué ; on propose alors une feuille « Enregistrer ou partager »
+       (un nouveau toucher, donc autorisé) et « Copier le contenu » pour les fichiers texte. */
+ let agcFile=null,agcTxt='';
+ document.addEventListener('click',e=>{const a=e.target&&e.target.closest&&e.target.closest('a[download]');
+  if(!a||!agcIOS||!agcStand()||!/^(blob|data):/.test(a.href))return;e.preventDefault();const name=a.getAttribute('download')||'fichier';
+  fetch(a.href).then(r=>r.blob()).then(async b=>{agcFile=new File([b],name,{type:b.type||'application/octet-stream'});
+   agcTxt=/json|text|calendar/.test(b.type)||/\.(json|ics|txt|csv)$/i.test(name)?await b.text():'';
+   document.querySelectorAll('.toast').forEach(x=>x.remove()); /* le message « téléchargée » serait trompeur : la feuille le remplace */
+   openSheet(`<h2 style="margin-top:0">Ton fichier est prêt</h2><p class="sub">${esc(name)}</p><p>Touche le bouton, puis choisis <b>« Enregistrer dans Fichiers »</b> ou l'appli de ton choix.</p><button id="agcShareB" style="width:100%;min-height:54px">Enregistrer ou partager</button>${agcTxt?'<button id="agcCopyB" class="ghost" style="width:100%;min-height:48px;margin-top:10px">Copier le contenu</button>':''}<button class="ghost" data-act="closeSheet" style="width:100%;min-height:48px;margin-top:10px">Fermer</button>`)}).catch(()=>toast('Fichier impossible à préparer ici.'))},true);
+ document.addEventListener('click',async e=>{const b=e.target&&e.target.closest&&e.target.closest('#agcShareB,#agcCopyB');if(!b||!agcFile)return;
+  if(b.id==='agcCopyB'){try{await navigator.clipboard.writeText(agcTxt);toast('Copié : colle-le dans Notes ou dans un e-mail pour le garder.')}catch(er){toast('Copie impossible ici.')}return}
+  try{await navigator.share({files:[agcFile],title:agcFile.name});toast('C\'est fait.')}catch(er){if(!er||er.name!=='AbortError')toast(agcTxt?'Partage impossible : utilise « Copier le contenu ».':'Partage impossible ici.')}});
+}
+/* === fin ag_compat === */
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -6328,11 +7142,15 @@ setInterval(()=>{if(document.visibilityState==='visible'){const d=store.get('boi
 /* ag_perf : une seule connexion IndexedDB, réutilisée (avant : une nouvelle connexion à chaque lecture/écriture) ;
    fermée au retour au premier plan puis rouverte à la demande, et un nouvel essai si Safari a perdu la connexion. */
 let IDBC=null;
-const idbOpen=()=>new Promise((ok,ko)=>{try{const r=indexedDB.open('edilgan',1);r.onupgradeneeded=()=>r.result.createObjectStore('photos',{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>ko(r.error)}catch(e){ko(e)}});
+const idbOpen=()=>new Promise((ok,ko)=>{try{let late=0;const tm=setTimeout(()=>{late=1;ko(new Error('IndexedDB : ouverture trop longue'))},8000);/* ag_compat : sur iPhone l'ouverture peut ne jamais répondre (WebKit 273827, 226547) : on abandonne après 8 s, le prochain appel réessaie */const r=indexedDB.open('edilgan',1);r.onupgradeneeded=()=>r.result.createObjectStore('photos',{keyPath:'id'});r.onsuccess=()=>{clearTimeout(tm);if(late){try{r.result.close()}catch(e){}return}ok(r.result)};r.onerror=()=>{clearTimeout(tm);ko(r.error)}}catch(e){ko(e)}});
 const idb=()=>IDBC||(IDBC=idbOpen().then(db=>{db.onversionchange=()=>{try{db.close()}catch(e){}IDBC=null};db.onclose=()=>{IDBC=null};return db},e=>{IDBC=null;throw e}));
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&IDBC){const c=IDBC;IDBC=null;c.then(db=>{try{db.close()}catch(e){}},()=>{})}});
 const phOp=(mode,fn,again)=>idb().then(db=>new Promise((ok,ko)=>{let t;try{t=db.transaction('photos',mode)}catch(e){IDBC=null;if(!again){ok(phOp(mode,fn,1));return}ko(e);return}
-  const st=t.objectStore('photos'),r=fn(st);t.oncomplete=()=>ok(r&&r.result);t.onerror=ev=>{const er=(ev&&ev.target&&ev.target.error)||t.error;if(!again&&er&&/UnknownError|InvalidStateError/.test(er.name)){IDBC=null;ok(phOp(mode,fn,1))}else ko(t.error)}}));
+  const st=t.objectStore('photos'),r=fn(st);let end=0;const tm=setTimeout(()=>{if(end)return;end=1;IDBC=null;try{t.abort()}catch(e){}if(!again)ok(phOp(mode,fn,1));else ko(new Error('IndexedDB : délai dépassé'))},8000);
+  /* ag_compat : iOS 26 peut laisser une transaction sans aucun événement (WebKit 315804) ou l'annuler sans erreur (connexion perdue en arrière-plan) :
+     délai de garde de 8 s puis un nouvel essai sur une connexion neuve, au lieu d'attendre indéfiniment (sauvegarde, calendrier, photos). */
+  t.oncomplete=()=>{if(end)return;end=1;clearTimeout(tm);ok(r&&r.result)};t.onerror=ev=>{if(end)return;end=1;clearTimeout(tm);const er=(ev&&ev.target&&ev.target.error)||t.error;if(!again&&er&&/UnknownError|InvalidStateError/.test(er.name)){IDBC=null;ok(phOp(mode,fn,1))}else ko(t.error||er)};
+  t.onabort=()=>{if(end)return;end=1;clearTimeout(tm);IDBC=null;if(!again)ok(phOp(mode,fn,1));else ko(t.error||new Error('IndexedDB : transaction annulée'))}}));
 async function renderPhotos(){let L=[];try{L=(await phOp('readonly',st=>{const a=st.getAll(IDBKeyRange.upperBound('__',true)),b=st.getAll(IDBKeyRange.lowerBound('_`'));return{get result(){return(a.result||[]).concat(b.result||[])}}})||[]).filter(p=>!String(p.id).startsWith('__'))}catch(e){}L.sort((a,b)=>a.d<b.d?-1:1);
   $('phList').innerHTML=L.map(p=>`<figure><img src="${p.data}" alt="Photo du ${frd(p.d)}"><figcaption>${frd(p.d)} <button class="x" style="min-height:28px;min-width:28px;font-size:16px" data-act="phDel" data-id="${p.id}" aria-label="Supprimer">×</button></figcaption></figure>`).join('')||finEmpty('photos','Pas encore de photo.','La première servira de point de départ : même pose, même lumière, une fois par mois.',{t:'Prendre ma première photo',act:'finPick',q:'#phIn'});
   $('phCmp').innerHTML=L.length>1?`<div class="cmp" id="cmpBox"><img src="${L[0].data}" alt="Avant"><img class="after" src="${L[L.length-1].data}" alt="Après"><div class="bar2"></div><span style="left:8px">${frd(L[0].d)}</span><span style="right:8px">${frd(L[L.length-1].d)}</span></div><input type="range" min="0" max="100" value="50" id="cmpR" aria-label="Comparer avant et après" style="margin-top:8px;padding:0;min-height:30px;background:none;border:0">`:'';
@@ -6430,10 +7248,12 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.27-92';
+const APP_VERSION='2026.11.27-93';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.27-93','Programmes santé','44 maladies : exercices adaptés avec un programme de 4 semaines, suivi de ton assiette (sel, sucres, graisses, fibres, fer…), recettes adaptées et avis produit selon ta santé. Sport › Programme › « Programmes santé ».','sport','programme'],
+ ['2026.11.27-93','Mieux sur iPhone et Android','Bip qui revient après une pause, caméra du scanner qui repart, bouton retour Android qui ne fait plus perdre ta séance, enregistrement de fichiers plus simple sur iPhone.','accueil',''],
  ['2026.11.27-92','De vrais sons pour dormir','11 vrais enregistrements de nature en boucle douce : pluie, vagues, ruisseau, orage, vent, oiseaux, nuit d\'été, feu de cheminée, café, train, bateau. Sur iPhone, ils continuent même écran verrouillé.','sommeil','detente'],
  ['2026.11.27-91','Plus rapide','Démarrage deux fois moins chargé, mémoire divisée par 3, la bibliothèque d\'exercices fluide même avec les animations, et le texte s\'affiche tout de suite même avec un réseau lent.','accueil',''],
  ['2026.11.27-90','La virgule marche partout','Tu peux écrire 96,4 dans tous les champs (poids, charge, grammes…). « Kilos perdus en tout » compte tes vraies pesées, et « Le mot du coach » ne montre plus jamais de texte technique.','suivi','progres2'],
@@ -6499,7 +7319,7 @@ Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS,BK_ACTS
 }
 /* ==== Audit iPhone : clavier virtuel, typographie française, stockage ==== */
 (function(){const R=document.documentElement,vv=window.visualViewport;
- if(vv){const upd=()=>{const kb=Math.max(0,Math.round(innerHeight-vv.height-vv.offsetTop));R.style.setProperty('--kb',kb+'px');R.classList.toggle('kb',kb>120)};vv.addEventListener('resize',upd);vv.addEventListener('scroll',upd)}
+ if(vv){const upd=()=>{const sc=vv.scale||1,kb=Math.max(0,Math.round(innerHeight-(sc>1.02?vv.height*sc:vv.height+vv.offsetTop)));/* ag_compat : un zoom à deux doigts (fréquent chez les seniors) réduit aussi la zone visible : il était pris pour le clavier -> barre d'onglets masquée et bouton « Série faite » déplacé de 300 à 500 px */R.style.setProperty('--kb',kb+'px');R.classList.toggle('kb',kb>120)};vv.addEventListener('resize',upd);vv.addEventListener('scroll',upd)}
  const SK=/^(SCRIPT|STYLE|TEXTAREA|INPUT|CODE|PRE)$/,RX=/ ([:;?!»])|(«) /g;
  const fx=n=>{if(n.nodeType===3){const p=n.parentNode,v=n.data;if(!p||SK.test(p.nodeName)||v.indexOf(' ')<0)return;const w=v.replace(RX,(m,a,b)=>a?' '+a:b+' ');if(w!==v)n.data=w}else if(n.nodeType===1&&!SK.test(n.nodeName)){const t=document.createTreeWalker(n,NodeFilter.SHOW_TEXT);let x;while((x=t.nextNode()))fx(x)}};
  fx(document.body);new MutationObserver(ms=>ms.forEach(m=>m.type==='characterData'?fx(m.target):m.target.closest&&m.target.closest('[data-anim]')?0:m.addedNodes.forEach(fx))).observe(document.body,{childList:true,subtree:true,characterData:true});
