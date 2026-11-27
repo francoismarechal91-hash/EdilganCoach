@@ -1326,6 +1326,57 @@ html[data-skin=synth] .agrrdv li button.ck:not(.on){color:var(--mute)!important}
 .agrhome .mute{line-height:1.45}
 /* === /ag_research === */
 
+/* === ag_qa2 === QA v86 : petits écrans (320 px), texte « Grand / Très grand », contrastes des états actifs, paysage */
+/* barre du haut : le nom de l'app passait SOUS la cloche (320 px ; 390 px en Très grand / Aurore) */
+.appbar .logo{min-width:0}
+html .appbar .logo .lname{min-width:0;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:374px){html[data-size=xl] .appbar .logo .lname{display:none!important}}
+@media (max-width:350px){html[data-size=l] .appbar .logo .lname{display:none!important}}
+/* barre d'onglets en Très grand sur 320 px : « ScannerCuisine » collés */
+@media (max-width:374px){html[data-size=xl] .tabs{left:4px;right:4px;padding:3px}html[data-size=xl] .tabs a{font-size:9.5px;letter-spacing:-.01em}}
+/* Bon à savoir : le tableau des saisons dépassait de la carte (colonne Fruits coupée) */
+.tbl.ref td{overflow-wrap:anywhere;-webkit-hyphens:auto;hyphens:auto}.tbl.ref td:first-child{overflow-wrap:normal;-webkit-hyphens:manual;hyphens:manual}
+@media (max-width:420px){html[data-size=xl] .tbl.ref tr:has(>td:nth-child(3)){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:10px}html[data-size=xl] .tbl.ref tr:has(>td:nth-child(3))>td:first-child{grid-column:1/-1;padding-bottom:0}html[data-size=xl] .tbl.ref tr:has(>td:nth-child(3))>td:not(:first-child){border-top:0;padding-right:0}}
+@media (max-width:340px){html .tbl.ref tr:has(>td:nth-child(3)){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:10px}html .tbl.ref tr:has(>td:nth-child(3))>td:first-child{grid-column:1/-1;padding-bottom:0}html .tbl.ref tr:has(>td:nth-child(3))>td:not(:first-child){border-top:0;padding-right:0}}
+/* Sommeil « Comment as-tu dormi ? » : 11 px et « Moyen » coupé en texte agrandi -> 3 colonnes */
+@media (max-width:420px){html[data-size=xl] #slQ{grid-template-columns:repeat(3,minmax(0,1fr))}html[data-size=xl] #slQ button{font-size:14px}}
+@media (max-width:350px){html[data-size=l] #slQ{grid-template-columns:repeat(3,minmax(0,1fr))}html[data-size=l] #slQ button{font-size:13px}}
+/* Profil : « Très grand » coupé dans son propre bouton quand le texte est en Très grand */
+section[data-v=moi] #foldApp>.seg>button{white-space:normal;line-height:1.15}
+/* Sport › Historique : noms de séance coupés (« Jour 1 – Haut… ») ; dates du graphique 8 semaines qui se chevauchent */
+section[data-v=sport] .sxhl .n b{white-space:normal}
+@media (max-width:420px){html[data-size=xl] section[data-v=sport] .sxwb>div:nth-child(even):not(.now) span{visibility:hidden}}
+@media (max-width:380px){html[data-size=l] section[data-v=sport] .sxwb>div:nth-child(even):not(.now) span{visibility:hidden}}
+@media (max-width:340px){section[data-v=sport] .sxwb>div:nth-child(even):not(.now) span{visibility:hidden}}
+/* chiffres des tuiles (calendrier « -6,6 kg » coupé en « -6,6… ») en Très grand */
+@media (max-width:420px){html[data-size=xl] .stats b{font-size:18px}html[data-size=xl] .stats div{padding:10px 8px}}
+/* Tour du monde : « Le menu du pays » écrasé à un mot par ligne à côté de « Tout changer » (320 px, texte agrandi) */
+.wmh{flex-wrap:wrap}.wmh>div{flex:1 1 150px}
+/* Check-in « Comment tu te sens ? » : boutons 1-5 de 29 à 39 px de large -> libellé au-dessus, boutons pleine largeur */
+@media (max-width:400px){html .chkrow{flex-wrap:wrap;gap:4px 8px}html .chkrow>b{width:100%}.chkrow~div.mute[style*="padding-left:100px"]{padding-left:0!important}}
+html:is([data-size=l],[data-size=xl]) .chkrow{flex-wrap:wrap;gap:4px 8px}
+html:is([data-size=l],[data-size=xl]) .chkrow>b{width:100%}
+html:is([data-size=l],[data-size=xl]) .chkrow~div.mute[style*="padding-left:100px"]{padding-left:0!important}
+/* états actifs « blanc sur couleur claire » : 1,4 à 3,5:1 (check-in, numéro de la série en cours, répétitions en réserve) */
+html[data-skin=synth] .chkrow button.on{color:#1a0420!important}
+html[data-skin=foretnuit] .chkrow button.on{color:#0c1a24!important}
+html[data-skin=aurore] .chkrow button.on{color:#04221a!important}
+html[data-skin=synth] .qual button.on{color:#1a0420}
+html[data-skin=synth] #ov .sxsets li.cur .sn{color:#1a0420}
+html[data-skin=foretnuit] #ov .sxsets li.cur .sn{color:#0c1a24}
+html[data-skin=aurore] #ov .sxsets li.cur .sn{color:#04221a}
+/* « 3 × 12 » et kcal du journal en rouge un peu pâle : 3,5 à 4,1:1 (Clair, Nuit) */
+html[data-skin=clair] body :is(.dose,#ov .sxmeta .dose){color:#b52a1a}
+html[data-skin=nuit] body :is(.dose,.jl .v,#ov .sxmeta .dose,#journal .jl .v,section[data-v=sport] .sxtag){color:#ff8a70}
+/* vert sur fond clair : « Super » / « Dans la bonne zone » (Sommeil) et « -1,9 kg par semaine » (Mes progrès) à 1,8-2,8:1 */
+html:is([data-skin=clair],[data-skin=pets],[data-skin=ocean],[data-skin=foret]) :is(section[data-v=sommeil] .sxslx>b.q4,section[data-v=sommeil] .sxslx>b.q5,section[data-v=sommeil] .sxslx span.ok,section[data-v=suivi] .sxwk3 .good b){color:color-mix(in srgb,var(--green) 55%,var(--ink))}
+/* Sauces « Avec ce que j'ai chez moi » : case de 22 px dans une étiquette de 28 px -> toute la ligne fait 44 px */
+label:has(>#sFrigo){min-height:44px;cursor:pointer}
+/* séance prête : le sous-titre « Tour 1 sur 2 · Exercice 2 sur 5 » était coupé (…) -> 2 lignes si besoin */
+#ov .sxht span{white-space:normal}
+/* paysage / petits écrans : les chiffres du minuteur dépassaient de l'anneau (anneau limité par la hauteur) */
+#ov .sxt{font-size:clamp(34px,min(16vw,11.5vh),74px)}
+/* === /ag_qa2 === */
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -2811,7 +2862,7 @@ function normAI(o,AK,NK,d=0){if(d>6||!o||typeof o!=='object')return o;
     o[k]=normAI(v,AK,NK,d+1)}
   return o}
 const schemaKeys=p=>({AK:new Set([...p.matchAll(/"([a-z_]+)":\s*\[/g)].map(m=>m[1])),NK:new Set([...p.matchAll(/"([a-z_]+)":\s*\d/g)].map(m=>m[1]))});
-async function askJSON(prompt,opts={}){const{AK,NK}=schemaKeys(prompt);const r=await askJSON0(prompt,opts);if(!r||typeof r!=='object'||Array.isArray(r))throw{code:'busy'};return normAI(r,AK,NK)}
+async function askJSON(prompt,opts={}){const{AK,NK}=schemaKeys(prompt);let r=await askJSON0(prompt,opts);if(!r||typeof r!=='object'||Array.isArray(r))throw{code:'busy'};if(!qaFit(prompt,r)){r=null;try{r=await askJSON0(prompt+'\nATTENTION : ta réponse précédente ne respectait pas le format. Réponds avec EXACTEMENT les clés du format JSON demandé, remplies.',opts)}catch(e){}if(!r||typeof r!=='object'||Array.isArray(r)||!qaFit(prompt,r))throw{code:'bad'}}return normAI(r,AK,NK)}
 async function askJSON0(prompt,opts={}){
   const full=prompt+FR+'\nRéponds uniquement avec un objet JSON valide, sans texte autour.';
   if(!(await preferClaude())){let r=await anyAI([{role:'user',content:full}],{images:opts.images||[],json:true});
@@ -2881,11 +2932,11 @@ const BODY_F=[["trapezes", "M92 56C88 61 80 64 74 66C80 68 88 69 94 66C95 63 94 
 const BODY_B=[["trapezes", "M100 52C96 56 88 62 76 67C82 74 89 84 94 96C97 104 99 110 100 114Z"], ["epaules", "M74 67C64 68 57 74 55 84C54 92 54 100 56 106C60 96 66 88 74 82C78 79 81 76 82 73C80 70 77 68 74 67Z"], ["dorsaux", "M86 84C78 88 71 94 67 102C67 118 70 134 76 148C80 158 85 164 90 166C92 156 94 146 95 136C92 120 90 102 86 84Z"], ["triceps", "M63 101C57 104 54 112 53 122C52 132 54 140 57 146C61 140 63 132 64 124C65 114 65 106 63 101Z"], ["avant_bras", "M57 148C52 152 48 160 46 170C44 180 42 188 42 194L48 195C50 186 53 176 56 168C58 160 59 153 57 148Z"], ["lombaires", "M93 132C90 146 89 160 89 174C89 180 90 184 92 186L99 186V128C97 128 95 129 93 132Z"], ["fessiers", "M70 186C66 196 66 206 70 214C76 222 86 226 94 224C97 222 99 218 99 212V192C92 186 82 184 70 186Z"], ["ischios", "M70 226C67 242 68 260 72 276C74 284 77 288 81 290L84 288C86 270 86 248 84 230C80 228 75 226 70 226Z M87 230C91 248 93 266 92 284L88 290C88 270 88 250 87 230Z"], ["mollets", "M73 298C69 308 69 322 73 334C76 342 80 346 84 342C86 330 86 312 84 298C81 294 76 294 73 298Z M88 298C92 306 95 318 94 330C93 338 90 344 87 342C86 330 86 312 88 298Z"]];
 const BODY_DEF={F:'M80 204C82 230 84 260 86 286M64 84C66 80 70 76 74 74M72 140C76 142 80 142 84 140',B:'M78 200C84 206 90 208 96 206M76 258C78 270 80 280 82 288M60 120C60 128 61 136 62 142'};
 function mapSVG(col,pick=false,role=null){
-  const r=k=>role?role(k):'';
-  const half=a=>a.map(([k,d])=>`<path d="${d}" fill="${col(k)}" data-k="${k}"${r(k)?` data-r="${r(k)}"`:''} tabindex="0" role="button" aria-label="${MN[k]}"/><path d="${d}" fill="url(#mshine)" pointer-events="none"/>`).join('');
+  const r=k=>role?role(k):'',gid='mshine'+(mapSVG.n=(mapSVG.n||0)+1);
+  const half=a=>a.map(([k,d])=>`<path d="${d}" fill="${col(k)}" data-k="${k}"${r(k)?` data-r="${r(k)}"`:''} tabindex="0" role="button" aria-label="${MN[k]}"/><path d="${d}" fill="url(#${gid})" pointer-events="none"/>`).join('');
   const fig=(a,def)=>`<path d="${BODY_OUT}" fill="var(--sil)"/><g transform="translate(200 0) scale(-1 1)"><path d="${BODY_OUT}" fill="var(--sil)"/></g>${half(a)}<path d="${def}" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.2" stroke-linecap="round" pointer-events="none"/><g transform="translate(200 0) scale(-1 1)">${half(a)}<path d="${def}" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.2" stroke-linecap="round" pointer-events="none"/></g>`;
   const lab=(x,t)=>`<text x="${x}" y="392" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" opacity=".6">${t}</text>`;
-  return `<svg class="body${pick?' pick':' info'}" viewBox="24 8 352 392" role="img" aria-label="Carte des muscles : touche un muscle pour savoir à quoi il sert"><defs><linearGradient id="mshine" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset=".45" stop-color="#fff" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient></defs><g>${fig(BODY_F,BODY_DEF.F)}</g>${lab(100,'Face')}<g transform="translate(200 0)">${fig(BODY_B,BODY_DEF.B)}</g>${lab(300,'Dos')}</svg>`;
+  return `<svg class="body${pick?' pick':' info'}" viewBox="24 8 352 392" role="img" aria-label="Carte des muscles : touche un muscle pour savoir à quoi il sert"><defs><linearGradient id="${gid}" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset=".45" stop-color="#fff" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity=".12"/></linearGradient></defs><g>${fig(BODY_F,BODY_DEF.F)}</g>${lab(100,'Face')}<g transform="translate(200 0)">${fig(BODY_B,BODY_DEF.B)}</g>${lab(300,'Dos')}</svg>`;
 }
 const LEG=`<div class="legend"><span><i style="background:var(--hot)"></i>Principal</span><span><i style="background:var(--warm)"></i>Secondaire</span></div>`;
 const bodyMap=(p=[],s=[],ex='')=>`<div class="bmap" data-ex="${esc(ex)}">`+mapSVG(k=>p.includes(k)?'var(--hot)':s.includes(k)?'var(--warm)':'var(--mus)',false,k=>p.includes(k)?'p':s.includes(k)?'s':'')+LEG.replace('</div>','<span class="mute" style="flex-basis:100%;text-align:center">Touche un muscle pour savoir à quoi il sert</span></div>')+'</div>';
@@ -3767,8 +3818,8 @@ async function wikiPhoto(q,key){key=key||q;if(PHC[q]!==undefined)return PHC[q];
     const v=pg?{src:pg.thumbnail.source,t:pg.title}:null;PHC[q]=v;const ks=Object.keys(PHC);if(ks.length>300)delete PHC[ks[0]];store.set('phc2',PHC);return v}catch(e){return undefined}}
 const aiPic=(q,pays)=>'https://image.pollinations.ai/prompt/'+encodeURIComponent(`photo culinaire réaliste du plat ${q}${pays?' ('+pays+')':''}, servi dans une assiette, vue de trois quarts, lumière naturelle, appétissant`)+'?width=640&height=440&nologo=true&seed='+(q.length*7919%9973);
 function phHash(t){let h=2166136261;for(const c of String(t))h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0}
-function phIllu(name,course,pays){const h=phHash(name||'plat'),hu=h%360,hu2=(hu+38)%360,em={entree:'🥗',plat:'🍲',dessert:'🍰'}[course]||['🍲','🥘','🍛','🍜','🥗','🍝','🍱','🫕'][h%8],fl=pays&&WSEL&&WSEL.n===pays?flag(WSEL.a):'';
-  return `<div class="phil" style="--h1:${hu};--h2:${hu2}" aria-hidden="true"><svg viewBox="0 0 160 120"><defs><radialGradient id="pg${h}" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity=".55"/></radialGradient></defs><ellipse cx="80" cy="96" rx="52" ry="9" fill="#000" opacity=".13"/><circle cx="80" cy="62" r="40" fill="url(#pg${h})"/><circle cx="80" cy="62" r="29" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/><path d="M68 18c-3-5 3-7 0-12M80 16c-3-5 3-7 0-12M92 18c-3-5 3-7 0-12" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2.4" stroke-linecap="round"/></svg><span class="phem">${em}</span>${fl?`<span class="phfl">${fl}</span>`:''}</div>`}
+function phIllu(name,course,pays){const h=phHash(name||'plat'),gi=h+'_'+(phIllu.n=(phIllu.n||0)+1),hu=h%360,hu2=(hu+38)%360,em={entree:'🥗',plat:'🍲',dessert:'🍰'}[course]||['🍲','🥘','🍛','🍜','🥗','🍝','🍱','🫕'][h%8],fl=pays&&WSEL&&WSEL.n===pays?flag(WSEL.a):'';
+  return `<div class="phil" style="--h1:${hu};--h2:${hu2}" aria-hidden="true"><svg viewBox="0 0 160 120"><defs><radialGradient id="pg${gi}" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity=".55"/></radialGradient></defs><ellipse cx="80" cy="96" rx="52" ry="9" fill="#000" opacity=".13"/><circle cx="80" cy="62" r="40" fill="url(#pg${gi})"/><circle cx="80" cy="62" r="29" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/><path d="M68 18c-3-5 3-7 0-12M80 16c-3-5 3-7 0-12M92 18c-3-5 3-7 0-12" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2.4" stroke-linecap="round"/></svg><span class="phem">${em}</span>${fl?`<span class="phfl">${fl}</span>`:''}</div>`}
 const PHBAD=new Set();
 function phTry(src,ok){return new Promise(res=>{const im=new Image();let done=0;const t=setTimeout(()=>{if(!done){done=1;res(null)}},15000);im.onload=()=>{if(done)return;done=1;clearTimeout(t);res(ok&&!ok(im)?null:im)};im.onerror=()=>{if(!done){done=1;clearTimeout(t);res(null)}};im.decoding='async';im.referrerPolicy='no-referrer';im.src=src})}
 async function wikiAny(host,q,key){const ck=host+'|'+q;if(PHC[ck]!==undefined)return PHC[ck];
@@ -3867,7 +3918,7 @@ const duoCode=()=>'EDG1.'+b64e(myWeek());
 function duoParse(t){const m=String(t||'').match(/EDG1\.([A-Za-z0-9_-]+)/);if(!m)return null;try{const o=b64d(m[1]);if(!(o&&o.v===1&&typeof o.n==='string'))return null;const n=k=>Math.max(0,Math.min(1e4,Math.round(num(o[k]))));return{v:1,n:o.n.slice(0,30),wk:String(o.wk||'').slice(0,10),s:n('s'),m:n('m'),a:n('a'),j:n('j'),st:n('st'),e:n('e'),t:num(o.t)}}catch(e){return null}}
 const DUOGOAL=()=>Math.max(4,(num(P.jours)||3)*2);
 function renderDuo(){const el=$('duoBox');if(!el)return;const me=myWeek(),o=DUO&&DUO.wk===me.wk?DUO:null,old=DUO&&!o;
-  const col=(x0,me2,x={...x0,s:Math.round(num(x0.s)),m:Math.round(num(x0.m)),a:Math.round(num(x0.a)),j:Math.round(num(x0.j)),st:Math.round(num(x0.st))})=>`<div class="duoc${me2?' me':''}"><b>${esc(x.n)}</b><div class="duon">${x.s}</div><span>séance${x.s>1?'s':''}</span><ul><li>${x.m} min de sport</li><li>${x.a} jour${x.a>1?'s':''} actif${x.a>1?'s':''}</li><li>${x.j} jour${x.j>1?'s':''} de repas notés</li><li>série : ${x.st} j</li></ul></div>`;
+  const col=(x0,me2,x={...x0,s:Math.round(num(x0.s)),m:Math.round(num(x0.m)),a:Math.round(num(x0.a)),j:Math.round(num(x0.j)),st:Math.round(num(x0.st))})=>`<div class="duoc${me2?' me':''}"><b>${esc(x.n)}</b><div class="duon">${x.s}</div><span>séance${x.s>1?'s':''}</span><ul><li>${x.m} min de sport</li><li>${x.a} jour${x.a>1?'s':''} actif${x.a>1?'s':''}</li><li>${x.j} jour${x.j>1?'s':''} de repas noté${x.j>1?'s':''}</li><li>série : ${x.st} j</li></ul></div>`;
   const tot=me.s+(o?Math.round(num(o.s))||0:0),g=DUOGOAL(),pc=Math.min(100,Math.round(tot/g*100));
   el.innerHTML=`<p class="sub">Chaque semaine, échangez vos résumés : un code à envoyer par message ou un QR à scanner. Rien ne passe par un serveur.</p>
   <div class="duog">${col(me,1)}${o?col(o):`<div class="duoc empty"><b>Ta moitié</b><p class="mute">${old?'Son résumé date de la semaine dernière : demande-lui le nouveau.':'Ajoute son code pour vous comparer.'}</p></div>`}</div>
@@ -3933,7 +3984,7 @@ function weekStats(off=0){const wk0=weekKey(Date.now()-off*7*864e5),wk1=dkey(new
   return{wk0,s:ses.length,min:ses.reduce((a,l)=>a+num(l.min),0),jours:jd.length,kcal:Math.round(avg(kc)),prot:Math.round(avg(pr)),tk:m.kcal,tp:m.prot,dw:wLast&&wPrev?Math.round((wLast.w-wPrev.w)*10)/10:null,sleep:nights.length?Math.round(avg(nights)):0,eau,act:Object.keys(streak().A).filter(inW).length}}
 function weekHTML(){const w=weekStats(),lw=weekStats(1),c=(v,l,sub)=>`<div><b>${v}</b><span>${l}</span>${sub?`<small>${sub}</small>`:''}</div>`,tr=(a,b)=>a>b?'▲':a<b?'▼':'=';
   const top=[w.s>=(num(P.jours)||3)?'Objectif séances atteint':'',w.eau>=5?'Bien hydraté':'',w.act>=6?'Régularité au top':'',w.prot&&w.tp&&w.prot>=w.tp*.9?'Protéines au rendez-vous':''].filter(Boolean);
-  return `<div class="stats wkst">${c(w.s,'séance'+(w.s>1?'s':''),lw.s||w.s?tr(w.s,lw.s)+' vs '+lw.s:'')}${c(w.min,'minutes de sport','')}${c(w.act+'/7','jours actifs','')}${c(w.jours,w.jours>1?'jours de repas notés':'jour de repas noté','')}${c(w.prot?w.prot+' g':'–','protéines / jour',w.tp?'objectif '+w.tp+' g':'')}${c(w.sleep?hm(w.sleep).replace(' h ','h'):'–','de sommeil / nuit','')}${c(w.dw==null?'–':(w.dw>0?'+':'')+fr(w.dw)+' kg','poids sur la semaine','')}${c(w.eau+'/7','jours d\'eau OK','')}</div>
+  return `<div class="stats wkst">${c(w.s,'séance'+(w.s>1?'s':''),lw.s||w.s?tr(w.s,lw.s)+' vs '+lw.s:'')}${c(w.min,w.min>1?'minutes de sport':'minute de sport','')}${c(w.act+'/7','jours actifs','')}${c(w.jours,w.jours>1?'jours de repas notés':'jour de repas noté','')}${c(w.prot?w.prot+' g':'–','protéines / jour',w.tp?'objectif '+w.tp+' g':'')}${c(w.sleep?hm(w.sleep).replace(' h ','h'):'–','de sommeil / nuit','')}${c(w.dw==null?'–':(w.dw>0?'+':'')+fr(w.dw)+' kg','poids sur la semaine','')}${c(w.eau+'/7','jours d\'eau OK','')}</div>
   ${top.length?`<div class="chips" style="margin-top:10px">${top.map(t=>`<span class="chip p">${esc(t)}</span>`).join('')}</div>`:''}
   <div class="row" style="margin-top:12px"><button class="sm" data-act="weekCoach">Le mot du coach</button><button class="ghost sm" data-act="weekShare">Partager l'image</button></div><div id="weekCoachRes"></div>`}
 function renderWeekCard(){const el=$('weekBox');if(el)el.innerHTML=weekHTML()}
@@ -4094,7 +4145,7 @@ async function renderCal(){const el=$('calBox');if(!el)return;const now=new Date
   el.innerHTML=`<div class="row sb calh"><button class="ghost sm" data-act="calMv" data-v="-1" aria-label="Mois précédent">‹</button><b>${first.toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}</b><button class="ghost sm" data-act="calMv" data-v="1" aria-label="Mois suivant" ${y===now.getFullYear()&&m===now.getMonth()?'disabled':''}>›</button></div>
   <div class="calg calw">${['L','M','M','J','V','S','D'].map(x=>`<span>${x}</span>`).join('')}</div><div class="calg">${cells.join('')}</div>
   <div class="legend" style="margin-top:8px"><span><i style="background:var(--yel)"></i>repas</span><span><i style="background:var(--red)"></i>sport</span><span><i style="background:var(--blue)"></i>poids</span><span><i style="background:#8b7cf6"></i>sommeil</span><span><i style="background:var(--mute)"></i>note</span></div>
-  <div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:12px"><div><b>${meals}</b><span>jours de repas notés</span></div><div><b>${ses}</b><span>séance${ses>1?'s':''}</span></div><div><b>${ws.length>1?((ws[ws.length-1].poids-ws[0].poids>0?'+':'')+fr(Math.round((ws[ws.length-1].poids-ws[0].poids)*10)/10)+' kg'):ws.length?fr(ws[0].poids)+' kg':'–'}</b><span>${ws.length>1?'de poids ce mois':'poids'}</span></div></div>
+  <div class="stats" style="grid-template-columns:repeat(3,minmax(0,1fr));margin-top:12px"><div><b>${meals}</b><span>${meals>1?'jours de repas notés':'jour de repas noté'}</span></div><div><b>${ses}</b><span>séance${ses>1?'s':''}</span></div><div><b>${ws.length>1?((ws[ws.length-1].poids-ws[0].poids>0?'+':'')+fr(Math.round((ws[ws.length-1].poids-ws[0].poids)*10)/10)+' kg'):ws.length?fr(ws[0].poids)+' kg':'–'}</b><span>${ws.length>1?'de poids ce mois':'poids'}</span></div></div>
   <div id="calDet"></div>`;
   if(CALD&&CALD.startsWith(`${y}-${String(m+1).padStart(2,'0')}`))calDetail(CALD)}
 let CALDATA={};
@@ -4743,8 +4794,8 @@ SX.end=snap=>{
 /* ---------- Séances prêtes : minuteur guidé ---------- */
 rStep=function(){clearInterval(rtick);if(!R)return;const s=R.seq[R.i];if(!s){rEnd(true);return}
   const nx=R.seq.slice(R.i+1).find(z=>!z.repos);R.end=s.s?Date.now()+s.s*1000:0;R.pause=0;R.said=0;
-  const all=R.seq.filter(z=>!z.repos).length,k=R.seq.slice(0,R.i+1).filter(z=>!z.repos).length,
-    sub=`${R.x.tours>1?'Tour '+s.tour+' sur '+R.x.tours+' · ':''}${s.repos?'Pause':'Exercice '+k+' sur '+all}`;
+  const all=R.seq.filter(z=>!z.repos&&z.tour===s.tour).length,k=R.seq.slice(0,R.i+1).filter(z=>!z.repos&&z.tour===s.tour).length,
+    sub=`${R.x.tours>1?'Tour\u00a0'+s.tour+'\u00a0sur\u00a0'+R.x.tours+' · ':''}${s.repos?'Pause':'Exercice\u00a0'+k+'\u00a0sur\u00a0'+all}`;
   const stage=s.repos?SX.ring('sxRing','<b class="sxt" role="timer">0:00</b><span>de repos</span>')
     :s.s?SX.ring('sxRing',ANIM.html(ANIM.libKey(s.n,s.k),'anim ovanim'))+`<div class="sxbig"><b class="sxt" role="timer">0:00</b></div>`
     :`<div class="sxring still"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="trk" cx="60" cy="60" r="54"/></svg><div class="sxrin">${ANIM.html(ANIM.libKey(s.n,s.k),'anim ovanim')}</div></div><div class="sxbig"><b>${esc(s.r)}</b><span>répétitions, à ton rythme</span></div>`;
@@ -4770,10 +4821,10 @@ SX.runEnd=sn=>{const min=Math.max(1,Math.round((Date.now()-sn.t0)/6e4)),ex=new S
 /* ---------- Sport › Programme : la séance du jour en vedette, le reste en second plan ---------- */
 renderProgToday=function(){const el=$('progToday');if(!el)return;let n=null;try{n=simpleNext()}catch(e){}if(!n){el.innerHTML='';el.hidden=true;return}el.hidden=false;el.classList.add('sxtoday');
   const wk=LOG.filter(l=>l.d>=weekKey()).length,goal=Math.max(1,Math.min(7,num(P.jours)||3)),exs=arr(n.j.exercices);
-  el.innerHTML=`<div class="sxtk"><span>${n.done?'Séance faite aujourd\'hui, bravo':'Ta séance du jour'}</span><span class="sxwk" role="img" aria-label="${wk} séance${wk>1?'s':''} sur ${goal} cette semaine">${Array.from({length:goal},(_,i)=>`<i class="${i<wk?'f':''}"></i>`).join('')}<em>${wk}/${goal}</em></span></div>
+  el.innerHTML=`<div class="sxtk"><span>${n.done?'Bravo, séance faite aujourd\'hui':'Ta séance du jour'}</span><span class="sxwk" role="img" aria-label="${wk} séance${wk>1?'s':''} sur ${goal} cette semaine">${Array.from({length:goal},(_,i)=>`<i class="${i<wk?'f':''}"></i>`).join('')}<em>${wk}/${goal}</em></span></div>
   <h2>${esc(n.j.nom)}</h2><div class="mute">${esc(n.j.focus||'')}${n.j.focus?' · ':''}${exs.length} exercice${exs.length>1?'s':''}${n.j.duree_min?' · '+esc(n.j.duree_min)+' min':''}</div>
   <ol class="sxpre">${exs.slice(0,5).map((x,i)=>`<li><i>${i+1}</i><span>${esc(x.nom)}</span><em>${esc(x.series)} × ${esc(x.reps)}</em></li>`).join('')}${exs.length>5?`<li class="more"><i>+</i><span>${exs.length-5} autre${exs.length-5>1?'s':''}</span></li>`:''}</ol>
-  <button class="wide sxstart" data-act="start" data-j="${n.ji}">${n.done?'En refaire une':'Démarrer la séance'}</button>`};
+  <button class="wide sxstart" data-act="start" data-j="${n.ji}">${n.done?'En faire une autre':'Démarrer la séance'}</button>`};
 SX._renderProg=renderProg;
 renderProg=function(){SX._renderProg();try{SX.progPolish()}catch(e){console.error(e)}};
 SX.progPolish=()=>{const g=$('genProg');if(g)g.classList.toggle('ghost',!!PR);SX.envieFold();const pr=$('prog');if(!pr||!PR)return;let n=null;try{n=simpleNext()}catch(e){}
@@ -5045,6 +5096,28 @@ function secSeedNote(st){try{if(!store.get('pushSeed','')||st==='setup'||st==='l
 Object.assign(PUSH_ACTS,{pushSeedDel(){const v=store.get('pushSeed','');if(!v)return;try{localStorage.removeItem('coach_pushSeed')}catch(e){}rapRefresh();
   undoToast('Clé effacée de ce téléphone',()=>{store.set('pushSeed',v);rapRefresh()})}});
 /* === /ag_sec === */
+/* === ag_qa2 === QA v86 : contrôle des réponses IA hors format + changement de jour pendant que l'app est ouverte */
+/* qaFit : la réponse contient-elle au moins une des clés du « Format JSON » demandé, remplie ?
+   Si le format a des listes d'objets (jours, repas, aliments, exercices, sauces, recettes…), au moins une doit être non vide. */
+function qaFit(p,r){try{if(!r||typeof r!=='object')return false;p=String(p);const i=p.lastIndexOf('Format JSON');if(i<0)return true;const a=p.indexOf('{',i);if(a<0)return true;
+  let d=0,b=-1,q=0;for(let j=a;j<p.length;j++){const c=p[j];if(q){if(c==='\\')j++;else if(c==='"')q=0;continue}if(c==='"')q=1;else if(c==='{')d++;else if(c==='}'){if(!--d){b=j;break}}}
+  if(b<0)return true;let t;try{t=JSON.parse(p.slice(a,b+1))}catch(e){return true}if(!t||typeof t!=='object'||Array.isArray(t))return true;const ks=Object.keys(t);if(!ks.length)return true;
+  const full=v=>v!=null&&v!==''&&v!==0&&!(Array.isArray(v)&&!v.some(x=>x!=null&&x!==''&&!(typeof x==='object'&&!Object.keys(x).length)))&&!(typeof v==='object'&&!Array.isArray(v)&&!Object.keys(v).length);
+  const objA=ks.filter(k=>Array.isArray(t[k])&&t[k].some(x=>x&&typeof x==='object'));
+  if(objA.length)return objA.some(k=>{const v=r[k];return Array.isArray(v)?v.some(x=>x&&typeof x==='object'&&Object.keys(x).length):!!(v&&typeof v==='object'&&Object.keys(v).length)});
+  return ks.some(k=>full(r[k]))}catch(e){return true}}
+/* Jour qui change pendant que l'app est ouverte : sur iPhone, l'app en arrière-plan est gelée (le minuteur de minuit
+   ne part pas) ; au retour le matin, l'accueil et « Mes repas » montraient encore les chiffres de la veille, et le
+   pilulier n'était jamais remis à zéro (absent de la liste de minuit). On redessine dès que la date a changé. */
+{let qaD=null;const qaDay=()=>{let d;try{d=today()}catch(e){return}if(qaD===null){qaD=d;return}if(d===qaD)return;qaD=d;
+  [()=>renderDaily(),()=>renderHome(),()=>renderDay(),()=>renderMenu(),()=>renderSleep(),()=>renderChk(),()=>renderDrink(),()=>renderPills(),()=>renderProgToday(),()=>renderWeekCard()].forEach(f=>{try{f()}catch(e){}})};
+ setTimeout(qaDay,0);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')qaDay()});addEventListener('pageshow',qaDay);addEventListener('focus',qaDay);setInterval(qaDay,60000)}
+/* Écran allumé : le système relâche le verrou d'écran dès que l'app passe en arrière-plan ; au retour pendant une séance,
+   une recette ou un repas guidé, l'écran se remettait en veille pendant le repos. On le redemande (et on le rend
+   à la fermeture de l'écran guidé, quel qu'il soit, pour ne jamais le garder par erreur). */
+{const ovq=$('ov');document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')return;try{if(ovq&&ovq.classList.contains('on')&&navigator.wakeLock&&(!WL||WL.released))navigator.wakeLock.request('screen').then(w=>WL=w).catch(()=>{})}catch(e){}});
+ if(ovq)new MutationObserver(()=>{if(!ovq.classList.contains('on'))try{if(WL&&!WL.released)WL.release()}catch(e){}}).observe(ovq,{attributes:true,attributeFilter:['class']})}
+/* === /ag_qa2 === */
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -5383,7 +5456,7 @@ $('frigo').value=store.get('frigo','');$('frigo').oninput=()=>store.set('frigo',
 
 /* ---------- Actions ---------- */
 const A={
-  logW(){const w=num($('wIn').value)||num(P.poids);if(!w){$('wIn').focus();return}W=W.filter(p=>p.d!==today());W.push({d:today(),w});W.sort((a,b)=>a.d<b.d?-1:1);store.set('pesees',W);P.poids=String(w);$('p-poids').value=w;saveP();calc();$('wIn').value='';drawW()},
+  logW(){const w=num($('wIn').value)||num(P.poids);if(!w){$('wIn').focus();return}W=W.filter(p=>p.d!==today());W.push({d:today(),w});W.sort((a,b)=>a.d<b.d?-1:1);store.set('pesees',W);P.poids=String(w);$('p-poids').value=w;saveP();calc();$('wIn').value='';drawW();toast('Poids enregistré : '+fr(w)+' kg')},
   kadj(b){P.kadj=(+P.kadj||0)+(+b.dataset.v);P.kadjD=today();saveP();calc();bilan()},
   kreset(b,e){e.preventDefault();P.kadj=0;saveP();calc();bilan()},
   askImgDel(){ASKIMG=null;$('askImg').hidden=true;$('askImg').innerHTML='';$('askPh').value='';$('ask').placeholder='Écris ton message…'},
@@ -5606,7 +5679,7 @@ Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une
     const typed=$('ean').value.replace(/\D/g,'');if(typed&&PH._done&&!(b&&b.closest&&b.closest('#prodRes')))resetProdPh();let ean=typed;const st=t=>busy($('prodRes'),t);
     if(!ean)for(const k of ['produit','ping','ptab'])if(PH[k]&&!ean){st('Lecture du code-barres');ean=await decodeBarcode(PH[k])}
     let p=ean?(st('Recherche dans Open Food Facts'),await offLookup(ean)):null;
-    if(!p&&typed&&!PH.produit&&!PH.ptab&&!PH.ping)throw{code:'nofound'};
+    if(!p&&typed&&!PH.produit&&!PH.ptab&&!PH.ping)throw{code:offLookup.net?'net':'nofound'};
     const hasPh=PH.produit||PH.ptab||PH.ping;
     if(!p&&!hasPh){$('prodRes').innerHTML='<div class="err">Ajoute au moins une photo (code-barres, tableau ou ingrédients), ou tape le code-barres.</div>';return}
     p=p||{source:'Lu sur tes photos',ean:ean||'',nom:'',c100:{}};
@@ -5710,12 +5783,12 @@ async function decodeBarcode(blob){
   try{const Z=await loadZX(),h=new Map();h.set(Z.DecodeHintType.TRY_HARDER,true);h.set(Z.DecodeHintType.POSSIBLE_FORMATS,[Z.BarcodeFormat.EAN_13,Z.BarcodeFormat.EAN_8,Z.BarcodeFormat.UPC_A,Z.BarcodeFormat.UPC_E]);
     const rd=new Z.BrowserMultiFormatReader(h),u=URL.createObjectURL(blob);try{return(await rd.decodeFromImageUrl(u)).getText()}finally{URL.revokeObjectURL(u)}}catch(e){return null}
 }
-async function offLookup(ean){
+async function offLookup(ean){offLookup.net=0;
   try{const r=await fetch(`https://fr.openfoodfacts.org/api/v2/product/${encodeURIComponent(ean)}.json?lc=fr&fields=product_name,product_name_fr,brands,quantity,serving_size,nutriscore_grade,nova_group,ingredients_text_fr,ingredients_text,allergens_tags,additives_tags,nutriments`,{signal:tmo(12000)});
     if(!r.ok)return null;const d=await r.json();if(d.status!==1||!d.product)return null;const p=d.product,n=p.nutriments||{};
     return{source:'Open Food Facts',ean,nom:p.product_name_fr||p.product_name||'Produit '+ean,marque:p.brands||'',quantite:p.quantity||'',portion:p.serving_size||'',nutriscore:/^[a-e]$/.test(p.nutriscore_grade||'')?p.nutriscore_grade:'',nova:p.nova_group||'',
       ingredients:p.ingredients_text_fr||p.ingredients_text||'',allergenes:(p.allergens_tags||[]).map(t=>{t=t.replace(/^..:/,'');return({milk:'lait',nuts:'fruits à coque',gluten:'gluten',eggs:'œufs',soybeans:'soja',peanuts:'arachides',fish:'poisson',crustaceans:'crustacés',celery:'céleri',mustard:'moutarde','sesame-seeds':'sésame','sulphur-dioxide-and-sulphites':'sulfites',lupin:'lupin',molluscs:'mollusques'})[t]||t}).join(', '),additifs:(p.additives_tags||[]).length,
-      c100:{kcal:n['energy-kcal_100g']??(n.energy_100g!=null?Math.round(n.energy_100g/4.184):undefined),p:n.proteins_100g,g:n.carbohydrates_100g,sucres:n.sugars_100g,l:n.fat_100g,ags:n['saturated-fat_100g'],fibres:n.fiber_100g,sel:n.salt_100g}}}catch(e){return null}
+      c100:{kcal:n['energy-kcal_100g']??(n.energy_100g!=null?Math.round(n.energy_100g/4.184):undefined),p:n.proteins_100g,g:n.carbohydrates_100g,sucres:n.sugars_100g,l:n.fat_100g,ags:n['saturated-fat_100g'],fibres:n.fiber_100g,sel:n.salt_100g}}}catch(e){offLookup.net=e&&(e.name==='TypeError'||e.name==='AbortError')?1:0;return null}
 }
 const NSC={a:'#038141',b:'#85bb2f',c:'#e6b800',d:'#ee8100',e:'#e63e11'};
 /* ===================== ANALYSE PRODUIT (Nutri-Score 2023 estimé, repères FSA/UE, additifs) ===================== */
@@ -6333,10 +6406,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.27-88';
+const APP_VERSION='2026.11.27-89';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.27-89','Plus solide','13 corrections : une réponse bizarre de l\'IA ne peut plus effacer ton programme ni vider ton menu, l\'app passe au nouveau jour toute seule à minuit (pilulier compris), textes et boutons mieux lisibles sur petit écran et en très grand.','accueil',''],
  ['2026.11.27-88','Plus sûre','Contrôle de sécurité complet : une sauvegarde piégée ne peut plus rien exécuter, la clé des rappels ne part plus dans tes sauvegardes, le serveur de notifications n\'accepte que toi, et le scanner et le QR code sont servis par l\'app elle-même.','moi',''],
  ['2026.11.27-87','Un suivi sleeve encore plus juste','Objectif protéines adapté à ton étape après l\'opération, calendrier de tes rendez-vous de suivi avec un résumé à montrer au médecin, rappel pour boire AVANT le repas, ton feu vert sport selon les semaines, et un message rassurant si ton poids fait un palier.','suivi','sante2'],
  ['2026.11.27-86','Toujours une image','Chaque plat a maintenant une image : une jolie illustration tout de suite, puis la vraie photo (Wikipédia en français ou en anglais, TheMealDB, Wikimedia Commons) dès qu\'elle est trouvée. Les textes des cartes sont plus courts.','cuisine','monde'],
