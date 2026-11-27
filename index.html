@@ -2077,7 +2077,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
  <symbol id="i-pill" viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="7" rx="3.5" transform="rotate(-35 12 12.5)"/><path d="M9.5 8.5l5 7"/></symbol>
  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
  <symbol id="i-ruler" viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="8" rx="2"/><path d="M6 8v3M10 8v4M14 8v3M18 8v4"/></symbol>
- <symbol id="i-chart" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+ <symbol id="i-chart" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></symbol><symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="3"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
 </svg>
 
 <div id="amb" aria-hidden="true"></div><div id="sweep" aria-hidden="true"></div>
@@ -2147,7 +2147,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
 
   <div class="pane" data-pane="corps2">
     <div class="card"><h2>Mon poids</h2><p class="sub">Le poids bouge chaque jour avec l'eau et le sel. La ligne lissée montre ce qui se passe vraiment.</p><div class="fig" style="min-height:190px"><svg id="trendSvg"></svg></div><div id="trendTxt"></div>
-      <div class="row" style="margin-top:10px"><input id="wIn2" type="number" inputmode="decimal" step="0.1" placeholder="Poids du jour (kg)" style="flex:1;margin:0;min-width:150px"><button class="alt" data-act="logW2">Enregistrer mon poids</button></div></div>
+      <div class="row" style="margin-top:10px"><input id="wIn2" type="text" inputmode="decimal" autocomplete="off" step="0.1" placeholder="Poids du jour (kg)" style="flex:1;margin:0;min-width:150px"><button class="alt" data-act="logW2">Enregistrer mon poids</button></div></div>
     <div class="card"><h2>Mes mensurations</h2><p class="sub">Quand la balance bloque, le mètre ruban, lui, avance souvent.</p>
       <div class="grid" id="mesForm"></div><button class="wide" data-act="mesSave" style="margin-top:12px">Enregistrer mes mesures</button><div id="mesHist"></div></div>
     <div class="card"><h2>Photos avant / après</h2><p class="sub">Elles restent sur ton téléphone. Même pose, même lumière, une fois par mois.</p>
@@ -2311,8 +2311,8 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
       <div class="full"><label for="p-nom">Prénom</label><input id="p-nom" placeholder="ex. François" autocomplete="given-name"></div>
       <div><label for="p-sexe">Sexe</label><select id="p-sexe"><option value="H">Homme</option><option value="F">Femme</option></select></div>
       <div><label for="p-age">Âge</label><input id="p-age" type="number" inputmode="numeric" min="14" max="99" placeholder="30"></div>
-      <div><label for="p-taille">Taille (cm)</label><input id="p-taille" type="number" inputmode="decimal" min="120" max="230" placeholder="178"></div>
-      <div><label for="p-poids">Poids (kg)</label><input id="p-poids" type="number" inputmode="decimal" step="0.1" min="30" max="300" placeholder="80"></div>
+      <div><label for="p-taille">Taille (cm)</label><input id="p-taille" type="text" inputmode="decimal" autocomplete="off" min="120" max="230" placeholder="178"></div>
+      <div><label for="p-poids">Poids (kg)</label><input id="p-poids" type="text" inputmode="decimal" autocomplete="off" step="0.1" min="30" max="300" placeholder="80"></div>
       <div class="full"><label for="p-obj">Mon objectif</label><select id="p-obj" data-custom="ex. préparer un trail, perdre 10 kg, avoir des bras plus épais">
         <option value="muscle">Me muscler / prendre du volume</option>
         <option value="perte">Perdre du poids</option>
@@ -2355,7 +2355,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
     <div class="grid">
       <div><label for="p-kcalmed">Calories / jour</label><input id="p-kcalmed" type="number" inputmode="numeric" placeholder="ex. 1200"></div>
       <div><label for="p-protmed">Protéines / jour (g)</label><input id="p-protmed" type="number" inputmode="numeric" placeholder="ex. 70"></div>
-      <div><label for="p-eaumed">Eau / jour (litres)</label><input id="p-eaumed" type="number" inputmode="decimal" step="0.1" placeholder="ex. 1,5"></div>
+      <div><label for="p-eaumed">Eau / jour (litres)</label><input id="p-eaumed" type="text" inputmode="decimal" autocomplete="off" step="0.1" placeholder="ex. 1,5"></div>
       <div><label for="p-repas">Repas / jour</label><select id="p-repas" data-custom="ex. 2 repas + 3 collations"><option value="">Normal</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
     </div>
     <div class="tip" id="santeTip" style="display:none"></div>
@@ -2366,7 +2366,7 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
     <h2>Mes pesées</h2>
     <svg class="spark" id="spark" preserveAspectRatio="none"></svg>
     <p class="mute" id="wHist"></p>
-    <div class="row"><input id="wIn" type="number" inputmode="decimal" step="0.1" placeholder="Poids du jour (kg)" style="flex:1;margin:0;min-width:150px"><button class="alt" data-act="logW">Enregistrer</button></div>
+    <div class="row"><input id="wIn" type="text" inputmode="decimal" autocomplete="off" step="0.1" placeholder="Poids du jour (kg)" style="flex:1;margin:0;min-width:150px"><button class="alt" data-act="logW">Enregistrer</button></div>
     <div id="bilan"></div>
   </div>
 
@@ -2660,8 +2660,8 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
       <div class="full"><label for="w-nom">Ton prénom</label><input id="w-nom" autocomplete="given-name" placeholder="Prénom"></div>
       <div><label for="w-age">Âge</label><input id="w-age" type="number" inputmode="numeric" placeholder="ans"></div>
       <div><label for="w-sexe">Tu es</label><select id="w-sexe"><option value="H">Un homme</option><option value="F">Une femme</option></select></div>
-      <div><label for="w-taille">Taille</label><input id="w-taille" type="number" inputmode="decimal" placeholder="cm"></div>
-      <div><label for="w-poids">Poids</label><input id="w-poids" type="number" inputmode="decimal" step="0.1" placeholder="kg"></div>
+      <div><label for="w-taille">Taille</label><input id="w-taille" type="text" inputmode="decimal" autocomplete="off" placeholder="cm"></div>
+      <div><label for="w-poids">Poids</label><input id="w-poids" type="text" inputmode="decimal" autocomplete="off" step="0.1" placeholder="kg"></div>
     </div>
     <label style="margin-top:18px">Ton objectif</label>
     <div class="wobj" id="wObj">
@@ -2966,7 +2966,7 @@ const OBJ={muscle:'se muscler et prendre du volume',perte:'perdre du poids',sech
 const KADJ_OK=()=>!(P.kadjD&&Date.now()-new Date(P.kadjD+'T12:00')<7*864e5);
 function kadjGuard(el){if(!KADJ_OK())el.querySelectorAll('[data-act=kadj]').forEach(b=>{const r=b.closest('.row');if(r)r.innerHTML='<span class="mute">Ajustement appliqué le '+new Date(P.kadjD+'T12:00').toLocaleDateString('fr-FR')+'. Le prochain bilan sera possible dans une semaine, le temps de voir l\'effet.</span>'})}
 function metrics(){
-  const t=+P.taille,w=+P.poids,a=+P.age;if(!t||!w||t<100||t>250||w<25||w>400)return null;
+  const t=num(P.taille),w=num(P.poids),a=num(P.age);if(!t||!w||t<100||t>250||w<25||w>400)return null;
   const imc=w/((t/100)**2);
   const bmr=a?Math.round(10*w+6.25*t-5*a+(P.sexe==='F'?-161:5)):null;
   const j=num(P.jours)||3,act=j<=1?1.2:j<=3?1.375:j<=5?1.55:1.725;
@@ -2982,7 +2982,7 @@ const cat=i=>i<18.5?'Maigreur':i<25?'Poids normal':i<30?'Surpoids':i<35?'Obésit
 function calc(){
   const m=metrics();$('avatar').textContent=((P.nom||'').trim()[0]||'M').toUpperCase();
   $('hello').textContent=P.obj?'Objectif '+({muscle:'muscle',perte:'perte de poids',seche:'sèche',forme:'forme',endurance:'cardio'}[P.obj]||P.obj):'Mon Coach';
-  if(!m){$('imcPin').style.display='none';const t=+P.taille,w=+P.poids;$('imc').textContent='–';$('imcCat').textContent=t&&(t<100||t>250)?'Taille en centimètres (ex. 178)':w&&(w<25||w>400)?'Vérifie ton poids (en kg)':'Remplis ton profil';$('imcRange').textContent='';['stBmr','stKcal','stProt'].forEach(i=>$(i)&&($(i).textContent='–'));renderDay();return}
+  if(!m){$('imcPin').style.display='none';const t=num(P.taille),w=num(P.poids);$('imc').textContent='–';$('imcCat').textContent=t&&(t<100||t>250)?'Taille en centimètres (ex. 178)':w&&(w<25||w>400)?'Vérifie ton poids (en kg)':'Remplis ton profil';$('imcRange').textContent='';['stBmr','stKcal','stProt'].forEach(i=>$(i)&&($(i).textContent='–'));renderDay();return}
   $('imc').textContent=fr(m.imc.toFixed(1));$('imcCat').textContent=cat(m.imc);
   $('imcRange').textContent='Poids « normal » pour ta taille : '+Math.round(m.min)+' à '+Math.round(m.max)+' kg';
   const pin=$('imcPin');pin.style.display='block';pin.style.left=Math.min(100,Math.max(0,(m.imc-15)/25*100))+'%';
@@ -3960,7 +3960,7 @@ function renderCQ(){const el=$('cqRes');if(!el)return;const q=$('cqQ').value.tri
 function cqPanel(f){const [pg,pl]=CQPORT[f.grp]||[100,'1 portion'],v=x=>x==null?'–':fr(Math.round(x*10)/10);
   return `<div class="cqp"><div class="row sb" style="flex-wrap:nowrap"><b>${esc(f.nom)}</b><button class="ghost sm" data-act="cqClose" aria-label="Fermer">✕</button></div>
   <div class="macro" style="margin:6px 0"><span><b>${v(f.k)}</b> kcal</span><span><b>${v(f.p)}</b> g prot.</span><span><b>${v(f.g)}</b> g gluc.</span><span><b>${v(f.su)}</b> g sucres</span><span><b>${v(f.l)}</b> g lip.</span><span><b>${v(f.f)}</b> g fibres</span></div><p class="mute" style="margin:0 0 8px;font-size:13px">Pour 100 g · ANSES, table Ciqual 2025</p>
-  <label for="cqG">Quantité (g)</label><div class="row" style="flex-wrap:nowrap"><input id="cqG" type="number" inputmode="decimal" value="${pg}" style="flex:1;margin:0"><button data-act="cqAdd">Ajouter</button></div>
+  <label for="cqG">Quantité (g)</label><div class="row" style="flex-wrap:nowrap"><input id="cqG" type="text" inputmode="decimal" autocomplete="off" value="${pg}" style="flex:1;margin:0"><button data-act="cqAdd">Ajouter</button></div>
   <div class="chips" style="margin-top:8px">${[[pg,pl],[50,'50 g'],[100,'100 g'],[200,'200 g']].map(([g,l])=>`<button class="chip" data-act="cqQty" data-v="${g}">${esc(l)}${l.endsWith('g')?'':' ('+g+' g)'}</button>`).join('')}</div>
   <div class="mute" id="cqTot" style="margin-top:8px"></div></div>`}
 function cqTot(){const f=CQSEL,g=num($('cqG')?.value);if(!f||!$('cqTot'))return;const r=cqVal(f,g);$('cqTot').innerHTML=`Pour ${Math.round(g)} g : <b>${Math.round(r.kcal)} kcal</b> · ${fr(Math.round(r.p*10)/10)} g de protéines`}
@@ -4001,7 +4001,7 @@ async function weekImage(){const w=weekStats(),cs=getComputedStyle(document.docu
 const WEEK_ACTS={
   weekCoach(b){const w=weekStats(),lw=weekStats(1);run(b,$('weekCoachRes'),'Le coach regarde ta semaine',async()=>{const t=await askChat([{role:'user',content:`Tu es « EdilganSuperCoach », coach bienveillant mais franc. Tu tutoies, en français, sans markdown, 5 phrases maximum. ${profil(true)}
 Bilan de sa semaine : ${JSON.stringify(w)}. Semaine précédente : ${JSON.stringify(lw)}. (s = séances, min = minutes de sport, act = jours actifs, jours = jours de repas notés, kcal/prot = moyennes par jour notées, tk/tp = objectifs, dw = variation de poids en kg, sleep = minutes de sommeil par nuit, eau = jours où l'objectif d'eau est atteint.)
-Dis ce qui va bien (sois précis), UNE chose à améliorer la semaine prochaine avec une action concrète, et termine par une phrase motivante.`}],x=>{$('weekCoachRes').innerHTML='<div class="tip">'+esc(x)+'</div>'});$('weekCoachRes').innerHTML='<div class="tip">'+esc(t)+'</div>'})},
+Dis ce qui va bien (sois précis), UNE chose à améliorer la semaine prochaine avec une action concrète, et termine par une phrase motivante.`}],x=>{$('weekCoachRes').innerHTML='<div class="tip">'+esc(unJSONtxt(x))+'</div>'});$('weekCoachRes').innerHTML='<div class="tip">'+esc(unJSONtxt(t))+'</div>'})},
   async weekShare(){try{const bl=await weekImage(),f=new File([bl],'ma-semaine.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Ma semaine'});return}catch(e){if(e&&e.name==='AbortError')return}}const u=URL.createObjectURL(bl);openSheet(`<div class="row sb"><h2 style="margin:0">Ma semaine</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Appuie longuement sur l'image pour l'enregistrer ou la partager.</p><img src="${u}" alt="Bilan de ma semaine" style="width:100%;border-radius:16px">`)}catch(e){if(e&&e.name!=='AbortError')toast('Image impossible à créer ici.')}}
 };
 
@@ -4058,7 +4058,7 @@ function plSum(){const P2=PLATE,t=k=>Math.round(P2.aliments.reduce((x,a)=>x+num(
 function renderPlate(){const r=PLATE;if(!r)return;
   $('plateRes').innerHTML=`<div class="card"><h2>${esc(r.nom||'Mon repas')}</h2>${r.corr&&r.corr.length?`<div class="chip p" style="margin-bottom:8px">Corrigé selon tes précisions</div>`:''}<div class="big" style="color:var(--red)" id="plK">${esc(Math.round(num(r.kcal)))}<span style="font-size:20px"> kcal</span></div>
     <div class="macro"><span><b>${esc(Math.round(num(r.proteines_g)))}</b> g prot.</span><span><b>${esc(Math.round(num(r.glucides_g)))}</b> g gluc.</span><span><b>${esc(Math.round(num(r.lipides_g)))}</b> g lip.</span>${r.confiance?`<span>Confiance ${esc(r.confiance)}</span>`:''}</div>
-    <p class="mute" style="margin:6px 0 0;font-size:14px">Tu connais les grammes ? Change-les directement : tout se recalcule.</p><table class="tbl plt">${r.aliments.map((a,i)=>`<tr><td>${esc(a.nom)}${a.quantite&&!/^\s*\d+\s*(g|ml)\s*$/i.test(a.quantite)?` <span class="mute">${esc(a.quantite)}</span>`:''}<div class="plgw"><input class="plg" type="number" inputmode="decimal" min="0" data-i="${i}" value="${num(a.grammes)?Math.round(num(a.grammes)):''}" placeholder="?" aria-label="Grammes de ${esc(a.nom)}"> g</div></td><td>${esc(Math.round(num(a.kcal)))} kcal</td><td style="width:44px"><button class="x" data-act="plDel" data-i="${i}" aria-label="Retirer ${esc(a.nom)}">×</button></td></tr>`).join('')}</table>
+    <p class="mute" style="margin:6px 0 0;font-size:14px">Tu connais les grammes ? Change-les directement : tout se recalcule.</p><table class="tbl plt">${r.aliments.map((a,i)=>`<tr><td>${esc(a.nom)}${a.quantite&&!/^\s*\d+\s*(g|ml)\s*$/i.test(a.quantite)?` <span class="mute">${esc(a.quantite)}</span>`:''}<div class="plgw"><input class="plg" type="text" inputmode="decimal" autocomplete="off" min="0" data-i="${i}" value="${num(a.grammes)?Math.round(num(a.grammes)):''}" placeholder="?" aria-label="Grammes de ${esc(a.nom)}"> g</div></td><td>${esc(Math.round(num(a.kcal)))} kcal</td><td style="width:44px"><button class="x" data-act="plDel" data-i="${i}" aria-label="Retirer ${esc(a.nom)}">×</button></td></tr>`).join('')}</table>
     ${r.avis?`<p>${esc(r.avis)}</p>`:''}
     <details class="plfix" ${r.corr&&r.corr.length?'':''}><summary style="cursor:pointer;font-weight:800;padding:8px 0">Ce n'est pas tout à fait ça ? Corrige-moi</summary>
       <p class="mute" style="margin-top:0">Dis-moi ce qui est faux, je recalcule. Je retiens tes corrections pour les prochaines photos.</p>
@@ -4742,7 +4742,7 @@ renderS=function(){
   <details class="sxdet"><summary>Comment bien le faire</summary>${machBox(x)}${x.machine?'':`<div class="row" style="margin:8px 0">${yt(x.nom+' exécution technique','Vidéo de l\'exercice')}</div>`}${bodyMap(p,s,x.nom)}${x.execution?`<p>${esc(x.execution)}</p>`:''}${x.conseil?`<p class="mute">${esc(x.conseil)}</p>`:''}</details>
   ${bw?'':'<details id="wu" class="sxdet"><summary>Échauffement et disques</summary><div id="wuIn"></div></details>'}
   <div class="logbar sxbar${bw?' bw':''}"><div class="sxin">
-   <div class="sxst sxkg"><label for="sKg">Charge (kg)</label><div class="sxsr"><button type="button" class="ghost sxpm" data-sxs="sKg" data-v="-1" aria-label="Moins de charge">−</button><input id="sKg" type="number" inputmode="decimal" step="0.5" min="0" value="${esc(kg0)}" placeholder="0"><button type="button" class="ghost sxpm" data-sxs="sKg" data-v="1" aria-label="Plus de charge">+</button></div></div>
+   <div class="sxst sxkg"><label for="sKg">Charge (kg)</label><div class="sxsr"><button type="button" class="ghost sxpm" data-sxs="sKg" data-v="-1" aria-label="Moins de charge">−</button><input id="sKg" type="text" inputmode="decimal" autocomplete="off" step="0.5" min="0" value="${esc(kg0)}" placeholder="0"><button type="button" class="ghost sxpm" data-sxs="sKg" data-v="1" aria-label="Plus de charge">+</button></div></div>
    <div class="sxst"><label for="sR">${u==='s'?'Secondes':u==='min'?'Minutes':'Répétitions'}</label><div class="sxsr"><button type="button" class="ghost sxpm" data-sxs="sR" data-v="-1" aria-label="Une de moins">−</button><input id="sR" type="number" inputmode="numeric" min="0" value="${esc(r0)}" placeholder="0"><button type="button" class="ghost sxpm" data-sxs="sR" data-v="1" aria-label="Une de plus">+</button></div></div>
    ${bw?'<button type="button" class="ghost sxpm sxaddkg" data-act="sxKg" aria-label="Ajouter une charge">+ kg</button>':''}</div>
   <button class="kdone" data-act="doneSet"><span class="kck" aria-hidden="true">${SX.ic('i-tick')}</span><span>${last?'Dernière série faite':'Série '+(cur+1)+' faite'}</span></button></div></div>`;
@@ -4881,7 +4881,7 @@ renderTrend=function(){
    `<path d="${line}" class="sxln drawline"/>`+(mxp!==last?lab(mxp,'max '+fr(mxp.w),false):'')+(mn!==last&&mn!==mxp?lab(mn,'min '+fr(mn.w),true):'')+
    `<circle cx="${pts[pts.length-1][0].toFixed(1)}" cy="${pts[pts.length-1][1].toFixed(1)}" r="9" class="sxhalo"/><circle cx="${pts[pts.length-1][0].toFixed(1)}" cy="${pts[pts.length-1][1].toFixed(1)}" r="5" class="sxlast"/>`+
    `<text x="${pl}" y="${H-6}" class="sxax">${fd(E[0].d)}</text><text x="${(W2-pr).toFixed(1)}" y="${H-6}" text-anchor="end" class="sxax">${fd(last.d)}</text>`;
-  const L0=E0[E0.length-1],ref=[...E0].reverse().find(p=>(t(L0.d)-t(p.d))>=6*864e5),wk=ref?(L0.e-ref.e)/((t(L0.d)-t(ref.d))/864e5)*7:0,tot=E0[0].e-L0.e,good=down?wk<0:up?wk>0:Math.abs(wk)<.25;
+  const L0=E0[E0.length-1],ref=[...E0].reverse().find(p=>(t(L0.d)-t(p.d))>=6*864e5),wk=ref?(L0.e-ref.e)/((t(L0.d)-t(ref.d))/864e5)*7:0,tot=num(E0[0].w)-num(L0.w),good=down?wk<0:up?wk>0:Math.abs(wk)<.25;
   let proj='';if(cap!=null&&Math.abs(wk)>=.05&&(down?wk<0:wk>0)){const wks=Math.abs((L0.e-cap)/wk);if(wks<52)proj=`À ce rythme, tu ${down?'passes sous':'atteins'} <b>${fr(cap)} kg</b> vers le ${new Date(Date.now()+wks*6048e5).toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}.`}
   tt.innerHTML=`<div class="stk sxwk3"><div><b>${fr(L0.e.toFixed(1))}</b><span>kg, ta tendance</span></div><div class="${good?'good':''}"><b>${wk>0?'+':''}${fr(wk.toFixed(2))}</b><span>kg par semaine</span></div><div><b>${fr(Math.abs(tot).toFixed(1))}</b><span>kg ${tot>=0?'perdus':'pris'} en tout</span></div></div>${proj?`<p class="sxproj">${proj}</p>`:''}`};
 
@@ -5118,6 +5118,7 @@ function qaFit(p,r){try{if(!r||typeof r!=='object')return false;p=String(p);cons
 {const ovq=$('ov');document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')return;try{if(ovq&&ovq.classList.contains('on')&&navigator.wakeLock&&(!WL||WL.released))navigator.wakeLock.request('screen').then(w=>WL=w).catch(()=>{})}catch(e){}});
  if(ovq)new MutationObserver(()=>{if(!ovq.classList.contains('on'))try{if(WL&&!WL.released)WL.release()}catch(e){}}).observe(ovq,{attributes:true,attributeFilter:['class']})}
 /* === /ag_qa2 === */
+function unJSONtxt(t){t=String(t||'').trim();if(!/^[\[{]/.test(t))return t;try{const o=JSON.parse(t),out=[];(function walk(v){if(typeof v==='string'){if(v.trim())out.push(v.trim())}else if(Array.isArray(v))v.forEach(walk);else if(v&&typeof v==='object')Object.values(v).forEach(walk)})(o);return out.join(' ')||t}catch(e){return t.replace(/[{}\[\]"]+/g,' ').replace(/\s*[a-z_]+\s*:\s*/gi,' ').replace(/\s+/g,' ').trim()}}
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -5181,7 +5182,7 @@ function renderS(){
   ${g.note?`<div class="tip">${esc(g.note)}</div>`:''}${(sleepLow||sore||dl)&&S.i===0&&!x.sets.length?`<div class="tip" style="border-left-color:var(--yel)">${sleepLow?'Nuit courte : fais une série de moins par exercice aujourd\'hui. ':''}${sore?'Grosses courbatures : allège de 25 %. ':''}${dl&&!sleepLow&&!sore?'Ton corps a besoin d\'une semaine plus légère : moitié moins de séries, 4 répétitions en réserve.':''}</div>`:''}${/course|marche|v[ée]lo|rameur|elliptique|tapis|cardio/i.test(x.nom+' '+(x.machine||''))?`<div class="tip">Zone 2 : ${hrZones().z2.join('–')} pulsations/min, tu peux parler en phrases. Fractionné : ${hrZones().hiit.join('–')}.</div>`:''}
   <label style="margin-top:4px">Combien de répétitions tu aurais encore pu faire ?</label>
   <div class="qual" id="rirRow" style="margin-bottom:4px">${['0','1','2','3','4+'].map((v,i)=>`<button data-act="rir" data-v="${i}" class="${(S.rir??2)===i?'on':''}">${v}</button>`).join('')}</div>
-  <div class="logbar"><div class="setin"><div><label for="sKg">Charge (kg)</label><input id="sKg" type="number" inputmode="decimal" step="0.5" value="${esc(x.sets.length?x.sets[x.sets.length-1].kg:g.kg)}" placeholder="0"></div>
+  <div class="logbar"><div class="setin"><div><label for="sKg">Charge (kg)</label><input id="sKg" type="text" inputmode="decimal" autocomplete="off" step="0.5" value="${esc(x.sets.length?x.sets[x.sets.length-1].kg:g.kg)}" placeholder="0"></div>
   <div><label for="sR">Répétitions</label><input id="sR" type="number" inputmode="numeric" value="${esc(x.sets.length?x.sets[x.sets.length-1].reps:g.reps)}"></div></div>
   <button class="kdone" data-act="doneSet" style="width:100%;min-height:60px;font-size:19px"><span class="kck" aria-hidden="true"><svg class="i"><use href="#i-tick"/></svg></span><span>Série ${x.sets.length+1} faite</span></button></div>
   <div class="row" style="margin:12px 0"><button class="ghost sm" data-act="prevEx" ${S.i?'':'disabled'}>Exercice précédent</button><button class="ghost sm" data-act="nextEx">Exercice suivant</button>${x.machine?'':yt(x.nom+' exécution technique','Vidéo')}</div>
@@ -5456,7 +5457,7 @@ $('frigo').value=store.get('frigo','');$('frigo').oninput=()=>store.set('frigo',
 
 /* ---------- Actions ---------- */
 const A={
-  logW(){const w=num($('wIn').value)||num(P.poids);if(!w){$('wIn').focus();return}W=W.filter(p=>p.d!==today());W.push({d:today(),w});W.sort((a,b)=>a.d<b.d?-1:1);store.set('pesees',W);P.poids=String(w);$('p-poids').value=w;saveP();calc();$('wIn').value='';drawW();toast('Poids enregistré : '+fr(w)+' kg')},
+  logW(){const w=num($('wIn').value);if(!w||w<25||w>350){$('wIn').focus();toast('Écris ton poids du jour (ex. 96,4)');return}W=W.filter(p=>p.d!==today());W.push({d:today(),w});W.sort((a,b)=>a.d<b.d?-1:1);store.set('pesees',W);P.poids=String(w);$('p-poids').value=w;saveP();calc();$('wIn').value='';drawW();toast('Poids enregistré : '+fr(w)+' kg')},
   kadj(b){P.kadj=(+P.kadj||0)+(+b.dataset.v);P.kadjD=today();saveP();calc();bilan()},
   kreset(b,e){e.preventDefault();P.kadj=0;saveP();calc();bilan()},
   askImgDel(){ASKIMG=null;$('askImg').hidden=true;$('askImg').innerHTML='';$('askPh').value='';$('ask').placeholder='Écris ton message…'},
@@ -5502,7 +5503,7 @@ Propose UN exercice de remplacement pour « ${x.nom} » qui travaille les mêmes
   rir(b){S.rir=+b.dataset.v;document.querySelectorAll('#rirRow button').forEach(x=>x.classList.toggle('on',x===b))},
   doneSet(b){if(b&&b.classList&&b.classList.contains('kdone')&&!b.classList.contains('did')){b.classList.add('did');try{navigator.vibrate&&navigator.vibrate(18)}catch(e){}setTimeout(()=>{if(b.isConnected)A.doneSet()},260);return}const x=S.ex[S.i],kg=num($('sKg').value),rp=num($('sR').value),prev=bestE1(x.nom),cur=Math.max(0,...x.sets.map(s=>num(s.kg)*(1+num(s.reps)/30)));
     if(kg&&prev&&kg*(1+rp/30)>Math.max(prev,cur)+0.01){toast('Nouveau record sur '+x.nom+' !');confetti();store.set('nbrec',store.get('nbrec',0)+1);say('Nouveau record !')}
-    x.sets.push({kg:$('sKg').value,reps:$('sR').value,rir:S.rir??2});
+    x.sets.push({kg:(v=>v===''?'':String(num(v)))(String($('sKg').value).trim()),reps:$('sR').value,rir:S.rir??2});
     if(x.sets.length>=(+x.series||3)){if(S.i<S.ex.length-1){S.i++;S.rest=Date.now()+(+x.repos_s||90)*1000}else return endS()}else S.rest=Date.now()+(+x.repos_s||90)*1000;renderS()},
   rest(b){S.rest+=(+b.dataset.v)*1000;if(S.rest<Date.now())S.rest=Date.now()+1000},
   skipRest(){S.rest=0;renderS()},
@@ -5721,7 +5722,7 @@ Format JSON : {"grammes":0,"comment":"en 1 courte phrase, comment tu as estimé 
     <div class="macro"><span><b>${fr(SYN.p)}</b> g prot.</span><span><b>${fr(SYN.g)}</b> g gluc.</span><span><b>${fr(k(c.sucres))}</b> g sucres</span><span><b>${fr(SYN.l)}</b> g lip.</span><span><b>${fr(k(c.sel))}</b> g sel</span></div>
     <p>${esc(r.synthese)}</p>${r.points_forts&&r.points_forts.length?`<b>Les +</b>${list(r.points_forts)}`:''}${r.points_faibles&&r.points_faibles.length?`<b>Les −</b>${list(r.points_faibles)}`:''}
     ${r.alternative?`<div class="tip"><b>Mieux pour toi :</b> ${esc(r.alternative)}</div>`:''}${r.pour_la_suite?`<div class="tip"><b>Pour la suite :</b> ${esc(r.pour_la_suite)}</div>`:''}
-    <div class="row" style="margin-top:12px"><button data-act="addSyn">Ajouter à mon journal</button><label class="mute" for="synG">Corriger les grammes</label><input id="synG" type="number" inputmode="decimal" value="${Math.round(g)}" style="width:100px;margin:0"></div></div>`})},
+    <div class="row" style="margin-top:12px"><button data-act="addSyn">Ajouter à mon journal</button><label class="mute" for="synG">Corriger les grammes</label><input id="synG" type="text" inputmode="decimal" autocomplete="off" value="${Math.round(g)}" style="width:100px;margin:0"></div></div>`})},
   addSyn(b){const g2=num($('synG').value),p=PROD,c=p.c100||{},k=x=>Math.round(num(x)*g2/100);addFood({nom:`${p.nom} (${Math.round(g2)} g)`,kcal:k(c.kcal),p:k(c.p),g:k(c.g),l:k(c.l)});b.textContent='Ajouté !';b.disabled=true},
   genSauce(b){const ing=$('sIng').value.trim(),fr=$('sFrigo').checked?$('frigo').value.trim():'',dis=dislike('sauce');run(b,$('sauces'),b.dataset.more?'Le chef cherche d\'autres sauces':'Création de tes sauces',async()=>{
     const r=await askJSON(`Tu es un chef saucier créatif. ${profil()}
@@ -5867,7 +5868,7 @@ function verdictHTML(p){const a=prodAnalyse(p),c=a.c,u=a.drink?'100 ml':'100 g';
   ${a.noVal?`<div class="tip" style="border-left-color:var(--yel)">Valeurs nutritionnelles manquantes : ajoute une photo du tableau pour une note plus précise.</div>`:''}<table class="tbl"${a.noVal?' hidden':''}><tr><td><b>Pour ${u}</b></td><td></td><td></td></tr><tr><td>Énergie</td><td>${c.kcal==null||c.kcal===''?'–':Math.round(num(c.kcal))+' kcal'}</td><td></td></tr>${lvl('l','Matières grasses',c.l,'g')}${lvl('sa','dont saturées',c.ags,'g')}<tr><td>Glucides</td><td>${c.g==null||c.g===''?'–':fr(Math.round(num(c.g)*10)/10)+' g'}</td><td></td></tr>${lvl('su','dont sucres',c.sucres,'g')}<tr><td>Fibres</td><td>${c.fibres==null||c.fibres===''?'–':fr(num(c.fibres))+' g'}</td><td></td></tr><tr><td>Protéines</td><td>${c.p==null||c.p===''?'–':fr(Math.round(num(c.p)*10)/10)+' g'}</td><td></td></tr>${lvl('se','Sel',c.sel,'g')}</table>
   ${p.portion?`<p class="mute">Portion indiquée : ${esc(p.portion)}</p>`:''}${p.allergenes?`<p class="mute"><b>Allergènes :</b> ${esc(p.allergenes)}</p>`:''}
   ${a.mark?`<details><summary style="cursor:pointer;font-weight:700;padding:8px 0">Ingrédients (sucres et additifs surlignés)</summary><p class="mute ingtxt">${a.mark}</p></details>`:''}
-  <details style="margin-top:6px"><summary style="cursor:pointer;font-weight:700;padding:8px 0">Une valeur est fausse ? Corrige-la</summary><p class="mute" style="margin-top:0">Recopie les chiffres de l'étiquette (pour ${u}) : la note est recalculée tout de suite.</p><div class="grid pedit">${[['kcal','Énergie (kcal)'],['l','Matières grasses (g)'],['ags','dont saturées (g)'],['g','Glucides (g)'],['sucres','dont sucres (g)'],['fibres','Fibres (g)'],['p','Protéines (g)'],['sel','Sel (g)']].map(([k,l])=>`<div><label for="pe-${k}">${l}</label><input id="pe-${k}" type="number" inputmode="decimal" step="0.01" value="${c[k]==null||c[k]===''?'':esc(c[k])}"></div>`).join('')}</div><div class="row" style="margin-top:8px"><button class="alt" data-act="prodEdit">Recalculer la note</button></div></details>
+  <details style="margin-top:6px"><summary style="cursor:pointer;font-weight:700;padding:8px 0">Une valeur est fausse ? Corrige-la</summary><p class="mute" style="margin-top:0">Recopie les chiffres de l'étiquette (pour ${u}) : la note est recalculée tout de suite.</p><div class="grid pedit">${[['kcal','Énergie (kcal)'],['l','Matières grasses (g)'],['ags','dont saturées (g)'],['g','Glucides (g)'],['sucres','dont sucres (g)'],['fibres','Fibres (g)'],['p','Protéines (g)'],['sel','Sel (g)']].map(([k,l])=>`<div><label for="pe-${k}">${l}</label><input id="pe-${k}" type="text" inputmode="decimal" autocomplete="off" step="0.01" value="${c[k]==null||c[k]===''?'':esc(c[k])}"></div>`).join('')}</div><div class="row" style="margin-top:8px"><button class="alt" data-act="prodEdit">Recalculer la note</button></div></details>
   <p class="mute" style="font-size:13px;margin-bottom:0">Source : ${esc(p.source||'')}${p.ean?' · code '+esc(p.ean):''}${p.ean&&/Open Food Facts/.test(p.source||'')?` · <a href="https://fr.openfoodfacts.org/produit/${encodeURIComponent(p.ean)}" target="_blank" rel="noopener noreferrer">voir la fiche</a>`:''}. Note indicative calculée par l'app (Nutri-Score, transformation, additifs). Ce n'est pas un avis médical.</p></div>`}
 async function prodAvis(p){const el=$('pAvis');if(!el)return;const a=prodAnalyse(p);if(!a.known)return;
   el.innerHTML='<div class="busy">Le coach regarde ce produit pour toi<span class="dots3"><i></i><i></i><i></i></span></div>';
@@ -6285,7 +6286,7 @@ function renderTrend(){
 /* mensurations */
 const MESF=[['taille','Tour de taille'],['hanches','Hanches'],['poitrine','Poitrine'],['bras','Bras'],['cuisse','Cuisse'],['cou','Cou']];
 function renderMes(){
-  const last=MES[MES.length-1]||{};$('mesForm').innerHTML=MESF.map(([k,n])=>`<div><label for="ms-${k}">${n} (cm)</label><input id="ms-${k}" type="number" inputmode="decimal" step="0.5" placeholder="${esc(last[k]||'')}"></div>`).join('');
+  const last=MES[MES.length-1]||{};$('mesForm').innerHTML=MESF.map(([k,n])=>`<div><label for="ms-${k}">${n} (cm)</label><input id="ms-${k}" type="text" inputmode="decimal" autocomplete="off" step="0.5" placeholder="${esc(last[k]||'')}"></div>`).join('');
   if(MES.length<1){$('mesHist').innerHTML='';return}const f=MES[0],l=MES[MES.length-1];let tot=0;
   $('mesHist').innerHTML=`<table class="tbl" style="margin-top:12px">${MESF.map(([k,n])=>{if(!num(l[k]))return'';const d=num(f[k])&&MES.length>1?num(l[k])-num(f[k]):0;tot+=d<0?-d:0;return `<tr><td>${n}</td><td>${fr(l[k])} cm ${d?`<span style="color:${d<0?'var(--green)':'var(--mute)'}">(${d>0?'+':''}${fr(d)})</span>`:''}</td></tr>`}).join('')}</table>${tot?`<p style="font-weight:800;color:var(--green)">${fr(tot)} cm perdus au total, bravo !</p>`:''}<p class="mute">Depuis le ${frd(f.d)} · ${MES.length} relevé${MES.length>1?'s':''}</p>`;
 }
@@ -6406,10 +6407,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.27-89';
+const APP_VERSION='2026.11.27-90';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.27-90','La virgule marche partout','Tu peux écrire 96,4 dans tous les champs (poids, charge, grammes…). « Kilos perdus en tout » compte tes vraies pesées, et « Le mot du coach » ne montre plus jamais de texte technique.','suivi','progres2'],
  ['2026.11.27-89','Plus solide','13 corrections : une réponse bizarre de l\'IA ne peut plus effacer ton programme ni vider ton menu, l\'app passe au nouveau jour toute seule à minuit (pilulier compris), textes et boutons mieux lisibles sur petit écran et en très grand.','accueil',''],
  ['2026.11.27-88','Plus sûre','Contrôle de sécurité complet : une sauvegarde piégée ne peut plus rien exécuter, la clé des rappels ne part plus dans tes sauvegardes, le serveur de notifications n\'accepte que toi, et le scanner et le QR code sont servis par l\'app elle-même.','moi',''],
  ['2026.11.27-87','Un suivi sleeve encore plus juste','Objectif protéines adapté à ton étape après l\'opération, calendrier de tes rendez-vous de suivi avec un résumé à montrer au médecin, rappel pour boire AVANT le repas, ton feu vert sport selon les semaines, et un message rassurant si ton poids fait un palier.','suivi','sante2'],
