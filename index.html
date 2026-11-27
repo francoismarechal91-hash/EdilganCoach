@@ -1294,6 +1294,10 @@ section[data-v=sommeil] #slAvg{margin-bottom:0}
 .anim[data-k],.animMini[data-k]{--animB:color-mix(in srgb,var(--animC) 72%,#14080c);--animBg:var(--fill);--animL:color-mix(in srgb,var(--animC) 42%,#fff);--animE:color-mix(in srgb,var(--animP) 62%,var(--animC))}
 .animMini[data-k] svg,.pthumb .animMini[data-k] svg,.exthumb .animMini[data-k] svg{transform:none}
 /* === /ag_anim === */
+.phil{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(120% 90% at 30% 20%,hsl(var(--h1) 75% 72%),hsl(var(--h2) 62% 48%));transition:opacity .5s}.phil svg{position:absolute;inset:0;width:100%;height:100%}.phil .phem{position:relative;font-size:clamp(30px,9vw,46px);transform:translateY(-4%);filter:drop-shadow(0 3px 4px rgba(0,0,0,.2))}.phil .phfl{position:absolute;right:8px;bottom:6px;font-size:18px}.phil.gone{opacity:0}
+.dph .phimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s}.dph .phimg.in{opacity:1}.dph .credit{z-index:2}
+.dish>b{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.dish .dsub{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+html:is([data-size=l],[data-size=xl]) .drow{grid-auto-columns:minmax(170px,64%)}
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -3688,7 +3692,7 @@ function zoomWorld(z){WZ=z;document.querySelectorAll('#wZone button').forEach(b=
   const f=t=>{const k=D?Math.min(1,(t-t0)/D):1,e=1-Math.pow(1-k,3),v=from.map((x,i)=>x+(to[i]-x)*e);sv.setAttribute('viewBox',v.join(' '));WVB=v;if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
 function pickCountry(a,n){const c=CUIS[a];WSEL={a,n:c?c[1]:n,z:c?c[0]:''};document.querySelectorAll('#wMap path').forEach(p=>p.classList.toggle('sel',p.dataset.a===a&&!!a));
   $('wSel').value=CUIS[a]?a:'';renderCountry();setTimeout(()=>$('wCountry').scrollIntoView({behavior:'smooth',block:'start'}),80)}
-function dishCard(o,q){return `<div class="dish"><div class="dph" data-act="cook" data-r="${reg(o)}" role="button" aria-label="Recette : ${esc(o.nom)}" data-q="${esc(q||o.wiki||o.nom_local||o.nom)}" data-pays="${esc(o.pays||'')}"><span class="mute">Photo…</span></div><b>${esc(o.nom)}</b>${o.nom_en?'<small class="srctag">Recette d\'origine traduite</small>':''}${o.type||o.desc?`<small class="mute dsub">${esc([o.type,o.desc].filter(Boolean).join(' · '))}</small>`:''}<div class="row" style="gap:6px;margin-top:auto;padding-top:6px;flex-wrap:nowrap"><button class="sm" data-act="cook" data-r="${reg(o)}">La recette</button><button class="ghost sm" data-act="favR" data-short="1" data-r="${reg(o)}" aria-label="Ajouter aux favoris" style="flex:0 0 44px">${FAVR.some(f=>f.data&&f.data.nom===o.nom)?'★':'☆'}</button></div></div>`}
+function dishCard(o,q){return `<div class="dish"><div class="dph" data-act="cook" data-r="${reg(o)}" role="button" aria-label="Recette : ${esc(o.nom)}" data-q="${esc(q||o.wiki||o.nom_local||o.nom)}" data-pays="${esc(o.pays||'')}" data-en="${esc(o.nom_en||'')}" data-loc="${esc(o.nom_local||'')}" data-n="${esc(o.nom||'')}" data-c="${esc(o.course||'')}">${phIllu(o.nom||q,o.course,o.pays)}</div><b>${esc(o.nom)}</b>${o.nom_en?'<small class="srctag">Recette d\'origine traduite</small>':''}${o.type||o.desc?`<small class="mute dsub">${esc([o.type,o.desc].filter(Boolean).join(' · '))}</small>`:''}<div class="row" style="gap:6px;margin-top:auto;padding-top:6px;flex-wrap:nowrap"><button class="sm" data-act="cook" data-r="${reg(o)}">La recette</button><button class="ghost sm" data-act="favR" data-short="1" data-r="${reg(o)}" aria-label="Ajouter aux favoris" style="flex:0 0 44px">${FAVR.some(f=>f.data&&f.data.nom===o.nom)?'★':'☆'}</button></div></div>`}
 const MDBA={US:'American',GB:'British',CA:'Canadian',CN:'Chinese',EG:'Egyptian',PH:'Filipino',FR:'French',GR:'Greek',IN:'Indian',IE:'Irish',IT:'Italian',JP:'Japanese',MX:'Mexican',MA:'Moroccan',NL:'Dutch',PL:'Polish',PT:'Portuguese',RU:'Russian',ES:'Spanish',TH:'Thai',TN:'Tunisian',TR:'Turkish',VN:'Vietnamese',AR:'Argentinian'};
 async function mdbArea(a){const z=MDBA[a];if(!z||navigator.onLine===false)return[];try{const j=await ptmo(fetch('https://www.themealdb.com/api/json/v1/1/filter.php?a='+z).then(r=>r.json()),4000);return arr(j&&j.meals).map(m=>m&&m.strMeal).filter(Boolean)}catch(e){return[]}}
 let WSEEN=store.get('wseen',{});if(!WSEEN||typeof WSEEN!=='object'||Array.isArray(WSEEN))WSEEN={};
@@ -3696,7 +3700,7 @@ let WSEEN=store.get('wseen',{});if(!WSEEN||typeof WSEEN!=='object'||Array.isArra
 const WCOURSE=[['entree','Entrées','🥗','entrées (ou soupes, mezzés, petites assiettes)'],['plat','Plats','🍲','plats principaux'],['dessert','Desserts','🍰','desserts ou pâtisseries']];
 let WMENU={};
 const wSkel=()=>'<div class="dsk"><em></em><b></b><b class="w6"></b></div>'.repeat(3);
-function wCourseHTML(c,L){return L.map(x=>dishCard({nom:x.nom,nom_en:x.nom_en||'',nom_local:x.nom_local,wiki:x.wiki,pays:WSEL.n,description:x.description||((c==='entree'?'Entrée':c==='plat'?'Plat':'Dessert')+' traditionnel ('+WSEL.n+')'),desc:x.description},x.q)).join('')}
+function wCourseHTML(c,L){return L.map(x=>dishCard({course:c,nom:x.nom,nom_en:x.nom_en||'',nom_local:x.nom_local,wiki:x.wiki,pays:WSEL.n,description:x.description||((c==='entree'?'Entrée':c==='plat'?'Plat':'Dessert')+' traditionnel ('+WSEL.n+')'),desc:x.description},x.q)).join('')}
 function wPaint(c){const box=$('wC_'+c),key=WSEL&&(WSEL.a||WSEL.n);if(!box||!key)return;const L=(WMENU[key]||{})[c];if(!L)return;box.innerHTML=wCourseHTML(c,L);box.scrollLeft=0;loadPhotos(box)}
 async function wLoad(courses,force){if(!WSEL)return;const key=WSEL.a||WSEL.n,M=WMENU[key]=WMENU[key]||{};
   const todo=courses.filter(c=>force||!M[c]);courses.filter(c=>!todo.includes(c)).forEach(wPaint);if(!todo.length)return;
@@ -3734,15 +3738,36 @@ async function wikiPhoto(q,key){key=key||q;if(PHC[q]!==undefined)return PHC[q];
     const qw=normT(key).filter(w=>w.length>3),pg=arr(d.query&&d.query.pages).sort((a,b)=>a.index-b.index).find(p=>p.thumbnail&&p.thumbnail.source&&!/\.svg/i.test(p.thumbnail.source)&&(!qw.length||normT(p.title).some(t=>qw.some(w=>t.startsWith(w.slice(0,5))||w.startsWith(t.slice(0,5))))));
     const v=pg?{src:pg.thumbnail.source,t:pg.title}:null;PHC[q]=v;const ks=Object.keys(PHC);if(ks.length>300)delete PHC[ks[0]];store.set('phc2',PHC);return v}catch(e){return undefined}}
 const aiPic=(q,pays)=>'https://image.pollinations.ai/prompt/'+encodeURIComponent(`photo culinaire réaliste du plat ${q}${pays?' ('+pays+')':''}, servi dans une assiette, vue de trois quarts, lumière naturelle, appétissant`)+'?width=640&height=440&nologo=true&seed='+(q.length*7919%9973);
-async function fillPhoto(box){if(box.dataset.done)return;box.dataset.done=1;const q=box.dataset.q,pays=box.dataset.pays||'';
-  let w=pays?await wikiPhoto(q+' '+pays,q):null;if(!w)w=await wikiPhoto(q);
-  if(w){box.innerHTML=`<img src="${esc(w.src)}" alt="${esc(q)}" loading="lazy"><a class="credit" href="https://fr.wikipedia.org/wiki/${encodeURIComponent(w.t)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Photo : Wikipédia</a>`;return}
-  box.innerHTML=`<img src="${esc(aiPic(q,pays))}" alt="${esc(q)}" loading="lazy"><span class="credit">Illustration IA (indicative)</span>`;
-  const im=box.querySelector('img');im.onerror=()=>{box.innerHTML=`<a class="vid" href="${IMGQ(q+' plat')}" target="_blank" rel="noopener">Voir des photos</a>`}}
+function phHash(t){let h=2166136261;for(const c of String(t))h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0}
+function phIllu(name,course,pays){const h=phHash(name||'plat'),hu=h%360,hu2=(hu+38)%360,em={entree:'🥗',plat:'🍲',dessert:'🍰'}[course]||['🍲','🥘','🍛','🍜','🥗','🍝','🍱','🫕'][h%8],fl=pays&&WSEL&&WSEL.n===pays?flag(WSEL.a):'';
+  return `<div class="phil" style="--h1:${hu};--h2:${hu2}" aria-hidden="true"><svg viewBox="0 0 160 120"><defs><radialGradient id="pg${h}" cx="50%" cy="45%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity=".55"/></radialGradient></defs><ellipse cx="80" cy="96" rx="52" ry="9" fill="#000" opacity=".13"/><circle cx="80" cy="62" r="40" fill="url(#pg${h})"/><circle cx="80" cy="62" r="29" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/><path d="M68 18c-3-5 3-7 0-12M80 16c-3-5 3-7 0-12M92 18c-3-5 3-7 0-12" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2.4" stroke-linecap="round"/></svg><span class="phem">${em}</span>${fl?`<span class="phfl">${fl}</span>`:''}</div>`}
+const PHBAD=new Set();
+function phTry(src,ok){return new Promise(res=>{const im=new Image();let done=0;const t=setTimeout(()=>{if(!done){done=1;res(null)}},15000);im.onload=()=>{if(done)return;done=1;clearTimeout(t);res(ok&&!ok(im)?null:im)};im.onerror=()=>{if(!done){done=1;clearTimeout(t);res(null)}};im.decoding='async';im.referrerPolicy='no-referrer';im.src=src})}
+async function wikiAny(host,q,key){const ck=host+'|'+q;if(PHC[ck]!==undefined)return PHC[ck];
+  try{const r=await ptmo(fetch(`https://${host}/w/api.php?action=query&format=json&formatversion=2&origin=*&generator=search&gsrnamespace=0&gsrlimit=4&prop=pageimages&piprop=thumbnail&pithumbsize=640&gsrsearch=`+encodeURIComponent(q)).then(r=>r.json()),6000);
+    const qw=normT(key||q).filter(w=>w.length>3),pg=arr(r.query&&r.query.pages).sort((a,b)=>a.index-b.index).find(p=>p.thumbnail&&p.thumbnail.source&&!/\.svg|flag|map|carte|logo/i.test(p.thumbnail.source)&&(!qw.length||normT(p.title).some(t=>qw.some(w=>t.startsWith(w.slice(0,5))||w.startsWith(t.slice(0,5))))));
+    const v=pg?{src:pg.thumbnail.source,t:pg.title,h:host}:null;PHC[ck]=v;const ks=Object.keys(PHC);if(ks.length>400)delete PHC[ks[0]];store.set('phc2',PHC);return v}catch(e){return undefined}}
+async function commonsPhoto(q){const ck='commons|'+q;if(PHC[ck]!==undefined)return PHC[ck];
+  try{const r=await ptmo(fetch('https://commons.wikimedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&generator=search&gsrnamespace=6&gsrlimit=6&prop=imageinfo&iiprop=url|mime&iiurlwidth=640&gsrsearch='+encodeURIComponent(q+' food')).then(r=>r.json()),6000);
+    const qw=normT(q).filter(w=>w.length>3),pg=arr(r.query&&r.query.pages).find(p=>{const ii=p.imageinfo&&p.imageinfo[0];return ii&&/jpe?g|png|webp/i.test(ii.mime||'')&&ii.thumburl&&qw.some(w=>normT(p.title).some(t=>t.startsWith(w.slice(0,5))))});
+    const v=pg?{src:pg.imageinfo[0].thumburl,t:pg.title,h:'commons.wikimedia.org'}:null;PHC[ck]=v;store.set('phc2',PHC);return v}catch(e){return undefined}}
+async function mdbThumb(en){if(!en)return null;const ck='mdb|'+en;if(PHC[ck]!==undefined)return PHC[ck];try{const j=await ptmo(fetch('https://www.themealdb.com/api/json/v1/1/search.php?s='+encodeURIComponent(en)).then(r=>r.json()),5000);
+  const m=arr(j&&j.meals).find(x=>x&&sameDish(x.strMeal,en));const v=m&&m.strMealThumb?{src:m.strMealThumb,t:m.strMeal,h:'themealdb'}:null;PHC[ck]=v;store.set('phc2',PHC);return v}catch(e){return undefined}}
+function phShow(box,im,cred){if(!box.isConnected)return;const ill=box.querySelector('.phil');im.alt=box.dataset.n||box.dataset.q||'';im.className='phimg';box.querySelectorAll('.phimg,.credit').forEach(x=>x.remove());box.appendChild(im);if(cred)box.insertAdjacentHTML('beforeend',cred);requestAnimationFrame(()=>{im.classList.add('in');if(ill)setTimeout(()=>ill.classList.add('gone'),400)})}
+async function fillPhoto(box){if(box.dataset.done)return;box.dataset.done=1;const q=box.dataset.q,pays=box.dataset.pays||'',en=box.dataset.en||'',loc=box.dataset.loc||'',n=box.dataset.n||q;
+  if(!box.querySelector('.phil'))box.innerHTML=phIllu(n,box.dataset.c,pays);
+  if(navigator.onLine===false)return;
+  const tries=[()=>pays?wikiAny('fr.wikipedia.org',q+' '+pays,q):null,()=>wikiAny('fr.wikipedia.org',q),()=>en?wikiAny('en.wikipedia.org',en):null,()=>mdbThumb(en),()=>loc&&loc!==q?wikiAny('en.wikipedia.org',loc):null,()=>wikiAny('en.wikipedia.org',n+(pays?' '+pays:''),n),()=>commonsPhoto(en||loc||q)];
+  for(const t of tries){let w=null;try{w=await t()}catch(e){}if(!w||PHBAD.has(w.src))continue;const im=await phTry(w.src);if(!im){PHBAD.add(w.src);continue}
+    const site=w.h==='themealdb'?'TheMealDB':w.h==='commons.wikimedia.org'?'Wikimedia Commons':'Wikipédia',href=w.h==='themealdb'?'https://www.themealdb.com/':`https://${w.h}/wiki/${encodeURIComponent(w.t)}`;
+    phShow(box,im,`<a class="credit" href="${esc(href)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Photo : ${site}</a>`);return}
+  // illustration IA : on vérifie que c'est bien l'image demandée (le service renvoie parfois une image « occupé »)
+  for(let k=0;k<2;k++){const src=aiPic(q,pays).replace(/seed=\d+/,'seed='+((phHash(q)+k*7919)%99991));const im=await phTry(src,x=>x.naturalWidth===640&&x.naturalHeight===440);
+    if(im){phShow(box,im,'<span class="credit">Illustration IA</span>');return}await new Promise(r=>setTimeout(r,4000))}}
 const phIO='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){phIO.unobserve(e.target);fillPhoto(e.target)}}),{rootMargin:'200px'}):null;
 function loadPhotos(root){root.querySelectorAll('.dph:not([data-done])').forEach(b=>phIO?phIO.observe(b):fillPhoto(b))}
 const WRECF=`{"recettes":[{"nom":"nom en français","nom_local":"nom dans la langue du pays","wiki":"titre de l'article Wikipédia français du plat d'origine","description":"1 phrase qui donne envie","moment":"","kcal":0,"proteines_g":0,"glucides_g":0,"lipides_g":0,"temps_min":30,"cout":"€","ingredients":["quantité + ingrédient (avec un équivalent facile à trouver en France si besoin)"],"adaptation":"ce qui a été adapté pour lui, en 1 phrase (vide si rien)"}]}`;
-function wRecHTML(m){const q=m.wiki||m.nom_local||m.nom;return `<div class="dph wide" data-q="${esc(q)}" data-pays="${esc(WSEL?WSEL.n:'')}"><span class="mute">Photo…</span></div>`+mealHTML({...m,pays:WSEL?WSEL.n:'',description:[m.description,m.nom_local&&m.nom_local!==m.nom?'('+m.nom_local+')':'',m.adaptation?'Adapté pour toi : '+m.adaptation:''].filter(Boolean).join(' ')},`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button>`)}
+function wRecHTML(m){const q=m.wiki||m.nom_local||m.nom;return `<div class="dph wide" data-q="${esc(q)}" data-pays="${esc(WSEL?WSEL.n:'')}" data-n="${esc(m.nom||q)}">${phIllu(m.nom||q,'',WSEL?WSEL.n:'')}</div>`+mealHTML({...m,pays:WSEL?WSEL.n:'',description:[m.description,m.nom_local&&m.nom_local!==m.nom?'('+m.nom_local+')':'',m.adaptation?'Adapté pour toi : '+m.adaptation:''].filter(Boolean).join(' ')},`<button class="ghost sm" data-act="ate" data-r="${reg(m)}">Je l'ai mangé</button>`)}
 const WORLD_ACTS={
   wMore(){wLoad(WCOURSE.map(x=>x[0]),true)},
   wReAll(){wLoad(WCOURSE.map(x=>x[0]),true)},
@@ -5084,7 +5109,7 @@ async function loadCook(){
 function renderK(){
   const d=K.d,et=d.etapes||[],head=`<div class="ovh"><span class="mute" style="flex:1">${esc(d.nom||K.o.nom)}</span><b class="ktm" style="color:var(--red);white-space:nowrap"></b><button class="ghost sm" data-act="kClose">Fermer</button></div>`;
   if(K.i<0){
-    ov.innerHTML=head+`<div class="dph wide" data-q="${esc(K.o.wiki||K.o.nom_local||d.nom||K.o.nom)}" data-pays="${esc(K.o.pays||'')}" style="margin:6px 0 10px"><span class="mute">Photo…</span></div><h1 style="font-size:clamp(28px,7vw,38px)">${esc(d.nom||K.o.nom)}</h1>
+    ov.innerHTML=head+`<div class="dph wide" data-q="${esc(K.o.wiki||K.o.nom_local||d.nom||K.o.nom)}" data-pays="${esc(K.o.pays||'')}" data-en="${esc(K.o.nom_en||'')}" data-loc="${esc(K.o.nom_local||'')}" data-n="${esc(d.nom||K.o.nom)}" style="margin:6px 0 10px">${phIllu(d.nom||K.o.nom,K.o.course||'',K.o.pays||'')}</div><h1 style="font-size:clamp(28px,7vw,38px)">${esc(d.nom||K.o.nom)}</h1>
     <div class="macro" style="margin:8px 0">${num(d.temps_total_min)?`<span><b>${esc(d.temps_total_min)}</b> min</span>`:''}${d.difficulte?`<span>${esc(d.difficulte)}</span>`:''}${d.kcal_portion?`<span><b>${esc(d.kcal_portion)}</b> kcal / portion</span>`:''}</div>
     ${d.source&&d.source.url?`<div class="srcnote"><svg class="i" aria-hidden="true"><use href="#i-globe"/></svg><span>Recette d'origine : <b>${esc(d.source.site)}</b>, un site en ${esc(d.source.lang||'langue étrangère')} (pas un site français). Traduite intégralement en français par le coach, mesures converties.${d.source.licence?' Licence '+esc(d.source.licence)+'.':''} <a href="${esc(d.source.url)}" target="_blank" rel="noopener">Voir l'original</a></span></div>`:''}
     <label for="kN">Nombre de portions</label><div class="row"><select id="kN" style="width:auto">${[1,2,3,4,5,6,8].map(n=>`<option ${n===K.n?'selected':''}>${n}</option>`).join('')}</select><span class="mute">les quantités sont recalculées</span></div>
@@ -6121,10 +6146,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.26-85';
+const APP_VERSION='2026.11.27-86';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.27-86','Toujours une image','Chaque plat a maintenant une image : une jolie illustration tout de suite, puis la vraie photo (Wikipédia en français ou en anglais, TheMealDB, Wikimedia Commons) dès qu\'elle est trouvée. Les textes des cartes sont plus courts.','cuisine','monde'],
  ['2026.11.26-85','Nouvelles animations d\'exercices','Une vraie silhouette, des mouvements justes et fluides, le matériel bien dessiné (barre, haltères, poulie, machines, banc) et les muscles qui travaillent mis en lumière. 91 démonstrations au lieu de 41.','sport','exos'],
  ['2026.11.26-84','Séance guidée refaite','Gros boutons − et + pour la charge et les répétitions, tes chiffres de la dernière fois, repos en anneau avec « Corriger », exercice suivant toujours visible, et un vrai récap de fin avec tes records. Courbe de poids lissée, pilulier et sommeil plus clairs.','sport','programme'],
  ['2026.11.26-83','Accueil, cuisine et scanner plus clairs','Noter un repas en 2 gestes, verdict produit lisible d\'un coup d\'œil (note, couleur, un mot), recette et mode cuisine plus grands avec « C\'est fait » toujours au même endroit, réglages rangés comme sur iPhone.','accueil',''],
