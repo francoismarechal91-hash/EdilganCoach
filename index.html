@@ -10185,10 +10185,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.28-103';
+const APP_VERSION='2026.11.28-104';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.28-104','Barre du bas remise à sa place','Sur iOS 26, après avoir tapé du texte, la barre Accueil · Sport · Scanner · Cuisine · Suivi pouvait rester au milieu de l\'écran (bug d\'Apple). L\'app la remet en bas toute seule.','accueil',''],
  ['2026.11.28-103','C\'est quoi, cet aliment ?','Prends en photo n\'importe quel aliment (fruit, légume, champignon, graine, viande, poisson, coquillage, fromage…) : le coach te dit ce que c\'est, ses valeurs, comment le choisir et le cuire, et ce qu\'il faut savoir pour ta santé. Scanner › « C\'est quoi ? ».','scan','quoi'],
  ['2026.11.28-102','Plus juste au quotidien','Dernière vérification faite : conseils adaptés à la sleeve partout, programme santé qui démarre au bon niveau selon ta date d\'opération, rappels d\'eau qui évitent l\'heure des repas, fiches santé mises à jour (AVC, foie gras, ostéoporose), séance guidée plus claire sur les étapes en minutes.','accueil',''],
  ['2026.11.28-101','Campagne enchantée','Ton thème Forêt devient une campagne peinte : gros nuages d\'été, rizières, grand arbre, maisonnette, herbes au vent, pissenlits et papillons. Le décor suit l\'heure du jour, et la nuit arrivent la lune et les lucioles. Clair devient « papier et encre », Nuit devient « velours et bougie ».','moi',''],
@@ -10267,6 +10268,14 @@ Object.assign(A,SPORT_ACTS,WORLD_ACTS,DUO_ACTS,CQ_ACTS,WEEK_ACTS,FI_ACTS,BK_ACTS
 /* ==== Audit iPhone : clavier virtuel, typographie française, stockage ==== */
 (function(){const R=document.documentElement,vv=window.visualViewport;
  if(vv){const upd=()=>{const sc=vv.scale||1,kb=Math.max(0,Math.round(innerHeight-(sc>1.02?vv.height*sc:vv.height+vv.offsetTop)));/* ag_compat : un zoom à deux doigts (fréquent chez les seniors) réduit aussi la zone visible : il était pris pour le clavier -> barre d'onglets masquée et bouton « Série faite » déplacé de 300 à 500 px */R.style.setProperty('--kb',kb+'px');R.classList.toggle('kb',kb>120)};vv.addEventListener('resize',upd);vv.addEventListener('scroll',upd)}
+ /* iOS 26 (bugs.webkit.org 300523) : après la fermeture du clavier, la barre d'onglets fixe peut rester « au milieu » jusqu'au prochain défilement.
+    On force Safari à recalculer les éléments fixes : petit défilement aller-retour + recomposition de la barre. */
+ const tabsFix=()=>{const ae=document.activeElement;if(ae&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName))return;const y=scrollY,x=scrollX;try{scrollTo(x,y+1);scrollTo(x,y)}catch(e){}
+   const t=document.querySelector('.tabs');if(t){t.style.transform='translateZ(0)';requestAnimationFrame(()=>{t.style.transform=''})}if(vv&&vv.offsetTop>1&&(!ae||ae===document.body))try{scrollTo(x,y)}catch(e){};R.classList.remove('kb');R.style.setProperty('--kb','0px')};
+ const tabsFixSoon=()=>[60,250,600].forEach(d=>setTimeout(tabsFix,d));
+ document.addEventListener('focusout',e=>{if(e.target&&/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))tabsFixSoon()},true);
+ if(vv){let h0=vv.height;vv.addEventListener('resize',()=>{if(vv.height>h0+80)tabsFixSoon();h0=vv.height})}
+ addEventListener('pageshow',tabsFixSoon);addEventListener('orientationchange',tabsFixSoon);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')tabsFixSoon()});
  const SK=/^(SCRIPT|STYLE|TEXTAREA|INPUT|CODE|PRE)$/,RX=/ ([:;?!»])|(«) /g;
  const fx=n=>{if(n.nodeType===3){const p=n.parentNode,v=n.data;if(!p||SK.test(p.nodeName)||v.indexOf(' ')<0)return;const w=v.replace(RX,(m,a,b)=>a?' '+a:b+' ');if(w!==v)n.data=w}else if(n.nodeType===1&&!SK.test(n.nodeName)){const t=document.createTreeWalker(n,NodeFilter.SHOW_TEXT);let x;while((x=t.nextNode()))fx(x)}};
  fx(document.body);new MutationObserver(ms=>ms.forEach(m=>m.type==='characterData'?fx(m.target):m.target.closest&&m.target.closest('[data-anim]')?0:m.addedNodes.forEach(fx))).observe(document.body,{childList:true,subtree:true,characterData:true});
