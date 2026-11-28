@@ -1949,6 +1949,20 @@ html[data-skin=pets]:not(#_) #sheet .grab{width:44px;height:6px;background:#f2b7
 /* ---------- OCÉAN : la séance garde la lumière de l eau (dégradé lagon en haut) ---------- */
 html[data-skin=ocean]:not(#_) :is(#ov,#welcome){background:linear-gradient(180deg,#c9eef2 0,#e6f5f5 320px) no-repeat,#e6f5f5}
 /* === /ag_themes2 === */
+/* === rev3 === */
+/* R1 Accueil : « Séance prête » n'apparaît plus deux fois — la tuile de « Plus d'idées » se cache quand la carte « Ton sport »
+   propose déjà le bouton (pas encore de programme). Sans :has (vieux navigateurs), rien ne change. */
+html body section[data-v=accueil]:has(#homeSeance [data-act=goPane][data-p=prets])>.tiles>.tile[data-p=prets]:not(#_){display:none}
+/* R2 « Noter un repas » : la carte arrive sous la barre du haut, pas derrière */
+section[data-v=cuisine] .jadd{scroll-margin-top:76px}
+/* R3 Accueil, tuiles « Plus d'idées » : la flèche › revient dans les thèmes Campagne, Campagne nuit, Nuit et Aurore
+   (le reflet lumineux de ces thèmes remplaçait la flèche par une pastille jaune ou la rendait invisible). */
+html:not(#_) body section[data-v=accueil]>.tiles>.tile::after{background:var(--mute)!important;-webkit-mask:var(--agv-chev) center/contain no-repeat!important;mask:var(--agv-chev) center/contain no-repeat!important}
+/* R5 Clair : en texte Grand et Très grand, le sous-titre passe sur deux lignes et les oiseaux dessinés volaient dessus */
+html:is([data-size=l],[data-size=xl]) .th2c-bd{display:none}
+/* R4 Chats & chiens : le vert des mensurations (« (-6) », « 10 cm perdus ») passe de 2:1 à 5,3:1 de contraste */
+html[data-skin=pets] #mesHist [style*="--green"]{color:#1f7a55!important}
+/* === /rev3 === */
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -4803,13 +4817,13 @@ const CQ_ACTS={
 function weekStats(off=0){const wk0=weekKey(Date.now()-off*7*864e5),wk1=dkey(new Date(wk0+'T12:00').getTime()+7*864e5),inW=d=>d>=wk0&&d<wk1;
   const ses=LOG.filter(l=>inW(l.d)),jd=Object.entries(J).filter(([d,a])=>inW(d)&&Array.isArray(a)&&a.length),m=metrics()||{};
   const kc=jd.map(([,a])=>a.reduce((s,e)=>s+num(e.kcal),0)),pr=jd.map(([,a])=>a.reduce((s,e)=>s+num(e.p),0)),avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
-  const ws=W.filter(x=>inW(x.d)),wPrev=[...W].filter(x=>x.d<wk0).pop(),wLast=ws[ws.length-1];
+  const ws=W.filter(x=>inW(x.d)),wPrev=[...W].filter(x=>x.d<wk0).pop()||(ws.length>1?ws[0]:null),wLast=ws[ws.length-1];
   const nights=Object.entries(SL).filter(([d])=>inW(d)).map(([,n])=>dur(n.c,n.l));
   const eau=Object.entries(EAU).filter(([d,v])=>inW(d)&&v>=(m.eau||8)).length;
   return{wk0,s:ses.length,min:ses.reduce((a,l)=>a+num(l.min),0),jours:jd.length,kcal:Math.round(avg(kc)),prot:Math.round(avg(pr)),tk:m.kcal,tp:m.prot,dw:wLast&&wPrev?Math.round((wLast.w-wPrev.w)*10)/10:null,sleep:nights.length?Math.round(avg(nights)):0,eau,act:Object.keys(streak().A).filter(inW).length}}
 function weekHTML(){const w=weekStats(),lw=weekStats(1),c=(v,l,sub)=>`<div><b>${v}</b><span>${l}</span>${sub?`<small>${sub}</small>`:''}</div>`,tr=(a,b)=>a>b?'▲':a<b?'▼':'=';
   const top=[w.s>=(num(P.jours)||3)?'Objectif séances atteint':'',w.eau>=5?'Bien hydraté':'',w.act>=6?'Régularité au top':'',w.prot&&w.tp&&w.prot>=w.tp*.9?'Protéines au rendez-vous':''].filter(Boolean);
-  return `<div class="stats wkst">${c(w.s,'séance'+(w.s>1?'s':''),lw.s||w.s?tr(w.s,lw.s)+' vs '+lw.s:'')}${c(w.min,w.min>1?'minutes de sport':'minute de sport','')}${c(w.act+'/7','jours actifs','')}${c(w.jours,w.jours>1?'jours de repas notés':'jour de repas noté','')}${c(w.prot?w.prot+' g':'–','protéines / jour',w.tp?'objectif '+w.tp+' g':'')}${c(w.sleep?hm(w.sleep):'–','de sommeil / nuit','')}${c(w.dw==null?'–':(w.dw>0?'+':'')+fr(w.dw)+' kg','poids sur la semaine','')}${c(w.eau+'/7','jours d\'eau OK','')}</div>
+  return `<div class="stats wkst">${c(w.s,'séance'+(w.s>1?'s':''),lw.s||w.s?tr(w.s,lw.s)+' vs '+lw.s:'')}${c(w.min,w.min>1?'minutes de sport':'minute de sport','')}${c(w.act+'/7','jours suivis','')}${c(w.jours,w.jours>1?'jours de repas notés':'jour de repas noté','')}${c(w.prot?w.prot+' g':'–','protéines / jour',w.tp?'objectif '+w.tp+' g':'')}${c(w.sleep?hm(w.sleep):'–','de sommeil / nuit','')}${c(w.dw==null?'–':(w.dw>0?'+':'')+fr(w.dw)+' kg','poids sur la semaine','')}${c(w.eau+'/7','jours d\'eau OK','')}</div>
   ${top.length?`<div class="chips" style="margin-top:10px">${top.map(t=>`<span class="chip p">${esc(t)}</span>`).join('')}</div>`:''}
   <div class="row" style="margin-top:12px"><button class="sm" data-act="weekCoach">Le mot du coach</button><button class="ghost sm" data-act="weekShare">Partager l'image</button></div><div id="weekCoachRes"></div>`}
 function renderWeekCard(){const el=$('weekBox');if(el)el.innerHTML=weekHTML()}
@@ -4819,7 +4833,7 @@ async function weekImage(){const w=weekStats(),cs=getComputedStyle(document.docu
   x.fillStyle='rgba(0,0,0,.22)';x.fillRect(0,0,W2,H2);for(let i=0;i<26;i++){x.fillStyle=`rgba(255,255,255,${Math.random()*.08})`;x.beginPath();x.arc(Math.random()*W2,Math.random()*H2,20+Math.random()*120,0,7);x.fill()}
   x.fillStyle='#fff';x.font='800 44px system-ui,-apple-system,sans-serif';x.fillText('EdilganSuperCoach',70,110);x.font='600 38px system-ui,sans-serif';x.globalAlpha=.85;x.fillText('Ma semaine du '+new Date(w.wk0+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long'}),70,170);x.globalAlpha=1;
   x.font='900 92px system-ui,sans-serif';x.fillText((P.nom||'Moi').trim().slice(0,18),70,300);
-  const items=[[w.s,'séances'],[w.min,'minutes de sport'],[w.act+'/7','jours actifs'],[w.prot?w.prot+' g':'–','protéines / jour'],[w.sleep?hm(w.sleep):'–','sommeil / nuit'],[w.dw==null?'–':(w.dw>0?'+':'')+String(w.dw).replace('.',',')+' kg','poids']];
+  const items=[[w.s,'séances'],[w.min,'minutes de sport'],[w.act+'/7','jours suivis'],[w.prot?w.prot+' g':'–','protéines / jour'],[w.sleep?hm(w.sleep):'–','sommeil / nuit'],[w.dw==null?'–':(w.dw>0?'+':'')+String(w.dw).replace('.',',')+' kg','poids']];
   items.forEach(([v,l],i)=>{const cx=70+(i%2)*480,cy=400+Math.floor(i/2)*270;x.fillStyle='rgba(255,255,255,.14)';x.beginPath();x.roundRect?x.roundRect(cx,cy,440,230,36):x.rect(cx,cy,440,230);x.fill();x.fillStyle='#fff';x.font='900 96px system-ui,sans-serif';x.fillText(String(v),cx+36,cy+130);x.font='600 34px system-ui,sans-serif';x.globalAlpha=.85;x.fillText(l,cx+36,cy+190);x.globalAlpha=1});
   x.font='700 34px system-ui,sans-serif';x.fillText(w.s>=(num(P.jours)||3)?'Objectif de la semaine : réussi !':'On continue, chaque jour compte.',70,H2-80);
   return new Promise(ok=>cv.toBlob(ok,'image/png'))}
@@ -4982,7 +4996,7 @@ function calDetail(k){const x=CALDATA[k]||{d:k},el=$('calDet');if(!el)return;CAL
   const sl=x.sommeil?`<p style="margin:0">Couché à ${esc(x.sommeil.c||'?')}, levé à ${esc(x.sommeil.l||'?')}${x.sommeil.c&&x.sommeil.l?' · '+hm(dur(x.sommeil.c,x.sommeil.l)):''}${x.sommeil.q?' · nuit '+(['','très mauvaise','mauvaise','moyenne','bonne','excellente'][x.sommeil.q]||''):''}</p>`:'';
   el.innerHTML=`<div class="card" style="margin:14px 0 0"><h2 style="margin-top:0">${new Date(k+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</h2>
   ${sec('Repas',R.length?`${R.map(e=>`<div class="jl"><span class="n">${esc(e.nom)}<div class="mute">${Math.round(num(e.p))} g prot · ${Math.round(num(e.g))} g gluc · ${Math.round(num(e.l))} g lip</div></span><span class="v">${Math.round(num(e.kcal)).toLocaleString('fr-FR')} kcal</span></div>`).join('')}<p style="margin:6px 0 0"><b>Total : ${Math.round(tk).toLocaleString('fr-FR')} kcal · ${Math.round(tp)} g de protéines</b></p>`:'')}
-  ${sec('Sport',arr(x.seances).map(s=>`<div class="meal"><b>${esc(s.nom)}</b> <span class="mute">${esc(s.min)} min${s.ressenti?' · '+esc(s.ressenti):''}</span>${arr(s.ex).length?`<ul style="margin:6px 0 0;padding-left:18px">${s.ex.map(e=>`<li>${esc(e.nom)}${arr(e.sets).length?' : '+e.sets.map(z=>z.s?Math.round(num(z.s))+' s':(num(z.kg)?fr(num(z.kg))+' kg × ':'')+esc(z.reps||'')).filter(Boolean).join(', '):''}</li>`).join('')}</ul>`:''}</div>`).join(''))}
+  ${sec('Sport',arr(x.seances).map(s=>`<div class="meal"><b>${esc(s.nom)}</b> <span class="mute">${esc(s.min)} min${s.ressenti?' · '+esc(s.ressenti):''}</span>${arr(s.ex).length?`<ul style="margin:6px 0 0;padding-left:18px">${s.ex.map(e=>`<li>${esc(e.nom)}${arr(e.sets).length?' : '+e.sets.map(z=>z.s?Math.round(num(z.s))+' s':(num(z.kg)?fr(num(z.kg))+' kg × ':'')+esc(z.reps||'')+(z.reps?rv3U(e):'')).filter(Boolean).join(', '):''}</li>`).join('')}</ul>`:''}</div>`).join(''))}
   ${sec('Corps',[x.poids!=null?`Poids : <b>${fr(x.poids)} kg</b>`:'',x.mes&&x.mes.taille?`Tour de taille : <b>${esc(x.mes.taille)} cm</b>`:'',x.eau!=null?`Eau : <b>${esc(x.eau)} verre${x.eau>1?'s':''}</b>`:'',x.pas!=null?`Pas : <b>${Number(x.pas).toLocaleString('fr-FR')}</b>`:'',x.pilules!=null?`Prises cochées : <b>${esc(x.pilules)}</b>`:''].filter(Boolean).map(t=>`<div>${t}</div>`).join(''))}
   ${sec('Sommeil',sl)}
   ${sec('Humeur',x.humeur?Object.entries(x.humeur).map(([k2,v])=>`<span class="chip">${esc({h:'Humeur',e:'Énergie',c:'Courbatures',s:'Stress',f:'Faim'}[k2]||k2)} ${esc(v)}/5</span>`).join(' '):'')}
@@ -5244,7 +5258,7 @@ const rapHM=m=>String(Math.floor(m/60)%24).padStart(2,'0')+':'+String(m%60).padS
 const JRS=['dim.','lun.','mar.','mer.','jeu.','ven.','sam.'],JRL=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
 const RAPN={eau:['Boire','💧'],pills:['Mes médicaments et compléments','💊'],repas:['Mes repas','🍽️'],pesee:['Ma pesée','⚖️'],seance:['Ma séance','🏋️'],coucher:['Aller me coucher','🌙']};
 function rapTimes(k,all){const r=RAP[k];if(!r||(!r.on&&!all))return[];
-  if(k==='eau'){const out=[],a=tmin(r.a),st=Math.max(30,+r.pas||90);for(let m=tmin(r.de);m<=a;m+=st)out.push({h:rapHM(m),t:'💧 Un verre d\'eau',d:BARIA()?'Par petites gorgées, et pas dans les 30 minutes autour d\'un repas.':'Un grand verre d\'eau, maintenant.'});return out}
+  if(k==='eau'){const out=[],a=tmin(r.a),st=Math.max(30,+r.pas||90),rp=BARIA()&&RAP.repas&&RAP.repas.on?arr(RAP.repas.h).map(tmin):[];for(let m=tmin(r.de);m<=a;m+=st)if(!rp.some(x=>Math.abs(x-m)<30))out.push({h:rapHM(m),t:'💧 Un verre d\'eau',d:BARIA()?'Par petites gorgées, et pas dans les 30 minutes autour d\'un repas.':'Un grand verre d\'eau, maintenant.'});return out}
   if(k==='pills')return arr(PILLS).filter(p=>p&&p.h).map(p=>({h:p.h,t:'💊 '+p.n,d:'Ta prise de '+p.h+' (pilulier EdilganSuperCoach).',pid:p.id}));
   if(k==='repas')return arr(r.h).filter(Boolean).map(h=>({h,t:'🍽️ C\'est l\'heure de manger',d:BARIA()?'Petite portion, protéines d\'abord, 20 minutes, petites bouchées.':'Un repas équilibré. Pense à le noter dans l\'app.'}));
   if(k==='pesee')return[{h:r.h,t:'⚖️ Pesée de la semaine',d:'À jeun, après être passé aux toilettes, toujours sur la même balance. Note-la dans l\'app.',days:[+r.j]}];
@@ -5553,7 +5567,7 @@ renderS=function(){
   const g=suggest(x),p=clean(x.muscles),s=clean(x.muscles_secondaires),u=SX.unit(x),fx=S._fix;delete S._fix;if(fx&&fx.rir!=null)S.rir=+fx.rir;
   const ls=x.sets[x.sets.length-1],kg0=fx?fx.kg:ls?ls.kg:g.kg,r0=fx?fx.reps:ls?ls.reps:g.reps,prev=lastSets(x.nom)||[],cur=x.sets.length,rows=Math.max(n,cur+1);
   const cardio=/\b(course|marche|v[ée]lo|rameur|elliptique|tapis|cardio)\b/i.test(x.nom+' '+(x.machine||'')),timed=/[ée]chauffement|[ée]tirement|mobilit[ée]/i.test(x.nom)||u!=='rep'||/\bmin\b|minute|\d+\s*s\b|secondes?/i.test(String(x.reps||'')),bw=!num(kg0)&&SX.bw(x),addKg=bw&&!cardio&&!timed;
-  const tips=[];if(!cur&&g.note)tips.push(['',g.note]);
+  const tips=[];if(!cur&&g.note&&!timed)tips.push(['',g.note]);
   if((sleepLow||sore||dl)&&S.i===0&&!cur)tips.push(['warn',(sleepLow?'Nuit courte : fais une série de moins par exercice aujourd\'hui. ':'')+(sore?'Grosses courbatures : allège de 25 %. ':'')+(dl&&!sleepLow&&!sore?'Ton corps a besoin d\'une semaine plus légère : moitié moins de séries, 4 répétitions en réserve.':'')]);
   if(cardio&&!cur)tips.push(['',`Zone 2 : ${hrZones().z2.join('–')} pulsations/min, tu peux parler en phrases. Fractionné : ${hrZones().hiit.join('–')}.`]);
   const row=i=>{const pv=prev[i]?SX.setTxt(prev[i],x):'';
@@ -5567,7 +5581,7 @@ renderS=function(){
   <div class="sxanim">${ANIM.html(ANIM.pick(x.nom,x.machine,x.anim),'anim ovanim')}</div>
   <ol class="sxsets">${Array.from({length:rows},(_,i)=>row(i)).join('')}</ol>
   ${tips.map(([c,t])=>`<div class="tip sxtip${c?' '+c:''}">${esc(t)}</div>`).join('')}
-  <div class="sxrir"><span id="sxRirL">Tu aurais pu en faire combien de plus ?</span><div class="qual" id="rirRow" role="group" aria-labelledby="sxRirL">${['0','1','2','3','4+'].map((v,i)=>`<button data-act="rir" data-v="${i}" class="${(S.rir??2)===i?'on':''}">${v}</button>`).join('')}</div></div>
+  <div class="sxrir"${timed?' style="display:none"':''}><span id="sxRirL">Tu aurais pu en faire combien de plus ?</span><div class="qual" id="rirRow" role="group" aria-labelledby="sxRirL">${['0','1','2','3','4+'].map((v,i)=>`<button data-act="rir" data-v="${i}" class="${(S.rir??2)===i?'on':''}">${v}</button>`).join('')}</div></div>
   <div class="sxup"><div><small>${nx?'Exercice suivant':'Dernier exercice'}</small><b>${nx?esc(nx.nom):'Ensuite, c\'est fini !'}</b>${nx?`<em>${esc(nx.series)} × ${esc(nx.reps)}</em>`:''}</div><div class="sxupb">${S.i?`<button class="ghost sm" data-act="prevEx" aria-label="Exercice précédent">${SX.chl}</button>`:''}<button class="ghost sm" data-act="nextEx" aria-label="${nx?'Passer à l\'exercice suivant':'Finir la séance'}">${nx?'Passer':'Finir'}</button></div></div>
   <details class="sxdet"><summary>Comment bien le faire</summary>${machBox(x)}${x.machine?'':`<div class="row" style="margin:8px 0">${yt(x.nom+' exécution technique','Vidéo de l\'exercice')}</div>`}${bodyMap(p,s,x.nom)}${x.execution?`<p>${esc(x.execution)}</p>`:''}${x.conseil?`<p class="mute">${esc(x.conseil)}</p>`:''}</details>
   ${bw?'':'<details id="wu" class="sxdet"><summary>Échauffement et disques</summary><div id="wuIn"></div></details>'}
@@ -5618,7 +5632,7 @@ SX.end=snap=>{
   ${dv>0?`<p class="sxcmp">${SX.ic('i-trend')}<b>+${dv} %</b> de poids soulevé par rapport à la dernière fois</p>`:''}${recs.length?`<p class="sxcmp">${SX.ic('i-star')}${recs.length>1?recs.length+' nouveaux records':'Nouveau record'} : ${recs.map(e=>esc(e.nom)).join(', ')}</p>`:''}
   <ul class="sxrecap">${done.map(e=>`<li><span><b>${esc(e.nom)}</b><em>${esc(SX.sum(e))}</em></span>${recs.includes(e)?'<i class="sxpr">Record</i>':''}</li>`).join('')}</ul>
   <div class="sxfeel"><h3>C'était comment ?</h3><div class="row">${['Trop facile','Parfait','Trop dur'].map(f=>`<button class="ghost" data-act="feel" data-v="${f}">${f}</button>`).join('')}</div></div>
-  <p class="mute sxtipend">Bois un grand verre d'eau et mange des protéines dans les 2 heures.</p>
+  <p class="mute sxtipend">${BARIA()?'Bois par petites gorgées (pas dans les 30 minutes autour d\'un repas) et prends des protéines dans les 2 heures.':'Bois un grand verre d\'eau et mange des protéines dans les 2 heures.'}</p>
   <div class="sxfoot"><button class="wide sxgo" data-act="closeS">Fermer</button></div></div>`;ov.scrollTop=0};
 
 /* ---------- Séances prêtes : minuteur guidé ---------- */
@@ -5645,7 +5659,7 @@ rEnd=function(done){const snap=R?{x:R.x,t0:R.t0,cnt:R.cnt,i:R.i,seq:R.seq}:null;
 SX.runEnd=sn=>{const min=Math.max(1,Math.round((Date.now()-sn.t0)/6e4)),ex=new Set(sn.x.steps.map(z=>z.n)).size,rt=sn.x.g==='routine';
   ov.innerHTML=`<div class="sxw sxend"><div class="sxmed" aria-hidden="true">${SX.ic('i-tick')}</div><h1>Bravo !</h1><p class="sxsub">« ${esc(sn.x.t)} » terminé${sn.cnt?' · '+sn.cnt+' tours d\'équipe':''}.</p>
   <div class="sxkpi k3"><div><b>${min}</b><span>minutes</span></div><div><b>${ex}</b><span>exercice${ex>1?'s':''}</span></div><div><b>${sn.cnt||sn.x.tours||1}</b><span>${sn.cnt?'tours d\'équipe':'tour'+((sn.x.tours||1)>1?'s':'')}</span></div></div>
-  <p class="mute sxtipend">${rt?'Ton corps te dit merci.':'Pense à boire un grand verre d\'eau.'}${rt?'':' La séance est notée dans ton historique.'}</p>
+  <p class="mute sxtipend">${rt?'Ton corps te dit merci.':BARIA()?'Pense à boire, par petites gorgées.':'Pense à boire un grand verre d\'eau.'}${rt?'':' La séance est notée dans ton historique.'}</p>
   <div class="sxfoot"><button class="wide sxgo" data-act="rClose">Fermer</button></div></div>`;ov.scrollTop=0};
 
 /* ---------- Sport › Programme : la séance du jour en vedette, le reste en second plan ---------- */
@@ -5995,6 +6009,8 @@ const PS={
  goutte:['Vidal · Goutte : peut-on prévenir les crises ?','https://www.vidal.fr/maladies/metabolisme-diabete/goutte/causes.html'],
  goutte2:['sante.fr · Boire du café prévient-il les crises de goutte ?','https://www.sante.fr/decryptage/nos-reponses/boire-du-cafe-previent-il-les-crises-de-goutte'],
  mash:['Vidal · De la NASH à la MASH : conduite à tenir','https://www.vidal.fr/actualites/31509-de-la-nash-a-la-mash-quelle-conduite-a-tenir-en-pratique-en-soins-primaires.html'],
+ masld:['EASL-EASD-EASO · Recommandations sur la stéatose métabolique (MASLD), 2024','https://pmc.ncbi.nlm.nih.gov/articles/PMC11519095/'],
+ rezd:['Agence européenne du médicament · Rezdiffra (resmétirom), autorisé en août 2025','https://www.ema.europa.eu/en/medicines/human/EPAR/rezdiffra'],
  mash2:['SOS Hépatites · La NASH, maladie du foie gras','https://soshepatites.org/wp-content/uploads/2021/01/Brochure-NASH-version-2.pdf'],
  anemie:['Vidal · Anémie par carence en fer de l’adulte','https://www.vidal.fr/recommandations/3455/anemie_ferriprive_de_l_adulte/prise_en_charge/'],
  fer:['Santé Canada · Le fer, un élément nutritif essentiel','https://www.canada.ca/fr/sante-canada/services/publications/aliments-et-nutrition/le-fer-element-nutritif-essentiel-sante.html'],
@@ -6089,8 +6105,8 @@ const PATHO={
   ias:'Insuffisance cardiaque : au moins 3 séances/sem de 30 à 60 min associant endurance et renforcement légers, intensité modérée seulement (effort 3-4 puis 4-5/10) ; aucun effort intense, musculation lourde ni compétition ; pas de plongée ; eau à 25 °C minimum ; rappeler les signes d’alerte (essoufflement, chevilles gonflées, prise de poids rapide).',
   ian:'Insuffisance cardiaque : peu salé (6 g/j maximum sauf consigne du cardiologue), respecte la quantité de boisson fixée par le médecin, aucun plat préparé.'},
  avc:{s:'AVC',fort:1,cap:5,r:'Après un AVC, bouger limite les séquelles, aide à rester autonome et diminue le risque d’un nouvel AVC en agissant sur la tension, le sucre et le cholestérol.',
-  f:[['Quand','Idéalement dans les 6 mois après l’AVC, d’abord en rééducation, puis avec un professionnel de l’activité physique adaptée.'],['Endurance et renforcement','Associe les deux, à ton rythme, selon tes capacités et tes limites.'],['Souplesse et équilibre','Ajoute-les si besoin : ils aident à marcher plus sûrement.'],['Au quotidien','Bouge le plus possible et réduis le temps assis et devant les écrans.']],
-  ev:['de forcer jusqu’à la douleur sur le côté atteint','les exercices d’équilibre sans appui à portée de main','de bloquer ta respiration en forçant'],
+  f:[['Quand','Le plus tôt possible, d’abord en rééducation, puis avec un professionnel de l’activité physique adaptée. Il n’est jamais trop tard : même des années après, bouger aide encore.'],['Endurance et renforcement','Associe les deux, à ton rythme : endurance 3 à 5 fois par semaine, 20 à 60 minutes à effort modéré (commence par 10 minutes si besoin) ; renforcement 2 à 3 fois par semaine, jamais deux jours de suite, 8 à 10 exercices de 10 à 15 répétitions.'],['Souplesse et équilibre','Équilibre et étirements 2 à 3 fois par semaine : ils aident à marcher plus sûrement.'],['Au quotidien','Bouge le plus possible et réduis le temps assis et devant les écrans.']],
+  ev:['de forcer jusqu’à la douleur sur le côté atteint','si tu prends un anticoagulant : les sports avec risque de chute ou de choc (demande à ton médecin lesquels)','les exercices d’équilibre sans appui à portée de main','de bloquer ta respiration en forçant'],
   st:['un signe d’AVC : visage qui se déforme, bras ou jambe qui faiblit, parole difficile → appelle le 15 immédiatement'],
   pr:'toujours : ton médecin s’appuie sur un bilan de tes séquelles et un avis du cardiologue avant de prescrire l’activité',
   a:{k:['Les mêmes règles que pour protéger ton cœur : peu de sel, peu de graisses saturées, beaucoup de légumes.','Si tu as du mal à avaler, suis les conseils de texture de ton orthophoniste.'],p:['légumes, fruits, légumineuses','poisson'],m:['plats préparés, charcuterie'],pi:['les textures dures ou sèches si la déglutition est difficile']},
@@ -6116,11 +6132,11 @@ const PATHO={
   sv:[['sucres'],['fibres',30]],pg:{f:'meta',ban:['sol']},src:['obe','inserm'],
   ias:'Surpoids : endurance 150 min/sem minimum pendant la perte de poids puis 200-300 min/sem, renforcement pour garder le muscle, ni sauts ni course au début, peu de passages au sol.',
   ian:'Surpoids : portions modérées sans régime strict, légumes en premier, protéines à chaque repas, eau comme boisson, cuisine maison.'},
- steatose:{s:'foie',r:'Le gras en trop dans le foie diminue quand on bouge et qu’on perd un peu de poids : 5 % de poids en moins réduisent déjà le gras, 7 à 10 % réduisent l’inflammation. Il n’y a pas de médicament spécifique : l’hygiène de vie est le traitement.',
+ steatose:{s:'foie',r:'Le gras en trop dans le foie diminue quand on bouge et qu’on perd un peu de poids : 5 % de poids en moins réduisent déjà le gras, 7 à 10 % réduisent l’inflammation. L’hygiène de vie est le traitement de base : un médicament existe depuis 2025, mais seulement pour certaines formes avancées, sur décision du spécialiste.',
   f:[['Endurance','Au moins 150 minutes par semaine (par exemple 30 minutes 5 jours), effort 5-6 sur 10.'],['Renforcement','2 séances par semaine, comme recommandé pour tous.']],
   ev:['l’alcool, qui abîme aussi le foie'],st:[],pr:'pour le suivi de ton foie (prise de sang, examen de l’élasticité du foie)',
-  a:{k:['Les sucres en excès sont la principale cause : sodas, jus, pâtisseries, plats industriels sucrés. C’est la priorité.','Alimentation de type méditerranéen : légumes, légumineuses, poisson, huile d’olive, fruits entiers.','Alcool : le moins possible, parles-en avec ton médecin.'],p:['légumes et légumineuses','poisson','huile d’olive','eau'],m:['sodas, jus de fruits','pâtisseries, biscuits','plats cuisinés industriels','alcool'],pi:['les plats salés industriels contiennent souvent du sucre ajouté']},
-  sv:[['sucres'],['ags',12]],pg:{f:'meta'},src:['mash','mash2'],
+  a:{k:['Les sucres en excès sont la principale cause : sodas, jus, pâtisseries, plats industriels sucrés. C’est la priorité.','Alimentation de type méditerranéen : légumes, légumineuses, poisson, huile d’olive, fruits entiers.','Alcool : idéalement pas du tout, il abîme aussi le foie ; parles-en avec ton médecin si c’est difficile.'],p:['légumes et légumineuses','poisson','huile d’olive','eau'],m:['sodas, jus de fruits','pâtisseries, biscuits','plats cuisinés industriels','alcool'],pi:['les plats salés industriels contiennent souvent du sucre ajouté']},
+  sv:[['sucres'],['ags',12]],pg:{f:'meta'},src:['mash','mash2','masld','rezd'],
   ias:'Foie gras : endurance 150 min/sem minimum + renforcement 2 fois/sem, perte de poids progressive de 5 à 10 %.',
   ian:'Stéatose hépatique : presque pas de sucres ajoutés (aucun soda ni jus), type méditerranéen, aucun alcool dans les recettes.'},
  goutte:{s:'goutte',r:'La goutte vient d’un excès d’acide urique qui forme des cristaux dans les articulations. Bouger régulièrement, perdre du poids si besoin et surtout limiter alcool et boissons sucrées aide à espacer les crises, en plus du traitement.',
@@ -6184,12 +6200,12 @@ const PATHO={
   ias:'Arthrose : activités sans impact, renforcement des cuisses, douleur 3/10 maximum et disparue le lendemain.',
   ian:'Arthrose : si surpoids, perte de poids progressive sans régime sévère, protéines suffisantes.'},
  osteo:{s:'ostéoporose',r:'L’os se renforce quand il porte le poids du corps et quand les muscles tirent dessus. Bouger améliore aussi ton équilibre : c’est ce qui évite les chutes, donc les fractures.',
-  f:[['En charge','Marche ou autre activité « en charge » 30 minutes, au moins 3 fois par semaine (ou 30 minutes de marche par jour).'],['Équilibre','Exercices d’équilibre plusieurs fois par semaine, avec un appui à portée de main.'],['Renforcement','Jambes, fessiers et muscles du dos, 2 à 3 fois par semaine.']],
+  f:[['En charge','30 minutes de marche par jour, ou 1 heure d’activité « en charge » (marche soutenue, escaliers, randonnée) 3 fois par semaine.'],['Équilibre','Exercices d’équilibre plusieurs fois par semaine, avec un appui à portée de main.'],['Renforcement','Jambes, fessiers et muscles du dos, 2 à 3 fois par semaine.']],
   ev:['si tu as eu une fracture d’une vertèbre : de te pencher en avant en portant une charge et les torsions brusques du dos (demande les bons gestes au kiné)','les activités à fort risque de chute'],
   st:['une douleur brutale du dos après un effort ou une chute → consulte'],pr:'si tu as déjà eu une fracture, pour savoir quels mouvements sont sûrs pour toi',
   a:{k:['Calcium : 2 à 3 produits laitiers par jour (environ 1 000 mg), ou une eau riche en calcium.','Vitamine D : ton médecin peut la doser et te prescrire un complément si besoin.','Assez de protéines à chaque repas : elles aident l’os quand le calcium et la vitamine D sont suffisants.','Arrête le tabac et limite l’alcool.'],p:['yaourts, fromages, lait','eaux riches en calcium','poissons gras'],m:['alcool','tabac'],pi:['supprimer les laitages sans les remplacer']},
   sv:[['ca',950]],pg:{f:'sen',cm:[20,25,30,30],eff:[[4,5],[4,5],[5,6],[5,6]],ban:['dos_charge']},src:['osteo','osteo2','anses','chute'],
-  ias:'Ostéoporose : activités en charge (marche) au moins 30 min 3 fois/sem, équilibre avec appui, renforcement jambes et dos ; aucune flexion du dos en charge, pas de torsion brusque ni de sport à risque de chute.',
+  ias:'Ostéoporose : activités en charge (marche) 30 min par jour ou 1 h 3 fois/sem, équilibre avec appui, renforcement jambes et dos ; aucune flexion du dos en charge, pas de torsion brusque ni de sport à risque de chute.',
   ian:'Ostéoporose : 2 à 3 produits laitiers par jour ou eau riche en calcium, protéines suffisantes, poissons gras.'},
  polyarthrite:{s:'polyarthrite',fort:1,r:'Quel que soit son degré, la polyarthrite n’empêche pas de bouger : l’activité entretient tes muscles, ton cœur et la mobilité de tes articulations.',
   f:[['Endurance','Marche, vélo, natation, aquagym, d’intensité modérée, progressivement vers 150 minutes par semaine.'],['Renforcement','2 à 3 fois par semaine, sans douleur, charges légères.'],['Mobilité','Tous les jours, mains et poignets compris.'],['En poussée','Mets au repos les articulations enflammées et continue de bouger doucement le reste.']],
@@ -6500,7 +6516,8 @@ const patWeek=p=>Math.min(4,1+Math.floor(patDone(p)/p.per));
 const patPrev=()=>{const b=store.get('pathoPrev',null);return b&&typeof b==='object'&&'pr' in b?b:null};
 function patSync(){const p=patActive();if(!p)return;const w=patWeek(p);if(num(p.w)===w)return;const B=patBuild(p.k,p.lvl,w);PR.jours=B.jours;PR.resume=B.resume;store.set('programme',PR);p.w=w;store.set('pathoPlan',p)}
 function patStart(k,lvl){const pa=patActive();if(!(pa&&patPrev()))store.set('pathoPrev',{pr:PR||null,d:today(),titre:PR?String(PR.titre||''):''});
- const B=patBuild(k,lvl,1);PR=B;store.set('programme',PR);store.set('pathoPlan',{k,lvl,t:Date.now(),d:today(),per:B.jours.length,titre:B.titre,names:B.jours.map(j=>j.nom),w:1});renderProg()}
+ let w0=1;if(/^(sleeve|bypass|anneau)$/.test(k)&&P.opdate){const dd=Math.floor((Date.now()-new Date(P.opdate))/864e5);if(dd>=180)w0=3;else if(dd>=42)w0=2}
+  const B=patBuild(k,lvl,w0);PR=B;store.set('programme',PR);store.set('pathoPlan',{k,lvl,t:Date.now(),d:today(),per:B.jours.length,titre:B.titre,names:B.jours.map(j=>j.nom),w:w0});renderProg()}
 
 /* 3. Sport › Programme : carte « Programmes santé » */
 function patChip(k,on){return `<button class="chip patc${on?' p':''}" data-act="patOpen" data-k="${k}">${esc(SANTE[k])}</button>`}
@@ -6536,7 +6553,7 @@ function patSheet(k){const d=PATHO[k];if(!d)return;const L=patL(),others=L.filte
  if(d.ev.length)h+=sec('À éviter',patUl(d.ev));
  h+=sec('Stop si…',`<p style="margin:0 0 4px">Arrête-toi et parles-en à ton médecin si tu ressens :</p>${patUl([...d.st,...PAT_STOP0])}`,'patstop');
  const a=d.a||{};h+=sec('Ton assiette',patUl(a.k)+`<div class="patcols">${[['À privilégier',a.p],['À limiter',a.m],['Pièges',a.pi]].filter(x=>x[1]&&x[1].length).map(([t,l])=>`<div><b>${t}</b>${patUl(l)}</div>`).join('')}</div><p class="mute" style="font-size:14px;margin:8px 0 0">Tes menus, recettes et analyses de produits tiennent compte de ces règles automatiquement. Pour un plan précis, une diététicienne est la bonne personne.</p>`);
- h+=sec('Ton suivi',T.length?`<p style="margin:0 0 6px">Ajouté à ton journal (Cuisine › Mes repas), en plus de tes objectifs habituels :</p><ul class="fl">${T.map(t=>`<li><b>${PTRK[t.id].n}</b> : ${esc(patLimTxt(t))}</li>`).join('')}</ul><button class="ghost sm" data-act="patGoJ">Voir mon suivi du jour</button>`:'<p style="margin:0">Pas de chiffre particulier à suivre : tes objectifs habituels suffisent.</p>');
+ h+=sec('Ton suivi',T.length?`<p style="margin:0 0 6px">Ajouté à ton journal (Cuisine › Mes repas), en plus de tes objectifs habituels :</p><ul class="fl">${T.map(t=>`<li><b>${PTRK[t.id].n}</b> : ${esc(patLimTxt(t))}</li>`).join('')}</ul><button class="ghost sm" data-act="patGoJ">Voir mon suivi du jour</button>`:(['sleeve','bypass','anneau'].includes(k)?'<p style="margin:0">Tes protéines et ton eau sont suivies chaque jour sur l’accueil, avec les repères de ta phase après l’opération.</p>':'<p style="margin:0">Pas de chiffre particulier à suivre : tes objectifs habituels suffisent.</p>'));
  h+=sec('Au quotidien',patUl([...(d.h||[]),...PAT_HAB0]));
  h+=d.pg?sec('Ton programme 4 semaines',`<p class="mute" style="margin:0 0 6px">${PATHO[k].pg&&patSess(k,1,1).length} séances par semaine de 20 à 45 minutes, échauffement compris. Les exercices sont animés dans la séance guidée.</p>${patWeeksHTML(k)}<div class="patbtns" id="patAct">${patActBtns(k)}</div>`):sec('Sport',`<p style="margin:0 0 8px">Pas de précaution sport particulière : tous les programmes de l’app te conviennent.</p><button class="ghost sm" data-act="go" data-to="sport/prets">Voir les séances prêtes</button>`);
  h+=sec('Sources',`<ul class="fl patsrc">${(d.src||[]).map(s=>PS[s]).filter(Boolean).concat([PS.guide]).filter((s,i,A)=>A.indexOf(s)===i).map(([t,u])=>`<li><a href="${secUrl(u)}" target="_blank" rel="noopener noreferrer">${esc(t)}</a></li>`).join('')}</ul>`);
@@ -6937,6 +6954,7 @@ function infoOf(nom,k,extra){
   if(!errs){const m=(sc.m||[]).join(' ');errs=sc.fn?['aller trop vite']:(FAM.find(f=>f[0].test(m))||[0,['aller trop vite']])[1]}
   const steps=cues.slice(0,6).map((c,i,a)=>cueStep(key,c,i,a.length,spec&&spec.s&&spec.s[i],fr));
   const er=errs.slice(0,5).map((t,i)=>errStep(key,t,spec&&spec.e&&spec.e[i],fr));
+  if(/^(marche|velo|course|rameur|elliptique|tapis|stepper|nage|natation)/.test(key))er.forEach((e,i)=>{if(e&&e.t==='vite'&&!(spec&&spec.e&&spec.e[i]&&spec.e[i].fix)){e.what='Tu pars trop vite.';e.risk='Le cœur et les articulations n\'ont pas eu le temps de chauffer : tu t\'essouffles vite.';e.fix='Commence tranquille, puis accélère petit à petit.'}});
   return{nom:x?x.nom:nom,key,steps,errs:er,fr}}
 /* ---- lecteur ---- */
 const off=()=>document.documentElement.dataset.fx==='off';
@@ -8257,7 +8275,7 @@ ${N?'':'<i class="th2-gust"></i>'}
  let BOX=[0,0];
  const deco=()=>{const k=R.dataset.skin,tod=curTod(),d=document.getElementById('heroDeco');let W=400,H=340;
   const bw=d&&d.offsetWidth,bh=d&&d.offsetHeight;if(bw&&bh){H=340;W=Math.round(Math.max(280,Math.min(1400,H*bw/bh)))}BOX=[bw||0,bh||0];
-  setTimeout(()=>ensure(),0);return frame(tod,W,H)};
+  setTimeout(()=>idle(()=>ensure()),0);return frame(tod,W,H)};
  const ensure=()=>{if(!isForest(R.dataset.skin))return;const d=document.getElementById('heroDeco');const root=d&&d.querySelector('.th2');if(!root)return;
   const bw=d.offsetWidth,bh=d.offsetHeight;if(!bw||!bh)return;const H=340,W=Math.round(Math.max(280,Math.min(1400,H*bw/bh))),tod=root.dataset.tod;
   if(Math.abs(W-parseFloat(root.style.getPropertyValue('--th2w')))>W*.06){d.innerHTML=frame(tod,W,H);return ensure()}
@@ -8310,7 +8328,7 @@ ${N?'':'<i class="th2-gust"></i>'}
 <path class="th2c-ink d1" pathLength="1" d="M-4 246C40 232 84 226 128 234S206 252 250 242 330 226 404 234" stroke-width="1.7"/>
 <path class="th2c-ink d2" pathLength="1" d="M-4 272C60 258 120 256 176 266S290 280 340 266 384 258 404 260" stroke-width="2.1"/>
 <path class="th2c-ink d2" pathLength="1" d="M22 300c2-18 0-30-4-42M24 300c5-12 12-18 22-20M36 300c-1-12 3-22 9-28M366 300c1-16 6-28 14-34M372 300c2-10 8-18 16-22M360 300c-5-10-12-14-22-14" stroke-width="1.5"/>
-<path class="th2c-ink d1" pathLength="1" d="M92 232v-22M92 216l-5-5M92 213l6-6M200 238v-16M200 226l-4-4M200 224l4-4" stroke-width="1.2"/>
+<path class="th2c-ink d1" pathLength="1" d="M150 238v-16M150 226l-5-5M150 223l6-6M250 242v-14M250 232l-4-4M250 230l4-4" stroke-width="1.2"/>
 </g>
 <path class="th2c-ink d3" pathLength="1" d="${hatch(140,246,12,7,10,2.15,2)}${hatch(286,272,10,7,9,2.2,1.5)}" fill="none" stroke="#1d1915" stroke-width=".8" stroke-linecap="round" opacity=".38"/>
 </svg>
@@ -8342,10 +8360,25 @@ ${N?'':'<i class="th2-gust"></i>'}
  let pvDone={};const pv=()=>{const day=todOf(hour())==='nuit'?'jour':todOf(hour());[[day,'--th2pvD'],['nuit','--th2pvN']].forEach(([t,v])=>{if(pvDone[v]||R.style.getPropertyValue(v))return;pvDone[v]=1;paint(t,400,340,(o)=>thumbs(o,400,340,t),.42)})};
  {const sk=document.getElementById('skins');if(sk&&'IntersectionObserver' in window)new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting))setTimeout(pv,300)}).observe(sk)}
  agVisInterval(tick,5*6e4,1);
- tick();setTimeout(sync,0);
+ tick();setTimeout(()=>idle(sync),0);
  return {PAL,todOf,curTod,ensure,tick};
 })();
 /* === /ag_themes2 === */
+/* === rev3 === Vérification finale : petites aides, aucune clé ni format de stockage touché.
+   rv3Ex/rv3U : retrouve l'exercice dans le programme pour afficher l'unité d'une série minutée (calendrier, historique).
+   « Noter un repas » (data-act=nowMeal) : amène vraiment la carte sous la barre du haut (le défilement doux était parfois perdu
+   ou finissait derrière la barre). Écouteur de clic indépendant de l'objet A (déclaré plus bas dans le fichier). */
+function rv3Ex(e){try{for(const j of arr(PR&&PR.jours)){const x=arr(j&&j.exercices).find(y=>y&&e&&y.nom===e.nom);if(x)return x}}catch(_){}return null}
+function rv3U(e){try{const x=e&&e.reps?e:rv3Ex(e),u=x&&typeof SX!=='undefined'?SX.unit(x):'rep';return u==='min'?' min':u==='s'?' s':''}catch(_){return ''}}
+{const fix=()=>{const c=document.querySelector('section[data-v=cuisine].on .jadd');if(!c)return;const ab=$('appbar'),off=(ab?ab.getBoundingClientRect().bottom:60)+8,t=c.getBoundingClientRect().top;
+    if(Math.abs(t-off)>12){const de=document.documentElement,sb=de.style.scrollBehavior;de.style.scrollBehavior='auto';window.scrollTo(0,Math.max(0,scrollY+t-off));de.style.scrollBehavior=sb}};
+  let until=0;/* recale plusieurs fois (le contenu au-dessus se remplit en différé, Safari n'ancre pas le défilement), jamais après un geste de l'utilisateur */
+  document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('[data-act=nowMeal]');if(b){until=Date.now()+4200;[450,1000,1700,2600,3800].forEach(ms=>setTimeout(()=>{if(Date.now()<until)fix()},ms))}},true);
+  ['pointerdown','touchstart','wheel','keydown'].forEach(t=>addEventListener(t,e=>{if(!(e.target&&e.target.closest&&e.target.closest('[data-act=nowMeal]')))until=0},{passive:true,capture:true}))}
+/* Sleeve/bypass/anneau + diabète : la règle « 2 à 3 repas sans grignotage » ne doit pas faire supprimer les petites collations
+   protéinées prévues après l'opération (consigne ajoutée aux demandes à l'IA, rien d'autre ne change). */
+{const _st3=santeTxt;santeTxt=function(){let t=_st3.apply(this,arguments);try{const L=P.santeL||[];if(BARIA()&&(L.includes('diab2')||L.includes('diab1')))t+='\nAprès une chirurgie de l\'obésité, les petites collations prévues (riches en protéines, sans sucres rapides) font partie du plan : ce n\'est pas du grignotage.'}catch(e){}return t}}
+/* === /rev3 === */
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -8694,7 +8727,7 @@ const A={
   dislClear(b){DISL=[];store.set('dislikes',DISL);b.parentNode.remove();toast('C\'est oublié.')},
   homeAsk(){const v=$('hAsk').value.trim();if(!v){$('hAsk').focus();return}$('hAsk').value='';openPane('coach','chat');setTimeout(()=>{$('ask').value=v;send()},250)},
   zclear(){const old=P.zones.slice();P.zones=[];saveP();renderZones();if(old.length)undoToast('Priorités effacées',()=>{P.zones=old;saveP();renderZones()})},
-  genProg(b){const env=(b&&b.dataset.envie)?$('envie').value.trim():'';run(b,$('prog'),'Préparation de ta semaine',async()=>{
+  genProg(b){if(typeof patActive==='function'&&patActive()&&b&&b.dataset&&!b.dataset.patok){b.dataset.patok=1;const t0=b.textContent;b.textContent='Remplacer ton programme santé ? Touche encore';setTimeout(()=>{if(b.isConnected){delete b.dataset.patok;b.textContent=t0}},4500);return}if(b&&b.dataset)delete b.dataset.patok;const env=(b&&b.dataset.envie)?$('envie').value.trim():'';run(b,$('prog'),'Préparation de ta semaine',async()=>{
     PR=await askJSON(`Tu es un coach sportif diplômé. ${profil()}${env?'\nCE QU\'IL DEMANDE POUR CETTE SEMAINE (prioritaire) : « '+env+' ».':''}
 Crée un programme d'entraînement hebdomadaire adapté, réaliste et sûr, avec exactement ${P.jours||3} séances. Insiste sur les zones prioritaires sans négliger le reste, et respecte les blessures.
 ${SPORT_RULES()}
@@ -9652,10 +9685,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.28-101';
+const APP_VERSION='2026.11.28-102';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.28-102','Plus juste au quotidien','Dernière vérification faite : conseils adaptés à la sleeve partout, programme santé qui démarre au bon niveau selon ta date d\'opération, rappels d\'eau qui évitent l\'heure des repas, fiches santé mises à jour (AVC, foie gras, ostéoporose), séance guidée plus claire sur les étapes en minutes.','accueil',''],
  ['2026.11.28-101','Campagne enchantée','Ton thème Forêt devient une campagne peinte : gros nuages d\'été, rizières, grand arbre, maisonnette, herbes au vent, pissenlits et papillons. Le décor suit l\'heure du jour, et la nuit arrivent la lune et les lucioles. Clair devient « papier et encre », Nuit devient « velours et bougie ».','moi',''],
  ['2026.11.28-100','Vérification n°2','Plus simple au premier lancement (valeurs impossibles refusées, unités indiquées, mots plus clairs), « Noter un repas » ouvre toutes les façons de noter, anneaux de l\'accueil qui ne se décalent plus, fenêtres mieux lues par VoiceOver, fiche tension mise à jour (exercices tenus permis avec ton médecin).','accueil',''],
  ['2026.11.28-99','Exercices à la barre plus justes','Muscle-up, tractions, relevés de jambes, front et back lever, dips : la silhouette est vraiment suspendue, pieds dans le vide, barres à la bonne hauteur.','sport','exos'],
