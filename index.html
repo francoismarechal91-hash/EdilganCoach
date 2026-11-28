@@ -6697,37 +6697,42 @@ function FR(o){const h=o.h,r=o.r||0,T=p=>add(h,rot(p,r)),lL=o.lL??4,lR=o.lR??4;
   return{fr:1,h,sc,sL,sR,hd,eL,wL,eR,wR,gL:add(wL,mul(unit(sub(wL,eL)),3.4)),gR:add(wR,mul(unit(sub(wR,eR)),3.4)),hL,hR,kL:o.KL||kL,nL:o.NL||nL,kR:o.KR||kR,nR:o.NR||nR,ha:r}}
 const S={};
 /* ===== Muscle-up ===== */
-const MB=[118,56];
-const MK=(sh,t,o)=>({...atSh(sh,t),w1:[119,59],w2:[116,59],wb1:-1,wb2:-1,...o});
-const MU0=MK([114,110],-6,{l1:95,s1:60,l2:90,s2:56,ft1:150,ft2:146,hd:0,e:.2}),MU1=MK([104,64],-18,{l1:40,s1:40,l2:36,s2:36,ft1:120,ft2:116,hd:-6,e:.8}),
-  MU2=MK([128,42],40,{l1:0,s1:-12,l2:-4,s2:-16,ft1:80,ft2:76,hd:-20,e:1}),MU3=MK([124,6],8,{l1:4,s1:-2,l2:-2,s2:-6,ft1:90,ft2:86,hd:0,e:.9});
-S.mu={n:'Muscle-up',m:['back','chest','tri'],p:[()=>L([118,56],[212,56],5,P,.5)+X.post(214,54)],pf:[()=>X.bar(MB)],k:[MU0,MU0,MU1,MU2,MU3,MU3,MU2,MU1],tp:[.6,.45,.35,.45,.9,.6,.5,.7]};
+/* muscle-up sur barre HAUTE : suspension bras tendus pieds dans le vide, tirage explosif vers les hanches, passage au-dessus, appui bras tendus.
+   Le mouvement dépasse la hauteur du cadre : la « caméra » suit le corps qui monte (pan), barre et sol bougent avec. */
+const MB=[118,-18];
+const MK=(sh,t,pan,o)=>({...atSh(add(sh,[0,pan]),t),w1:[119,-15+pan],w2:[116,-15+pan],wb1:-1,wb2:-1,pan,...o});
+const MUP=(J,p)=>{const d=(p&&p.pan)||0,y=MB[1]+d,gy=G+d;return L([118,y],[212,y],5,P,.5)+Rc(210,y-2,8,Math.max(0,Math.min(gy,202)-y+2),3,P,.45)+(gy<=200?Rc(201,gy-3.5,26,3.5,1.7,P,.5)+L([12,gy],[228,gy],2,P,.3):'')};
+const MUF=(J,p)=>X.bar(add(MB,[0,(p&&p.pan)||0]));
+const MU0=MK([114,36],-6,0,{l1:14,s1:-26,l2:8,s2:-34,ft1:84,ft2:76,hd:0,e:.2}),MU1=MK([100,-12],-24,18,{l1:22,s1:12,l2:16,s2:6,ft1:96,ft2:92,hd:-6,e:.9}),
+  MU2=MK([130,-32],40,38,{l1:0,s1:-10,l2:-4,s2:-14,ft1:80,ft2:76,hd:-20,e:1}),MU3=MK([124,-70],8,76,{l1:4,s1:-2,l2:-2,s2:-6,ft1:90,ft2:86,hd:0,e:.9});
+S.mu={n:'Muscle-up',noFloor:1,m:['back','chest','tri'],p:[MUP],pf:[MUF],k:[MU0,MU0,MU1,MU2,MU3,MU3,MU2,MU1],tp:[.7,.45,.35,.45,.9,.6,.5,.8]};
 const LB=[140,100],LK=(sh,t,ft,o)=>({...atSh(sh,t),w1:[141,103],w2:[138,103],wb1:-1,wb2:-1,n1:ft,n2:add(ft,[-3,0]),...o});
 const ML0=LK([100,62],-6,[114,GF],{e:.2,hd:-4}),ML1=LK([108,76],-12,[114,GF],{e:.6,hd:-6}),ML2=LK([150,76],42,[110,GF],{e:1,hd:-18}),ML3=LK([146,48],6,[118,182],{e:.8,hd:0});
 S.mulow={n:'Transition muscle-up à la barre basse',m:['back','chest','tri'],p:[()=>L([140,100],[214,100],5,P,.5)+X.post(216,98)],pf:[()=>X.bar(LB)],k:[ML0,ML0,ML1,ML2,ML3,ML3,ML2,ML1],tp:[.6,.6,.6,.6,1,.6,.6,.7]};
 /* ===== Gainage suspendu ===== */
-const HB=[126,-6],HBP=()=>L([126,-6],[210,-6],5,P,.5)+X.post(212,-8),HBF=()=>X.bar(HB);
-const HANG=(u,top)=>{const t=lerp(-4,top?-48:-16,u),sh=L2([124,48],top?[112,44]:[121,47],u),h=sub(sh,up(t,LT));return{hx:h[0],hy:h[1],t,w1:[127,-3],w2:[124,-3],wb1:-1,wb2:-1,hd:lerp(0,-6,u)}};
-S.hkr={n:'Relevés de genoux suspendu',m:['abs'],tp:T2(.4,.9,.4,1.5),p:[HBP],pf:[HBF],g:u=>({...HANG(u),l1:lerp(4,116,u),s1:lerp(2,14,u),l2:lerp(1,112,u),s2:lerp(-1,10,u),ft1:lerp(90,100,u),ft2:lerp(86,96,u)})};
-S.ttb={n:'Relevés de jambes jusqu\'à la barre',m:['abs'],tp:T2(.4,1.1,.3,1.6),p:[HBP],pf:[HBF],g:u=>{const l=lerp(4,204,ease(u));return{...HANG(u,1),l1:l,s1:l,l2:l-3,s2:l-3,ft1:l+40,ft2:l+36}}};
+/* barre haute : bras tendus, les pieds restent au-dessus du sol pendant tout le mouvement */
+const HB=[126,-20],HBP=()=>L([126,-20],[210,-20],5,P,.5)+X.post(212,-22),HBF=()=>X.bar(HB);
+const HANG=(u,top)=>{const t=lerp(-4,top?-48:-16,u),sh=L2([124,34],top?[112,30]:[121,33],u),h=sub(sh,up(t,LT));return{hx:h[0],hy:h[1],t,w1:[127,-17],w2:[124,-17],wb1:-1,wb2:-1,hd:lerp(0,-6,u)}};
+S.hkr={n:'Relevés de genoux suspendu',m:['abs'],tp:T2(.4,.9,.4,1.5),p:[HBP],pf:[HBF],g:u=>({...HANG(u),l1:lerp(10,116,u),s1:lerp(-26,14,u),l2:lerp(4,112,u),s2:lerp(-34,10,u),ft1:lerp(70,100,u),ft2:lerp(62,96,u)})};
+S.ttb={n:'Relevés de jambes jusqu\'à la barre',m:['abs'],tp:T2(.4,1.1,.3,1.6),p:[HBP],pf:[HBF],g:u=>{const l=lerp(6,204,ease(u)),f=lerp(66,40,u),b=lerp(30,0,Math.pow(u,1.5));return{...HANG(u,1),l1:l,s1:l-b,l2:l-3,s2:l-3-b*1.2,ft1:l+f,ft2:l+f-4}}};
 /* ===== Front lever (face au ciel, bras tendus) ===== */
 const FLB=[86,14],FLP=()=>L([20,14],[86,14],5,P,.5)+X.post(20,12),FLF=()=>X.bar(FLB);
 const FLK=(sh,t,q,k,o)=>{const[l1,s1]=legR(t,q,k);return{...atSh(sh,t),w1:[87,17],w2:[84,17],wb1:-1,wb2:-1,l1,s1,l2:l1-2,s2:s1-2,ft1:s1+30,ft2:s1+28,hd:0,...o}};
-const FH=FLK([86,70],-2,10,70,{e:.2}),FT1=FLK([76,70],-52,110,150,{e:.6});
+const FH=FLK([86,70],-2,10,110,{e:.2}),FT1=FLK([76,70],-52,110,150,{e:.6});
 const FLt=FLK([70,66],-90,135,165,{sp:7,e:1}),FLtb=FLK([70,67.2],-90,135,165,{sp:7,e:1});
 S.fltuck={n:'Front lever groupé',m:['back','abs'],p:[FLP],pf:[FLF],k:[FH,FH,FT1,FLt,FLtb,FLt,FT1],tp:[.6,.7,.6,1.4,1.4,.7,.7]};
 const FLs=FLK([70,66],-90,0,0,{T1:.86,T2:.86,l1:88,s1:88,l2:93,s2:93,ft1:92,ft2:96,e:1});
 S.flstraddle={n:'Front lever jambes écartées',m:['back','abs'],p:[FLP],pf:[FLF],k:[FH,FH,FT1,FLs,{...FLs,hy:FLs.hy+1.4},FLs,FT1],tp:[.6,.7,.6,1.4,1.4,.7,.7]};
 const FLf=FLK([70,66],-90,0,0,{ft1:96,ft2:94,e:1});
-S.flfull={n:'Front lever',m:['back','abs'],p:[FLP],pf:[FLF],k:[FH,FH,FLK([74,70],-50,40,10,{e:.6}),FLf,{...FLf,hy:FLf.hy+1.4},FLf,FLK([74,70],-50,40,10,{e:.6})],tp:[.6,.8,.7,1.4,1.4,.8,.8]};
+S.flfull={n:'Front lever',m:['back','abs'],p:[FLP],pf:[FLF],k:[FH,FH,FT1,FLf,{...FLf,hy:FLf.hy+1.4},FLf,FT1],tp:[.6,.8,.7,1.4,1.4,.8,.8]};
 /* ===== Skin the cat et back lever (face au sol) ===== */
 const SKB=[120,14],SKP=()=>L([120,14],[210,14],5,P,.5)+X.post(212,12),SKF=()=>X.bar(SKB);
 const SKK=(sh,t,q,k,e)=>{const[l1,s1]=legR(t,q,k);return{...atSh(sh,t),w1:[121,17],w2:[118,17],wb1:-1,wb2:-1,l1,s1,l2:l1-2,s2:s1-2,ft1:s1+20,ft2:s1+18,hd:0,e}};
-const SK0=SKK([118,70],-2,12,62,.2),SK1=SKK([114,72],-70,140,150,.6),SK2=SKK([118,72],-180,150,160,.8),SK3=SKK([122,72],-250,100,120,.9),SK4=SKK([126,68],-322,18,30,1);
+const SK0=SKK([118,70],-2,12,110,.2),SK1=SKK([114,72],-70,140,150,.6),SK2=SKK([118,72],-180,150,160,.8),SK3=SKK([122,72],-250,100,120,.9),SK4=SKK([126,68],-322,18,60,1);
 S.skin={n:'Skin the cat',m:['back','shoulder','abs'],p:[SKP],pf:[SKF],k:[SK0,SK0,SK1,SK2,SK3,SK4,SK4,SK3,SK2,SK1],tp:[.5,.7,.7,.7,.7,1.2,.7,.7,.7,.7]};
 const BLB=[138,14],BLP=()=>L([30,14],[138,14],5,P,.5)+X.post(30,12),BLF=()=>X.bar(BLB);
 const BLK=(sh,t,q,k,o)=>{const[l1,s1]=legR(t,q,k);return{...atSh(sh,t),w1:[139,17],w2:[136,17],wb1:1,wb2:1,l1,s1,l2:l1+2,s2:s1+2,ft1:s1-10,ft2:s1-8,hd:0,...o}};
-const GH=BLK([150,68],30,4,20,{e:.3}),BLt=BLK([165,62],90,120,150,{sp:6,e:1}),BLs=BLK([165,62],90,0,0,{T1:.86,T2:.86,l1:-92,s1:-92,l2:-87,s2:-87,ft1:-90,ft2:-86,e:1}),BLf=BLK([165,62],90,0,0,{ft1:-92,ft2:-90,e:1});
+const GH=BLK([150,68],30,4,72,{e:.3}),BLt=BLK([165,62],90,120,150,{sp:6,e:1}),BLs=BLK([165,62],90,0,0,{T1:.86,T2:.86,l1:-92,s1:-92,l2:-87,s2:-87,ft1:-90,ft2:-86,e:1}),BLf=BLK([165,62],90,0,0,{ft1:-92,ft2:-90,e:1});
 const BLH=b=>[GH,GH,BLK([158,66],60,40,60,{e:.6}),b,{...b,hy:b.hy+1.4},b,BLK([158,66],60,40,60,{e:.6})];
 S.bltuck={n:'Back lever groupé',m:['back','chest','shoulder'],p:[BLP],pf:[BLF],k:BLH(BLt),tp:[.6,.7,.6,1.4,1.4,.7,.7]};
 S.blstraddle={n:'Back lever jambes écartées',m:['back','chest','shoulder'],p:[BLP],pf:[BLF],k:BLH(BLs),tp:[.6,.7,.6,1.4,1.4,.7,.7]};
@@ -6923,16 +6928,16 @@ S.rotext={n:'Rotation externe d\'épaule à l\'élastique',fr:1,m:['shoulder'],t
 const BAR0=[126,10],BARP=()=>L([126,10],[210,10],5,P,.5)+X.post(212,8),BARF=()=>X.bar([126,10]);
 /* traction de profil : u = 0 bras tendus, 1 menton au-dessus de la barre */
 const TRAC=(u,o={})=>{const b=o.bar||BAR0,t=lerp(o.t0??-4,o.t1??-12,u),sh=L2(add(b,[-2,54]),add(b,[-8,o.top??12]),u),hp=sub(sh,up(t,LT));
-  return{hx:hp[0],hy:hp[1],t,w1:add(b,[1,3]),w2:add(b,[-2,3]),wb1:o.wb??-1,wb2:o.wb??-1,U1:lerp(1,.8,u),U2:lerp(1,.8,u),l1:22,s1:-58,l2:12,s2:-70,ft1:20,ft2:10,hd:lerp(0,-8,u),...(o.x||{})}};
+  return{hx:hp[0],hy:hp[1],t,w1:add(b,[1,3]),w2:add(b,[-2,3]),wb1:o.wb??-1,wb2:o.wb??-1,U1:lerp(1,.8,u),U2:lerp(1,.8,u),l1:20,s1:-82,l2:10,s2:-92,ft1:-62,ft2:-72,hd:lerp(0,-8,u),...(o.x||{})}};
 /* jambes de face fléchies en arrière (suspendu) */
-const HLEG=(cx,hy)=>({KL:[cx-14,hy+36],NL:[cx-6,hy+52],KR:[cx+14,hy+36],NR:[cx+4,hy+54]});
+const HLEG=(cx,hy)=>({KL:[cx-14,hy+34],NL:[cx-7,hy+44],KR:[cx+14,hy+34],NR:[cx+5,hy+45]});
 const FBAR=()=>L([30,10],[210,10],5,P,.55)+X.post(30,8)+X.post(210,8);
 S.scappull={n:'Tractions scapulaires',fr:1,m:['back','traps'],tp:T2(.5,.8,.9,1),p:[FBAR],
   g:u=>{const cx=120,hy=lerp(124,115,u);return{cx,hy,sh:lerp(5,-3,u),hdy:lerp(3,0,u),wL:[101,11],wR:[139,11],wbL:1,wbR:-1,...HLEG(cx,hy)}}};
 S.tracneg={n:'Traction négative',m:['back','bi'],tp:T2(.7,3.2,.3,.9),p:[BARP],pf:[BARF],g:u=>TRAC(1-u)};
 S.tracsup={n:'Traction supination',m:['back','bi'],tp:T2(.3,.9,.35,1.5),p:[BARP],pf:[BARF],g:u=>TRAC(u,{t0:-1,t1:-4,top:16})};
-S.trachaute={n:'Traction poitrine à la barre',m:['back','bi'],tp:T2(.3,.7,.35,1.5),p:[()=>L([126,28],[210,28],5,P,.5)+X.post(212,26)],pf:[()=>X.bar([126,28])],
-  g:u=>{const b=[126,28],t=lerp(-4,-20,u),sh=L2(add(b,[-2,54]),add(b,[-10,-6]),ease(u)),hp=sub(sh,up(t,LT));return{hx:hp[0],hy:hp[1],t,w1:add(b,[1,3]),w2:add(b,[-2,3]),wb1:-1,wb2:-1,l1:lerp(22,34,u),s1:lerp(-58,-40,u),l2:lerp(12,26,u),s2:lerp(-70,-52,u),ft1:20,ft2:10,hd:lerp(0,-10,u)}}};
+S.trachaute={n:'Traction poitrine à la barre',m:['back','bi'],tp:T2(.3,.7,.35,1.5),p:[()=>L([126,12],[210,12],5,P,.5)+X.post(212,10)],pf:[()=>X.bar([126,12])],
+  g:u=>{const b=[126,12],t=lerp(-4,-20,u),sh=L2(add(b,[-2,54]),add(b,[-10,-6]),ease(u)),hp=sub(sh,up(t,LT));return{hx:hp[0],hy:hp[1],t,w1:add(b,[1,3]),w2:add(b,[-2,3]),wb1:-1,wb2:-1,l1:lerp(20,34,u),s1:lerp(-82,-60,u),l2:lerp(10,26,u),s2:lerp(-92,-72,u),ft1:lerp(-62,-30,u),ft2:lerp(-72,-40,u),hd:lerp(0,-10,u)}}};
 const AR0={cx:120,hy:113,wL:[78,11],wR:[162,11],wbL:1,wbR:-1,hd:0,...HLEG(120,113),e:.2};
 const ARR={cx:146,hy:81,wL:[78,11],wR:[162,11],wbL:1,wbR:-1,lean:-4,...HLEG(146,81),e:1},ARL={...ARR,cx:94,lean:4,...HLEG(94,81)};
 S.tracarcher={n:'Traction archer',fr:1,m:['back','bi'],p:[FBAR],k:[AR0,AR0,ARR,ARR,AR0,AR0,ARL,ARL],tp:[.3,1,.35,1.2,.3,1,.35,1.2]};
@@ -6940,13 +6945,14 @@ S.trac1={n:'Traction à une main assistée',fr:1,m:['back','bi'],tp:T2(.4,1.2,.4
   g:u=>{const cx=lerp(124,133,u),hy=lerp(118,84,u);return{cx,hy,wR:[140,11],wbR:-1,wL:[96,lerp(52,78,u)],wbL:-1,lean:lerp(0,-3,u),...HLEG(cx,hy)}}};
 /* ===== Dips ===== */
 const DIPF=()=>X.dipF(94)+X.dipF(146),DIPT=()=>`<circle cx="94" cy="104" r="5.5" fill="${P}"/><circle cx="146" cy="104" r="5.5" fill="${P}"/>`;
-const DPOSE=(hy,o={})=>{const cx=o.cx??120;return{cx,hy,wL:[94,103],wR:[146,103],wbL:-1,wbR:1,KL:[cx-14,hy+36],NL:[cx-6,hy+52],KR:[cx+14,hy+36],NR:[cx+4,hy+54],hd:0,...o}};
+const DPOSE=(hy,o={})=>{const cx=o.cx??120;return{cx,hy,wL:[94,103],wR:[146,103],wbL:-1,wbR:1,KL:[cx-14,hy+34],NL:[cx-7,hy+44],KR:[cx+14,hy+34],NR:[cx+5,hy+45],hd:0,...o}};
 const DSTAND={cx:120,hy:104,sh:4,wL:[94,103],wR:[146,103],wbL:-1,wbR:1,KL:[111,147],NL:[110,188],KR:[129,147],NR:[130,188],e:.15};
 S.dipsupport={n:'Maintien aux barres parallèles',fr:1,m:['tri','chest','shoulder'],p:[DIPF],pf:[DIPT],
   k:[DSTAND,DSTAND,DPOSE(101,{sh:-2,e:1}),DPOSE(102.2,{sh:-1.2,e:.9}),DPOSE(101,{sh:-2,e:1}),DSTAND],tp:[.5,.7,1.4,1.4,.6,.8]};
 S.dipsneg={n:'Dips négatifs',fr:1,m:['chest','tri'],tp:T2(.6,3,.3,.8),p:[DIPF],pf:[DIPT],g:u=>DPOSE(lerp(103,128,u))};
-const DIPS=(u)=>{const t=lerp(6,26,u),sh=L2([119,50],[127,80],u),hp=sub(sh,up(t,LT));return{hx:hp[0],hy:hp[1],t,w1:[122,104],w2:[119,104],wb1:-1,wb2:-1,l1:lerp(0,12,u),s1:lerp(-70,-82,u),l2:lerp(-6,6,u),s2:lerp(-76,-88,u),ft1:-40,ft2:-50,hd:lerp(0,-6,u)}};
-S.dipsbar={n:'Dips aux barres parallèles',m:['chest','tri'],tp:T2(.3,1.3,.15,.85),p:[()=>X.pbars(104,58,186)],g:DIPS};
+/* barres à hauteur de hanche, descente jusqu'aux coudes à ~90°, buste un peu penché, genoux pliés : les pieds ne touchent jamais le sol */
+const DIPS=(u)=>{const t=lerp(8,28,u),sh=L2([118,44],[131,60],u),hp=sub(sh,up(t,LT));return{hx:hp[0],hy:hp[1],t,w1:[121,98],w2:[118,98],wb1:-1,wb2:-1,l1:lerp(2,10,u),s1:lerp(-84,-92,u),l2:lerp(-4,4,u),s2:lerp(-90,-98,u),ft1:-62,ft2:-72,hd:lerp(0,-6,u)}};
+S.dipsbar={n:'Dips aux barres parallèles',m:['chest','tri'],tp:T2(.3,1.3,.15,.85),p:[()=>X.pbars(98,58,186)],g:DIPS};
 S.dipsanneaux={n:'Dips aux anneaux',fr:1,m:['chest','tri','shoulder'],tp:T2(.4,1.5,.2,1),pf:[J=>X.rings(J.gL)+X.rings(J.gR)],
   g:u=>{const s=Math.sin(u*Math.PI*2)*1.6;return DPOSE(lerp(103,127,u),{cx:120+s,wL:[96+s*.6,103],wR:[144+s*.6,103]})}};
 /* ===== Calisthénie : poussée (pompes, équilibres, planche) ===== */
@@ -7046,6 +7052,78 @@ S.swimming={n:'Swimming (nage)',m:['lower','glute','shoulder'],d:1.6,p:[()=>X.ma
 const SAWS=(lean,wL,wR,ts,e)=>({cx:120,hy:178,lean,tsc:ts,nL:[30,184],nR:[210,184],wL,wR,wbL:-1,wbR:1,e});
 const SW0=SAWS(0,[48,126],[192,126],1,.2),SWL=SAWS(-24,[176,92],[54,170],.82,1),SWR=SAWS(24,[186,170],[64,92],.82,1);
 S.saw={n:'La scie',fr:1,m:['obl','ham','back'],p:[()=>X.mat()],k:[SW0,SW0,SWL,SWL,SW0,SW0,SWR,SWR],tp:[.4,1.1,.7,1.1,.4,1.1,.7,1.1]};
+/* ===== v98b — suspension lisible au premier coup d'œil (remplace les scènes suspendues / en appui définies plus haut) :
+   pas de sol ni d'ombre, montants qui sortent par le bas du cadre, bras et cuisses un peu raccourcis (silhouette réduite),
+   jambes presque tendues fléchies vers l'arrière, chevilles croisées : au moins 25 % du cadre de vide sous les pieds.
+   Quand le corps monte au-dessus de la barre, la « caméra » le suit (pan : corps, barre et montants décalés ensemble). ===== */
+const SU=.84,SUT=.8,SUA={U1:SU,F1:SU,U2:SU,F2:SU,T1:SUT,T2:SUT},ARMS=(UA+FA)*SU;
+const POSTZ=(x,y)=>Rc(x-4,y-2,8,Math.max(0,203-y),3,P,.45);                       // montant jusqu'au bas du cadre, sans socle
+const PNZ=p=>(p&&p.pan)||0;
+const HLEGS={l1:-6,s1:-58,l2:-10,s2:-64,ft1:-82,ft2:-88};                            // jambes suspendues : chevilles croisées, genoux un peu fléchis
+const armTo=(W,sh0,W0)=>add(W,mul(unit(sub(sh0,W0)),ARMS));                       // épaule replacée pour un bras raccourci
+/* --- muscle-up --- */
+const MBZ=[118,-20],MKZ=(sh,t,pan,o)=>({...atSh(add(sh,[0,pan]),t),w1:[119,-17+pan],w2:[116,-17+pan],wb1:-1,wb2:-1,pan,...SUA,...o});
+const MUZ0=MKZ([114,31],-6,0,{...HLEGS,hd:0,e:.2}),MUZ1=MKZ([100,-12],-24,18,{l1:20,s1:-24,l2:14,s2:-34,ft1:-60,ft2:-70,hd:-6,e:.9}),
+  MUZ2=MKZ([130,-32],40,38,{l1:0,s1:-16,l2:-4,s2:-24,ft1:-70,ft2:-78,hd:-20,e:1}),MUZ3=MKZ([124,-65],8,72,{l1:4,s1:-8,l2:-2,s2:-16,ft1:-80,ft2:-88,hd:0,e:.9});
+S.mu={n:'Muscle-up',noFloor:1,m:['back','chest','tri'],p:[(J,p)=>{const y=MBZ[1]+PNZ(p);return L([118,y],[212,y],5,P,.5)+POSTZ(212,y)}],pf:[(J,p)=>X.bar(add(MBZ,[0,PNZ(p)]))],
+  k:[MUZ0,MUZ0,MUZ1,MUZ2,MUZ3,MUZ3,MUZ2,MUZ1],tp:[.7,.45,.35,.45,.9,.6,.5,.8]};
+/* --- relevés suspendus --- */
+const HBZ=[126,-20],HBPZ=()=>L(HBZ,[210,-20],5,P,.5)+POSTZ(210,-20),HBFZ=()=>X.bar(HBZ);
+const HANGZ=(u,top)=>{const t=lerp(-4,top?-48:-16,u),sh=L2([124,31],top?[112,28]:[121,30],u),h=sub(sh,up(t,LT));return{hx:h[0],hy:h[1],t,w1:[127,-17],w2:[124,-17],wb1:-1,wb2:-1,hd:lerp(0,-6,u),...SUA}};
+S.hkr={n:'Relevés de genoux suspendu',noFloor:1,m:['abs'],tp:T2(.4,.9,.4,1.5),p:[HBPZ],pf:[HBFZ],
+  g:u=>{const s1=-58+72*Math.pow(u,2.2),s2=-64+74*Math.pow(u,2.2),f=lerp(24,36,u);return{...HANGZ(u),l1:lerp(-6,116,u),s1,l2:lerp(-10,112,u),s2,ft1:s1-f,ft2:s2-f}}};
+S.ttb={n:'Relevés de jambes jusqu\'à la barre',noFloor:1,m:['abs'],tp:T2(.4,1.1,.3,1.6),p:[HBPZ],pf:[HBFZ],
+  g:u=>{const l=lerp(-6,204,ease(u)),s1=-58+262*Math.pow((l+6)/210,2.1);return{...HANGZ(u,1),l1:l,s1,l2:l-4,s2:s1-6,ft1:s1-24,ft2:s1-30}}};
+/* --- tractions (barre haute, la caméra suit le menton au-dessus de la barre) --- */
+const BZ=[126,-20],BARPZ=(J,p)=>{const y=BZ[1]+PNZ(p);return L([126,y],[210,y],5,P,.5)+POSTZ(212,y)},BARFZ=(J,p)=>X.bar(add(BZ,[0,PNZ(p)]));
+const TRACZ=(u,o={})=>{const pan=(o.pan??14)*(o.ez?ease(u):u),t=lerp(o.t0??-4,o.t1??-12,u),sh=add(L2(add(BZ,[-2,ARMS]),add(BZ,[-8,o.top??12]),o.ez?ease(u):u),[0,pan]),hp=sub(sh,up(t,LT));
+  return{hx:hp[0],hy:hp[1],t,w1:add(BZ,[1,3+pan]),w2:add(BZ,[-2,3+pan]),wb1:-1,wb2:-1,...SUA,U1:SU*lerp(1,.9,u),U2:SU*lerp(1,.9,u),...HLEGS,hd:lerp(0,-8,u),pan,...(o.x||{})}};
+S.tracneg={n:'Traction négative',noFloor:1,m:['back','bi'],tp:T2(.7,3.2,.3,.9),p:[BARPZ],pf:[BARFZ],g:u=>TRACZ(1-u)};
+S.tracsup={n:'Traction supination',noFloor:1,m:['back','bi'],tp:T2(.3,.9,.35,1.5),p:[BARPZ],pf:[BARFZ],g:u=>TRACZ(u,{t0:-1,t1:-4,top:16,pan:12})};
+S.trachaute={n:'Traction poitrine à la barre',noFloor:1,m:['back','bi'],tp:T2(.3,.7,.35,1.5),p:[BARPZ],pf:[BARFZ],
+  g:u=>TRACZ(u,{t1:-20,top:-6,pan:32,ez:1,x:{l1:lerp(-6,20,u),s1:lerp(-58,-44,u),l2:lerp(-10,14,u),s2:lerp(-64,-50,u),hd:lerp(0,-10,u)}})};
+/* --- front lever, skin the cat, back lever : même barre haute, bras raccourcis --- */
+const FLBZ=[86,-20],FLPZ=()=>L([20,-20],[86,-20],5,P,.5)+POSTZ(20,-20),FLFZ=()=>X.bar(FLBZ);
+const FLKZ=(sh,t,q,k,o)=>{const[l1,s1]=legR(t,q,k),W=[87,-17];return{...atSh(armTo(W,sh,[87,17]),t),w1:W,w2:[84,-17],wb1:-1,wb2:-1,...SUA,l1,s1,l2:l1-2,s2:s1-2,ft1:s1+30,ft2:s1+28,hd:0,...o}};
+const FHZ=FLKZ([86,70],-2,0,0,{...HLEGS,e:.2}),FT1Z=FLKZ([76,70],-52,110,150,{e:.6});
+const FLtZ=FLKZ([70,66],-90,135,165,{sp:7,e:1}),FLsZ=FLKZ([70,66],-90,0,0,{T1:.8,T2:.8,l1:88,s1:88,l2:93,s2:93,ft1:92,ft2:96,e:1}),FLfZ=FLKZ([70,66],-90,0,0,{T1:SUT,T2:SUT,ft1:96,ft2:94,e:1});
+const FMZ=FLKZ([84,70],-14,46,110,{ft1:-86,ft2:-92,e:.4}),FLHZ=b=>[FHZ,FHZ,FMZ,FT1Z,b,{...b,hy:b.hy+1.4},b,FT1Z,FMZ];
+S.fltuck={n:'Front lever groupé',noFloor:1,m:['back','abs'],p:[FLPZ],pf:[FLFZ],k:FLHZ(FLtZ),tp:[.6,.35,.35,.6,1.4,1.4,.7,.35,.35]};
+S.flstraddle={n:'Front lever jambes écartées',noFloor:1,m:['back','abs'],p:[FLPZ],pf:[FLFZ],k:FLHZ(FLsZ),tp:[.6,.35,.35,.6,1.4,1.4,.7,.35,.35]};
+S.flfull={n:'Front lever',noFloor:1,m:['back','abs'],p:[FLPZ],pf:[FLFZ],k:FLHZ(FLfZ),tp:[.6,.4,.4,.7,1.4,1.4,.8,.4,.4]};
+const SKBZ=[120,-20],SKPZ=()=>L([120,-20],[210,-20],5,P,.5)+POSTZ(212,-20),SKFZ=()=>X.bar(SKBZ);
+const SKKZ=(sh,t,q,k,e,o)=>{const[l1,s1]=legR(t,q,k),W=[121,-17];return{...atSh(armTo(W,sh,[121,17]),t),w1:W,w2:[118,-17],wb1:-1,wb2:-1,...SUA,l1,s1,l2:l1-2,s2:s1-2,ft1:s1+20,ft2:s1+18,hd:0,e,...o}};
+const SKZ0=SKKZ([118,70],-2,0,0,.2,HLEGS),SKZM=SKKZ([117,71],-24,36,110,.4,{ft1:-86,ft2:-92}),SKZ1=SKKZ([114,72],-70,140,150,.6),SKZ2=SKKZ([118,72],-180,150,160,.8),SKZ3=SKKZ([122,72],-250,100,120,.9),SKZ4=SKKZ([126,68],-322,18,60,1);
+S.skin={n:'Skin the cat',noFloor:1,m:['back','shoulder','abs'],p:[SKPZ],pf:[SKFZ],k:[SKZ0,SKZ0,SKZM,SKZ1,SKZ2,SKZ3,SKZ4,SKZ4,SKZ3,SKZ2,SKZ1,SKZM],tp:[.5,.35,.35,.7,.7,.7,1.2,.7,.7,.7,.35,.35]};
+const BLBZ=[138,-18],BLPZ=()=>L([30,-18],[138,-18],5,P,.5)+POSTZ(30,-18),BLFZ=()=>X.bar(BLBZ);
+const BLKZ=(sh,t,q,k,o)=>{const[l1,s1]=legR(t,q,k),W=[139,-15];return{...atSh(armTo(W,sh,[139,17]),t),w1:W,w2:[136,-15],wb1:1,wb2:1,...SUA,l1,s1,l2:l1+2,s2:s1+2,ft1:s1-10,ft2:s1-8,hd:0,...o}};
+const GHZ=BLKZ([150,68],30,4,60,{e:.3}),BLMZ=BLKZ([158,66],60,40,60,{e:.6});
+const BLHZ=b=>[GHZ,GHZ,BLMZ,b,{...b,hy:b.hy+1.4},b,BLMZ];
+S.bltuck={n:'Back lever groupé',noFloor:1,m:['back','chest','shoulder'],p:[BLPZ],pf:[BLFZ],k:BLHZ(BLKZ([165,62],90,120,150,{sp:6,e:1})),tp:[.6,.7,.6,1.4,1.4,.7,.7]};
+S.blstraddle={n:'Back lever jambes écartées',noFloor:1,m:['back','chest','shoulder'],p:[BLPZ],pf:[BLFZ],k:BLHZ(BLKZ([165,62],90,0,0,{T1:.8,T2:.8,l1:-92,s1:-92,l2:-87,s2:-87,ft1:-90,ft2:-86,e:1})),tp:[.6,.7,.6,1.4,1.4,.7,.7]};
+S.blfull={n:'Back lever',noFloor:1,m:['back','chest','shoulder'],p:[BLPZ],pf:[BLFZ],k:BLHZ(BLKZ([165,62],90,0,0,{ft1:-92,ft2:-90,e:1})),tp:[.6,.7,.6,1.4,1.4,.7,.7]};
+/* --- dips aux barres parallèles (profil) : barres hautes, pieds dans le vide --- */
+const PBZ=(y,x0,x1)=>L([x0,y],[x1,y],5.5,P,.62)+Rc(x0+4,y,6,203-y,3,P,.42)+Rc(x1-10,y,6,203-y,3,P,.42);
+S.dipsbar={n:'Dips aux barres parallèles',noFloor:1,m:['chest','tri'],tp:T2(.3,1.3,.15,.85),p:[()=>PBZ(68,58,186)],
+  g:u=>{const t=lerp(8,28,u),sh=L2([118,20],[129,35],u),hp=sub(sh,up(t,LT));return{hx:hp[0],hy:hp[1],t,w1:[121,68],w2:[118,68],wb1:-1,wb2:-1,...SUA,l1:lerp(-4,4,u),s1:lerp(-54,-60,u),l2:lerp(-8,0,u),s2:lerp(-60,-66,u),ft1:-82,ft2:-88,hd:lerp(0,-6,u)}}};
+/* --- vues de face : barre haute, chevilles croisées, torse un peu raccourci --- */
+const FBARZ=(J,p)=>{const y=-20+PNZ(p);return L([30,y],[210,y],5,P,.55)+POSTZ(30,y)+POSTZ(210,y)};
+const HLEGZ=(cx,hy)=>({KL:[cx-8,hy+34],NL:[cx+3,hy+53],KR:[cx+8,hy+34],NR:[cx-4,hy+54]});
+S.scappull={n:'Tractions scapulaires',noFloor:1,fr:1,m:['back','traps'],tp:T2(.5,.8,.9,1),p:[FBARZ],
+  g:u=>{const cx=120,hy=lerp(86,78,u);return{cx,hy,tsc:.9,sh:lerp(5,-3,u),hdy:lerp(3,0,u),wL:[101,-19],wR:[139,-19],wbL:1,wbR:-1,...HLEGZ(cx,hy)}}};
+const ARZ=(cx,hy,pan,o)=>({cx,hy:hy+pan,tsc:.9,wL:[78,-19+pan],wR:[162,-19+pan],wbL:1,wbR:-1,pan,...HLEGZ(cx,hy+pan),...o});
+const ARZ0=ARZ(120,77,0,{e:.2}),ARZR=ARZ(146,47,9,{lean:-4,e:1}),ARZL=ARZ(94,47,9,{lean:4,e:1});
+S.tracarcher={n:'Traction archer',noFloor:1,fr:1,m:['back','bi'],p:[FBARZ],k:[ARZ0,ARZ0,ARZR,ARZR,ARZ0,ARZ0,ARZL,ARZL],tp:[.3,1,.35,1.2,.3,1,.35,1.2]};
+S.trac1={n:'Traction à une main assistée',noFloor:1,fr:1,m:['back','bi'],tp:T2(.4,1.2,.4,1.6),p:[FBARZ],pf:[(J,p)=>L([96,-20+PNZ(p)],[96,58+PNZ(p)],3,E,.9)],
+  g:u=>{const pan=lerp(0,9,u),cx=lerp(124,133,u),hy=lerp(82,50,u)+pan;return{cx,hy,tsc:.9,pan,wR:[140,-19+pan],wbR:-1,wL:[96,lerp(22,46,u)+pan],wbL:-1,lean:lerp(0,-3,u),...HLEGZ(cx,hy)}}};
+/* --- dips de face et anneaux : barres hautes, pieds dans le vide --- */
+const DYZ=63,DIPFZ=()=>Rc(91,DYZ+1,6,202-DYZ,3,P,.45)+Rc(143,DYZ+1,6,202-DYZ,3,P,.45),DIPTZ=()=>`<circle cx="94" cy="${DYZ+1}" r="5.5" fill="${P}"/><circle cx="146" cy="${DYZ+1}" r="5.5" fill="${P}"/>`;
+const DPZ=(hy,o={})=>{const cx=o.cx??120;return{cx,hy,wL:[94,DYZ],wR:[146,DYZ],wbL:-1,wbR:1,KL:[cx-9,hy+34],NL:[cx+3,hy+52],KR:[cx+9,hy+34],NR:[cx-4,hy+53],hd:0,...o}};
+S.dipsupport={n:'Maintien aux barres parallèles',noFloor:1,fr:1,m:['tri','chest','shoulder'],p:[DIPFZ],pf:[DIPTZ],
+  k:[DPZ(74,{sh:5,e:.3}),DPZ(74,{sh:5,e:.3}),DPZ(61,{sh:-2,e:1}),DPZ(62.2,{sh:-1.2,e:.9}),DPZ(61,{sh:-2,e:1}),DPZ(74,{sh:5,e:.3})],tp:[.5,.7,1.4,1.4,.6,.8]};
+S.dipsneg={n:'Dips négatifs',noFloor:1,fr:1,m:['chest','tri'],tp:T2(.6,3,.3,.8),p:[DIPFZ],pf:[DIPTZ],g:u=>DPZ(lerp(63,88,u))};
+S.dipsanneaux={n:'Dips aux anneaux',noFloor:1,fr:1,m:['chest','tri','shoulder'],tp:T2(.4,1.5,.2,1),pf:[J=>X.rings(J.gL)+X.rings(J.gR)],
+  g:u=>{const s=Math.sin(u*Math.PI*2)*1.6;return DPZ(lerp(63,87,u),{cx:120+s,wL:[96+s*.6,DYZ],wR:[144+s*.6,DYZ]})}};
 /* règles nom → scène : précises (aucun nom d'exercice existant n'est détourné, vérifié par test) */
 const XL_RULES=[
  [/tractions? scapulaires?|scapular pull|scap pulls?/,'scappull'],[/traction.*n[ée]gative|n[ée]gatives? (de |en )?tractions?|negative pull/,'tracneg'],
@@ -8796,10 +8874,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.28-98';
+const APP_VERSION='2026.11.28-99';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.28-99','Exercices à la barre plus justes','Muscle-up, tractions, relevés de jambes, front et back lever, dips : la silhouette est vraiment suspendue, pieds dans le vide, barres à la bonne hauteur.','sport','exos'],
  ['2026.11.28-98','Vérification n°1','14 corrections : le bouton « Annuler » des messages remarche, une copie de sécurité est faite avant chaque restauration, repères santé mis à jour (sel sous 5 g pour la tension, foie déconseillé pendant la grossesse), animations corrigées, scanner disponible hors ligne.','accueil',''],
  ['2026.11.27-97','Animations plus fluides','Les démonstrations sont redessinées sur place au lieu d\'être recréées : séance et repos environ 60 % plus légers, bibliothèque d\'exercices 2 fois plus légère.','sport','exos'],
  ['2026.11.27-96','Encore plus léger','Moins de travail quand l\'app est en arrière-plan (de 922 réveils à 10 en 2 heures), mémoire au démarrage divisée par 2, écrans de séance et de repos plus fluides, photos et calendrier qui ne sont plus recalculés pour rien.','accueil',''],
