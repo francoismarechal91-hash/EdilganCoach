@@ -1544,6 +1544,19 @@ html{overscroll-behavior-y:contain}
 #sheetIn .row>[data-act=closeSheet]{flex-shrink:0}#sheetIn .row:has(>[data-act=closeSheet])>h2{min-width:0;overflow-wrap:break-word;hyphens:auto}
 .toast button{pointer-events:auto}html .toast{width:max-content;max-width:90%}
 /* === /rev1 === */
+/* === rev2 === */
+/* Anneaux de l'accueil : la classe utilitaire .full{grid-column:1/-1} s'appliquait aux anneaux à 100 % (.ring.full)
+   → dès qu'un objectif était atteint (protéines, eau), les anneaux passaient l'un sous l'autre. */
+.rings>.ring.full{grid-column:auto}
+/* Contraste : puce cochée (santé, onboarding) blanc sur #f0412f = 3,8:1 en Clair et Nuit → même rouge que les boutons (4,6:1). */
+html:is([data-skin=clair],[data-skin=nuit]) .chip.p{background:var(--red)}
+/* Quoi de neuf : « Voir tout » */
+.rv2more>summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center;padding:6px 0;list-style-position:inside}
+.rv2tech{margin:10px 2px 4px;font-size:15px}
+#rv2ObErr{margin:12px 0 0}
+/* titre de feuille focalisé pour les lecteurs d'écran : pas de cadre (ce n'est pas un bouton) */
+#sheetIn [tabindex="-1"]:focus{outline:none}
+/* === /rev2 === */
 .legend{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;font-size:13px;color:var(--mute);margin-top:4px}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-right:6px;vertical-align:-1px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
@@ -2483,11 +2496,11 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
       <div><label for="p-taille">Taille (cm)</label><input id="p-taille" type="text" inputmode="decimal" autocomplete="off" min="120" max="230" placeholder="178"></div>
       <div><label for="p-poids">Poids (kg)</label><input id="p-poids" type="text" inputmode="decimal" autocomplete="off" step="0.1" min="30" max="300" placeholder="80"></div>
       <div class="full"><label for="p-obj">Mon objectif</label><select id="p-obj" data-custom="ex. préparer un trail, perdre 10 kg, avoir des bras plus épais">
-        <option value="muscle">Me muscler / prendre du volume</option>
+        <option value="muscle">Me muscler (prendre du volume)</option>
         <option value="perte">Perdre du poids</option>
-        <option value="seche">Perdre du gras et me dessiner</option>
-        <option value="forme">Garder la forme / tonifier</option>
-        <option value="endurance">Améliorer mon cardio</option></select></div>
+        <option value="seche">Affiner ma silhouette (perdre du gras)</option>
+        <option value="forme">Garder la forme</option>
+        <option value="endurance">Avoir plus de souffle (cardio)</option></select></div>
       <div><label for="p-niv">Niveau</label><select id="p-niv" data-custom="ex. reprise après 5 ans d'arrêt"><option value="débutant">Débutant</option><option value="intermédiaire">Intermédiaire</option><option value="avancé">Avancé</option></select></div>
       <div><label for="p-jours">Séances / semaine</label><select id="p-jours" data-custom="ex. 2 à 3, selon les semaines"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option><option>7</option></select></div>
       <div><label for="p-lieu">Où je m'entraîne</label><select id="p-lieu" data-custom="ex. au parc, à la piscine, salle d'entreprise"><option value="salle">En salle</option><option value="maison">À la maison</option><option value="mixte">Les deux</option></select></div>
@@ -2829,8 +2842,8 @@ window.addEventListener('error',function(e){if(window.__edgOK)return;var m=e&&e.
       <div class="full"><label for="w-nom">Ton prénom</label><input id="w-nom" autocomplete="given-name" placeholder="Prénom"></div>
       <div><label for="w-age">Âge</label><input id="w-age" type="number" inputmode="numeric" placeholder="ans"></div>
       <div><label for="w-sexe">Tu es</label><select id="w-sexe"><option value="H">Un homme</option><option value="F">Une femme</option></select></div>
-      <div><label for="w-taille">Taille</label><input id="w-taille" type="text" inputmode="decimal" autocomplete="off" placeholder="cm"></div>
-      <div><label for="w-poids">Poids</label><input id="w-poids" type="text" inputmode="decimal" autocomplete="off" step="0.1" placeholder="kg"></div>
+      <div><label for="w-taille">Taille (cm)</label><input id="w-taille" type="text" inputmode="decimal" autocomplete="off" placeholder="cm"></div>
+      <div><label for="w-poids">Poids (kg)</label><input id="w-poids" type="text" inputmode="decimal" autocomplete="off" step="0.1" placeholder="kg"></div>
     </div>
     <label style="margin-top:18px">Ton objectif</label>
     <div class="wobj" id="wObj">
@@ -3150,7 +3163,7 @@ function metrics(){
 const cat=i=>i<18.5?'Maigreur':i<25?'Poids normal':i<30?'Surpoids':i<35?'Obésité modérée':i<40?'Obésité sévère':'Obésité massive';
 function calc(){
   const m=metrics();$('avatar').textContent=((P.nom||'').trim()[0]||'M').toUpperCase();
-  $('hello').textContent=P.obj?'Objectif '+({muscle:'muscle',perte:'perte de poids',seche:'sèche',forme:'forme',endurance:'cardio'}[P.obj]||P.obj):'Mon Coach';
+  $('hello').textContent=P.obj?'Objectif : '+({muscle:'me muscler',perte:'perdre du poids',seche:'affiner ma silhouette',forme:'garder la forme',endurance:'plus de souffle'}[P.obj]||P.obj):'Mon Coach';
   if(!m){$('imcPin').style.display='none';const t=num(P.taille),w=num(P.poids);$('imc').textContent='–';$('imcCat').textContent=t&&(t<100||t>250)?'Taille en centimètres (ex. 178)':w&&(w<25||w>400)?'Vérifie ton poids (en kg)':'Remplis ton profil';$('imcRange').textContent='';['stBmr','stKcal','stProt'].forEach(i=>$(i)&&($(i).textContent='–'));renderDay();return}
   $('imc').textContent=fr(m.imc.toFixed(1));$('imcCat').textContent=cat(m.imc);
   $('imcRange').textContent='Poids « normal » pour ta taille : '+Math.round(m.min)+' à '+Math.round(m.max)+' kg';
@@ -4534,7 +4547,7 @@ setTimeout(bkGuard,2500);
 const BK_ACTS={
   async bkAutoRestore(b){const id=b.dataset.id;if(!b.dataset.ok&&!b.dataset.sure){b.dataset.sure=1;b.textContent='Sûr ? Touche encore';setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent='Restaurer'}},4000);return}
     try{const x=await phOp('readonly',st=>st.get(id));if(!x||!x.data)throw 0;const cur={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('coach_'))cur[k]=localStorage.getItem(k)}
-      await autoSnap('avant-restauration',cur);Object.entries(x.data).forEach(([k,v])=>{try{localStorage.setItem(k,v)}catch(e){}});toast('Données restaurées');setTimeout(()=>location.reload(),900)}catch(e){toast('Restauration impossible')}}
+      await autoSnap('avant-restauration',cur);Object.entries(x.data).forEach(([k,v])=>{if(k==='coach_pushSeed')return;try{localStorage.setItem(k,v)}catch(e){}});toast('Données restaurées');setTimeout(()=>location.reload(),900)}catch(e){toast('Restauration impossible')}}
 };
 
 /* ===================== CALENDRIER : historique jour par jour, archivé pour toujours (IndexedDB) ===================== */
@@ -4661,7 +4674,7 @@ const HLP=[
 function hlpInit(){HLP.forEach(([f,short])=>{let p=null;try{p=f()}catch(e){}if(!p||p.dataset.hlp)return;p.dataset.hlp='1';const x=document.createElement('p');x.className='sub hlpx';x.hidden=true;x.innerHTML=p.innerHTML;
   p.textContent=short+' ';const b=document.createElement('button');b.type='button';b.className='ghost hlp';b.dataset.act='hlp';b.setAttribute('aria-expanded','false');b.setAttribute('aria-label','Plus d\'explications');b.textContent='?';p.appendChild(b);p.after(x)})}
 const SIMPLE_ACTS={
-  nowMeal(){openPane('scan','assiette')},
+  nowMeal(){openPane('cuisine','journal');setTimeout(()=>{const c=document.querySelector('section[data-v=cuisine] .jadd');if(c)c.scrollIntoView({block:'start',behavior:'smooth'})},120)},
   nowScan(){openPane('scan','produit');setTimeout(()=>{try{if(location.hash==='#scan'&&!$('scanOv').classList.contains('on'))A.liveScan()}catch(e){}},150)},
   nowSport(){let n=null;try{n=simpleNext()}catch(e){}if(n&&!n.done){startSession(n.j);return}openPane('sport',n?'programme':'prets')},
   nowCook(){openPane('cuisine','menus')},
@@ -5145,7 +5158,7 @@ renderS=function(){
   const lastN=SL[today()],sleepLow=lastN&&dur(lastN.c,lastN.l)<360,cc=CHK[today()],sore=cc&&cc.c>=4,dl=deloadNeeded();
   const g=suggest(x),p=clean(x.muscles),s=clean(x.muscles_secondaires),u=SX.unit(x),fx=S._fix;delete S._fix;if(fx&&fx.rir!=null)S.rir=+fx.rir;
   const ls=x.sets[x.sets.length-1],kg0=fx?fx.kg:ls?ls.kg:g.kg,r0=fx?fx.reps:ls?ls.reps:g.reps,prev=lastSets(x.nom)||[],cur=x.sets.length,rows=Math.max(n,cur+1);
-  const cardio=/\b(course|marche|v[ée]lo|rameur|elliptique|tapis|cardio)\b/i.test(x.nom+' '+(x.machine||'')),timed=/[ée]chauffement|[ée]tirement|mobilit[ée]/i.test(x.nom)||/\bmin\b|minute|\d+\s*s\b|secondes?/i.test(String(x.reps||'')),bw=!num(kg0)&&SX.bw(x)&&!cardio&&!timed;
+  const cardio=/\b(course|marche|v[ée]lo|rameur|elliptique|tapis|cardio)\b/i.test(x.nom+' '+(x.machine||'')),timed=/[ée]chauffement|[ée]tirement|mobilit[ée]/i.test(x.nom)||u!=='rep'||/\bmin\b|minute|\d+\s*s\b|secondes?/i.test(String(x.reps||'')),bw=!num(kg0)&&SX.bw(x),addKg=bw&&!cardio&&!timed;
   const tips=[];if(!cur&&g.note)tips.push(['',g.note]);
   if((sleepLow||sore||dl)&&S.i===0&&!cur)tips.push(['warn',(sleepLow?'Nuit courte : fais une série de moins par exercice aujourd\'hui. ':'')+(sore?'Grosses courbatures : allège de 25 %. ':'')+(dl&&!sleepLow&&!sore?'Ton corps a besoin d\'une semaine plus légère : moitié moins de séries, 4 répétitions en réserve.':'')]);
   if(cardio&&!cur)tips.push(['',`Zone 2 : ${hrZones().z2.join('–')} pulsations/min, tu peux parler en phrases. Fractionné : ${hrZones().hiit.join('–')}.`]);
@@ -5156,7 +5169,7 @@ renderS=function(){
   const nx=S.ex[S.i+1],last=S.i===S.ex.length-1&&cur>=n-1;
   ov.innerHTML=`<div class="sxw sxex">${head}
   <h1>${esc(x.nom)}</h1>
-  <div class="sxmeta"><span class="dose">${esc(x.series)} × ${esc(x.reps)}</span><span>repos ${esc(SX.dur(+x.repos_s||90))}</span>${x.machine?`<span class="sxmach">${esc(x.machine)}</span>`:''}</div>
+  <div class="sxmeta"><span class="dose">${esc(x.series)} × ${esc(x.reps)}</span><span>repos ${esc(SX.dur(+x.repos_s||90))}</span>${x.machine?`<span class="sxmach">${esc(/^aucun$/i.test(String(x.machine).trim())?'sans matériel':x.machine)}</span>`:''}</div>
   <div class="sxanim">${ANIM.html(ANIM.pick(x.nom,x.machine,x.anim),'anim ovanim')}</div>
   <ol class="sxsets">${Array.from({length:rows},(_,i)=>row(i)).join('')}</ol>
   ${tips.map(([c,t])=>`<div class="tip sxtip${c?' '+c:''}">${esc(t)}</div>`).join('')}
@@ -5167,7 +5180,7 @@ renderS=function(){
   <div class="logbar sxbar${bw?' bw':''}"><div class="sxin">
    <div class="sxst sxkg"><label for="sKg">Charge (kg)</label><div class="sxsr"><button type="button" class="ghost sxpm" data-sxs="sKg" data-v="-1" aria-label="Moins de charge">−</button><input id="sKg" type="text" inputmode="decimal" autocomplete="off" step="0.5" min="0" value="${esc(kg0)}" placeholder="0"><button type="button" class="ghost sxpm" data-sxs="sKg" data-v="1" aria-label="Plus de charge">+</button></div></div>
    <div class="sxst"><label for="sR">${u==='s'?'Secondes':u==='min'?'Minutes':'Répétitions'}</label><div class="sxsr"><button type="button" class="ghost sxpm" data-sxs="sR" data-v="-1" aria-label="Une de moins">−</button><input id="sR" type="number" inputmode="numeric" min="0" value="${esc(r0)}" placeholder="0"><button type="button" class="ghost sxpm" data-sxs="sR" data-v="1" aria-label="Une de plus">+</button></div></div>
-   ${bw?'<button type="button" class="ghost sxpm sxaddkg" data-act="sxKg" aria-label="Ajouter une charge">+ kg</button>':''}</div>
+   ${addKg?'<button type="button" class="ghost sxpm sxaddkg" data-act="sxKg" aria-label="Ajouter une charge">+ kg</button>':''}</div>
   <button class="kdone" data-act="doneSet"><span class="kck" aria-hidden="true">${SX.ic('i-tick')}</span><span>${last?'Dernière série faite':'Série '+(cur+1)+' faite'}</span></button></div></div>`;
   ov.scrollTop=0;
   const wu=()=>{const kg=num($('sKg')?.value),w=$('wuIn');if(!w)return;w.innerHTML=kg>=5?`<p class="mute" style="margin-top:0">5 min de cardio léger avant, puis :</p><table class="tbl">${warmup(kg).map(([f,r])=>`<tr><td>${f?'Échauffement '+Math.round(f*100)+' %':'Barre à vide'}</td><td>${f?fr(Math.max(0,Math.round(kg*f/2.5)*2.5))+' kg':'20 kg'} × ${r}</td></tr>`).join('')}</table><p class="mute">60 s de repos entre ces séries, puis 2 min avant ta première vraie série.</p><p class="mute">Disques par côté (barre de 20 kg) : ${esc(plates(kg))}</p>`:'<p class="mute">Indique une charge pour calculer l\'échauffement.</p>'};
@@ -5606,6 +5619,7 @@ const PS={
  veine2:['sante.fr · Jambes lourdes','https://www.sante.fr/jambes-lourdes'],
  arthsf:['sante.fr · Arthrose et rhumatismes','https://www.sante.fr/node/2055459'],
  sfhta:['Société française d’hypertension artérielle · Alimentation et tension (mise au point 2024)','https://www.sfhta.eu/wp-content/uploads/2024/12/Mise-au-Point-nutrition-SFHTA-10-12-2024-1.pdf'],
+ esc24:['Société européenne de cardiologie · Recommandations 2024 sur la tension élevée et l’hypertension (activité physique, § 8.2)','https://doi.org/10.1093/eurheartj/ehae178'],
  htamemo:['HAS · Hypertension artérielle : des outils pour une prise en charge optimale','https://www.has-sante.fr/jcms/pprd_2974311/fr/hypertension-arterielle-des-outils-pour-une-prise-en-charge-optimale'],
  dyslip:['Ville de Paris · Alimentation et pathologies (cholestérol, tension)','https://cdn.paris.fr/paris/2025/12/11/alimentation-et-pathologies-W6Gw.pdf']
 };
@@ -5634,14 +5648,14 @@ const PATHO={
   ias:'Diabète de type 1 : glycémie avant, pendant si long et après (hypoglycémie possible jusqu’à 12 h après) ; sucre rapide toujours sur soi ; ne jamais donner de dose d’insuline ; ne pas s’entraîner seul lors d’une nouvelle activité.',
   ian:'Diabète de type 1 : indique les glucides de chaque plat en grammes ; ne propose jamais de dose d’insuline.'},
  hta:{s:'HTA',r:'Une activité régulière fait baisser la tension, en plus de ton traitement, et limite les autres risques pour le cœur comme le surpoids ou le prédiabète. Après une séance, la tension reste un peu plus basse pendant plusieurs heures.',
-  f:[['Endurance','3 à 7 jours par semaine, au moins 30 minutes par jour (d’un coup ou en plusieurs morceaux), effort modéré 5-6 sur 10. Commence par allonger la durée petit à petit.'],['Renforcement','2 à 3 jours par semaine non consécutifs, grands muscles, 2 à 4 séries de 8 à 12 répétitions, charges modérées ; débutant(e) ou senior, commence plus léger.'],['Souplesse','2 à 3 fois par semaine, étirements de 10 à 30 secondes.'],['Avec un bêtabloquant','Ton cœur monte moins vite : fie-toi à ton essoufflement (échelle 0-10) plutôt qu’à ta montre.']],
-  ev:['de bloquer ta respiration en forçant : souffle toujours pendant l’effort','les positions tenues longtemps en force (gainage long, chaise contre le mur) et les charges maximales','un effort modéré ou intense si ta tension au repos est très haute (180/110 ou plus) : consulte d’abord','la grosse chaleur si tu prends un diurétique : bois régulièrement'],
+  f:[['Endurance','3 à 7 jours par semaine, au moins 30 minutes par jour (d’un coup ou en plusieurs morceaux), effort modéré 5-6 sur 10. Commence par allonger la durée petit à petit.'],['Renforcement','2 à 3 jours par semaine non consécutifs, grands muscles, 2 à 4 séries de 8 à 12 répétitions, charges modérées ; débutant(e) ou senior, commence plus léger.'],['Exercices tenus (isométriques)','Ils font aussi baisser la tension (Société européenne de cardiologie, 2024) : chaise contre le mur, planche ou serrer une balle, 3 à 4 fois 1 à 2 minutes avec 1 à 2 minutes de repos, 2 à 3 jours par semaine, sans forcer au maximum. Respire normalement pendant toute la tenue, jamais en apnée. Seulement si ta tension est bien contrôlée et avec l’accord de ton médecin : le programme de l’app n’en met pas d’office.'],['Souplesse','2 à 3 fois par semaine, étirements de 10 à 30 secondes.'],['Avec un bêtabloquant','Ton cœur monte moins vite : fie-toi à ton essoufflement (échelle 0-10) plutôt qu’à ta montre.']],
+  ev:['de bloquer ta respiration en forçant : souffle toujours pendant l’effort','de forcer au maximum, avec une charge lourde comme dans une position tenue (chaise contre le mur, planche), et les positions tenues tant que ta tension n’est pas équilibrée','un effort modéré ou intense si ta tension au repos est très haute (180/110 ou plus) : consulte d’abord','la grosse chaleur si tu prends un diurétique : bois régulièrement'],
   st:['un mal de tête violent ou une vue trouble','un vertige après la séance : assieds-toi, la tension peut baisser fort après l’effort, même quelques heures après'],
-  pr:'si ta tension n’est pas encore équilibrée, si tu as des symptômes à l’effort, ou avant des efforts intenses',
+  pr:'si ta tension n’est pas encore équilibrée, si tu as des symptômes à l’effort, avant des efforts intenses, ou avant d’ajouter des exercices tenus',
   a:{k:['Sel : moins de 5 g par jour (Société française d’hypertension, 2024 ; la HAS disait 6 à 8 g en 2016), soit à peu près une cuillère à café rase en tout, sel caché compris.','Le sel caché est surtout dans le pain, le fromage, la charcuterie, les plats préparés, les soupes et sauces toutes prêtes.','Une alimentation équilibrée et, si tu es en surpoids, une perte de poids modérée.','Alcool : réduis-le ou arrête-le.'],p:['légumes, fruits, légumineuses','herbes, épices, ail, citron à la place du sel','poisson, volaille, œufs','eau du robinet'],m:['charcuterie, fromages très salés','plats préparés, pizzas, chips, biscuits apéritif','bouillon cube, sauce soja','alcool'],pi:['les céréales du petit-déjeuner et les biscottes sont salées','certaines eaux gazeuses sont riches en sodium','saler avant d’avoir goûté']},
   h:['Prends ta tension à la maison si ton médecin te l’a demandé, et note-la.','Arrêter le tabac protège ton cœur, même s’il ne change pas directement la tension.'],
-  sv:[['sel',5]],pg:{f:'meta',ban:['iso']},src:['hta','htap','htamemo','sfhta'],
-  ias:'Hypertension : endurance modérée 30 min/j 3 à 7 j/sem ; renforcement 2-3 j/sem charges modérées en soufflant ; aucun blocage respiratoire, pas de gainage long ni de chaise statique ni de charges maximales ; avec bêtabloquant, intensité selon l’essoufflement (0-10) et non le cardio.',
+  sv:[['sel',5]],pg:{f:'meta',ban:['iso']},src:['hta','htap','htamemo','sfhta','esc24'],
+  ias:'Hypertension : endurance modérée 30 min/j 3 à 7 j/sem ; renforcement 2-3 j/sem charges modérées en soufflant ; aucun blocage respiratoire ni charge maximale ; exercices tenus (chaise contre le mur, planche, serrer une balle) seulement à effort modéré, 1 à 2 min par série en respirant normalement, en précisant « si ta tension est contrôlée et avec l’accord de ton médecin » ; avec bêtabloquant, intensité selon l’essoufflement (0-10) et non le cardio.',
   ian:'Hypertension : moins de 5 g de sel par jour au total ; aucune charcuterie, fromage très salé, bouillon cube, sauce soja ni plat préparé ; assaisonne aux herbes, épices et citron.'},
  chol:{s:'cholestérol',r:'Bouger régulièrement protège tes artères et aide ton traitement contre le cholestérol à mieux agir. Avec une alimentation pauvre en graisses saturées, c’est la base de la prise en charge.',
   f:[['Endurance','150 à 300 minutes par semaine d’intensité modérée (effort 5-6 sur 10), en 3 à 5 fois.'],['Renforcement','Au moins 2 séances par semaine.'],['Souplesse','2 à 3 fois par semaine.']],
@@ -7428,7 +7442,7 @@ const xlCard=(k,x)=>{const dur=Math.round(x.steps.reduce((a,s)=>a+(s.s||45)+(s.r
   return`<button class="pret" data-act="runPret" data-k="${k}"><span class="pthumb">${ANIM.html(ANIM.libKey(s.n,s.k),'animMini')}</span><span style="flex:1;min-width:0;text-align:left"><b>${esc(x.t)}</b><small class="mute">${esc(x.d)}</small></span><span class="chip">${dur} min</span></button>`};
 const XLTN={caliD:'débutant',caliI:'intermédiaire',caliA:'avancé'};
 function xlTestRes(r){if(!r)return'';const k=r.niv;return`<p class="xlRes">Ton niveau : <b>${XLTN[k]}</b>${r.d?` <span class="mute">(test du ${esc(frd(r.d))})</span>`:''}.</p><button class="wide" data-act="runPret" data-k="${k}">Lancer « ${esc(PRETS[k].t)} »</button>`}
-function xlPretsHTML(){const t=store.get('xlTest',null);return XL_GR.map(([g,tt,sub])=>`<h3 style="margin:18px 0 4px">${tt}</h3><p class="sub" style="margin-top:0">${sub}</p><div class="prets">${Object.entries(PRETS).filter(([,x])=>x.g===g).map(([k,x])=>xlCard(k,x)).join('')}</div>`+(g==='cali'?`<div class="xlTest" id="xlTest"><h3>Mes résultats au test</h3><p class="mute" style="margin-top:0">Écris tes chiffres : le coach te dit quelle séance choisir.</p><div class="xlTg"><div><label for="xlTp">Pompes</label><input id="xlTp" type="text" inputmode="numeric" autocomplete="off" placeholder="ex. 12" value="${t&&t.p!=null?esc(t.p):''}"></div><div><label for="xlTt">Tractions</label><input id="xlTt" type="text" inputmode="numeric" autocomplete="off" placeholder="ex. 2" value="${t&&t.t!=null?esc(t.t):''}"></div><div><label for="xlTh">Hollow (secondes)</label><input id="xlTh" type="text" inputmode="numeric" autocomplete="off" placeholder="ex. 25" value="${t&&t.h!=null?esc(t.h):''}"></div></div><button class="alt wide" data-act="xlTest">Voir mon niveau</button><div id="xlTr">${xlTestRes(t)}</div></div>`:'')).join('')}
+function xlPretsHTML(){const t=store.get('xlTest',null);return XL_GR.map(([g,tt,sub])=>`<h3 style="margin:18px 0 4px">${tt}</h3><p class="sub" style="margin-top:0">${sub}</p><div class="prets">${Object.entries(PRETS).filter(([,x])=>x.g===g).map(([k,x])=>xlCard(k,x)).join('')}</div>`+(g==='cali'?`<div class="xlTest" id="xlTest"><h3>Mes résultats au test</h3><p class="mute" style="margin-top:0">Écris tes chiffres : le coach te dit quelle séance choisir.</p><div class="xlTg"><div><label for="xlTp">Pompes</label><input id="xlTp" type="text" inputmode="numeric" autocomplete="off" placeholder="ex. 12" value="${t&&t.p!=null?esc(t.p):''}"></div><div><label for="xlTt">Tractions</label><input id="xlTt" type="text" inputmode="numeric" autocomplete="off" placeholder="ex. 2" value="${t&&t.t!=null?esc(t.t):''}"></div><div><label for="xlTh">Gainage creux (secondes)</label><input id="xlTh" type="text" inputmode="numeric" autocomplete="off" placeholder="ex. 25" value="${t&&t.h!=null?esc(t.h):''}"></div></div><button class="alt wide" data-act="xlTest">Voir mon niveau</button><div id="xlTr">${xlTestRes(t)}</div></div>`:'')).join('')}
 const _xlRP=renderPrets;
 renderPrets=function(){const r=_xlRP.apply(this,arguments);const el=$('pretsBox');if(el&&!el.querySelector('#xlTest')){const h=[...el.querySelectorAll('h3')].find(z=>/^À deux/.test(z.textContent));if(h)h.insertAdjacentHTML('beforebegin',xlPretsHTML());else el.insertAdjacentHTML('beforeend',xlPretsHTML())}return r};
 function xlNiv(p,t,h){const lp=p<10?0:p<25?1:2,lt=t<1?0:t<8?1:2;let n=Math.min(lp,lt);if(h<20)n=0;else if(h<45)n=Math.min(n,1);return['caliD','caliI','caliA'][n]}
@@ -7565,9 +7579,45 @@ try{const b0=beep;let t=0;
 {const _rf=restoreFrom;restoreFrom=function(txt){try{const t=String(txt||''),a=t.indexOf('{'),b=t.lastIndexOf('}');if(a>=0&&b>a){JSON.parse(t.slice(a,b+1));
   const cur={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('coach_'))cur[k]=localStorage.getItem(k)}
   /* identifiant propre (comme « _maj_ ») : ne remplace pas la sauvegarde du jour ; même format d'enregistrement que autoSnap, rangée « autre » par bkPrune (4 gardées) */
-  if(cur.coach_profil||cur.coach_journal)phOp('readwrite',st=>st.put({id:'__bk_'+new Date().toISOString().slice(0,10)+'_rest_'+Date.now(),data:cur,d:Date.now(),v:APP_VERSION,reason:'avant-restauration',n:Object.keys(cur).length})).then(()=>{BKGEN++;return bkPrune()}).catch(()=>{})}}catch(e){}
+  delete cur.coach_pushSeed;if(cur.coach_profil||cur.coach_journal)phOp('readwrite',st=>st.put({id:'__bk_'+new Date().toISOString().slice(0,10)+'_rest_'+Date.now(),data:cur,d:Date.now(),v:APP_VERSION,reason:'avant-restauration',n:Object.keys(cur).length})).then(()=>{BKGEN++;return bkPrune()}).catch(()=>{})}}catch(e){}
   return _rf.apply(this,arguments)}}
 /* === /rev1 === */
+/* === rev2 === vérification indépendante, tour 2 */
+/* Quoi de neuf : l'essentiel d'abord (3 nouveautés), les améliorations techniques regroupées en une ligne, tout le reste
+   (y compris ce qui n'était jamais montré au-delà de 6) dans « Voir tout ». */
+const RV2_TECH=/^(Vérification|Plus solide|Plus sûre|Plus fiable|Plus rapide|Encore plus léger|Animations plus fluides|Mieux sur iPhone|Tes données sont protégées)/;
+const rv2News=L=>{const b=n=>`<button class="stp news" data-act="newsGo" data-v="${esc(n[3])}" data-p="${esc(n[4])}"><i>★</i><span><b>${esc(n[1])}</b><small>${esc(n[2])}</small></span></button>`;
+  const F=L.filter(n=>!RV2_TECH.test(n[1])),T=L.filter(n=>RV2_TECH.test(n[1])),top=F.slice(0,3),more=[...F.slice(3),...T];
+  let h=top.map(b).join('');
+  if(T.length)h+=`<p class="mute rv2tech">${top.length?'Et aussi : ':''}l'app est plus rapide, plus sûre et plus fiable (${T.length} mise${T.length>1?'s':''} à jour).</p>`;
+  if(more.length)h+=`<details class="rv2more"><summary>Voir tout (${more.length} de plus)</summary>${more.map(b).join('')}</details>`;
+  return h};
+/* Premier lancement : valeurs impossibles (taille 50, 1,78 m, poids 0 ou 500, âge 200) refusées avec un message clair ;
+   1,78 (mètres) est converti en 178 cm. Avant : acceptées sans rien dire, et l'app n'affichait plus d'objectif calories. */
+const rv2ObOk=st=>{const chk=(id,lo,hi,msg,conv)=>{const el=$(id);if(!el)return null;el.removeAttribute('aria-invalid');const v=String(el.value).trim();if(!v)return null;let n=num(v);if(conv)n=conv(n,el);return n>=lo&&n<=hi?null:[el,msg]};
+  const bad=[chk('w-age',10,110,'ton âge en années (ex. 65)'),chk('w-taille',100,250,'ta taille en centimètres (ex. 165)',(n,el)=>{if(n>=1&&n<2.6){n=Math.round(n*100);el.value=String(n)}return n}),chk('w-poids',25,350,'ton poids en kilos (ex. 72,5)')].filter(Boolean);
+  let m=$('rv2ObErr');if(!bad.length){if(m)m.remove();return true}
+  if(!m){m=document.createElement('p');m.id='rv2ObErr';m.className='err';m.setAttribute('role','alert');const nx=st.querySelector('[data-act=obNext]');if(nx)nx.before(m);else st.appendChild(m)}
+  m.textContent='Vérifie '+bad.map(x=>x[1]).join(', puis ')+'.';bad.forEach(x=>x[0].setAttribute('aria-invalid','true'));try{bad[0][0].focus()}catch(e){}return false};
+{const _og=obGo;obGo=function(d){try{if(d>0){const S=[...document.querySelectorAll('#welcome .obstep')],c=S.find(x=>!x.hidden);if(c&&c.querySelector('#w-taille')&&!rv2ObOk(c))return}}catch(e){}return _og.apply(this,arguments)}}
+/* Feuilles (#sheet) pour VoiceOver / TalkBack / clavier : nom = titre de la feuille (avant : toujours « Partager »),
+   focus placé dans la feuille à l'ouverture, Tab reste dedans, Échap ferme, focus rendu au bouton d'origine à la fermeture. */
+{const sh=$('sheet'),inn=$('sheetIn');if(sh&&inn){let back=null,was=false;
+  const name=()=>{const h=inn.querySelector('h1,h2,h3');const t=h?h.textContent.replace(/\s+/g,' ').trim().slice(0,80):'';sh.setAttribute('aria-label',t||'Fenêtre')};
+  const into=()=>{if(sh.contains(document.activeElement))return;const h=inn.querySelector('h1,h2,h3')||inn;if(!h.hasAttribute('tabindex'))h.setAttribute('tabindex','-1');try{h.focus({preventScroll:true})}catch(e){}};
+  /* bouton d'origine : s'il a été redessiné pendant que la feuille était ouverte, on retrouve son jumeau (même action, même clé) */
+  const twin=b=>{if(!b)return null;if(b.isConnected)return b;try{if(b.id)return $(b.id);const a=b.dataset&&b.dataset.act;if(!a)return null;let q='[data-act="'+CSS.escape(a)+'"]';['k','id','v','p','j','i'].forEach(k=>{if(b.dataset[k]!=null)q+='[data-'+k+'="'+CSS.escape(b.dataset[k])+'"]'});return document.querySelector(q)}catch(e){return null}};
+  const sync=()=>{const on=sh.classList.contains('on');
+    if(on){name();if(!was){const a=document.activeElement;back=a&&a!==document.body&&!sh.contains(a)?a:null;into()}}
+    else if(was){const b=twin(back);back=null;const ae=document.activeElement;if(b&&!b.matches('input,textarea,select,[contenteditable]')&&b.getClientRects().length&&(!ae||ae===document.body||sh.contains(ae)))try{b.focus({preventScroll:true})}catch(e){}}
+    was=on};
+  new MutationObserver(sync).observe(sh,{attributes:true,attributeFilter:['class']});
+  new MutationObserver(()=>{if(sh.classList.contains('on')){name();if(document.activeElement===document.body||!document.activeElement)into()}}).observe(inn,{childList:true});
+  document.addEventListener('keydown',e=>{if(!sh.classList.contains('on'))return;
+    if(e.key==='Escape'){e.preventDefault();const c=inn.querySelector('[data-act=closeSheet]');if(c)c.click();else try{A.closeSheet()}catch(x){}return}
+    if(e.key==='Tab'){const f=[...inn.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),summary,[tabindex]:not([tabindex="-1"])')].filter(x=>x.getClientRects().length);if(!f.length)return;
+      const i=f.indexOf(document.activeElement);if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&(i<0||i===f.length-1)){e.preventDefault();f[0].focus()}}})}}
+/* === /rev2 === */
 const IMGQ=q=>`https://www.google.fr/search?tbm=isch&hl=fr&gl=fr&lr=lang_fr&q=${encodeURIComponent(q)}`;
 const machBox=x=>!x.machine?'':`<div class="mach"><span class="ic c-blue"><svg class="i"><use href="#i-dumb"/></svg></span><div style="flex:1"><div class="mute" style="font-size:12px;font-weight:700">Sur quel appareil</div><b>${esc(x.machine)}</b>${x.reglage?`<div class="mute">${esc(x.reglage)}</div>`:''}</div></div>
  <div class="row" style="margin:8px 0 10px">${/poids du corps/i.test(x.machine)?'':`<a class="vid" href="${IMGQ(x.machine+' machine musculation')}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-8 8"/></svg>Voir la machine</a>`}${yt(x.nom+' '+(x.machine||'')+' exécution','Vidéo de l\'exercice')}</div>`;
@@ -7644,7 +7694,7 @@ function plates(kg){let r=(kg-20)/2;if(r<=0)return'barre seule';const out=[];for
 let VOICE=store.get('voix',false);
 function say(t){if(!VOICE)return;speak(t)}
 function bestE1(name){let b=0;LOG.forEach(l=>l.ex.forEach(e=>{if(e.nom===name)e.sets.forEach(s=>{b=Math.max(b,num(s.kg)*(1+num(s.reps)/30))})}));return b}
-function undoToast(t,undo){document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');d.innerHTML=esc(t)+' <button class="ghost sm" style="margin-left:8px;min-height:34px">Annuler</button>';d.querySelector('button').onclick=()=>{try{undo()}catch(e){}d.remove();toast('Restauré')};document.body.appendChild(d);setTimeout(()=>{if(!d.isConnected)return;d.style.transition='opacity .3s';d.style.opacity=0;setTimeout(()=>d.remove(),300)},5000)}
+function undoToast(t,undo){document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');d.innerHTML=esc(t)+' <button class="ghost sm" style="margin-left:8px;min-height:44px">Annuler</button>';d.querySelector('button').onclick=()=>{try{undo()}catch(e){}d.remove();toast('Restauré')};document.body.appendChild(d);setTimeout(()=>{if(!d.isConnected)return;d.style.transition='opacity .3s';d.style.opacity=0;setTimeout(()=>d.remove(),300)},8000)}
 function toast(t){document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');d.setAttribute('aria-live','polite');document.body.appendChild(d);requestAnimationFrame(()=>d.textContent=t);setTimeout(()=>{d.style.transition='opacity .3s';d.style.opacity=0;setTimeout(()=>d.remove(),300)},Math.min(8000,Math.max(2600,String(t).length*75)))}
 function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('div');c.className='confetti';const cols=[getComputedStyle(document.documentElement).getPropertyValue('--red'),'#ffcf5c','#22e4ff','#9be36f','#ff7a93'];
   c.innerHTML=Array.from({length:42},(_,i)=>`<i style="left:${Math.random()*100}%;background:${cols[i%cols.length]};--x:${(Math.random()*160-80).toFixed(0)}px;--r:${(Math.random()*720-360).toFixed(0)}deg;animation-delay:${(Math.random()*.4).toFixed(2)}s"></i>`).join('');document.body.appendChild(c);setTimeout(()=>c.remove(),2400)}
@@ -8105,7 +8155,7 @@ Format JSON : {"bilan":"2 phrases","conseils":["conseil concret"],"ce_soir":"une
     $('slAdv').innerHTML=`<div class="meal"><p style="margin-top:0">${esc(r.bilan)}</p>${list(r.conseils)}${r.ce_soir?`<div class="tip"><b>Ce soir :</b> ${esc(r.ce_soir)}</div>`:''}</div>`})},
   chk(b){const c=CHK[today()]||{};c[b.dataset.k]=+b.dataset.v;CHK[today()]=c;const k=Object.keys(CHK).sort().slice(-120);CHK=Object.fromEntries(k.map(x=>[x,CHK[x]]));store.set('checkin',CHK);renderChk();if(CHKQ.every(([q])=>c[q]))toast('C\'est noté, merci !')},
   chkEdit(){const c=CHK[today()];if(c){delete c.s}store.set('checkin',CHK);renderChk()},
-  logW2(){const w=num($('wIn2').value);if(!w){$('wIn2').focus();return}$('wIn').value=w;A.logW();$('wIn2').value='';renderSuivi()},
+  logW2(){const w=num($('wIn2').value);if(!w||w<25||w>350){$('wIn2').focus();toast(w?'Ce poids semble faux : écris-le en kilos (ex. 96,4)':'Écris ton poids du jour (ex. 96,4)');return}$('wIn').value=w;A.logW();$('wIn2').value='';renderSuivi()},
   mesSave(){const o={d:today()};let any=0;MESF.forEach(([k])=>{const v=num($('ms-'+k).value);if(v){o[k]=v;any=1}});if(!any){toast('Entre au moins une mesure');return}
     const prev=MES[MES.length-1]||{};MESF.forEach(([k])=>{if(!o[k]&&prev[k])o[k]=prev[k]});MES=MES.filter(m=>m.d!==today());MES.push(o);store.set('mesures',MES);renderMes();toast('Mesures enregistrées');renderSuivi()},
   winAdd(){const t=$('winIn').value.trim();if(!t){$('winIn').focus();return}WINS.push({d:today(),t});store.set('victoires',WINS);$('winIn').value='';renderWins();confetti();toast('Belle victoire !')},
@@ -8389,7 +8439,7 @@ function renderHome(){try{renderNow()}catch(e){}
   const m=metrics()||{},t=dayTot(),tk=m.kcal||2000,tp=m.prot||100,te=m.eau||8,w=EAU[today()]||0,h=new Date().getHours();
   const nom=(P.nom||'').trim();$('avatar').textContent=(nom[0]||'M').toUpperCase();
   $('hello').textContent=(h<5||h>=18?'Bonsoir':'Bonjour')+(nom?' '+nom:'')+' !';
-  $('sub').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+(P.obj?' · objectif '+({muscle:'muscle',perte:'perte de poids',seche:'sèche',forme:'forme',endurance:'cardio'}[P.obj]||P.obj):'');
+  $('sub').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+(P.obj?' · objectif : '+({muscle:'me muscler',perte:'perdre du poids',seche:'affiner ma silhouette',forme:'garder la forme',endurance:'plus de souffle'}[P.obj]||P.obj):'');
   $('rings').innerHTML=ring(t.k,m.kcal||0,'var(--r1)',m.kcal?`${Math.round(t.k).toLocaleString('fr-FR')} / ${m.kcal.toLocaleString('fr-FR')}`:'kcal',m.kcal?'kcal':"aujourd'hui")+ring(t.p,tp,'var(--r2)',`${Math.round(t.p)} / ${tp} g`,'protéines')+ring(w,te,'var(--r3)',`${w} / ${te}`,'verres d\'eau');
   {const steps=[[!!(P.poids&&P.taille&&P.age&&P.obj),'Compléter mon profil','taille, poids, âge, objectif','goPane','moi',''],
     [!!((P.santeL||[]).length||P.sante||store.get('santeOk',0)),'Ma santé','opération, traitements, allergies','goFold','moi','foldSante'],
@@ -8411,7 +8461,7 @@ function renderHome(){try{renderNow()}catch(e){}
   /* menu */
   const d=MENUS[today()];
   $('homeMenu').innerHTML=d?`<div class="row sb"><h3>Au menu aujourd'hui</h3><span class="mute">${num(d.calories_total)?Math.round(num(d.calories_total)).toLocaleString('fr-FR'):esc(d.calories_total)} kcal</span></div>${arr(d.repas).map(r=>`<div class="jl"><span class="n"><span class="mute">${esc(r.moment)}</span><br><b>${esc(r.nom)}</b></span><button class="ghost sm" data-act="cook" data-r="${reg(r)}">Recette</button></div>`).join('')}`
-    :`<div class="hcard"><span class="ic c-yel"><svg class="i"><use href="#i-fork"/></svg></span><div style="flex:1"><h3>Ton menu du jour</h3><div class="mute">${BARIA()?'Des petits repas adaptés à ta phase, recettes pas à pas.':'4 repas équilibrés, recettes pas à pas.'}</div></div></div><button data-act="genMenuHome" class="alt wide" style="margin-top:14px">Composer mon menu</button>`;
+    :`<div class="hcard"><span class="ic c-yel"><svg class="i"><use href="#i-fork"/></svg></span><div style="flex:1"><h3>Ton menu du jour</h3><div class="mute">${BARIA()?'Des petits repas adaptés à ta phase, recettes pas à pas.':'4 repas équilibrés, recettes pas à pas.'}</div></div></div><button data-act="genMenuHome" class="alt wide" style="margin-top:14px">Créer mon menu du jour</button>`;
   /* récup + poids */
   const last={};LOG.forEach(l=>l.ex.forEach(e=>{if(e.sets.length)clean(e.muscles).forEach(k=>{last[k]=Math.max(last[k]||0,l.t)})}));
   const hh=k=>last[k]?(Date.now()-last[k])/36e5:999;
@@ -8874,10 +8924,11 @@ function coachMsg(){const A=activeDays(),d1=dkey(Date.now()-864e5),d2=dkey(Date.
   const st=streak().st;if(st>=7&&st%7===0)return`${st} jours d'affilée : cette habitude devient vraiment la tienne !`;
   return'';}
 /* ---------- Mises à jour automatiques ---------- */
-const APP_VERSION='2026.11.28-99';
+const APP_VERSION='2026.11.28-100';
 
 /* ---- Quoi de neuf (après une mise à jour) ---- */
 const NEWS=[
+ ['2026.11.28-100','Vérification n°2','Plus simple au premier lancement (valeurs impossibles refusées, unités indiquées, mots plus clairs), « Noter un repas » ouvre toutes les façons de noter, anneaux de l\'accueil qui ne se décalent plus, fenêtres mieux lues par VoiceOver, fiche tension mise à jour (exercices tenus permis avec ton médecin).','accueil',''],
  ['2026.11.28-99','Exercices à la barre plus justes','Muscle-up, tractions, relevés de jambes, front et back lever, dips : la silhouette est vraiment suspendue, pieds dans le vide, barres à la bonne hauteur.','sport','exos'],
  ['2026.11.28-98','Vérification n°1','14 corrections : le bouton « Annuler » des messages remarche, une copie de sécurité est faite avant chaque restauration, repères santé mis à jour (sel sous 5 g pour la tension, foie déconseillé pendant la grossesse), animations corrigées, scanner disponible hors ligne.','accueil',''],
  ['2026.11.27-97','Animations plus fluides','Les démonstrations sont redessinées sur place au lieu d\'être recréées : séance et repos environ 60 % plus légers, bibliothèque d\'exercices 2 fois plus légère.','sport','exos'],
@@ -8921,7 +8972,7 @@ const NEWS=[
  ['2026.11.26-68','Pas tout fini ?','Valide ton repas, puis dis (ou montre en photo) ce que tu as laissé : le journal compte ce que tu as vraiment mangé.','scan','assiette'],
  ['2026.11.26-70','Mon calendrier','Jour par jour : repas, poids, sport, sommeil et ta note. Gardé pour toujours, même après les mises à jour.','suivi','calendrier']];
 function showNews(){let seen=store.get('newsSeen','');if(!seen){if(!P.taille){store.set('newsSeen',APP_VERSION);return}seen='2026.11.26-40'}const vk=v=>String(v).replace(/-(\d+)$/,(m,n)=>'-'+n.padStart(5,'0')),L=NEWS.filter(n=>vk(n[0])>vk(seen)&&(n[4]!=='journal'||n[1]!=='Repas en douceur'||BARIA()));store.set('newsSeen',APP_VERSION);if(!L.length||$('welcome').classList.contains('on'))return;
-  const go=()=>{if($('ov').classList.contains('on')||$('scanOv').classList.contains('on')||$('welcome').classList.contains('on')||$('sheet').classList.contains('on'))return setTimeout(go,4000);openSheet(`<div class="row sb"><h2 style="margin:0">Quoi de neuf ?</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Depuis ta dernière visite :</p>${L.slice(0,6).map(n=>`<button class="stp news" data-act="newsGo" data-v="${n[3]}" data-p="${n[4]}"><i>★</i><span><b>${esc(n[1])}</b><small>${esc(n[2])}</small></span></button>`).join('')}`)};setTimeout(go,1500)}
+  const go=()=>{if($('ov').classList.contains('on')||$('scanOv').classList.contains('on')||$('welcome').classList.contains('on')||$('sheet').classList.contains('on'))return setTimeout(go,4000);openSheet(`<div class="row sb"><h2 style="margin:0">Quoi de neuf ?</h2><button class="ghost sm" data-act="closeSheet">Fermer</button></div><p class="sub">Depuis ta dernière visite :</p>${rv2News(L)}`)};setTimeout(go,1500)}
 async function checkUpdate(){
   if(!/github\.io$/.test(location.host))return;
   try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const d=await r.json();
